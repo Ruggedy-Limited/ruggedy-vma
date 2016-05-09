@@ -16,6 +16,8 @@
         "laravelcollective/html": "~5.2.4",
         "laravel-doctrine/orm": "~1.1.9",
         "laravel-doctrine/extensions": "~1.0.8",
+        "beberlei/doctrineextensions": "~1.0",
+        "gedmo/doctrine-extensions": "~2.4",
         "laravel-doctrine/migrations": "~1.0.7",
         "laracasts/flash": "~2.0.0"
     },
@@ -59,6 +61,8 @@
             "php artisan optimize"
         ],
         "post-update-cmd": [
+            "php artisan clear-compiled",
+            "php artisan ide-helper:generate",
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan optimize"
         ]
