@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://pentamate.app'),
 
     /*
     |--------------------------------------------------------------------------
@@ -165,10 +165,10 @@ return [
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         App\Providers\AnnotationsServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        LaravelDoctrine\ORM\DoctrineServiceProvider::class,
+        /*LaravelDoctrine\ORM\DoctrineServiceProvider::class,
         LaravelDoctrine\Extensions\GedmoExtensionsServiceProvider::class,
         LaravelDoctrine\Extensions\BeberleiExtensionsServiceProvider::class,
-        LaravelDoctrine\Migrations\MigrationsServiceProvider::class,
+        LaravelDoctrine\Migrations\MigrationsServiceProvider::class,*/
         Laracasts\Flash\FlashServiceProvider::class,
     ],
 
