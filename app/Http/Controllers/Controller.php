@@ -2,13 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ErrorResponse;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
+use Illuminate\Translation\Translator;
+use App\Models\MessagingModel;
+
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
+    
+    /** @var  Translator */
+    protected $translator;
+
+    /**
+     * @param Translator $translator
+     */
+    public function __contruct(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * Generate an error response to return to customer
+     *
+     * @param string $messageKey
+     * @return ResponseFactory
+     */
+    public function generateErrorResponse($messageKey = '')
+    {
+        $translatorNamespace = null;
+        if (!method_exists($this, 'getTranslatorNamespace')) {
+            return new ErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        $translatorNamespace = $this->getTranslatorNamespace();
+        $message = $this->getTranslator()->get($translatorNamespace . '.' . $messageKey);
+
+        if ($message == 'messages.' . $messageKey) {
+            $message = MessagingModel::ERROR_DEFAULT;
+        }
+
+        $errorResponse = new ErrorResponse($message);
+        return response()->json($errorResponse);
+    }
+
+    /**
+     * @return Translator
+     */
+    public function getTranslator()
+    {
+        return $this->translator;
+    }
+
+    /**
+     * @param Translator $translator
+     */
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+    }
 }
