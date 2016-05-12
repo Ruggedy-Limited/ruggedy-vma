@@ -43,6 +43,7 @@ class RestContext extends FeatureContext implements Context
         // Create an empty stdClass object in the restObject property
         $this->restObject = new stdClass();
     }
+
     /**
      * @Given /^that I want to add a "([^"]*)" to my team$/
      * @Given /^that I want to make a new "([^"]*)"$/
@@ -53,7 +54,9 @@ class RestContext extends FeatureContext implements Context
         $this->setRestObjectType(ucwords(strtolower($objectType)));
         $this->setRestObjectMethod(self::HTTP_POST);
     }
+
     /**
+     * @Given /^that I want to get information about a "([^"]*)" on one of my teams$/
      * @Given /^that I want to find a "([^"]*)"$/
      * @param $objectType
      */
@@ -62,7 +65,9 @@ class RestContext extends FeatureContext implements Context
         $this->setRestObjectType(ucwords(strtolower($objectType)));
         $this->setRestObjectMethod(self::HTTP_GET);
     }
+
     /**
+     * @Given /^that I want to remove a "([^"]*)" from my team$/
      * @Given /^that I want to delete a "([^"]*)"$/
      * @param $objectType
      */
@@ -71,8 +76,9 @@ class RestContext extends FeatureContext implements Context
         $this->setRestObjectType(ucwords(strtolower($objectType)));
         $this->setRestObjectMethod(self::HTTP_DELETE);
     }
+
     /**
-     * @Given /^that I want to update a "([^"]*)"$/
+     * @Given /^that I want to update (a|my) "([^"]*)"$/
      * @param $objectType
      */
     public function thatIWantToUpdateA($objectType)
@@ -80,7 +86,9 @@ class RestContext extends FeatureContext implements Context
         $this->setRestObjectType(ucwords(strtolower($objectType)));
         $this->setRestObjectMethod(self::HTTP_PUT);
     }
+
     /**
+     * @Given /^that I want to change my "([^"]*)" to "([^"]*)"$/
      * @Given /^that their "([^"]*)" is "([^"]*)"$/
      * @Given /^that its "([^"]*)" is "([^"]*)"$/
      * @param $propertyName
@@ -91,6 +99,7 @@ class RestContext extends FeatureContext implements Context
         $propertyValue = $this->convertBoolHelper($propertyValue);
         $this->getRestObject()->$propertyName = $propertyValue;
     }
+
     /**
      * @When /^I request "([^"]*)"$/
      * @param $uri
@@ -137,6 +146,7 @@ class RestContext extends FeatureContext implements Context
         $this->setResponse($response);
         return true;
     }
+
     /**
      * @Then /^the HTTP response code should be ([^"]*)$/
      * @param $responseCode
@@ -145,6 +155,7 @@ class RestContext extends FeatureContext implements Context
     {
         PHPUnit_Framework_Assert::assertEquals($responseCode, $this->getResponse()->getStatusCode());
     }
+
     /**
      * @Then /^the response is JSON$/
      */
@@ -152,6 +163,7 @@ class RestContext extends FeatureContext implements Context
     {
         $this->responseIsJsonHelper();
     }
+
     /**
      * @Given /^the response has a "([^"]*)" property$/
      * @param $propertyName
@@ -161,6 +173,7 @@ class RestContext extends FeatureContext implements Context
     {
         $this->theResponseHasAPropertyHelper($propertyName);
     }
+
     /**
      * @Then /^the "([^"]*)" property equals "([^"]*)"$/
      * @param $propertyName
@@ -175,6 +188,22 @@ class RestContext extends FeatureContext implements Context
         $propertyValue = $this->convertBoolHelper($propertyValue);
         PHPUnit_Framework_Assert::assertEquals($propertyValue, $value);
     }
+
+    /**
+     * @Then /^the "([^"]*)" property does not equal "([^"]*)"$/
+     * @param $propertyName
+     * @param $propertyValue
+     * @throws InvalidResponseException
+     */
+    public function thePropertyNotEquals($propertyName, $propertyValue)
+    {
+        $this->responseIsJsonHelper();
+        $value = $this->theResponseHasAPropertyHelper($propertyName);
+        $value = $this->convertBoolHelper($value);
+        $propertyValue = $this->convertBoolHelper($propertyValue);
+        PHPUnit_Framework_Assert::assertNotEquals($propertyValue, $value);
+    }
+
     /**
      * @Given /^the type of the "([^"]*)" property is ([^"]*)$/
      * @param $propertyName
@@ -188,6 +217,7 @@ class RestContext extends FeatureContext implements Context
         $typeMatcher = PHPUnit_Framework_Assert::isType($typeString);
         $typeMatcher->evaluate($value, "Property '".$propertyName."' is not of the correct type: ".$typeString."!");
     }
+
     /**
      * @Then /^echo last response$/
      */
@@ -196,6 +226,7 @@ class RestContext extends FeatureContext implements Context
         echo $this->getRequestUrl() . PHP_EOL;
         echo PHP_EOL . $this->getResponse()->content() . PHP_EOL;
     }
+
     /**
      * Helper method to determine if the response is JSON
      * @return stdClass
@@ -208,6 +239,7 @@ class RestContext extends FeatureContext implements Context
         }
         return $data;
     }
+
     /**
      * @param $propertyName
      * @return mixed
@@ -220,6 +252,7 @@ class RestContext extends FeatureContext implements Context
         }
         return $data->$propertyName;
     }
+
     /**
      * Helper method to convert 'true' or 'false' passed as strings from the feature file to proper boolean values
      * @param $value
@@ -230,11 +263,18 @@ class RestContext extends FeatureContext implements Context
         if ($value === 'true') {
             return true;
         }
+
         if ($value === 'false') {
             return false;
         }
+
+        if ($value === 'NULL') {
+            return null;
+        }
+
         return $value;
     }
+
     /**
      * Helper method to convert integer values passed as strings from the feature file to proper integer values
      * @param $value
@@ -247,6 +287,7 @@ class RestContext extends FeatureContext implements Context
         }
         return $value;
     }
+
     /**
      * @return stdClass|array
      */
@@ -254,6 +295,7 @@ class RestContext extends FeatureContext implements Context
     {
         return $this->restObject;
     }
+
     /**
      * @param stdClass|array $restObject
      */
@@ -261,6 +303,7 @@ class RestContext extends FeatureContext implements Context
     {
         $this->restObject = $restObject;
     }
+
     /**
      * @return string
      */
@@ -268,6 +311,7 @@ class RestContext extends FeatureContext implements Context
     {
         return $this->restObjectType;
     }
+
     /**
      * @param string $restObjectType
      */
@@ -275,6 +319,7 @@ class RestContext extends FeatureContext implements Context
     {
         $this->restObjectType = $restObjectType;
     }
+
     /**
      * @return string
      */
@@ -282,6 +327,7 @@ class RestContext extends FeatureContext implements Context
     {
         return $this->restObjectMethod;
     }
+
     /**
      * @param string $restObjectMethod
      */
@@ -289,6 +335,7 @@ class RestContext extends FeatureContext implements Context
     {
         $this->restObjectMethod = $restObjectMethod;
     }
+
     /**
      * @return Response
      */
@@ -296,6 +343,7 @@ class RestContext extends FeatureContext implements Context
     {
         return $this->response;
     }
+
     /**
      * @param Response $response
      */
@@ -303,6 +351,7 @@ class RestContext extends FeatureContext implements Context
     {
         $this->response = $response;
     }
+
     /**
      * @return string
      */
@@ -310,6 +359,7 @@ class RestContext extends FeatureContext implements Context
     {
         return $this->requestUrl;
     }
+
     /**
      * @param string $requestUrl
      */
