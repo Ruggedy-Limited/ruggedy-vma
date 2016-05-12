@@ -50,17 +50,59 @@ class SparkServiceProvider extends ServiceProvider
      */
     public function booted()
     {
-        Spark::useStripe()->noCardUpFront()->trialDays(10);
+        /**
+         * Free account = 50Mb
+         * Restrict API-based apps
+         * 1 User, 1 Project and 1 Workspace, 10 assets
+         *
+         * Plan 1 = 500Mb = NZD$40/month
+         * All scanner apps
+         * 5 Projects, 2 Workspaces per project, unlimited assets
+         *
+         * Plan 2 = 1Gb = NZD$80/month
+         * All scanner apps
+         * Unlimited Projects and Workspaces, unlimited assets
+         */
+        Spark::useStripe()->noCardUpFront();
 
-        Spark::freePlan()
+        Spark::freePlan('Free Trial')
+            ->maxCollaborators(1)
             ->features([
-                'First', 'Second', 'Third'
+                '50Mb of Storage',
+                'All file output Scanner Apps',
+                '1 User Account',
+                '1 Project',
+                '1 Workspace',
+                '10 Assets',
             ]);
 
-        Spark::plan('Basic', 'provider-id-1')
-            ->price(10)
+        Spark::teamPlan('Basic Plan', 'stripe-id-basic-plan')
+            ->price(40)
+            ->maxTeamMembers(10)
+            ->maxTeams(5)
+            ->maxCollaborators(10)
             ->features([
-                'First', 'Second', 'Third'
+                '500Mb of Storage',
+                'Access to all Scanner Apps',
+                '10 User Accounts',
+                '5 Teams',
+                '5 Projects',
+                '2 Workspaces per Project',
+                'Unlimited Assets<sup>*</sup>',
+            ]);
+
+        Spark::teamPlan('Pro Plan', 'stripe-id-pro-plan')
+            ->price(80)
+            ->maxTeamMembers(50)
+            ->maxTeams(10)
+            ->maxCollaborators(50)
+            ->features([
+                '1Gb of Storage',
+                'Access to all Scanner Apps',
+                '50 User Accounts',
+                '10 Teams',
+                'Unlimited Projects &amp; Workspaces',
+                'Unlimited Assets<sup>*</sup>',
             ]);
     }
 }
