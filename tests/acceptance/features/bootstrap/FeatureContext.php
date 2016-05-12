@@ -10,6 +10,9 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Illuminate\Support\Facades\DB;
+use Laracasts\Behat\Context\App;
+use Laracasts\Behat\Context\DatabaseTransactions;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 
 /**
@@ -17,12 +20,14 @@ use Illuminate\Support\Facades\DB;
  */
 class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
 {
+    // Trait which starts a InnoDB transaction before each scenario and rolls back after each scenario
+    use DatabaseTransactions;
+
     /** @var  string */
     protected $apiKey;
 
     /**
      * Initializes context.
-     *
      * Every scenario gets its own context instance.
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.

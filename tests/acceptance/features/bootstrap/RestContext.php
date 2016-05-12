@@ -8,9 +8,11 @@ use Illuminate\Http\Response;
 use App\Exceptions\InvalidConfigurationException;
 use App\Exceptions\InvalidResponseException;
 use App\Exceptions\HttpException;
+use Illuminate\Support\Facades\App;
 use stdClass;
 use Exception;
 use PHPUnit_Framework_Assert;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 
 class RestContext extends FeatureContext implements Context
@@ -30,16 +32,19 @@ class RestContext extends FeatureContext implements Context
     protected $response;
     /** @var string  */
     protected $requestUrl;
+
     /**
      * Initializes context.
      * Every scenario gets it's own instance of the context object.
      */
     public function __construct()
     {
+        parent::__construct();
         // Create an empty stdClass object in the restObject property
         $this->restObject = new stdClass();
     }
     /**
+     * @Given /^that I want to add a "([^"]*)" to my team$/
      * @Given /^that I want to make a new "([^"]*)"$/
      * @param $objectType
      */
@@ -76,6 +81,7 @@ class RestContext extends FeatureContext implements Context
         $this->setRestObjectMethod(self::HTTP_PUT);
     }
     /**
+     * @Given /^that their "([^"]*)" is "([^"]*)"$/
      * @Given /^that its "([^"]*)" is "([^"]*)"$/
      * @param $propertyName
      * @param $propertyValue
@@ -99,7 +105,7 @@ class RestContext extends FeatureContext implements Context
         if (empty($uri)) {
             throw new Exception("Empty URI in 'I request :uri'");
         }
-        $baseUrl = env('APP_BASE_URL');
+        $baseUrl = env('APP_URL');
         if (empty($baseUrl)) {
             throw new InvalidConfigurationException("Invalid base APP_BASE_URL");
         }
@@ -121,9 +127,7 @@ class RestContext extends FeatureContext implements Context
         }
 
         $request = Request::create($fullUrl, strtoupper($this->getRestObjectMethod()), [], [], [], [], $content);
-        $response = app()->prepareResponse(
-            app()->handle($request)
-        );
+        $response = app()->handle($request);
 
         if (empty($response)) {
             throw new InvalidResponseException('Empty response received from server when executing request:' . PHP_EOL
