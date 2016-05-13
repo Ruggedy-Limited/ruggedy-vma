@@ -78,7 +78,9 @@ class RestContext extends FeatureContext implements Context
     }
 
     /**
-     * @Given /^that I want to update (a|my) "([^"]*)"$/
+     *
+     * @Given /^that I want to update my "([^"]*)"$/
+     * @Given /^that I want to update a "([^"]*)"$/
      * @param $objectType
      */
     public function thatIWantToUpdateA($objectType)
@@ -88,8 +90,9 @@ class RestContext extends FeatureContext implements Context
     }
 
     /**
-     * @Given /^that I want to change my "([^"]*)" to "([^"]*)"$/
+     * @Given /^that I want to change a "([^"]*)" to "([^"]*)"$/
      * @Given /^that their "([^"]*)" is "([^"]*)"$/
+     * @Given /^that I want to change it's "([^"]*)" to "([^"]*)"$/
      * @Given /^that its "([^"]*)" is "([^"]*)"$/
      * @param $propertyName
      * @param $propertyValue
