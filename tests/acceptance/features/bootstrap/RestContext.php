@@ -8,11 +8,10 @@ use Illuminate\Http\Response;
 use App\Exceptions\InvalidConfigurationException;
 use App\Exceptions\InvalidResponseException;
 use App\Exceptions\HttpException;
-use Illuminate\Support\Facades\App;
+use Behat\Gherkin\Node\TableNode;
 use stdClass;
 use Exception;
 use PHPUnit_Framework_Assert;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 
 class RestContext extends FeatureContext implements Context
@@ -193,6 +192,16 @@ class RestContext extends FeatureContext implements Context
     }
 
     /**
+     * @Then the "([^"]*)" array property has a "([^"]*)" value
+     */
+    public function theArrayPropertyHasTheFollowing($index, $value)
+    {
+        $responseBody = json_decode($this->getResponse()->content(), true);
+        PHPUnit_Framework_Assert::assertNotEmpty($responseBody[$index], "The specified index was not in the response");
+        PHPUnit_Framework_Assert::assertContains($value, $responseBody[$index]);
+    }
+
+    /**
      * @Then /^the "([^"]*)" property does not equal "([^"]*)"$/
      * @param $propertyName
      * @param $propertyValue
@@ -279,6 +288,28 @@ class RestContext extends FeatureContext implements Context
     }
 
     /**
+     * Iterate over the columns in a row and convert 'true' or 'false' string values to proper bools
+     * @param array $row
+     * @return array
+     */
+    protected function sanitiseRowHelper(array $row)
+    {
+        if (empty($row)) {
+            return $row;
+        }
+
+        foreach ($row as $index => $value) {
+            if (!is_scalar($value)) {
+                continue;
+            }
+
+            $row[$index] = $this->convertBoolHelper($value);
+        }
+
+        return $row;
+    }
+
+    /**
      * Helper method to convert integer values passed as strings from the feature file to proper integer values
      * @param $value
      * @return int
@@ -290,6 +321,28 @@ class RestContext extends FeatureContext implements Context
         }
         return $value;
     }
+
+    /**
+     * Assert that and element in the response contains an item
+     * @param array $row
+     * @param array $response
+     */
+    protected function isInProperty($index, array $row, array $response)
+    {
+        PHPUnit_Framework_Assert::assertNotEmpty($response, "Empty Array response given");
+        PHPUnit_Framework_Assert::assertArrayHasKey(
+            $index,
+            $response,
+            "The index specified does not exist in the response"
+        );
+        PHPUnit_Framework_Assert::assertArrayHasKey(
+            $index,
+            $row,
+            "The index specified does not exist in the TableNode"
+        );
+        PHPUnit_Framework_Assert::assertContains($row[$index], $response[$index]);
+    }
+
 
     /**
      * @return stdClass|array
