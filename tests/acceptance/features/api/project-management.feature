@@ -268,3 +268,26 @@ Feature: As an account or team owner
     And the response has a "message" property
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we could not update that Project. We could not find that project."
+
+  Scenario: Get a list of Projects on my account
+    Given that I want to get information about my "Projects"
+    When I request "/api/projects/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "success" property
+    And the type of the "success" property is boolean
+    And the "success" property equals "true"
+    And the response has a "projects" property
+    And the type of the "projects" property is array
+
+  Scenario: I attempt to get a list of projects for an account that I don't own
+    Given that I want to get information about my "Projects"
+    When I request "/api/projects/2"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, we could not give information about the projects on that account."

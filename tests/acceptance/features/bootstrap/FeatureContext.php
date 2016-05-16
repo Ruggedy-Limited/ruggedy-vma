@@ -2,17 +2,16 @@
 
 namespace Tests\Acceptance\Features\Bootstrap;
 
+use App\Exceptions\FeatureBackgroundSetupFailedException;
+use App\Exceptions\InvalidConfigurationException;
 use App\Team;
 use App\User;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Illuminate\Support\Facades\DB;
-use Laracasts\Behat\Context\App;
 use Laracasts\Behat\Context\DatabaseTransactions;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 
 /**
@@ -25,6 +24,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
     /** @var  string */
     protected $apiKey;
+
+    protected $em;
 
     /**
      * Initializes context.
@@ -53,26 +54,71 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     }
 
     /**
-     * @Given the following existing users:
+     * @Given /^the following existing ([^"]*):$/
+     *
+     * @param $objectType
+     * @param TableNode $table
+     * @return bool
+     * @throws FeatureBackgroundSetupFailedException
+     * @throws InvalidConfigurationException
      */
+    public function theFollowingExistingThings($objectType, TableNode $table)
+    {
+        $rootNamespace = env('APP_MODEL_NAMESPACE');
+        if (empty($rootNamespace)) {
+            throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
+        }
+
+        if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
+            $objectType = substr($objectType, 0, strlen($objectType) - 1);
+        }
+
+        $modelClassPath = $rootNamespace . "\\" . $objectType;
+
+        if (!class_exists($modelClassPath)) {
+            throw new FeatureBackgroundSetupFailedException("The '$modelClassPath' model does not exist.");
+        }
+
+        /** @var \Illuminate\Database\Eloquent\Model $model */
+        $model = new $modelClassPath();
+        if ($model instanceof \Eloquent) {
+            foreach ($table as $row) {
+                $model = new $modelClassPath($row);
+                $model->saveOrFail();
+            }
+            
+            return true;
+        }
+
+        /*foreach ($table as $row) {
+            $model = new $modelClassPath($row);
+            app('em')->persist($model);
+        }
+
+        app('em')->flush();*/
+    }
+
+    /**
+     * @Given the following existing users:
+     *
     public function theFollowingExistingUsers(TableNode $table)
     {
         foreach ($table as $row) {
             $user = new User($row);
             $user->saveOrFail();
         }
-    }
+    }*/
 
     /**
      * @Given the following existing teams:
-     */
+     *
     public function theFollowingExistingTeams(TableNode $table)
     {
         foreach ($table as $row) {
             $team = new Team($row);
             $team->saveOrFail();
         }
-    }
+    }*/
 
     /**
      * @Given a valid API key :apiKey

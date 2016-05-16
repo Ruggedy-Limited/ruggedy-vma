@@ -8,7 +8,6 @@ use Illuminate\Http\Response;
 use App\Exceptions\InvalidConfigurationException;
 use App\Exceptions\InvalidResponseException;
 use App\Exceptions\HttpException;
-use Behat\Gherkin\Node\TableNode;
 use stdClass;
 use Exception;
 use PHPUnit_Framework_Assert;
@@ -56,6 +55,7 @@ class RestContext extends FeatureContext implements Context
 
     /**
      * @Given /^that I want to get information about a "([^"]*)" on one of my teams$/
+     * @Given /^that I want to get information about my "([^"]*)"$/
      * @Given /^that I want to find a "([^"]*)"$/
      * @param $objectType
      */
@@ -92,6 +92,7 @@ class RestContext extends FeatureContext implements Context
      * @Given /^that I want to change a "([^"]*)" to "([^"]*)"$/
      * @Given /^that their "([^"]*)" is "([^"]*)"$/
      * @Given /^that I want to change it's "([^"]*)" to "([^"]*)"$/
+     * @Given /^that I want to change my "([^"]*)" to "([^"]*)"$/
      * @Given /^that its "([^"]*)" is "([^"]*)"$/
      * @param $propertyName
      * @param $propertyValue
