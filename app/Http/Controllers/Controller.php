@@ -11,20 +11,25 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use Illuminate\Translation\Translator;
 use App\Models\MessagingModel;
+use Illuminate\Http\Request;
 
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
-    
+
     /** @var  Translator */
     protected $translator;
+    /** @var  Request */
+    protected $request;
 
     /**
+     * @param Request $request
      * @param Translator $translator
      */
-    public function __contruct(Translator $translator)
+    public function __construct(Request $request, Translator $translator)
     {
+        $this->request = $request;
         $this->translator = $translator;
     }
 

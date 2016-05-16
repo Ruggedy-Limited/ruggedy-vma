@@ -22,22 +22,10 @@ class ApiController extends Controller implements GivesUserFeedback
 {
     const TRANSLATOR_NAMESPACE = 'api';
 
-    /** @var  Request - the current request instance */
-    protected $request;
-
-    /**
-     * ApiController constructor.
-     * @param Request $request
-     */
-    public function __construct(Request $request)
-    {
-        $this->setRequest($request);
-    }
-
     /**
      * Allow a team administrator to add a new user to their team
      *
-     * @Post("/user/invite/{teamId}/", as="user.invite", where={"teamId": "[0-9]+"})
+     * @Post("/user/{teamId}", as="user.invite", where={"teamId": "[0-9]+"})
      *
      * @param $teamId
      * @return \Illuminate\Contracts\Routing\ResponseFactory
@@ -90,7 +78,7 @@ class ApiController extends Controller implements GivesUserFeedback
     /**
      * Allow a team administrator to remove a user from their team
      *
-     * @Post("/user/remove/{teamId}/{userId}", as="user.remove", where={"teamId": "[0-9]+", "userId": "[0-9]+"})
+     * @Delete("/user/{teamId}/{userId}", as="user.remove", where={"teamId": "[0-9]+", "userId": "[0-9]+"})
      *
      * @param $teamId
      * @return \Illuminate\Contracts\Routing\ResponseFactory
@@ -141,7 +129,11 @@ class ApiController extends Controller implements GivesUserFeedback
         }
 
         $team = Team::find($teamId);
-        return response()->json($team);
+        
+        return response()->json([
+            $user->getTable() => $user,
+            $team->getTable() => $team
+        ]);
         
     }
 

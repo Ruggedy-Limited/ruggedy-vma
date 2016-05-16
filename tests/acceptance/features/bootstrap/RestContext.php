@@ -156,7 +156,10 @@ class RestContext extends FeatureContext implements Context
      */
     public function theHttpResponseCodeShouldBe($responseCode)
     {
-        PHPUnit_Framework_Assert::assertEquals($responseCode, $this->getResponse()->getStatusCode());
+        PHPUnit_Framework_Assert::assertEquals(
+            $responseCode,
+            $this->getResponse()->getStatusCode(), $this->getResponse()->content()
+        );
     }
 
     /**
@@ -175,6 +178,16 @@ class RestContext extends FeatureContext implements Context
     public function theResponseHasAProperty($propertyName)
     {
         $this->theResponseHasAPropertyHelper($propertyName);
+    }
+
+    /**
+     *  @Given /^the response does not have a "([^"]*)" property$/
+     * @param $propertyName
+     * @throws InvalidResponseException
+     */
+    public function theResponseDoesNotHaveAProperty($propertyName)
+    {
+        $this->theResponseHasAPropertyHelper($propertyName, true);
     }
 
     /**
@@ -250,77 +263,80 @@ class RestContext extends FeatureContext implements Context
         if (empty($data)) {
             throw new InvalidResponseException("Response was not JSON" . PHP_EOL . $this->getResponse()->content());
         }
+
         return $data;
     }
 
     /**
      * @param $propertyName
+     * @param bool $doesNotHaveAProperty
      * @return mixed
-     * @throws Exception
+     * @throws InvalidResponseException
      */
-    protected function theResponseHasAPropertyHelper($propertyName) {
+    protected function theResponseHasAPropertyHelper($propertyName, bool $doesNotHaveAProperty = false) {
         $data = $this->responseIsJsonHelper();
-        if (!isset($data->$propertyName)) {
-            throw new InvalidResponseException("Property '".$propertyName."' is not set!" . PHP_EOL);
+        // Get the property name and the data, taking into account that there may be dot syntax in the property name
+        list($propertyName, $data) = $this->getValueOfProperty($propertyName, $data, $doesNotHaveAProperty);
+
+        // We're looking for $data->$propertyName to be set and it isn't. Throw an exception to fail the test.
+        if (empty($doesNotHaveAProperty) && !isset($data->$propertyName)) {
+            throw new InvalidResponseException("Property '".$propertyName."' is NOT set!" . PHP_EOL);
         }
-        return $data->$propertyName;
+
+        // We're checking that $data->$propertyName is NOT set and it is. Throw an exception to fail the test.
+        if (!empty($doesNotHaveAProperty) && isset($data->$propertyName)) {
+            throw new InvalidResponseException("Property '".$propertyName."' IS set!" . PHP_EOL);
+        }
+
+        // If we're testing the $data->$propertyName is set and we go this far, it must be set, so return it.
+        if (empty($doesNotHaveAProperty)) {
+            return $data->$propertyName;
+        }
     }
 
     /**
-     * Helper method to convert 'true' or 'false' passed as strings from the feature file to proper boolean values
-     * @param $value
-     * @return bool
+     * @param $propertyName
+     * @param stdClass $data
+     * @param bool $doesNotHaveAProperty
+     * @return array
+     * @throws InvalidResponseException
      */
-    protected function convertBoolHelper($value)
+    protected function getValueOfProperty($propertyName, stdClass $data, bool $doesNotHaveAProperty = false): array
     {
-        if ($value === 'true') {
-            return true;
-        }
-
-        if ($value === 'false') {
-            return false;
-        }
-
-        if ($value === 'NULL') {
+        // If empty parameters are passed
+        if (empty($propertyName) || empty($data)) {
             return null;
         }
 
-        return $value;
-    }
-
-    /**
-     * Iterate over the columns in a row and convert 'true' or 'false' string values to proper bools
-     * @param array $row
-     * @return array
-     */
-    protected function sanitiseRowHelper(array $row)
-    {
-        if (empty($row)) {
-            return $row;
+        // There is no dot syntax in the property name so we're just looking for a property in the first level
+        if (strpos($propertyName, '.') === false) {
+            return [$propertyName, $data];
         }
 
-        foreach ($row as $index => $value) {
-            if (!is_scalar($value)) {
-                continue;
+        // There is dot syntax in the property name. Check that the property exists, then return the parent level of the
+        // object and the last part of the dot syntax string as the property name to check
+        $properties = explode(".", $propertyName);
+        $propertyNameResult = array_pop($properties);
+
+        foreach ($properties as $property) {
+            // If we are looking for a set property and we encounter and unset property at any point while traversing
+            // deeper into the object heirarchy, throw an exception
+            if (empty($doesNotHaveAProperty) && !isset($data->$property)) {
+                throw new InvalidResponseException("Property '".$property."' is NOT set!" . PHP_EOL);
             }
 
-            $row[$index] = $this->convertBoolHelper($value);
+            // We are looking for a property that isn't set so if we encounter an unset property at any point while
+            // traversing deeper into the object heirarchy, return the current property and it's parent so we know the
+            // step will pass
+            if (!empty($doesNotHaveAProperty) && empty($data->$property)) {
+                return [$property, $data];
+            }
+
+            $data = $data->$property;
         }
 
-        return $row;
-    }
+        return [$propertyNameResult, $data];
 
-    /**
-     * Helper method to convert integer values passed as strings from the feature file to proper integer values
-     * @param $value
-     * @return int
-     */
-    protected function convertIntHelper($value)
-    {
-        if (is_int($value)) {
-            return intval($value);
-        }
-        return $value;
     }
 
     /**

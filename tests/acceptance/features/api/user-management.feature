@@ -13,23 +13,21 @@ Feature: As a user of the API framework and the owner of at least one team
 
   Background:
     Given the following existing Users:
-    | id        | name        | email                      | password                                                     | remember_token | photo_url    | uses_two_factor_auth | authy_id | country_code | phone       | two_factor_reset_code | current_team_id | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | last_read_announcements_at | created_at          | updated_at          |
-    | 99999998  | John Smith  | johnsmith@dispostable.com  | $2y$10$IPgIlPVo/NW6fQMx0gJUyesYjV1N4LwC1fH2rj94s0gq.xDjMisNm | NULL           | NULL         | 0                    | NULL     | ZAR          | 0716852996  | NULL                  | 1               | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-19 14:39:01 | 2016-05-09 14:39:01        | 2016-05-09 14:39:01 | 2016-05-09 14:39:02 |
-    | 99999999  | Greg Symons | gregsymons@dispostable.com | $2y$10$0WLCM1EUuJce.zSlS1N4h.XRn7u8uDbyxslTkFOI0ka0fxSIXmjhC | NULL           | /myphoto.jpg | 0                    | NULL     | NZ           | 06134582354 | NULL                  | 1               | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-20 11:51:29 | 2016-05-10 11:51:43        | 2016-05-10 11:51:29 | 2016-05-10 11:51:43 |
+    | id | name        | email                      | password                                                     | remember_token | photo_url    | uses_two_factor_auth | authy_id | country_code | phone       | two_factor_reset_code | current_team_id | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | last_read_announcements_at | created_at          | updated_at          |
+    | 1  | John Smith  | johnsmith@dispostable.com  | $2y$10$IPgIlPVo/NW6fQMx0gJUyesYjV1N4LwC1fH2rj94s0gq.xDjMisNm | NULL           | NULL         | 0                    | NULL     | ZAR          | 0716852996  | NULL                  | 1               | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-19 14:39:01 | 2016-05-09 14:39:01        | 2016-05-09 14:39:01 | 2016-05-09 14:39:02 |
+    | 2  | Greg Symons | gregsymons@dispostable.com | $2y$10$0WLCM1EUuJce.zSlS1N4h.XRn7u8uDbyxslTkFOI0ka0fxSIXmjhC | NULL           | /myphoto.jpg | 0                    | NULL     | NZ           | 06134582354 | NULL                  | 1               | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-20 11:51:29 | 2016-05-10 11:51:43        | 2016-05-10 11:51:29 | 2016-05-10 11:51:43 |
     And the following existing Teams:
-    | id        | owner_id | name       | photo_url | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | created_at          | updated_at          |
-    | 99999999  | 99999998 | Johns Team | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 |
+    | id | owner_id | name       | photo_url | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | created_at          | updated_at          |
+    | 1  | 1        | Johns Team | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 |
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   Scenario: Adding a person to one of the teams on my account
     Given that I want to add a "Person" to my team
     And that their "email" is "garethpeter@gmail.com"
-    When I request "/api/users/1"
+    When I request "/api/user/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "email" property
     And the type of the "email" property is string
     And the "email" property equals "garethpeter@gmail.com"
@@ -40,7 +38,7 @@ Feature: As a user of the API framework and the owner of at least one team
     can add
     Given that I want to add a "Person" to my team
     And that their "email" is "garethpeter@gmail.com"
-    When I request "/api/users/1"
+    When I request "/api/user/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -53,7 +51,7 @@ Feature: As a user of the API framework and the owner of at least one team
   Scenario: I attempt to add a person to one of the teams on my account, but I provide an invalid team ID
     Given that I want to add a "Person" to my team
     And that their "email" is "garethpeter@gmail.com"
-    When I request "/api/users/1"
+    When I request "/api/user/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -66,7 +64,7 @@ Feature: As a user of the API framework and the owner of at least one team
   Scenario: I attempt to add a person to one of the teams on my account, but I don't provide a valid email address
     Given that I want to add a "Person" to my team
     And that their "email" is "garethpetergmail.com"
-    When I request "/api/users/add/1"
+    When I request "/api/user/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -78,24 +76,21 @@ Feature: As a user of the API framework and the owner of at least one team
 
   Scenario: Removing a person from one of the teams on my account
     Given that I want to remove a "Person" from my team
-    And that their "email" is "gregsymons@dispostable.com"
-    When I request "/api/users/1"
+    When I request "/api/user/1/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "gregsymons@dispostable.com"
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
+    And the response has a "users.email" property
+    And the type of the "users.email" property is string
+    And the "users.email" property equals "gregsymons@dispostable.com"
+    And the response has a "teams.id" property
+    And the type of the "teams.id" property is integer
+    And the "teams.id" property equals "1"
 
   Scenario: I attempt to remove a person from one of the teams on my account, but I provide an invalid team ID
     Given that I want to remove a "Person" from my team
     And that their "email" is "gregsymons@dispostable.com"
-    When I request "/api/users/111"
+    When I request "/api/user/11/2"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -105,11 +100,10 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we could not remove that person from that team because we could not find that team in your account."
 
-  Scenario: I attempt to remove a person from one of the teams on my account, but I provide an email address that
+  Scenario: I attempt to remove a person from one of the teams on my account, but I provide User ID that doesn't exist in that team
   doesn't exist in that team
     Given that I want to remove a "Person" from my team
-    And that their "email" is "notinmyteam@dispostable.com"
-    When I request "/api/users/1"
+    When I request "/api/users/1/3"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -119,28 +113,13 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we cannot remove that person because we could not find them in that team."
 
-  Scenario: I attempt to remove a person from one of the teams on my account, but I provide an invalid email address
-    Given that I want to remove a "Person" from my team
-    And that their "email" is "notinmyteam.com"
-    When I request "/api/users/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "true"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Sorry, we cannot not remove that person because we did not get a valid email address."
-
   Scenario: Get all possbile information regarding a team member
     Given that I want to get information about a "Person" on one of my teams
     And that their "id" is "99999999"
     When I request "/api/users/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Greg Symons"
@@ -222,9 +201,7 @@ Feature: As a user of the API framework and the owner of at least one team
     When I request "/api/users/99999998"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"
@@ -255,9 +232,7 @@ Feature: As a user of the API framework and the owner of at least one team
     When I request "/api/users/99999998"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"
@@ -291,9 +266,7 @@ Feature: As a user of the API framework and the owner of at least one team
     When I request "/api/users/99999998"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"

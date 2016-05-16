@@ -10,6 +10,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Laracasts\Behat\Context\DatabaseTransactions;
 
@@ -19,8 +20,6 @@ use Laracasts\Behat\Context\DatabaseTransactions;
  */
 class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
 {
-    // Trait which starts a InnoDB transaction before each scenario and rolls back after each scenario
-    use DatabaseTransactions;
 
     /** @var  string */
     protected $apiKey;
@@ -38,19 +37,12 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     }
 
     /**
-     * @beforeScenario
+     * @AfterScenario
      */
-    public function prepareScenario()
+    public function truncateTables()
     {
-        DB::beginTransaction();
-    }
-
-    /**
-     * @afterScenario
-     */
-    public function cleanupScenario()
-    {
-        DB::rollBack();
+        User::truncate();
+        Team::truncate();
     }
 
     /**
@@ -79,11 +71,11 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             throw new FeatureBackgroundSetupFailedException("The '$modelClassPath' model does not exist.");
         }
 
-        /** @var \Illuminate\Database\Eloquent\Model $model */
+        /** @var Model $model */
         $model = new $modelClassPath();
-        if ($model instanceof \Eloquent) {
+        if ($model instanceof Model) {
             foreach ($table as $row) {
-                $model = new $modelClassPath($row);
+                $model = $modelClassPath::forceCreate($row);
                 $model->saveOrFail();
             }
             
@@ -96,6 +88,63 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         }
 
         app('em')->flush();*/
+    }
+
+    /**
+     * Iterate over the columns in a row and convert 'true' or 'false' string values to proper bools
+     * @param array $row
+     * @return array
+     */
+    protected function sanitiseRowHelper(array $row)
+    {
+        if (empty($row)) {
+            return $row;
+        }
+
+        foreach ($row as $index => $value) {
+            if (!is_scalar($value)) {
+                continue;
+            }
+
+            $row[$index] = $this->convertBoolHelper($value);
+        }
+
+        return $row;
+    }
+
+    /**
+     * Helper method to convert 'true' or 'false' passed as strings from the feature file to proper boolean values
+     * @param $value
+     * @return bool
+     */
+    protected function convertBoolHelper($value)
+    {
+        if ($value === 'true') {
+            return true;
+        }
+
+        if ($value === 'false') {
+            return false;
+        }
+
+        if ($value === 'NULL') {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Helper method to convert integer values passed as strings from the feature file to proper integer values
+     * @param $value
+     * @return int
+     */
+    protected function convertIntHelper($value)
+    {
+        if (is_int($value)) {
+            return intval($value);
+        }
+        return $value;
     }
 
     /**

@@ -28,7 +28,7 @@ class ErrorResponse implements JsonSerializable, Jsonable
      * Implementation for the Jsonable interface
      *
      * @param int $options
-     * @return mixed
+     * @return string
      */
     public function toJson($options = 0)
     {
@@ -42,7 +42,15 @@ class ErrorResponse implements JsonSerializable, Jsonable
      */
     function jsonSerialize()
     {
-        return json_encode($this);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
     }
 
     /**
