@@ -1,0 +1,15 @@
+default:
+  extensions:
+    Laracasts\Behat\ServiceContainer\BehatExtension: ~
+    Behat\MinkExtension\ServiceContainer\MinkExtension:
+      default_session: laravel
+      laravel: ~
+  suites:
+    api:
+      paths: [ %paths.base%/tests/acceptance/features/api ]
+      contexts:
+        - Tests\Acceptance\Features\Bootstrap\RestContext
+    website:
+      paths: [ %paths.base%/tests/acceptance/features/web ]
+      contexts:
+        - Tests\Acceptance\Features\Bootstrap\FeatureContext
