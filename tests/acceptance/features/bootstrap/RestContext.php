@@ -158,7 +158,7 @@ class RestContext extends FeatureContext implements Context
     {
         PHPUnit_Framework_Assert::assertEquals(
             $responseCode,
-            $this->getResponse()->getStatusCode(), $this->getResponse()->content()
+            $this->getResponse()->getStatusCode()
         );
     }
 

@@ -11,6 +11,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Laracasts\Behat\Context\DatabaseTransactions;
 
@@ -56,20 +57,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function theFollowingExistingThings($objectType, TableNode $table)
     {
-        $rootNamespace = env('APP_MODEL_NAMESPACE');
-        if (empty($rootNamespace)) {
-            throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
-        }
-
-        if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
-            $objectType = substr($objectType, 0, strlen($objectType) - 1);
-        }
-
-        $modelClassPath = $rootNamespace . "\\" . $objectType;
-
-        if (!class_exists($modelClassPath)) {
-            throw new FeatureBackgroundSetupFailedException("The '$modelClassPath' model does not exist.");
-        }
+        $modelClassPath = $this->getEloquentModelClassHelper($objectType);
 
         /** @var Model $model */
         $model = new $modelClassPath();
@@ -88,6 +76,34 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         }
 
         app('em')->flush();*/
+    }
+
+    /**
+     * @Given /^the following ([A-Za-z]*) in ([A-Za-z]*) (.*)$/
+     * @param $manyObject
+     * @param $oneObject
+     * @param $pivotId
+     * @param TableNode $table
+     */
+    public function andTheFollowingRelations($manyObject, $oneObject, $pivotId, TableNode $table)
+    {
+        $oneClassPath  = $this->getEloquentModelClassHelper($oneObject);
+        $manyMethod    = $this->getEloquentManyRelationsMethodHelper($manyObject);
+
+        $oneModel = $oneClassPath::find($pivotId);
+        $attachments = [];
+        foreach ($table as $row) {
+            $row = $this->sanitiseRowHelper($row);
+            $id = $row['id'];
+            unset($row['id']);
+            $attachments[$id] = $row;
+        }
+
+        try {
+            $oneModel->$manyMethod()->attach($attachments);
+        } catch (QueryException $e) {
+            // Just catch the exception in the case of integrity constraint violations
+        }
     }
 
     /**
@@ -145,6 +161,49 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             return intval($value);
         }
         return $value;
+    }
+
+    /**
+     * Get the full class path for an Eloquent model
+     *
+     * @param string $objectType
+     * @return string
+     * @throws FeatureBackgroundSetupFailedException
+     * @throws InvalidConfigurationException
+     */
+    protected function getEloquentModelClassHelper(string $objectType): string
+    {
+        $rootNamespace = env('APP_MODEL_NAMESPACE');
+        if (empty($rootNamespace)) {
+            throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
+        }
+
+        if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
+            $objectType = substr($objectType, 0, strlen($objectType) - 1);
+        }
+
+        $modelClassPath = $rootNamespace . "\\" . $objectType;
+
+        if (!class_exists($modelClassPath)) {
+            throw new FeatureBackgroundSetupFailedException("The '$modelClassPath' model does not exist.");
+        }
+
+        return $modelClassPath;
+    }
+
+    /**
+     * Get the Eloquent Model method to get the relations for a one-to-many relationship
+     *
+     * @param string $objectType
+     * @return string
+     */
+    protected function getEloquentManyRelationsMethodHelper(string $objectType): string
+    {
+        if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
+            return strtolower($objectType);
+        }
+
+        return strtolower($objectType) . "s";
     }
 
     /**

@@ -19,6 +19,10 @@ Feature: As a user of the API framework and the owner of at least one team
     And the following existing Teams:
     | id | owner_id | name       | photo_url | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | created_at          | updated_at          |
     | 1  | 1        | Johns Team | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 |
+    And the following Users in Team 1:
+    | id | role   |
+    | 1  | owner  |
+    | 2  | member |
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   Scenario: Adding a person to one of the teams on my account
@@ -34,24 +38,10 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response has a "token" property
     And the type of the "token" property is string
 
-  Scenario: I attempt to add a person to one of the teams on my account, but I am at the limit of the number of people I
-    can add
-    Given that I want to add a "Person" to my team
-    And that their "email" is "garethpeter@gmail.com"
-    When I request "/api/user/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "true"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Sorry, we cannot add another person to your team because you have reached your account limit for the number of people you can add."
-
   Scenario: I attempt to add a person to one of the teams on my account, but I provide an invalid team ID
     Given that I want to add a "Person" to my team
     And that their "email" is "garethpeter@gmail.com"
-    When I request "/api/user/1"
+    When I request "/api/user/10"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -59,7 +49,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we cannot add that person to a team because no team was found with that team ID in your account."
+    And the "message" property equals "Sorry, we could not send the invitation because we couldn't find a valid team in your request."
 
   Scenario: I attempt to add a person to one of the teams on my account, but I don't provide a valid email address
     Given that I want to add a "Person" to my team
@@ -72,7 +62,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we cannot add that person to your team because we did not get a valid email address."
+    And the "message" property equals "Sorry, we could not send the invitation because we couldn't find a valid email in your request."
 
   Scenario: Removing a person from one of the teams on my account
     Given that I want to remove a "Person" from my team
@@ -98,12 +88,12 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not remove that person from that team because we could not find that team in your account."
+    And the "message" property equals "Sorry, that team does not exist."
 
   Scenario: I attempt to remove a person from one of the teams on my account, but I provide User ID that doesn't exist in that team
   doesn't exist in that team
     Given that I want to remove a "Person" from my team
-    When I request "/api/users/1/3"
+    When I request "/api/user/1/3"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -111,7 +101,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we cannot remove that person because we could not find them in that team."
+    And the "message" property equals "That person is not in that team. Perhaps they were already removed?"
 
   Scenario: Get all possbile information regarding a team member
     Given that I want to get information about a "Person" on one of my teams
@@ -157,7 +147,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not find that person in your team."
+    And the "message" property equals "That person is not in that team.  Perhaps they were already removed?"
 
   Scenario: I attempt to get information about a person on one of my teams, but I provide an invalid team ID
     Given that I want to get information about a "Person" on one of my teams
