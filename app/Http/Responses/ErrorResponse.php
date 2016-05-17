@@ -4,6 +4,7 @@ namespace App\Http\Responses;
 
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
+use stdClass;
 
 
 class ErrorResponse implements JsonSerializable, Jsonable
@@ -32,7 +33,8 @@ class ErrorResponse implements JsonSerializable, Jsonable
      */
     public function toJson($options = 0)
     {
-        return json_encode($this, $options);
+        $objectForJson = $this->toStdClass();
+        return json_encode($objectForJson, $options);
     }
 
     /**
@@ -51,6 +53,21 @@ class ErrorResponse implements JsonSerializable, Jsonable
     public function __toString()
     {
         return $this->toJson();
+    }
+
+    /**
+     * Create a stdClass object of $this so that all the members are public and can be converted to a string
+     *
+     * @return stdClass
+     */
+    protected function toStdClass()
+    {
+        $objectForJson = new stdClass();
+        foreach ($this as $prop => $val) {
+            $objectForJson->$prop = $val;
+        }
+
+        return $objectForJson;
     }
 
     /**

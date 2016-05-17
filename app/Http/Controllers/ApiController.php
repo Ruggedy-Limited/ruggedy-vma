@@ -45,6 +45,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function inviteToTeam($teamId)
     {
+        // Check that the team exists
         $team = Team::find($teamId);
         if (empty($team)) {
             $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
@@ -54,8 +55,10 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_TEAM);
         }
 
+        // Check for a valid email in the POST payload
         /** @var \Illuminate\Contracts\Validation\Validator $validation */
-        $validation = Validator::make($this->getRequest()->all(), [
+        $email = $this->getRequest()->json('email');
+        $validation = Validator::make(['email' => $email], [
             'email' => 'required|email'
         ]);
 
@@ -86,6 +89,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_GENERAL);
         }
 
+        // Hide the team details and return the invitation
         $invitation->setHidden(['team']);
         return response()->json($invitation);
     }
@@ -100,6 +104,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function removeFromTeam($teamId, $userId)
     {
+        // Check for a teamId and userId
         if (!isset($teamId, $userId)) {
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
                 'teamId' => $teamId ?? null,
@@ -108,7 +113,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
         }
-        
+
+        // Check for a valid team
         $team = Team::find($teamId);
         if (empty($team)) {
             $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
@@ -119,6 +125,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
         }
 
+        // Check that the User exists
         $user = User::find($userId);
         if (empty($user)) {
             $this->getLogger()->log(Logger::ERROR, "User not found in database or team", [
@@ -126,10 +133,16 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
                 'userId' => $userId,
             ]);
 
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
         }
-        
+
         try {
+            // Check that the user exists in the team
+            if ($user->teams()->wherePivot('team_id', $teamId)->first()->id !== intval($teamId)) {
+                return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
+            }
+
+            // Detach the team from the user
             $user->teams()->detach($teamId);
         } catch (Exception $e) {
             $this->getLogger()->log(Logger::ERROR, "Could not remove user from team", [
@@ -143,6 +156,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
 
+        // Get the team information and return the user and the team information
         $team = Team::find($teamId);
         
         return response()->json([

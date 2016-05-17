@@ -72,4 +72,20 @@ class Controller extends BaseController
     {
         $this->translator = $translator;
     }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function setRequest($request)
+    {
+        $this->request = $request;
+    }
 }
