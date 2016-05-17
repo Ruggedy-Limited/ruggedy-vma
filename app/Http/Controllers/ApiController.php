@@ -5,22 +5,35 @@ namespace App\Http\Controllers;
 use App;
 use App\User;
 use App\Team;
+use App\Services\JsonLogService;
+use Illuminate\Translation\Translator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
 use Illuminate\Support\Facades\Validator;
 use App\Contracts\GivesUserFeedback;
+use App\Contracts\CustomLogging;
 use App\Models\MessagingModel;
 use Exception;
+use Monolog\Logger;
 
 
 /**
  * @Controller(prefix="api")
  * @Middelware(["auth:api"])
  */
-class ApiController extends Controller implements GivesUserFeedback
+class ApiController extends Controller implements GivesUserFeedback, CustomLogging
 {
     const TRANSLATOR_NAMESPACE = 'api';
+    
+    /** @var  JsonLogService */
+    protected $logger;
+    
+    public function __construct(Request $request, Translator $translator, JsonLogService $logger)
+    {
+        parent::__construct($request, $translator);
+        $this->setLoggerContext($logger);
+        $this->setLogger($logger);
+    }
 
     /**
      * Allow a team administrator to add a new user to their team
@@ -34,7 +47,7 @@ class ApiController extends Controller implements GivesUserFeedback
     {
         $team = Team::find($teamId);
         if (empty($team)) {
-            Log::error("Team not found in database", [
+            $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
                 'teamId' => $teamId,
             ]);
 
@@ -47,8 +60,8 @@ class ApiController extends Controller implements GivesUserFeedback
         ]);
 
         $email = $this->getRequest()->json('email');
-        if (empty($email) || empty($validation->fails())) {
-            Log::error(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL, [
+        if (empty($email) || $validation->fails()) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid email address given", [
                 'teamId' => $teamId,
                 'email'  => $email,
             ]);
@@ -56,12 +69,14 @@ class ApiController extends Controller implements GivesUserFeedback
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL);
         }
 
+        // Create a SendInvitation interaction
         $sendInvitation = App::make(SendInvitation::class);
 
         try {
+            // Send the invitation
             $invitation = $sendInvitation->handle($team, $email);
         } catch (Exception $e) {
-            Log::error(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL, [
+            $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
                 'teamId'    =>  $teamId,
                 'email'     => $email,
                 'exception' => $e->getMessage(),
@@ -86,7 +101,7 @@ class ApiController extends Controller implements GivesUserFeedback
     public function removeFromTeam($teamId, $userId)
     {
         if (!isset($teamId, $userId)) {
-            Log::error("Invalid input", [
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
                 'teamId' => $teamId ?? null,
                 'userId' => $userId ?? null,
             ]);
@@ -96,7 +111,7 @@ class ApiController extends Controller implements GivesUserFeedback
         
         $team = Team::find($teamId);
         if (empty($team)) {
-            Log::error("Team not found in database", [
+            $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
                 'teamId' => $teamId,
                 'userId' => $userId,
             ]);
@@ -106,7 +121,7 @@ class ApiController extends Controller implements GivesUserFeedback
 
         $user = User::find($userId);
         if (empty($user)) {
-            Log::error("User not found in database", [
+            $this->getLogger()->log(Logger::ERROR, "User not found in database or team", [
                 'teamId' => $teamId,
                 'userId' => $userId,
             ]);
@@ -117,7 +132,7 @@ class ApiController extends Controller implements GivesUserFeedback
         try {
             $user->teams()->detach($teamId);
         } catch (Exception $e) {
-            Log::error("Could not remove user from team", [
+            $this->getLogger()->log(Logger::ERROR, "Could not remove user from team", [
                 'teamId'    => $teamId,
                 'userId'    => $userId,
                 'reason'    => "Query failed",
@@ -147,18 +162,46 @@ class ApiController extends Controller implements GivesUserFeedback
     }
 
     /**
-     * @return Request
+     * @inheritdoc
      */
-    public function getRequest()
+    function setLoggerContext(JsonLogService $logger)
     {
-        return $this->request;
+        $directory = $this->getLogContext();
+        $logger->setLoggerName($directory);
+
+        $filename  = $this->getLogFilename();
+        $logger->setLogFilename($filename);
     }
 
     /**
-     * @param Request $request
+     * @inheritdoc
      */
-    public function setRequest($request)
+    public function getLogContext(): string
     {
-        $this->request = $request;
+        return 'api';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLogFilename(): string
+    {
+        return 'api-controller.json.log';
+    }
+
+    /**
+     * @return JsonLogService
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param JsonLogService $logger
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
     }
 }
