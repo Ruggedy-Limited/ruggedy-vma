@@ -6,6 +6,7 @@ use App;
 use App\User;
 use App\Team;
 use App\Services\JsonLogService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Translation\Translator;
 use Illuminate\Http\Request;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
@@ -15,6 +16,7 @@ use App\Contracts\CustomLogging;
 use App\Models\MessagingModel;
 use Exception;
 use Monolog\Logger;
+use Illuminate\Support\Facades\Auth;
 
 
 /**
@@ -33,6 +35,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         parent::__construct($request, $translator);
         $this->setLoggerContext($logger);
         $this->setLogger($logger);
+        $this->middleware('auth:api');
     }
 
     /**
@@ -138,7 +141,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
         try {
             // Check that the user exists in the team
-            if ($user->teams()->wherePivot('team_id', $teamId)->first()->id !== intval($teamId)) {
+            if (empty($user->teams()->wherePivot('team_id', $teamId)->first()->id)
+                || $user->teams()->wherePivot('team_id', $teamId)->first()->id !== intval($teamId)) {
                 return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
             }
 
@@ -164,6 +168,189 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             $team->getTable() => $team
         ]);
         
+    }
+
+    /**
+     * Request information about a person on your team
+     *
+     * @GET("/user/{teamId}/{userId}", as="user.info", where={"teamId": "[0-9]+", "userId": "[0-9]+"})
+     *
+     * @param $teamId
+     * @param $userId
+     * @return \Illuminate\Http\JsonResponse|void
+     */
+    public function getUserInformation($teamId, $userId)
+    {
+        // Make sure the user exists
+        /** @var User $queriedUser */
+        $queriedUser = User::find($userId);
+        if (empty($queriedUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Requested user does not exist", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId' => $teamId,
+                'userId'        => $userId,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+        }
+
+        // Make sure the team exists
+        /** @var Team $team */
+        $team = Team::find($teamId);
+        if (empty($team)) {
+            $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId' => $teamId,
+                'userId'        => $userId,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
+        }
+
+        /** @var User $requestingUser */
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId'        => $teamId,
+                'userId'        => $userId,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        if (!$requestingUser->ownsTeam($team)) {
+            $this->getLogger()->log(Logger::DEBUG, "Authenticated user does not own the specified team", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId'        => $teamId,
+                'userId'        => $userId,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
+        }
+
+        // Make sure the user is on the team
+        if (!$queriedUser->onTeam($team)) {
+            $this->getLogger()->log(Logger::DEBUG, "Given user is not on the specified team", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId'        => $teamId,
+                'userId'        => $userId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
+        }
+
+        if ($requestingUser->id !== intval($userId)) {
+            $queriedUser->setVisible([
+                'name', 'email', 'photo_url', 'uses_two_factor_auth',
+            ]);
+        }
+
+        return response()->json($queriedUser);
+    }
+
+    /**
+     * Get a list of team members in a particular team
+     *
+     * @GET("/users/{teamId}", as="users.info", where={"teamId": "[0-9]+"})
+     *
+     * @param $teamId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function getListOfUsersInTeam($teamId)
+    {
+        // Check that the team exists
+        $team = Team::find($teamId);
+        if (empty($team)) {
+            $this->getLogger()->log(Logger::WARNING, "A team with the given ID could not be found", [
+                'teamId' => $teamId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
+        }
+
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId'        => $teamId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        if (!$requestingUser->ownsTeam($team)) {
+            $this->getLogger()->log(Logger::DEBUG, "Authenticated user does not own the specified team", [
+                'requestParams' => $this->getRequest()->all(),
+                'teamId'        => $teamId,
+                'userId'        => $requestingUser->id,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
+        }
+
+        // Get the list of team members and return them
+        $teamMembers = $team->users()->get([
+            'name', 'email', 'photo_url', 'uses_two_factor_auth',
+        ])->all();
+
+        return response()->json($teamMembers);
+    }
+
+    /**
+     * Edit some attributes of a user account
+     *
+     * @PUT("/user/{userId}", as="user.edit", where={"userId": "([0-9]+)"})
+     *
+     * @param $userId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function editUserAccount($userId)
+    {
+        /** @var User $requestingUser */
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+        }
+
+        if ($requestingUser->id !== intval($userId)) {
+            $this->getLogger()->log(Logger::ALERT, "User attempting to edit someone elses account", [
+                'requestingUserId' => $requestingUser->id ?: null,
+                'requestedUserId'  => $userId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_CANNOT_EDIT_ACCOUNT);
+        }
+
+        $profileChanges = $this->getRequest()->json()->all();
+        $requestingUser->forceFill($profileChanges);
+
+        try {
+            $requestingUser->save();
+        } catch (Exception $e) {
+            if (preg_match("/Duplicate entry '{$requestingUser->email}' for key 'users_email_unique'/", $e->getMessage())) {
+                return $this->generateErrorResponse(MessagingModel::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS);
+            }
+
+            if (preg_match("/Column not found/", $e->getMessage())) {
+                return $this->generateErrorResponse(MessagingModel::ERROR_FIELD_DOES_NOT_EXIST);
+            }
+
+            $this->getLogger()->log(Logger::ERROR, "Could not update user account", [
+                'user'           => $requestingUser->toArray(),
+                'profileChanges' => $profileChanges,
+                'exception'      => $e->getMessage(),
+                'trace'          => $e->getTraceAsString(),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        $requestingUser->setVisible([
+            'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
+        ]);
+        
+        return response()->json($requestingUser);
     }
 
     /**

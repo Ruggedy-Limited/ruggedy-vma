@@ -44,6 +44,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     {
         User::truncate();
         Team::truncate();
+        DB::table('team_users')->truncate();
     }
 
     /**
@@ -63,6 +64,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         $model = new $modelClassPath();
         if ($model instanceof Model) {
             foreach ($table as $row) {
+                $row = $this->sanitiseRowHelper($row);
                 $model = $modelClassPath::forceCreate($row);
                 $model->saveOrFail();
             }
@@ -123,6 +125,9 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             }
 
             $row[$index] = $this->convertBoolHelper($value);
+            if (is_int($row[$index])) {
+                $row[$index] = $this->convertIntHelper($value);
+            }
         }
 
         return $row;

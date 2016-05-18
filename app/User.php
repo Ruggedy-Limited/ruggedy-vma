@@ -39,6 +39,7 @@ class User extends SparkUser
         'billing_zip',
         'billing_country',
         'extra_billing_information',
+        'tax_rate',
     ];
 
     /**

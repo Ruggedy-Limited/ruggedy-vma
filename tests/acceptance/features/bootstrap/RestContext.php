@@ -3,6 +3,7 @@
 namespace Tests\Acceptance\Features\Bootstrap;
 
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Exceptions\InvalidConfigurationException;
@@ -206,13 +207,40 @@ class RestContext extends FeatureContext implements Context
     }
 
     /**
-     * @Then the "([^"]*)" array property has a "([^"]*)" value
+     * @Then /^the "([^"]*)" array property has a "([^"]*)" value$/
      */
     public function theArrayPropertyHasTheFollowing($index, $value)
     {
         $responseBody = json_decode($this->getResponse()->content(), true);
         PHPUnit_Framework_Assert::assertNotEmpty($responseBody[$index], "The specified index was not in the response");
         PHPUnit_Framework_Assert::assertContains($value, $responseBody[$index]);
+    }
+
+    /**
+     * @Then /^the array response has the following items:$/
+     *
+     * @param TableNode $table
+     */
+    public function theArrayResponseHasTheFollowingItems(TableNode $table)
+    {
+        $this->theTypeOfTheResponseIs('array');
+        $responseBody = json_decode($this->getResponse()->content(), true);
+
+        foreach ($table as $index => $row) {
+            $row = $this->sanitiseRowHelper($row);
+            foreach ($row as $field => $value) {
+                PHPUnit_Framework_Assert::assertNotEmpty($responseBody[$index]);
+                PHPUnit_Framework_Assert::assertArrayHasKey($field, $responseBody[$index]);
+                
+                // If we don't care what the exact value is we enter * in the TableNode
+                if ($value === "*") {
+                    continue;
+                }
+
+                PHPUnit_Framework_Assert::assertEquals($value, $responseBody[$index][$field]);
+            }
+        }
+
     }
 
     /**
@@ -240,8 +268,30 @@ class RestContext extends FeatureContext implements Context
     {
         $this->responseIsJsonHelper();
         $value = $this->theResponseHasAPropertyHelper($propertyName);
+
+        if ($typeString == 'boolean') {
+            $value = $this->convertBoolHelper($value);
+        }
+
+        if ($typeString == 'integer') {
+            $value = $this->convertIntHelper($value);
+        }
+
         $typeMatcher = PHPUnit_Framework_Assert::isType($typeString);
         $typeMatcher->evaluate($value, "Property '".$propertyName."' is not of the correct type: ".$typeString."!");
+    }
+
+    /**
+     * @Then /^the type of the response is (.*)$/
+     *
+     * @param $typeString
+     * @throws InvalidResponseException
+     */
+    public function theTypeOfTheResponseIs($typeString)
+    {
+        $response = $this->responseIsJsonHelper();
+        $typeMatcher = PHPUnit_Framework_Assert::isType($typeString);
+        $typeMatcher->evaluate($response, "The response is not of the correct type: ".$typeString."!");
     }
 
     /**
