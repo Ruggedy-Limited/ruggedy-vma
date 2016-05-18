@@ -13,10 +13,10 @@ class SparkServiceProvider extends ServiceProvider
      * @var array
      */
     protected $details = [
-        'vendor' => 'Your Company',
-        'product' => 'Your Product',
+        'vendor' => 'Ruggedy.io',
+        'product' => 'Continuous security auditing made simple',
         'street' => 'PO Box 111',
-        'location' => 'Your Town, NY 12345',
+        'location' => 'Auckland, New Zealand 12345',
         'phone' => '555-555-5555',
     ];
 
