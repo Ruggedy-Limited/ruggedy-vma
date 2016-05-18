@@ -79,7 +79,7 @@ class JsonLogService
         }
 
         $extra                =& $record['extra'];
-        $extra['file']        = get_called_class();
+        $extra['class']       = $this->getCallingClass();
         $extra['method']      = $this->getCallingMethod();
         $extra['description'] = $this->getDescription();
         $extra['env']         = env('APP_ENV');
@@ -103,10 +103,10 @@ class JsonLogService
 
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
-        $callingClass = isset($backtrace[1]['class']) ?: null;
+        $callingClass = $backtrace[1]['class'] ?: null;
         $this->setCallingClass($callingClass);
 
-        $callingMethod = isset($backtrace[1]['function']) ?: null;
+        $callingMethod = $backtrace[1]['function'] ?: null;
         $this->setCallingMethod($callingMethod);
 
         if (!is_array($context)) {
@@ -116,8 +116,23 @@ class JsonLogService
         try {
             $this->getLogger()->log($level, $message, $context);
         } catch (\Exception $e) {
-            // Nagios alert will be setup to monitor long periods of inactivity in the log files
+            // TODO: Setup a Nagios alert to monitor long periods of inactivity in the log files
         }
+    }
+
+    /**
+     * Split the string exception trace into an array of lines
+     *
+     * @param Exception $exception
+     * @return string
+     */
+    public function getTraceAsArrayOfLines(Exception $exception)
+    {
+        if (empty($exception->getTraceAsString()) || strpos($exception->getTraceAsString(), PHP_EOL) === false) {
+            return $exception->getTraceAsString();
+        }
+
+        return explode(PHP_EOL, $exception->getTraceAsString());
     }
 
     /**
