@@ -1,5 +1,14 @@
 # Change Log
 
+## Version 1.0.9
+
+- Fix various bugs.
+
+## Version 1.0.8
+
+- Fix typo in class name.
+- Constrain Vue packages tighter.
+
 ## Version 1.0.7
 
 - Stringify a few forms before handing them to vue-resource.
