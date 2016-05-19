@@ -13,7 +13,7 @@ use Behat\MinkExtension\Context\MinkContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-use Laracasts\Behat\Context\DatabaseTransactions;
+use Illuminate\Support\Facades\Schema;
 
 
 /**
@@ -42,9 +42,11 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function truncateTables()
     {
+        Schema::disableForeignKeyConstraints();
         User::truncate();
         Team::truncate();
         DB::table('team_users')->truncate();
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
