@@ -231,7 +231,7 @@ class RestContext extends FeatureContext implements Context
             foreach ($row as $field => $value) {
                 PHPUnit_Framework_Assert::assertNotEmpty($responseBody[$index]);
                 PHPUnit_Framework_Assert::assertArrayHasKey($field, $responseBody[$index]);
-                
+
                 // If we don't care what the exact value is we enter * in the TableNode
                 if ($value === "*") {
                     continue;

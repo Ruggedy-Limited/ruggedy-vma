@@ -23,38 +23,19 @@ Feature: As an account or team owner
       | 1  | John's Project    | 1       | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
       | 2  | Someone's Project | 2       | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
       | 3  | Another Project   | 3       | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
-    And the following Workspaces:
+    And the following existing Workspaces:
       | id | name                | user_id  | project_id | created_at          | updated_at          |
       | 1  | John's Workspace    | 1        | 1          | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
       | 2  | Someone's Workspace | 2        | 2          | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
-      | 2  | Another Workspace   | 3        | 3          | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
-    And the following Objects:
-      | id | name            | created_at          | updated_at          |
-      | 1  | User Account    | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 2  | Project         | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 3  | Workspace       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 4  | Asset           | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 5  | Scanner App     | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 6  | Event           | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    And the following UserPermissions:
-      | object_id | object_type | user_id | permission_id | created_at          | updated_at          |
-      | 2         | 1           | 1       | 3             | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    And the following Permissions:
-      | id | name       | created_at          | updated_at          |
-      | 1  | read only  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 2  | read/write | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 3  | Another Workspace   | 3        | 3          | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   Scenario: Create a new Workspace on my account
     Given that I want to make a new "Workspace"
-    And that its "project_id" is "1"
     And that its "name" is "My New Workspace"
-    When I request "/api/workspace"
+    When I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
     And the response has a "id" property
     And the type of the "id" property is integer
     And the response has a "name" property
@@ -69,14 +50,10 @@ Feature: As an account or team owner
 
   Scenario: Create a new Workspace on someone else's account where I have write access
     Given that I want to make a new "Workspace"
-    And that its "project_id" is "2"
     And that its "name" is "My New Workspace"
-    When I request "/api/workspace"
+    When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
     And the response has a "id" property
     And the type of the "id" property is integer
     And the response has a "name" property
@@ -84,16 +61,15 @@ Feature: As an account or team owner
     And the "name" property equals "My New Workspace"
     And the response has a "user_id" property
     And the type of the "user_id" property is integer
-    And the "user_id" property equals "1"
-    And the response has a "workspace_id" property
-    And the type of the "workspace_id" property is integer
-    And the "workspace_id" property equals "1"
+    And the "user_id" property equals "2"
+    And the response has a "project_id" property
+    And the type of the "project_id" property is integer
+    And the "project_id" property equals "2"
 
   Scenario: I attempt to create a Workspace on someone else's account where I don't have write access
     Given that I want to make a new "Workspace"
-    And that its "project_id" is "3"
     And that its "name" is "My New Workspace"
-    When I request "/api/workspace"
+    When I request "/api/workspace/3"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -101,13 +77,12 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we couldn't create this Workspace. You don't have permission to create Workspaces on that account."
+    And the "message" property equals "Sorry, you don't have permission to create Workspaces in that Project."
 
   Scenario: I attempt to create a Workspace on non-existent Project
     Given that I want to make a new "Workspace"
-    And that its "project_id" is "10"
     And that its "name" is "My New Workspace"
-    When I request "/api/workspace"
+    When I request "/api/workspace/10"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -115,79 +90,69 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we couldn't create this Workspace. We could not find an existing account with that ID."
+    And the "message" property equals "Sorry, that Project does not exist."
 
   Scenario: Delete a Workspace from my account
     Given that I want to delete a "Workspace"
     When I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "false"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm by repeating this request."
+    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
 
   Scenario: Delete and confirm deletion of a Workspace from my account
     Given that I want to delete a "Workspace"
     When I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "false"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm by repeating this request."
-    When I request "/api/workspace/1"
+    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
+    When I request "/api/workspace/1/confirm"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "1"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "We have deleted that workspace as requested."
 
   Scenario: Delete a Workspace on someone else's account where I have write access
     Given that I want to delete a "Workspace"
     When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "false"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm by repeating this request."
+    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
 
   Scenario: Delete and confirm deletion of a Workspace on someone else's account where I have Workspace write access
     Given that I want to delete a "Workspace"
     When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "false"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm by repeating this request."
-    When I request "/api/workspace/2"
+    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
+    When I request "/api/workspace/2/confirm"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "2"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "We have deleted that workspace as requested."
 
   Scenario: I attempt to delete a Workspace on someone else's account where I don't have Workspace write access
     Given that I want to delete a "Workspace"
@@ -199,11 +164,10 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we couldn't delete that Workspace. You don't have permission to delete Workspaces on that account."
+    And the "message" property equals "Sorry, you don't have permission to delete Workspaces from that Project."
 
   Scenario: I attempt to delete a non-existent Workspace
-    Given that I want to make a new "Workspace"
-    And that its "name" is "My New Workspace"
+    Given that I want to delete a "Workspace"
     When I request "/api/workspace/5"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -212,7 +176,7 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we couldn't that Workspace to delete it."
+    And the "message" property equals "Sorry, we that Workspace does not exist."
 
   Scenario: Edit the name of one of my workspaces
     Given that I want to update a "Workspace"
@@ -220,18 +184,18 @@ Feature: As an account or team owner
     When I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "1"
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Renamed Workspace"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Workspace updated successfully."
+    And the response has a "user_id" property
+    And the type of the "user_id" property is integer
+    And the "user_id" property equals "1"
+    And the response has a "project_id" property
+    And the type of the "project_id" property is integer
+    And the "project_id" property equals "1"
 
   Scenario: Edit the name of someone else's Workspace where I have write permission
     Given that I want to update a "Workspace"
@@ -239,18 +203,18 @@ Feature: As an account or team owner
     When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "success" property
-    And the type of the "success" property is boolean
-    And the "success" property equals "true"
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "2"
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Renamed Workspace"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Workspace updated successfully."
+    And the response has a "user_id" property
+    And the type of the "user_id" property is integer
+    And the "user_id" property equals "2"
+    And the response has a "project_id" property
+    And the type of the "project_id" property is integer
+    And the "project_id" property equals "2"
 
   Scenario: I attempt to edit the name of someone else's Workspace where I don't have read/write permission
     Given that I want to update a "Workspace"
@@ -263,7 +227,7 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not update that Workspace. You don't have permission to change it."
+    And the "message" property equals "Sorry, you don't have permission to make changes to that Workspace."
 
   Scenario: I attempt to edit the name of a workspace, but I give a workspace ID that does not exist
     Given that I want to update a "Workspace"
@@ -276,4 +240,4 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not update that Workspace. We could not find that workspace."
+    And the "message" property equals "Sorry, that Workspace does not exist."

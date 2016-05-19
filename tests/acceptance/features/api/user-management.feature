@@ -105,7 +105,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "message" property is string
     And the "message" property equals "Sorry, that person is not part of that team."
 
-  Scenario: Get all possbile information regarding a team member
+  Scenario: Get all possible information regarding a team member
     Given that I want to get information about a "Person" on one of my teams
     When I request "/api/user/1/2"
     Then the HTTP response code should be 200

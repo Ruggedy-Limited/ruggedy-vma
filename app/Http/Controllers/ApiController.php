@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App;
 use App\User;
 use App\Team;
+use App\Project;
+use App\Workspace;
 use App\Services\JsonLogService;
-
 use Illuminate\Translation\Translator;
 use Illuminate\Http\Request;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
@@ -390,6 +391,482 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         
         return response()->json($requestingUser);
     }
+
+    /**
+     * Create a project in the given user account or in the authenticated user's account if no userId is given
+     *
+     * @POST("/project/{userId?}", as="project.create", where={"userId":"[0-9]+"})
+     *
+     * @param $userId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function createProject($userId)
+    {
+        $requestingUser = Auth::user();
+        if (empty($userId)) {
+            $requestedUser = $requestingUser;
+        }
+
+        if (isset($userId)) {
+            $requestedUser = User::find($userId);
+        }
+
+        if (empty($requestedUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get a valid user account", [
+                'userId'         => $userId ?: null,
+                'requestingUser' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+        }
+
+        $projectFields = $this->getRequest()->json()->all();
+        $projectFields['user_id'] = $requestedUser->id;
+
+        try {
+            $project = Project::forceCreate($projectFields);
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Unable to create a new project", [
+                'userId'        => $requestedUser->id ?: null,
+                'projectFields' => $projectFields ?: null,
+                'exception'     => $e->getMessage(),
+                'trace'         => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_CREATE_PROJECT);
+        }
+
+        return response()->json($project);
+    }
+
+    /**
+     * Delete a project
+     *
+     * @DELETE("/project/{projectId}/{confirm?}", as="project.delete", where={"projectId":"[0-9]+", "confirm":"^confirm$"})
+     *
+     * @param $projectId
+     * @param null $confirm
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function deleteProject($projectId, $confirm = null)
+    {
+        if (!isset($projectId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required parameter $projectId is not set',
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+        
+        $project = Project::with('owner')->find($projectId);
+        if (empty($project)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_PROJECT_DOES_NOT_EXIST);
+        }
+
+        $requestingUser = Auth::user();
+        $projectOwner = $project->owner;
+        if (!isset($projectOwner->id, $requestingUser->id)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get required User ID", [
+                'projectOwnerId'   => $project->owner->id ?: null,
+                'requestingUserId' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+
+        if ($projectOwner->id !== $requestingUser->id) {
+            $this->getLogger()->log(Logger::ALERT, "Attempt to delete project without permission", [
+                'requestingUserId' => $requestingUser->id,
+                'projectOwnerId'   => $projectOwner->id,
+                'projectId'        => $projectId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DELETE_PROJECT_PERMISSION);
+        }
+
+        if (empty($confirm)) {
+            return $this->generateErrorResponse(MessagingModel::WARNING_DELETING_PROJECT, false);
+        }
+        
+        try {
+            $project->delete();
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Could not delete Project", [
+                'projectId'      => $projectId,
+                'confirm'        => $confirm,
+                'requestingUser' => $requestingUser->id ?: null,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_DELETE_PROJECT);
+        }
+
+        $response = new \stdClass();
+        $response->id = $projectId;
+        return response()->json($response);
+    }
+
+    /**
+     * Edit Project Details
+     *
+     * @PUT("/project/{projectId}", as="project.edit", where={"projectId":"[0-9]+"})
+     *
+     * @param $projectId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function editProject($projectId)
+    {
+        if (!isset($projectId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required parameter $projectId is not set',
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+
+        /** @var Project $project */
+        $project = Project::with('owner')->find($projectId);
+        if (empty($project)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_PROJECT_DOES_NOT_EXIST);
+        }
+
+        $requestingUser = Auth::user();
+        $projectOwner = $project->owner;
+        if (!isset($projectOwner->id, $requestingUser->id)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get required User ID", [
+                'projectOwnerId'   => $project->owner->id ?: null,
+                'requestingUserId' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+
+        if ($projectOwner->id !== $requestingUser->id) {
+            $this->getLogger()->log(Logger::ALERT, "Attempt to delete project without permission", [
+                'requestingUserId' => $requestingUser->id,
+                'projectOwnerId'   => $projectOwner->id,
+                'projectId'        => $projectId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_EDIT_PROJECT_PERMISSION);
+        }
+
+        // Apply the changes to the User Model
+        $projectChanges = $this->getRequest()->json()->all();
+        $project->fill($projectChanges);
+
+        try {
+            $project->save();
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Could not save changes to Project", [
+                'projectId'        => $projectId,
+                'requestingUserId' => $requestingUser->id,
+                'projectOwnerId'   => $projectOwner->id,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        return response()->json($project);
+    }
+
+    /**
+     * Get a list of projects on a particular person's account
+     * 
+     * @GET("/projects/{userId}", as="projects.list", where={"userId":"[0-9]+"})
+     * 
+     * @param $userId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function getProjectsForUser($userId)
+    {
+        if (!isset($userId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required paramter $userId is not set',
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+        
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
+                'requestParams' => $this->getRequest()->all(),
+                'userId'        => $userId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+        
+        if ($requestingUser->id !== intval($userId)) {
+            $this->getLogger()->log(Logger::ALERT, "User trying to list another user's Projects", [
+                'userId'           => $userId,
+                'requestingUserId' => $requestingUser->id,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_LIST_PROJECTS_PERMISSION);
+        }
+
+        return response()->json($requestingUser->projects()->get()->all());
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Create a workspace in the given Project
+     *
+     * @POST("/workspace/{projectId}", as="workspace.create", where={"projectId":"[0-9]+"})
+     *
+     * @param $projectId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function createWorkspace($projectId)
+    {
+        if (!isset($projectId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required parameter $workspaceId is not set',
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+        
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
+                'requestParams' => $this->getRequest()->all(),
+                'projectId'        => $projectId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        $project = Project::with('owner')->find($projectId);
+        if (empty($project)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not find the given project", [
+                'projectId'      => $projectId ?: null,
+                'requestingUser' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST);
+        }
+        
+        if (!isset($project->owner->id)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get a required user ID", [
+                'projectId'        => $projectId,
+                'requestingUserId' => $requestingUser->id,
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        $workspaceFields = $this->getRequest()->json()->all();
+        $workspaceFields['user_id']    = $project->owner->id;
+        $workspaceFields['project_id'] = $projectId;
+
+        try {
+            $workspace = Workspace::forceCreate($workspaceFields);
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Unable to create a new workspace", [
+                'userId'          => $requestingUser->id ?: null,
+                'workspaceFields' => $workspaceFields ?: null,
+                'exception'       => $e->getMessage(),
+                'trace'           => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_CREATE_WORKSPACE);
+        }
+
+        return response()->json($workspace);
+    }
+
+    /**
+     * Delete a workspace
+     *
+     * @DELETE("/workspace/{workspaceId}/{confirm?}", as="workspace.delete", where={"workspaceId":"[0-9]+", "confirm":"^confirm$"})
+     *
+     * @param $workspaceId
+     * @param null $confirm
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function deleteWorkspace($workspaceId, $confirm = null)
+    {
+        if (!isset($workspaceId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required parameter $workspaceId is not set',
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+
+        $workspace = Workspace::with('owner')->find($workspaceId);
+        if (empty($workspace)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST);
+        }
+
+        $requestingUser = Auth::user();
+        $workspaceOwner = $workspace->owner;
+        if (!isset($workspaceOwner->id, $requestingUser->id)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get required User ID", [
+                'workspaceOwnerId'   => $workspace->owner->id ?: null,
+                'requestingUserId' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+
+        if ($workspaceOwner->id !== $requestingUser->id) {
+            $this->getLogger()->log(Logger::ALERT, "Attempt to delete workspace without permission", [
+                'requestingUserId' => $requestingUser->id,
+                'workspaceOwnerId'   => $workspaceOwner->id,
+                'workspaceId'        => $workspaceId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DELETE_WORKSPACE_PERMISSION);
+        }
+
+        if (empty($confirm)) {
+            return $this->generateErrorResponse(MessagingModel::WARNING_DELETING_WORKSPACE, false);
+        }
+
+        try {
+            $workspace->delete();
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Could not delete Workspace", [
+                'workspaceId'      => $workspaceId,
+                'confirm'        => $confirm,
+                'requestingUser' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_DELETE_WORKSPACE);
+        }
+
+        $response = new \stdClass();
+        $response->id = $workspaceId;
+        return response()->json($response);
+    }
+
+    /**
+     * Edit Workspace Details
+     *
+     * @PUT("/workspace/{workspaceId}", as="workspace.edit", where={"workspaceId":"[0-9]+"})
+     *
+     * @param $workspaceId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function editWorkspace($workspaceId)
+    {
+        if (!isset($workspaceId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required parameter $workspaceId is not set',
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+
+        /** @var Workspace $workspace */
+        $workspace = Workspace::with('owner')->find($workspaceId);
+        if (empty($workspace)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST);
+        }
+
+        $requestingUser = Auth::user();
+        $workspaceOwner = $workspace->owner;
+        if (!isset($workspaceOwner->id, $requestingUser->id)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get required User ID", [
+                'workspaceOwnerId'   => $workspace->owner->id ?: null,
+                'requestingUserId' => $requestingUser->id ?: null,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+
+        if ($workspaceOwner->id !== $requestingUser->id) {
+            $this->getLogger()->log(Logger::ALERT, "Attempt to delete workspace without permission", [
+                'requestingUserId' => $requestingUser->id,
+                'workspaceOwnerId'   => $workspaceOwner->id,
+                'workspaceId'        => $workspaceId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_EDIT_WORKSPACE_PERMISSION);
+        }
+
+        // Apply the changes to the User Model
+        $workspaceChanges = $this->getRequest()->json()->all();
+        $workspace->fill($workspaceChanges);
+
+        try {
+            $workspace->save();
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Could not save changes to Workspace", [
+                'workspaceId'        => $workspaceId,
+                'requestingUserId' => $requestingUser->id,
+                'workspaceOwnerId'   => $workspaceOwner->id,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        return response()->json($workspace);
+    }
+
+    /**
+     * Get a list of workspaces on a particular person's account
+     *
+     * @GET("/workspaces/{projectId}", as="workspaces.list", where={"projectId":"[0-9]+"})
+     *
+     * @param $projectId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function getWorkspacesForProject($projectId)
+    {
+        if (!isset($projectId)) {
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'reason' => 'Required paramter $userId is not set',
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
+                'requestParams' => $this->getRequest()->all(),
+                'userId'        => $projectId,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        if ($requestingUser->id !== intval($projectId)) {
+            $this->getLogger()->log(Logger::ALERT, "User trying to list another user's Workspaces", [
+                'userId'           => $projectId,
+                'requestingUserId' => $requestingUser->id,
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_LIST_WORKSPACES_PERMISSION);
+        }
+
+        return response()->json($requestingUser->workspaces()->get()->all());
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * Get the namespace for the translator to find the relevant response message

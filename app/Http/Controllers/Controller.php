@@ -37,9 +37,10 @@ class Controller extends BaseController
      * Generate an error response to return to customer
      *
      * @param string $messageKey
+     * @param bool $isError
      * @return ResponseFactory
      */
-    public function generateErrorResponse($messageKey = '')
+    public function generateErrorResponse($messageKey = '', $isError = true)
     {
         $translatorNamespace = null;
         if (!method_exists($this, 'getTranslatorNamespace')) {
@@ -54,6 +55,7 @@ class Controller extends BaseController
         }
 
         $errorResponse = new ErrorResponse($message);
+        $errorResponse->setError($isError);
         return response()->json($errorResponse);
     }
 

@@ -4,8 +4,10 @@ namespace Tests\Acceptance\Features\Bootstrap;
 
 use App\Exceptions\FeatureBackgroundSetupFailedException;
 use App\Exceptions\InvalidConfigurationException;
+use App\Project;
 use App\Team;
 use App\User;
+use App\Workspace;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
@@ -13,7 +15,7 @@ use Behat\MinkExtension\Context\MinkContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-use Laracasts\Behat\Context\DatabaseTransactions;
+use Illuminate\Support\Facades\Schema;
 
 
 /**
@@ -42,9 +44,13 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function truncateTables()
     {
+        Schema::disableForeignKeyConstraints();
         User::truncate();
         Team::truncate();
         DB::table('team_users')->truncate();
+        Project::truncate();
+        Workspace::truncate();
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -162,9 +168,10 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     protected function convertIntHelper($value)
     {
-        if (is_int($value)) {
+        if (preg_match("/[\d]+/", $value)) {
             return intval($value);
         }
+
         return $value;
     }
 
