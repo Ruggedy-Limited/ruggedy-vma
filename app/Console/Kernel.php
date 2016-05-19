@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        // Commands\Inspire::class,
+        Commands\Schema\GenerateEntities::class,
+        Commands\RepositoryMakeCommand::class,
     ];
 
     /**
