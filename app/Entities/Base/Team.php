@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\Team
  *
- * @ORM\Entity(repositoryClass="App\Repositories\TeamRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`teams`", indexes={@ORM\Index(name="teams_owner_id_index", columns={"`owner_id`"})})
  */
 class Team extends AbstractEntity

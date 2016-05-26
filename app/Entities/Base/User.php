@@ -7,8 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\User
- *
- * @ORM\Entity(repositoryClass="App\Repositories\UserRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`users`", uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
 class User extends AbstractEntity
