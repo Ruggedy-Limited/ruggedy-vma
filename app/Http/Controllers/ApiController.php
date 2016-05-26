@@ -17,6 +17,8 @@ use App\Models\MessagingModel;
 use Exception;
 use Monolog\Logger;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use App\Http\Responses\ErrorResponse;
 
 
 /**
@@ -29,7 +31,14 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
     
     /** @var  JsonLogService */
     protected $logger;
-    
+
+    /**
+     * ApiController constructor.
+     *
+     * @param Request $request
+     * @param Translator $translator
+     * @param JsonLogService $logger
+     */
     public function __construct(Request $request, Translator $translator, JsonLogService $logger)
     {
         parent::__construct($request, $translator);
@@ -384,11 +393,35 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
 
-        $requestingUser->setVisible([
-            'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
+        $requestingUser = $requestingUser->toJson(0, [
+            'name', 'email', 'photoUrl', 'usesTwoFactorAuth', 'createdAt', 'updatedAt'
         ]);
         
         return response()->json($requestingUser);
+    }
+
+    /**
+     * Generate an error response to return to customer
+     *
+     * @param string $messageKey
+     * @return ResponseFactory
+     */
+    protected function generateErrorResponse($messageKey = '')
+    {
+        $translatorNamespace = null;
+        if (!method_exists($this, 'getTranslatorNamespace')) {
+            return new ErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+
+        $translatorNamespace = $this->getTranslatorNamespace();
+        $message = $this->getTranslator()->get($translatorNamespace . '.' . $messageKey);
+
+        if ($message == 'messages.' . $messageKey) {
+            $message = MessagingModel::ERROR_DEFAULT;
+        }
+
+        $errorResponse = new ErrorResponse($message);
+        return response()->json($errorResponse);
     }
 
     /**

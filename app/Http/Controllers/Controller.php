@@ -34,30 +34,6 @@ class Controller extends BaseController
     }
 
     /**
-     * Generate an error response to return to customer
-     *
-     * @param string $messageKey
-     * @return ResponseFactory
-     */
-    public function generateErrorResponse($messageKey = '')
-    {
-        $translatorNamespace = null;
-        if (!method_exists($this, 'getTranslatorNamespace')) {
-            return new ErrorResponse(MessagingModel::ERROR_DEFAULT);
-        }
-
-        $translatorNamespace = $this->getTranslatorNamespace();
-        $message = $this->getTranslator()->get($translatorNamespace . '.' . $messageKey);
-
-        if ($message == 'messages.' . $messageKey) {
-            $message = MessagingModel::ERROR_DEFAULT;
-        }
-
-        $errorResponse = new ErrorResponse($message);
-        return response()->json($errorResponse);
-    }
-
-    /**
      * @return Translator
      */
     public function getTranslator()
