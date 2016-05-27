@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\ApiToken
  *
- * @ORM\Entity(repositoryClass="App\Repositories\ApiTokenRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`api_tokens`", indexes={@ORM\Index(name="api_tokens_user_id_expires_at_index", columns={"`user_id`", "`expires_at`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="api_tokens_token_unique", columns={"`token`"})})
  */
 class ApiToken extends AbstractEntity
@@ -19,7 +19,7 @@ class ApiToken extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`user_id`", type="integer")
+     * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
      */
     protected $user_id;
 
@@ -62,6 +62,12 @@ class ApiToken extends AbstractEntity
      * @ORM\Column(name="`updated_at`", type="datetime", nullable=true)
      */
     protected $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="apiTokens", cascade={"persist"})
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $user;
 
     public function __construct()
     {
@@ -295,6 +301,29 @@ class ApiToken extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Set User entity (many to one).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\ApiToken
+     */
+    public function setUser(User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity (many to one).
+     *
+     * @return \App\Entities\Base\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 
     public function __sleep()

@@ -14,19 +14,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Team extends Base\Team
 {
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="teams")
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id")
-     */
-    protected $owner;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="teams")
+     * @ORM\ManyToMany(targetEntity="User")
+     * @ORM\JoinTable(name="team_users",
+     *      joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
+     *      )
      */
     protected $users;
 
-    /**
-     * Team constructor.
-     */
     public function __construct()
     {
         parent::__construct();
@@ -34,24 +29,6 @@ class Team extends Base\Team
     }
 
     /**
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param User $owner
-     */
-    public function setOwner($owner)
-    {
-        $this->owner = $owner;
-    }
-
-    /**
-     * Get all the users in this team
-     *
      * @return ArrayCollection
      */
     public function getUsers()
@@ -59,33 +36,8 @@ class Team extends Base\Team
         return $this->users;
     }
 
-    /**
-     * Reset the users in this team
-     *
-     * @param ArrayCollection $users
-     */
-    public function setUsers($users)
+    public function personIsInTeam(User $user)
     {
-        $this->users = $users;
-    }
-
-    /**
-     * Add a user to the team
-     *
-     * @param User $user
-     */
-    public function addUser(User $user)
-    {
-        $this->users->add($user);
-    }
-
-    /**
-     * Remove a user from the team
-     *
-     * @param User $userToRemove
-     * @return bool
-     */
-    public function removeUser(User $userToRemove) {
-        return $this->users->removeElement($userToRemove);
+        return $this->getUsers()->contains($user);
     }
 }

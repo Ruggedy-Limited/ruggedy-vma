@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\PerformanceIndicator
  *
- * @ORM\Entity(repositoryClass="App\Repositories\PerformanceIndicatorRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`performance_indicators`", indexes={@ORM\Index(name="performance_indicators_created_at_index", columns={"`created_at`"})})
  */
 class PerformanceIndicator extends AbstractEntity

@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\TeamSubscription
  *
- * @ORM\Entity(repositoryClass="App\Repositories\TeamSubscriptionRepository")
- * @ORM\Table(name="`team_subscriptions`")
+ * @ORM\MappedSuperclass
+ * @ORM\Table(name="`team_subscriptions`", indexes={@ORM\Index(name="team_subscriptions_fk_team_idx", columns={"`team_id`"})})
  */
 class TeamSubscription extends AbstractEntity
 {
@@ -20,7 +20,7 @@ class TeamSubscription extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`team_id`", type="integer")
+     * @ORM\Column(name="`team_id`", type="integer", options={"unsigned":true})
      */
     protected $team_id;
 
@@ -63,6 +63,12 @@ class TeamSubscription extends AbstractEntity
      * @ORM\Column(name="`updated_at`", type="datetime", nullable=true)
      */
     protected $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Team", inversedBy="teamSubscriptions", cascade={"persist"})
+     * @ORM\JoinColumn(name="`team_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $team;
 
     public function __construct()
     {
@@ -296,6 +302,29 @@ class TeamSubscription extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Set Team entity (many to one).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\TeamSubscription
+     */
+    public function setTeam(Team $team = null)
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity (many to one).
+     *
+     * @return \App\Entities\Base\Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
     }
 
     public function __sleep()

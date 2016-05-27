@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\Workspace
  *
- * @ORM\Entity(repositoryClass="App\Repositories\WorkspaceRepository")
- * @ORM\Table(name="`workspaces`", indexes={@ORM\Index(name="workspaces_user_id_foreign", columns={"`user_id`"}), @ORM\Index(name="workspaces_project_id_foreign", columns={"`project_id`"})})
+ * @ORM\MappedSuperclass
+ * @ORM\Table(name="`workspaces`", indexes={@ORM\Index(name="workspaces_fk_user", columns={"`user_id`"}), @ORM\Index(name="workspaces_fk_project", columns={"`project_id`"})})
  */
 class Workspace extends AbstractEntity
 {

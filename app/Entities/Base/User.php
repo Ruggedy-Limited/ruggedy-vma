@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\User
+ *
  * @ORM\MappedSuperclass
  * @ORM\Table(name="`users`", uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
@@ -160,10 +161,58 @@ class User extends AbstractEntity
     protected $updated_at;
 
     /**
+     * @ORM\OneToMany(targetEntity="Announcement", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $announcements;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ApiToken", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $apiTokens;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Invitation", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $invitations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Invoice", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $invoices;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Notification", mappedBy="userRelatedByUserId", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $notificationRelatedByUserIds;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Notification", mappedBy="userRelatedByCreatedBy", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`created_by`", nullable=false)
+     */
+    protected $notificationRelatedByCreatedBies;
+
+    /**
      * @ORM\OneToMany(targetEntity="Project", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
     protected $projects;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $subscriptions;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Team", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`owner_id`", nullable=false)
+     */
+    protected $teams;
 
     /**
      * @ORM\OneToMany(targetEntity="Workspace", mappedBy="user", cascade={"persist"})
@@ -173,7 +222,15 @@ class User extends AbstractEntity
 
     public function __construct()
     {
+        $this->announcements = new ArrayCollection();
+        $this->apiTokens = new ArrayCollection();
+        $this->invitations = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
+        $this->notificationRelatedByUserIds = new ArrayCollection();
+        $this->notificationRelatedByCreatedBies = new ArrayCollection();
         $this->projects = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
+        $this->teams = new ArrayCollection();
         $this->workspaces = new ArrayCollection();
     }
 
@@ -845,6 +902,222 @@ class User extends AbstractEntity
     }
 
     /**
+     * Add Announcement entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Announcement $announcement
+     * @return \App\Entities\Base\User
+     */
+    public function addAnnouncement(Announcement $announcement)
+    {
+        $this->announcements[] = $announcement;
+
+        return $this;
+    }
+
+    /**
+     * Remove Announcement entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Announcement $announcement
+     * @return \App\Entities\Base\User
+     */
+    public function removeAnnouncement(Announcement $announcement)
+    {
+        $this->announcements->removeElement($announcement);
+
+        return $this;
+    }
+
+    /**
+     * Get Announcement entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAnnouncements()
+    {
+        return $this->announcements;
+    }
+
+    /**
+     * Add ApiToken entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\ApiToken $apiToken
+     * @return \App\Entities\Base\User
+     */
+    public function addApiToken(ApiToken $apiToken)
+    {
+        $this->apiTokens[] = $apiToken;
+
+        return $this;
+    }
+
+    /**
+     * Remove ApiToken entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\ApiToken $apiToken
+     * @return \App\Entities\Base\User
+     */
+    public function removeApiToken(ApiToken $apiToken)
+    {
+        $this->apiTokens->removeElement($apiToken);
+
+        return $this;
+    }
+
+    /**
+     * Get ApiToken entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getApiTokens()
+    {
+        return $this->apiTokens;
+    }
+
+    /**
+     * Add Invitation entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Invitation $invitation
+     * @return \App\Entities\Base\User
+     */
+    public function addInvitation(Invitation $invitation)
+    {
+        $this->invitations[] = $invitation;
+
+        return $this;
+    }
+
+    /**
+     * Remove Invitation entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Invitation $invitation
+     * @return \App\Entities\Base\User
+     */
+    public function removeInvitation(Invitation $invitation)
+    {
+        $this->invitations->removeElement($invitation);
+
+        return $this;
+    }
+
+    /**
+     * Get Invitation entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getInvitations()
+    {
+        return $this->invitations;
+    }
+
+    /**
+     * Add Invoice entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Invoice $invoice
+     * @return \App\Entities\Base\User
+     */
+    public function addInvoice(Invoice $invoice)
+    {
+        $this->invoices[] = $invoice;
+
+        return $this;
+    }
+
+    /**
+     * Remove Invoice entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Invoice $invoice
+     * @return \App\Entities\Base\User
+     */
+    public function removeInvoice(Invoice $invoice)
+    {
+        $this->invoices->removeElement($invoice);
+
+        return $this;
+    }
+
+    /**
+     * Get Invoice entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getInvoices()
+    {
+        return $this->invoices;
+    }
+
+    /**
+     * Add Notification entity related by `user_id` to collection (one to many).
+     *
+     * @param \App\Entities\Base\Notification $notification
+     * @return \App\Entities\Base\User
+     */
+    public function addNotificationRelatedByUserId(Notification $notification)
+    {
+        $this->notificationRelatedByUserIds[] = $notification;
+
+        return $this;
+    }
+
+    /**
+     * Remove Notification entity related by `user_id` from collection (one to many).
+     *
+     * @param \App\Entities\Base\Notification $notification
+     * @return \App\Entities\Base\User
+     */
+    public function removeNotificationRelatedByUserId(Notification $notification)
+    {
+        $this->notificationRelatedByUserIds->removeElement($notification);
+
+        return $this;
+    }
+
+    /**
+     * Get Notification entity related by `user_id` collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getNotificationRelatedByUserIds()
+    {
+        return $this->notificationRelatedByUserIds;
+    }
+
+    /**
+     * Add Notification entity related by `created_by` to collection (one to many).
+     *
+     * @param \App\Entities\Base\Notification $notification
+     * @return \App\Entities\Base\User
+     */
+    public function addNotificationRelatedByCreatedBy(Notification $notification)
+    {
+        $this->notificationRelatedByCreatedBies[] = $notification;
+
+        return $this;
+    }
+
+    /**
+     * Remove Notification entity related by `created_by` from collection (one to many).
+     *
+     * @param \App\Entities\Base\Notification $notification
+     * @return \App\Entities\Base\User
+     */
+    public function removeNotificationRelatedByCreatedBy(Notification $notification)
+    {
+        $this->notificationRelatedByCreatedBies->removeElement($notification);
+
+        return $this;
+    }
+
+    /**
+     * Get Notification entity related by `created_by` collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getNotificationRelatedByCreatedBies()
+    {
+        return $this->notificationRelatedByCreatedBies;
+    }
+
+    /**
      * Add Project entity to collection (one to many).
      *
      * @param \App\Entities\Base\Project $project
@@ -878,6 +1151,78 @@ class User extends AbstractEntity
     public function getProjects()
     {
         return $this->projects;
+    }
+
+    /**
+     * Add Subscription entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Subscription $subscription
+     * @return \App\Entities\Base\User
+     */
+    public function addSubscription(Subscription $subscription)
+    {
+        $this->subscriptions[] = $subscription;
+
+        return $this;
+    }
+
+    /**
+     * Remove Subscription entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Subscription $subscription
+     * @return \App\Entities\Base\User
+     */
+    public function removeSubscription(Subscription $subscription)
+    {
+        $this->subscriptions->removeElement($subscription);
+
+        return $this;
+    }
+
+    /**
+     * Get Subscription entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSubscriptions()
+    {
+        return $this->subscriptions;
+    }
+
+    /**
+     * Add Team entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\User
+     */
+    public function addTeam(Team $team)
+    {
+        $this->teams[] = $team;
+
+        return $this;
+    }
+
+    /**
+     * Remove Team entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\User
+     */
+    public function removeTeam(Team $team)
+    {
+        $this->teams->removeElement($team);
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTeams()
+    {
+        return $this->teams;
     }
 
     /**

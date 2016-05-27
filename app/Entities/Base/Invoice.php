@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\Invoice
  *
- * @ORM\Entity(repositoryClass="App\Repositories\InvoiceRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`invoices`", indexes={@ORM\Index(name="invoices_created_at_index", columns={"`created_at`"}), @ORM\Index(name="invoices_user_id_index", columns={"`user_id`"}), @ORM\Index(name="invoices_team_id_index", columns={"`team_id`"})})
  */
 class Invoice extends AbstractEntity
@@ -20,12 +20,12 @@ class Invoice extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`user_id`", type="integer", nullable=true)
+     * @ORM\Column(name="`user_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`team_id`", type="integer", nullable=true)
+     * @ORM\Column(name="`team_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $team_id;
 
@@ -78,6 +78,18 @@ class Invoice extends AbstractEntity
      * @ORM\Column(name="`updated_at`", type="datetime", nullable=true)
      */
     protected $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="invoices", cascade={"persist"})
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`")
+     */
+    protected $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Team", inversedBy="invoices", cascade={"persist"})
+     * @ORM\JoinColumn(name="`team_id`", referencedColumnName="`id`")
+     */
+    protected $team;
 
     public function __construct()
     {
@@ -380,6 +392,52 @@ class Invoice extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Set User entity (many to one).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Invoice
+     */
+    public function setUser(User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity (many to one).
+     *
+     * @return \App\Entities\Base\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set Team entity (many to one).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\Invoice
+     */
+    public function setTeam(Team $team = null)
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity (many to one).
+     *
+     * @return \App\Entities\Base\Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
     }
 
     public function __sleep()

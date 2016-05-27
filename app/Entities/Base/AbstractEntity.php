@@ -2,6 +2,7 @@
 
 namespace App\Entities\Base;
 
+use Carbon\Carbon;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,11 +17,11 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     /**
      * @var \DateTime
      */
-    protected $createdAt;
+    protected $created_at;
     /**
      * @var \DateTime
      */
-    protected $updatedAt;
+    protected $updated_at;
 
     /**
      * @ORM\PrePersist
@@ -29,11 +30,11 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
      */
     public function timestamp()
     {
-        if (empty($this->createdAt)) {
-            $this->createdAt = new DateTime();
+        if (empty($this->created_at)) {
+            $this->created_at = new DateTime();
         }
 
-        $this->updatedAt = new DateTime();
+        $this->updated_at = new DateTime();
     }
 
     /**
@@ -110,9 +111,9 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
      *
      * @return mixed
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
-        return $this;
+        return $this->toStdClass();
     }
 
     /**
@@ -129,13 +130,18 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
      * @param array $onlyTheseAttributes
      * @return stdClass
      */
-    protected function toStdClass($onlyTheseAttributes = [])
+    public function toStdClass($onlyTheseAttributes = [])
     {
         $objectForJson = new stdClass();
 
         $members = new Collection($this->toArray());
         $members->filter(function($memberValue, $memberName) use ($onlyTheseAttributes)
         {
+            // Explicitly excluded items
+            if ($memberName == "__isInitialized__" || $memberName == "password") {
+                return false;
+            }
+
             // If the $onlyTheseAttributes filter is not set, return all the members
             if (empty($onlyTheseAttributes)) {
                 return true;
@@ -148,6 +154,10 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
         {
             // If this member is an object but does not have a getId() method, exit early because we cant get a scalar
             // value for the JSON representation
+            if ($memberValue instanceof DateTime || $memberValue instanceof Carbon) {
+                $memberValue = $memberValue->format(env('APP_DATE_FORMAT'));
+            }
+
             if (is_object($memberValue) && !method_exists($memberValue, 'getId')) {
                 return;
             }

@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * App\Entities\Base\Project
  *
- * @ORM\Entity(repositoryClass="App\Repositories\ProjectRepository")
- * @ORM\Table(name="`projects`", indexes={@ORM\Index(name="projects_user_id_foreign", columns={"`user_id`"})})
+ * @ORM\MappedSuperclass
+ * @ORM\Table(name="`projects`", indexes={@ORM\Index(name="projects_fk_user", columns={"`user_id`"})})
  */
 class Project extends AbstractEntity
 {

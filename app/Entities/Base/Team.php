@@ -3,6 +3,7 @@
 namespace App\Entities\Base;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\Team
@@ -20,7 +21,7 @@ class Team extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`owner_id`", type="integer")
+     * @ORM\Column(name="`owner_id`", type="integer", options={"unsigned":true})
      */
     protected $owner_id;
 
@@ -114,8 +115,35 @@ class Team extends AbstractEntity
      */
     protected $updated_at;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Invitation", mappedBy="team", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`team_id`", nullable=false)
+     */
+    protected $invitations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Invoice", mappedBy="team", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`team_id`", nullable=false)
+     */
+    protected $invoices;
+
+    /**
+     * @ORM\OneToMany(targetEntity="TeamSubscription", mappedBy="team", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`team_id`", nullable=false)
+     */
+    protected $teamSubscriptions;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="teams", cascade={"persist"})
+     * @ORM\JoinColumn(name="`owner_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $user;
+
     public function __construct()
     {
+        $this->invitations = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
+        $this->teamSubscriptions = new ArrayCollection();
     }
 
     /**
@@ -576,6 +604,137 @@ class Team extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Add Invitation entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Invitation $invitation
+     * @return \App\Entities\Base\Team
+     */
+    public function addInvitation(Invitation $invitation)
+    {
+        $this->invitations[] = $invitation;
+
+        return $this;
+    }
+
+    /**
+     * Remove Invitation entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Invitation $invitation
+     * @return \App\Entities\Base\Team
+     */
+    public function removeInvitation(Invitation $invitation)
+    {
+        $this->invitations->removeElement($invitation);
+
+        return $this;
+    }
+
+    /**
+     * Get Invitation entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getInvitations()
+    {
+        return $this->invitations;
+    }
+
+    /**
+     * Add Invoice entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Invoice $invoice
+     * @return \App\Entities\Base\Team
+     */
+    public function addInvoice(Invoice $invoice)
+    {
+        $this->invoices[] = $invoice;
+
+        return $this;
+    }
+
+    /**
+     * Remove Invoice entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Invoice $invoice
+     * @return \App\Entities\Base\Team
+     */
+    public function removeInvoice(Invoice $invoice)
+    {
+        $this->invoices->removeElement($invoice);
+
+        return $this;
+    }
+
+    /**
+     * Get Invoice entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getInvoices()
+    {
+        return $this->invoices;
+    }
+
+    /**
+     * Add TeamSubscription entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\TeamSubscription $teamSubscription
+     * @return \App\Entities\Base\Team
+     */
+    public function addTeamSubscription(TeamSubscription $teamSubscription)
+    {
+        $this->teamSubscriptions[] = $teamSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Remove TeamSubscription entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\TeamSubscription $teamSubscription
+     * @return \App\Entities\Base\Team
+     */
+    public function removeTeamSubscription(TeamSubscription $teamSubscription)
+    {
+        $this->teamSubscriptions->removeElement($teamSubscription);
+
+        return $this;
+    }
+
+    /**
+     * Get TeamSubscription entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTeamSubscriptions()
+    {
+        return $this->teamSubscriptions;
+    }
+
+    /**
+     * Set User entity (many to one).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Team
+     */
+    public function setUser(User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity (many to one).
+     *
+     * @return \App\Entities\Base\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 
     public function __sleep()

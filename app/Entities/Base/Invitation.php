@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\Invitation
  *
- * @ORM\Entity(repositoryClass="App\Repositories\InvitationRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`invitations`", indexes={@ORM\Index(name="invitations_team_id_index", columns={"`team_id`"}), @ORM\Index(name="invitations_user_id_index", columns={"`user_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="invitations_token_unique", columns={"`token`"})})
  */
 class Invitation extends AbstractEntity
@@ -19,12 +19,12 @@ class Invitation extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`team_id`", type="integer")
+     * @ORM\Column(name="`team_id`", type="integer", options={"unsigned":true})
      */
     protected $team_id;
 
     /**
-     * @ORM\Column(name="`user_id`", type="integer", nullable=true)
+     * @ORM\Column(name="`user_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $user_id;
 
@@ -47,6 +47,18 @@ class Invitation extends AbstractEntity
      * @ORM\Column(name="`updated_at`", type="datetime", nullable=true)
      */
     protected $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Team", inversedBy="invitations", cascade={"persist"})
+     * @ORM\JoinColumn(name="`team_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $team;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="invitations", cascade={"persist"})
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`")
+     */
+    protected $user;
 
     public function __construct()
     {
@@ -211,6 +223,52 @@ class Invitation extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Set Team entity (many to one).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\Invitation
+     */
+    public function setTeam(Team $team = null)
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity (many to one).
+     *
+     * @return \App\Entities\Base\Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
+    }
+
+    /**
+     * Set User entity (many to one).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Invitation
+     */
+    public function setUser(User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity (many to one).
+     *
+     * @return \App\Entities\Base\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 
     public function __sleep()

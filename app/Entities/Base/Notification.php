@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\Notification
  *
- * @ORM\Entity(repositoryClass="App\Repositories\NotificationRepository")
- * @ORM\Table(name="`notifications`", indexes={@ORM\Index(name="notifications_user_id_created_at_index", columns={"`user_id`", "`created_at`"})})
+ * @ORM\MappedSuperclass
+ * @ORM\Table(name="`notifications`", indexes={@ORM\Index(name="notifications_user_id_created_at_index", columns={"`user_id`", "`created_at`"}), @ORM\Index(name="notifications_fk_user_created_idx", columns={"`created_by`"})})
  */
 class Notification extends AbstractEntity
 {
@@ -19,12 +19,12 @@ class Notification extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`user_id`", type="integer")
+     * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
      */
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`created_by`", type="integer", nullable=true)
+     * @ORM\Column(name="`created_by`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $created_by;
 
@@ -62,6 +62,18 @@ class Notification extends AbstractEntity
      * @ORM\Column(name="`updated_at`", type="datetime", nullable=true)
      */
     protected $updated_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="notificationRelatedByUserIds", cascade={"persist"})
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $userRelatedByUserId;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="notificationRelatedByCreatedBies", cascade={"persist"})
+     * @ORM\JoinColumn(name="`created_by`", referencedColumnName="`id`")
+     */
+    protected $userRelatedByCreatedBy;
 
     public function __construct()
     {
@@ -295,6 +307,52 @@ class Notification extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Set User entity related by `user_id` (many to one).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Notification
+     */
+    public function setUserRelatedByUserId(User $user = null)
+    {
+        $this->userRelatedByUserId = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity related by `user_id` (many to one).
+     *
+     * @return \App\Entities\Base\User
+     */
+    public function getUserRelatedByUserId()
+    {
+        return $this->userRelatedByUserId;
+    }
+
+    /**
+     * Set User entity related by `created_by` (many to one).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Notification
+     */
+    public function setUserRelatedByCreatedBy(User $user = null)
+    {
+        $this->userRelatedByCreatedBy = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get User entity related by `created_by` (many to one).
+     *
+     * @return \App\Entities\Base\User
+     */
+    public function getUserRelatedByCreatedBy()
+    {
+        return $this->userRelatedByCreatedBy;
     }
 
     public function __sleep()
