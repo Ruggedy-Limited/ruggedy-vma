@@ -11,6 +11,7 @@ use App\Services\JsonLogService;
 use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
+use Illuminate\Support\Collection;
 use Illuminate\Translation\Translator;
 use Illuminate\Http\Request;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
@@ -170,12 +171,12 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         }
 
         // Check that the user exists in the team
-        if (empty($user->isInTeam($team))) {
+        if (empty($team->personIsInTeam($user))) {
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
         }
 
         // Detach the team from the user
-        $user->removeFromTeam($team);
+        $user->removeTeam($team);
 
         try {
             /** @var EntityManager $em */
@@ -193,11 +194,13 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
-        
-        return response()->json([
+
+        $responseData = new Collection([
             'user' => $user,
             'team' => $team
         ]);
+
+        return response()->json($responseData);
     }
 
     /**
@@ -243,7 +246,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
                 'requestParams' => $this->getRequest()->all(),
                 'teamId' => $teamId,
-                'userId'        => $userId,
+                'userId' => $userId,
             ]);
             
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
@@ -274,7 +277,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         }
 
         // Make sure the given user is on the team
-        if (empty($queriedUser->isInTeam($team))) {
+        if (empty($team->personIsInTeam($queriedUser))) {
             $this->getLogger()->log(Logger::DEBUG, "Given user is not on the specified team", [
                 'requestParams' => $this->getRequest()->all(),
                 'teamId'        => $teamId,
@@ -286,8 +289,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
         // Unless the authenticated user is requesting information about their own account, show only certain fields
         if ($requestingUser->getId() !== intval($userId)) {
-            $queriedUser = $queriedUser->toJson(0, [
-                'name', 'email', 'photoUrl', 'usesTwoFactorAuth',
+            $queriedUser = $queriedUser->toStdClass([
+                'name', 'email', 'photo_url', 'uses_two_factor_auth',
             ]);
         }
 
@@ -348,10 +351,9 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
         }
 
-        // Get the list of team members and return them
-        $teamMembers = $team->getUsers();
-
-        return response()->json($teamMembers);
+        return response()->json(
+            $team->getUsers()->toArray()
+        );
     }
 
     /**
@@ -395,11 +397,6 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
                 return $this->generateErrorResponse(MessagingModel::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS);
             }
 
-            // Handle the case where the person supplied a field that doesn't exist in the database
-            if (preg_match("/Column not found/", $e->getMessage())) {
-                return $this->generateErrorResponse(MessagingModel::ERROR_FIELD_DOES_NOT_EXIST);
-            }
-
             $this->getLogger()->log(Logger::ERROR, "Could not update user account", [
                 'user'           => $requestingUser->toArray(),
                 'profileChanges' => $profileChanges,
@@ -410,8 +407,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
 
-        $requestingUser = $requestingUser->toJson(0, [
-            'name', 'email', 'photoUrl', 'usesTwoFactorAuth', 'createdAt', 'updatedAt'
+        $requestingUser = $requestingUser->toStdClass([
+            'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
         ]);
         
         return response()->json($requestingUser);
