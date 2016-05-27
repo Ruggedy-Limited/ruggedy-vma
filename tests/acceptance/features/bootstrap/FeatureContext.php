@@ -10,8 +10,10 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
+use Doctrine\ORM\EntityManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -21,11 +23,19 @@ use Illuminate\Support\Facades\Schema;
  */
 class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
 {
+    const TOGGLE_FOREIGN_KEYS_SQL = 'SET FOREIGN_KEY_CHECKS=%u';
 
     /** @var  string */
     protected $apiKey;
 
+    /** @var EntityManager $em */
     protected $em;
+
+    protected $tablesToTruncate = [
+        'users',
+        'teams',
+        'team_users',
+    ];
 
     /**
      * Initializes context.
@@ -35,18 +45,29 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function __construct()
     {
+        $this->em = App::make(EntityManager::class);
     }
 
     /**
-     * @AfterScenario
+     * @BeforeScenario
      */
     public function truncateTables()
     {
-        Schema::disableForeignKeyConstraints();
-        User::truncate();
-        Team::truncate();
-        DB::table('team_users')->truncate();
-        Schema::enableForeignKeyConstraints();
+        // Disable foreign key checks
+        $this->getEm()->getConnection()->query(
+            sprintf(self::TOGGLE_FOREIGN_KEYS_SQL, 0)
+        );
+
+        // Truncate tables
+        foreach ($this->getTablesToTruncate() as $tableName) {
+            $truncateSql = $this->getEm()->getConnection()->getDatabasePlatform()->getTruncateTableSQL($tableName);
+            $this->getEm()->getConnection()->executeUpdate($truncateSql);
+        }
+
+        // Enable foreign key checks
+        $this->getEm()->getConnection()->query(
+            sprintf(self::TOGGLE_FOREIGN_KEYS_SQL, 1)
+        );
     }
 
     /**
@@ -164,9 +185,10 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     protected function convertIntHelper($value)
     {
-        if (is_int($value)) {
+        if (preg_match("/[\d]+/", $value)) {
             return intval($value);
         }
+
         return $value;
     }
 
@@ -257,5 +279,29 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    public function getEm()
+    {
+        return $this->em;
+    }
+
+    /**
+     * @param EntityManager $em
+     */
+    public function setEm($em)
+    {
+        $this->em = $em;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTablesToTruncate()
+    {
+        return $this->tablesToTruncate;
     }
 }

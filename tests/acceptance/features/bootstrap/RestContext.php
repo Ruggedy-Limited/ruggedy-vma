@@ -101,6 +101,7 @@ class RestContext extends FeatureContext implements Context
     public function thatTheItsIs($propertyName, $propertyValue)
     {
         $propertyValue = $this->convertBoolHelper($propertyValue);
+        $propertyValue = $this->convertIntHelper($propertyValue);
         $this->getRestObject()->$propertyName = $propertyValue;
     }
 
@@ -203,6 +204,8 @@ class RestContext extends FeatureContext implements Context
         $value = $this->theResponseHasAPropertyHelper($propertyName);
         $value = $this->convertBoolHelper($value);
         $propertyValue = $this->convertBoolHelper($propertyValue);
+        $value = $this->convertIntHelper($value);
+        $propertyValue = $this->convertIntHelper($propertyValue);
         PHPUnit_Framework_Assert::assertEquals($propertyValue, $value);
     }
 
@@ -229,14 +232,13 @@ class RestContext extends FeatureContext implements Context
         foreach ($table as $index => $row) {
             $row = $this->sanitiseRowHelper($row);
             foreach ($row as $field => $value) {
-                PHPUnit_Framework_Assert::assertNotEmpty($responseBody[$index]);
-                PHPUnit_Framework_Assert::assertArrayHasKey($field, $responseBody[$index]);
-                
                 // If we don't care what the exact value is we enter * in the TableNode
                 if ($value === "*") {
                     continue;
                 }
 
+                PHPUnit_Framework_Assert::assertNotEmpty($responseBody[$index]);
+                PHPUnit_Framework_Assert::assertArrayHasKey($field, $responseBody[$index]);
                 PHPUnit_Framework_Assert::assertEquals($value, $responseBody[$index][$field]);
             }
         }
