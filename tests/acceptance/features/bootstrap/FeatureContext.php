@@ -11,6 +11,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Doctrine\ORM\EntityManager;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\App;
@@ -28,9 +29,6 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     /** @var  string */
     protected $apiKey;
 
-    /** @var EntityManager $em */
-    protected $em;
-
     protected $tablesToTruncate = [
         'users',
         'teams',
@@ -45,7 +43,6 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function __construct()
     {
-        $this->em = App::make(EntityManager::class);
     }
 
     /**
@@ -53,21 +50,11 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function truncateTables()
     {
-        // Disable foreign key checks
-        $this->getEm()->getConnection()->query(
-            sprintf(self::TOGGLE_FOREIGN_KEYS_SQL, 0)
-        );
-
-        // Truncate tables
-        foreach ($this->getTablesToTruncate() as $tableName) {
-            $truncateSql = $this->getEm()->getConnection()->getDatabasePlatform()->getTruncateTableSQL($tableName);
-            $this->getEm()->getConnection()->executeUpdate($truncateSql);
+        Schema::disableForeignKeyConstraints();
+        foreach ($this->getTablesToTruncate() as $table) {
+            DB::table($table)->truncate();
         }
-
-        // Enable foreign key checks
-        $this->getEm()->getConnection()->query(
-            sprintf(self::TOGGLE_FOREIGN_KEYS_SQL, 1)
-        );
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -86,25 +73,28 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         /** @var Model $model */
         $model = new $modelClassPath();
         if ($model instanceof Model) {
-            foreach ($table as $row) {
-                $row = $this->sanitiseRowHelper($row);
-                $model = $modelClassPath::forceCreate($row);
-                $model->saveOrFail();
+            Schema::disableForeignKeyConstraints();
+            try {
+                foreach ($table as $row) {
+                    $row   = $this->sanitiseRowHelper($row);
+                    $model = $modelClassPath::forceCreate($row);
+                    $model->saveOrFail();
+                }
+
+                Schema::enableForeignKeyConstraints();
+
+                return true;
+            } catch (Exception $e) {
+                Schema::enableForeignKeyConstraints();
+                throw new FeatureBackgroundSetupFailedException("Failed when setting up database.");
             }
-            
-            return true;
         }
 
-        /*foreach ($table as $row) {
-            $model = new $modelClassPath($row);
-            app('em')->persist($model);
-        }
-
-        app('em')->flush();*/
+        return false;
     }
 
     /**
-     * @Given /^the following ([A-Za-z]*) in ([A-Za-z]*) (.*)$/
+     * @Given /^the following ([A-Za-z]*) in ([A-Za-z]*) (.*):$/
      * @param $manyObject
      * @param $oneObject
      * @param $pivotId
@@ -117,6 +107,9 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
         $oneModel = $oneClassPath::find($pivotId);
         $attachments = [];
+
+        Schema::disableForeignKeyConstraints();
+
         foreach ($table as $row) {
             $row = $this->sanitiseRowHelper($row);
             $id = $row['id'];
@@ -126,8 +119,10 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
         try {
             $oneModel->$manyMethod()->attach($attachments);
+            Schema::enableForeignKeyConstraints();
         } catch (QueryException $e) {
             // Just catch the exception in the case of integrity constraint violations
+            Schema::enableForeignKeyConstraints();
         }
     }
 
@@ -185,7 +180,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     protected function convertIntHelper($value)
     {
-        if (preg_match("/[\d]+/", $value)) {
+        if (preg_match("/^[1-9][\d]*$/", $value)) {
             return intval($value);
         }
 
