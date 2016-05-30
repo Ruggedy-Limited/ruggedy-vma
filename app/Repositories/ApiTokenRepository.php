@@ -34,11 +34,7 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
         $queryBuilder->addCriteria($criteria);
 
         $result = $queryBuilder->getQuery()->getResult();
-        if (empty($result[0])) {
-            return null;
-        }
-
-        return $result[0];
+        return $result[0] ?? null;
     }
 
     /**
@@ -62,8 +58,8 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
             'expiresAt'  => null,
         ]);
 
-        app('em')->persist($newToken);
-        app('em')->flush($newToken);
+        $this->getEntityManager()->persist($newToken);
+        $this->getEntityManager()->flush($newToken);
 
         return $user->addApiToken($newToken);
     }
@@ -112,10 +108,10 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
         {
             /** @var ApiToken $token */
             if ($token->getExpiresAt() <= Carbon::now()) {
-                app('em')->remove($token);
+                $this->getEntityManager()->remove($token);
             }
         });
 
-        app('em')->flush();
+        $this->getEntityManager()->flush();
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Providers;
 
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineExtensions\Query\Mysql\TimestampDiff;
 use LaravelDoctrine\ORM\DoctrineServiceProvider as LaravelDoctrineServiceProvider;
 use LaravelDoctrine\ORM\Configuration\Cache\CacheManager;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -28,11 +29,6 @@ class DoctrineServiceProvider extends LaravelDoctrineServiceProvider
         $platform->registerDoctrineTypeMapping('enum', 'string');
 
         $this->registerCustomFunctions($entityManager);
-
-        $config = config('doctrine');
-
-        $cacheManager = $this->app[CacheManager::class];
-
         $cache = $this->app[CacheManager::class]->driver();
 
         // standard annotation reader
@@ -63,10 +59,11 @@ class DoctrineServiceProvider extends LaravelDoctrineServiceProvider
         $driverChain->addDriver($annotationDriver, 'Entity');
 
         $evm = $entityManager->getEventManager();
+
         $timestampableListener = new TimestampableListener();
         $timestampableListener->setAnnotationReader($cachedAnnotationReader);
-        $evm->addEventSubscriber($timestampableListener);
 
+        $evm->addEventSubscriber($timestampableListener);
         $evm->addEventSubscriber(new MysqlSessionInit());
 
         $this->registerEntityRepositories();

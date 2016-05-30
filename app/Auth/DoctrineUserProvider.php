@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Auth;
-
 
 use App\Entities\User;
 use App\Repositories\UserRepository;
@@ -10,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Facades\EntityManager;
+
 
 class DoctrineUserProvider implements UserProvider
 {

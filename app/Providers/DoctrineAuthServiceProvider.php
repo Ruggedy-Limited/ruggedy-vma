@@ -20,6 +20,7 @@ class DoctrineAuthServiceProvider extends ServiceProvider
     {
         $this->app['auth']->extend('doctrine', function()
         {
+            // Extend the apps authentication to use the Doctrine UserRepository
             $hasher     = App::make(Hasher::class);
             $repository = App::make(UserRepository::class);
             return new DoctrineUserProvider(new User(), $hasher, $repository);

@@ -177,7 +177,6 @@ class RuggedyTokenGuard
         $token = new ApiToken();
         return $token->setFromArray([
             'user'       => $user,
-            'transient'  => true,
             'expires_at' => $expiration,
         ]);
     }
@@ -185,8 +184,8 @@ class RuggedyTokenGuard
     /**
      * Determine if the XSRF / header are valid and match.
      *
-     * @param  string  $xsrf
-     * @param  string  $header
+     * @param $token
+     * @param $request
      * @return bool
      */
     protected function validXsrf($token, $request)
@@ -207,6 +206,7 @@ class RuggedyTokenGuard
         try {
             return decrypt($request->header('X-XSRF-TOKEN'));
         } catch (Exception $e) {
+            return null;
         }
     }
 }
