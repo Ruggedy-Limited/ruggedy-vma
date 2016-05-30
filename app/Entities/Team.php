@@ -22,6 +22,9 @@ class Team extends Base\Team
      */
     protected $users;
 
+    /**
+     * Team constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -36,6 +39,33 @@ class Team extends Base\Team
         return $this->users;
     }
 
+    /**
+     * Add a User to this Team
+     *
+     * @param User $user
+     */
+    public function addUser(User $user)
+    {
+        $this->users->add($user);
+    }
+
+    /**
+     * Remove a User from this Team
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function removeUser(User $user)
+    {
+        return $this->users->removeElement($user);
+    }
+
+    /**
+     * Check if a person is in a particular team
+     *
+     * @param User $user
+     * @return bool
+     */
     public function personIsInTeam(User $user)
     {
         return $this->getUsers()->contains($user);
