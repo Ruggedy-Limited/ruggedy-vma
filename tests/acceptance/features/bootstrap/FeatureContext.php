@@ -10,8 +10,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
+use Doctrine\ORM\EntityManager;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -21,11 +24,14 @@ use Illuminate\Support\Facades\Schema;
  */
 class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
 {
-
     /** @var  string */
     protected $apiKey;
 
-    protected $em;
+    protected $tablesToTruncate = [
+        'users',
+        'teams',
+        'team_users',
+    ];
 
     /**
      * Initializes context.
@@ -38,14 +44,20 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     }
 
     /**
-     * @AfterScenario
+     * Truncate all relevant tables before each scenario
+     *
+     * @BeforeScenario
      */
     public function truncateTables()
     {
+        // Disable foreign key checks otherwise the TRUNCATE will fail with an integrity constraint violation
         Schema::disableForeignKeyConstraints();
-        User::truncate();
-        Team::truncate();
-        DB::table('team_users')->truncate();
+
+        foreach ($this->getTablesToTruncate() as $table) {
+            DB::table($table)->truncate();
+        }
+
+        // Re-enable foreign key checks
         Schema::enableForeignKeyConstraints();
     }
 
@@ -64,26 +76,37 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
         /** @var Model $model */
         $model = new $modelClassPath();
+
+        // If we have a valid Eloquent Model
         if ($model instanceof Model) {
-            foreach ($table as $row) {
-                $row = $this->sanitiseRowHelper($row);
-                $model = $modelClassPath::forceCreate($row);
-                $model->saveOrFail();
+            // Disable foreign key checks so that this doesn't fail for the wrong reasons
+            Schema::disableForeignKeyConstraints();
+
+            try {
+                foreach ($table as $row) {
+                    // Create ans save each row using Eloquent ORM
+                    $row   = $this->sanitiseRowHelper($row);
+                    $model = $modelClassPath::forceCreate($row);
+                    $model->saveOrFail();
+                }
+
+                // Re-enable foreign key checks
+                Schema::enableForeignKeyConstraints();
+
+                return true;
+            } catch (Exception $e) {
+                // Re-enable foreign key checks and throw an exception
+                Schema::enableForeignKeyConstraints();
+                throw new FeatureBackgroundSetupFailedException("Failed when setting up database.");
             }
-            
-            return true;
         }
 
-        /*foreach ($table as $row) {
-            $model = new $modelClassPath($row);
-            app('em')->persist($model);
-        }
-
-        app('em')->flush();*/
+        return false;
     }
 
     /**
-     * @Given /^the following ([A-Za-z]*) in ([A-Za-z]*) (.*)$/
+     * @Given /^the following ([A-Za-z]*) in ([A-Za-z]*) (.*):$/
+     * 
      * @param $manyObject
      * @param $oneObject
      * @param $pivotId
@@ -91,11 +114,17 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function andTheFollowingRelations($manyObject, $oneObject, $pivotId, TableNode $table)
     {
+        // Get the fully qualified class paths for the one and many relation Eloquent Models
         $oneClassPath  = $this->getEloquentModelClassHelper($oneObject);
         $manyMethod    = $this->getEloquentManyRelationsMethodHelper($manyObject);
 
+        // Get the relevant owning Model from the database
         $oneModel = $oneClassPath::find($pivotId);
         $attachments = [];
+
+        // Disable foreign key checks so that this doesn't fail for the wrong reasons
+        Schema::disableForeignKeyConstraints();
+
         foreach ($table as $row) {
             $row = $this->sanitiseRowHelper($row);
             $id = $row['id'];
@@ -103,15 +132,21 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             $attachments[$id] = $row;
         }
 
+        // Try to save the relational data to the database
         try {
             $oneModel->$manyMethod()->attach($attachments);
+            // Re-enable foreign key checks
+            Schema::enableForeignKeyConstraints();
         } catch (QueryException $e) {
             // Just catch the exception in the case of integrity constraint violations
+            // Re-enable foreign key checks
+            Schema::enableForeignKeyConstraints();
         }
     }
 
     /**
      * Iterate over the columns in a row and convert 'true' or 'false' string values to proper bools
+     *
      * @param array $row
      * @return array
      */
@@ -137,6 +172,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
     /**
      * Helper method to convert 'true' or 'false' passed as strings from the feature file to proper boolean values
+     *
      * @param $value
      * @return bool
      */
@@ -159,14 +195,16 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
     /**
      * Helper method to convert integer values passed as strings from the feature file to proper integer values
+     *
      * @param $value
      * @return int
      */
     protected function convertIntHelper($value)
     {
-        if (is_int($value)) {
+        if (preg_match("/^[1-9][\d]*$/", $value)) {
             return intval($value);
         }
+
         return $value;
     }
 
@@ -214,28 +252,6 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     }
 
     /**
-     * @Given the following existing users:
-     *
-    public function theFollowingExistingUsers(TableNode $table)
-    {
-        foreach ($table as $row) {
-            $user = new User($row);
-            $user->saveOrFail();
-        }
-    }*/
-
-    /**
-     * @Given the following existing teams:
-     *
-    public function theFollowingExistingTeams(TableNode $table)
-    {
-        foreach ($table as $row) {
-            $team = new Team($row);
-            $team->saveOrFail();
-        }
-    }*/
-
-    /**
      * @Given a valid API key :apiKey
      */
     public function aValidApiKey($apiKey)
@@ -257,5 +273,13 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTablesToTruncate()
+    {
+        return $this->tablesToTruncate;
     }
 }

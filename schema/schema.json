@@ -1,0 +1,26 @@
+{
+  "export": "doctrine2-annotation",
+  "zip": false,
+  "dir": "app/Entities/Base",
+  "params": {
+    "eolDelimeter": "unix",
+    "addGeneratorInfoAsComment": false,
+    "logToConsole": true,
+    "backupExistingFile": false,
+    "skipPluralNameChecking": false,
+    "extendsClass": "AbstractEntity",
+    "propertyTypehint": false,
+    "enhanceManyToManyDetection": true,
+    "quoteIdentifierStrategy": "always",
+    "bundleNamespace": "App",
+    "entityNamespace": "Entities\\Base",
+    "useAnnotationPrefix": "ORM\\",
+    "useAutomaticRepository": true,
+    "repositoryNamespace": "App\\Repositories",
+    "indentation": 4,
+    "filename": "%entity%.%extension%",
+    "quoteIdentifier": true,
+    "abstractEntity": true,
+    "defaultCascade": "persist"
+  }
+}

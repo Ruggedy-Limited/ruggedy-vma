@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://pentamate.app'),
+    'url' => env('APP_URL', 'http://ruggedy.app'),
 
     /*
     |--------------------------------------------------------------------------
@@ -156,6 +156,7 @@ return [
         Laravel\Cashier\CashierServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\DoctrineAuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
@@ -165,10 +166,10 @@ return [
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         App\Providers\AnnotationsServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        /*LaravelDoctrine\ORM\DoctrineServiceProvider::class,
+        App\Providers\DoctrineServiceProvider::class,
         LaravelDoctrine\Extensions\GedmoExtensionsServiceProvider::class,
         LaravelDoctrine\Extensions\BeberleiExtensionsServiceProvider::class,
-        LaravelDoctrine\Migrations\MigrationsServiceProvider::class,*/
+        LaravelDoctrine\Migrations\MigrationsServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
     ],
 

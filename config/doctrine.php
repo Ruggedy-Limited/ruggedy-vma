@@ -29,7 +29,7 @@ return [
                 'App'
             ],
             'paths'      => [
-                base_path('app')
+                base_path('app/Entities')
             ],
             'repository' => Doctrine\ORM\EntityRepository::class,
             'proxies'    => [
@@ -170,6 +170,6 @@ return [
     |
     */
     'gedmo'                     => [
-        'all_mappings' => false
+        'all_mappings' => true
     ]
 ];
