@@ -5,25 +5,29 @@ namespace App\Http\Controllers;
 use App;
 use App\Team as EloquentTeam;
 use App\User as EloquentUser;
+use App\Commands\InviteToTeam;
+use App\Contracts\GivesUserFeedback;
+use App\Contracts\CustomLogging;
 use App\Entities\User;
 use App\Entities\Team;
+use App\Exceptions\InvalidEmailException;
+use App\Exceptions\InvalidInputException;
+use App\Exceptions\InvalidTeamException;
+use App\Http\Responses\ErrorResponse;
+use App\Models\MessagingModel;
 use App\Services\JsonLogService;
 use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
+use Exception;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Translation\Translator;
 use Illuminate\Http\Request;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
-use Illuminate\Support\Facades\Validator;
-use App\Contracts\GivesUserFeedback;
-use App\Contracts\CustomLogging;
-use App\Models\MessagingModel;
-use Exception;
+use League\Tactician\CommandBus;
 use Monolog\Logger;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use App\Http\Responses\ErrorResponse;
 
 
 /**
@@ -36,6 +40,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
     
     /** @var  JsonLogService */
     protected $logger;
+    /** @var  CommandBus */
+    protected $bus;
 
     /**
      * ApiController constructor.
@@ -43,12 +49,14 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @param Request $request
      * @param Translator $translator
      * @param JsonLogService $logger
+     * @param CommandBus $bus
      */
-    public function __construct(Request $request, Translator $translator, JsonLogService $logger)
+    public function __construct(Request $request, Translator $translator, JsonLogService $logger, CommandBus $bus)
     {
         parent::__construct($request, $translator);
         $this->setLoggerContext($logger);
         $this->setLogger($logger);
+        $this->bus = $bus;
     }
 
     /**
@@ -56,66 +64,59 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      *
      * @Post("/user/{teamId}", as="user.invite", where={"teamId": "[0-9]+"})
      *
-     * @param TeamRepository $teamRepository
      * @param $teamId
      * @return \Illuminate\Contracts\Routing\ResponseFactory
      */
-    public function inviteToTeam(TeamRepository $teamRepository, $teamId)
+    public function inviteToTeam($teamId)
     {
-        // Make sure we have all the required parameters
-        if (!isset($teamId)) {
+        try {
+            $command = new InviteToTeam($teamId, $this->getRequest()->json('email', null));
+            $invitation = $this->getBus()->handle($command);
+        } catch (InvalidInputException $e) {
+
+            // Invalid user input provided
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'details' => 'The $teamId parameter is required and was not set'
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-        }
 
-        // Check that the team exists
-        /** @var Team $team */
-        $team = $teamRepository->find($teamId);
-        if (empty($team)) {
+        } catch (InvalidTeamException $e) {
+
+            // A related team was not found in the database for the given team ID
             $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
-                'teamId' => $teamId,
+                'teamId'  => $teamId,
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_TEAM);
-        }
 
-        // Check for a valid email in the POST payload
-        /** @var \Illuminate\Contracts\Validation\Validator $validation */
-        $email = $this->getRequest()->json('email');
-        $validation = Validator::make(['email' => $email], [
-            'email' => 'required|email'
-        ]);
+        } catch (InvalidEmailException $e) {
 
-        $email = $this->getRequest()->json('email');
-        if (empty($email) || $validation->fails()) {
-            $this->getLogger()->log(Logger::ERROR, "Invalid email address given", [
-                'teamId' => $teamId,
-                'email'  => $email,
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL);
-        }
-
-        // Create a SendInvitation interaction
-        $sendInvitation = App::make(SendInvitation::class);
-
-        try {
-            $eloquentTeam = new EloquentTeam();
-            $eloquentTeam->forceFill($team->toArray());
-            // Send the invitation
-            $invitation = $sendInvitation->handle($eloquentTeam, $email);
-        } catch (Exception $e) {
+            // Received an invalid email address
             $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
                 'teamId'    => $teamId,
-                'email'     => $email,
+                'email'     => $this->getRequest()->json('email', null),
                 'exception' => $e->getMessage(),
                 'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
+            return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL);
+
+        } catch (Exception $e) {
+
+            // Unknown error
+            $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
+                'teamId'      => $teamId,
+                'requestBody' => $this->getRequest()->getContent(),
+                'exception'   => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_GENERAL);
+
         }
 
         // Hide the team details and return the invitation
@@ -489,5 +490,21 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
     public function setLogger($logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @return CommandBus
+     */
+    public function getBus()
+    {
+        return $this->bus;
+    }
+
+    /**
+     * @param CommandBus $bus
+     */
+    public function setBus($bus)
+    {
+        $this->bus = $bus;
     }
 }
