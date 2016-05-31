@@ -171,6 +171,7 @@ return [
         LaravelDoctrine\Extensions\BeberleiExtensionsServiceProvider::class,
         LaravelDoctrine\Migrations\MigrationsServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
+        Madewithlove\Tactician\ServiceProvider::class,
     ],
 
     /*
