@@ -4,11 +4,15 @@ namespace App\Handlers\Commands;
 
 use App\Commands\InviteToTeam as InviteToTeamCommand;
 use App\Entities\Team;
+use App\Entities\User;
+use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidEmailException;
-use App\Exceptions\InvalidTeamException;
+use App\Exceptions\TeamNotFoundException;
 use App\Repositories\TeamRepository;
 use App\Team as EloquentTeam;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Factory;
 use Laravel\Spark\Contracts\Interactions\Settings\Teams\SendInvitation;
 
@@ -41,12 +45,20 @@ class InviteToTeam extends CommandHandler
      *
      * @param InviteToTeamCommand $command
      * @return mixed
+     * @throws Exception
      * @throws InvalidEmailException
      * @throws InvalidInputException
-     * @throws InvalidTeamException
+     * @throws TeamNotFoundException
      */
     public function handle(InviteToTeamCommand $command)
     {
+        // Get the authenticated user
+        /** @var User $requestingUser */
+        $requestingUser = Auth::user();
+        if (empty($requestingUser)) {
+            throw new Exception("Could not get the authenticated user");
+        }
+
         $teamId = $command->getTeamId();
         $email  = $command->getEmail();
         if (!isset($teamId, $email)) {
@@ -57,7 +69,12 @@ class InviteToTeam extends CommandHandler
         /** @var Team $team */
         $team = $this->getRepository()->find($teamId);
         if (empty($team)) {
-            throw new InvalidTeamException("Could not find a team associated with the given ID");
+            throw new TeamNotFoundException("Could not find a team associated with the given ID");
+        }
+
+        // Check that the authenticated User owns the given Team
+        if (!$requestingUser->ownsTeam($team)) {
+            throw new ActionNotPermittedException("The authenticated User does not own the given Team");
         }
 
         // Check for a valid email in the POST payload
