@@ -5,6 +5,6 @@ namespace App\Exceptions;
 use Exception;
 
 
-class InvalidTeamException extends Exception
+class TeamNotFoundException extends Exception
 {
 }
