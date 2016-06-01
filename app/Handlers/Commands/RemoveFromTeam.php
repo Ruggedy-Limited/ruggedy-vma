@@ -42,6 +42,8 @@ class RemoveFromTeam extends CommandHandler
     }
 
     /**
+     * Process the RemoveFromTeam command
+     *
      * @param RemoveFromTeamCommand $command
      * @return mixed
      * @throws ActionNotPermittedException
@@ -63,7 +65,7 @@ class RemoveFromTeam extends CommandHandler
         $teamId = $command->getTeamId();
         $userId = $command->getUserId();
 
-        // Make sure we have all the required parameters
+        // Make sure all the required members are set on the command
         if (!isset($teamId, $userId)) {
             throw new InvalidInputException("All parameters are required and must be valid");
         }

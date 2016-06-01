@@ -41,7 +41,7 @@ class InviteToTeam extends CommandHandler
     }
 
     /**
-     * Handle and process the command
+     * Process the InviteToTeam Command
      *
      * @param InviteToTeamCommand $command
      * @return mixed
@@ -61,6 +61,7 @@ class InviteToTeam extends CommandHandler
 
         $teamId = $command->getTeamId();
         $email  = $command->getEmail();
+        // Make sure all the required members are set on the command
         if (!isset($teamId, $email)) {
             throw new InvalidInputException("InviteToTeam command must have a valid team ID and email address");
         }

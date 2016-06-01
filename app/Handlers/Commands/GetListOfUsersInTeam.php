@@ -41,7 +41,7 @@ class GetListOfUsersInTeam extends CommandHandler
     }
 
     /**
-     *
+     * Process the GetListOfUsersInTeam command
      *
      * @param GetListOfUsersInTeamCommand $command
      * @return User
@@ -61,7 +61,7 @@ class GetListOfUsersInTeam extends CommandHandler
             throw new Exception("Could not get the authenticated user");
         }
 
-        // Make sure we have all the required parameters
+        // Make sure all the required members are set on the command
         $teamId = $command->getTeamId();
         if (!isset($teamId)) {
             throw new InvalidInputException("Both a valid team ID and user ID are required");

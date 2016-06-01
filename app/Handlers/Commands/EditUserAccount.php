@@ -5,10 +5,12 @@ namespace App\Handlers\Commands;
 use App\Commands\EditUserAccount as EditUserAccountCommand;
 use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
+use App\Exceptions\InvalidInputException;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 
 
 class EditUserAccount extends CommandHandler
@@ -31,8 +33,10 @@ class EditUserAccount extends CommandHandler
     }
 
     /**
+     * Process the EditUserAccount command
+     *
      * @param EditUserAccountCommand $command
-     * @return \stdClass
+     * @return stdClass
      * @throws ActionNotPermittedException
      * @throws Exception
      */
@@ -46,6 +50,11 @@ class EditUserAccount extends CommandHandler
         }
 
         $userId = $command->getUserId();
+        // Check that the required member is set on the command
+        if (!isset($userId)) {
+            throw new InvalidInputException("The required userId member is not set on the command object");
+        }
+
         // Check that the user is editing their own account
         if ($requestingUser->getId() !== intval($userId)) {
             throw new ActionNotPermittedException("User editing account is not the account owner");

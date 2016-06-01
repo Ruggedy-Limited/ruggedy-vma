@@ -25,6 +25,7 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Translation\Translator;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
 use League\Tactician\CommandBus;
@@ -66,7 +67,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @Post("/user/{teamId}", as="user.invite", where={"teamId": "[0-9]+"})
      *
      * @param $teamId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     * @return ResponseFactory|JsonResponse
      */
     public function inviteToTeam($teamId)
     {
@@ -144,7 +145,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      *
      * @param $teamId
      * @param $userId
-     * @return ResponseFactory
+     * @return ResponseFactory|JsonResponse
      */
     public function removeFromTeam($teamId, $userId)
     {
@@ -235,7 +236,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      *
      * @param $teamId
      * @param $userId
-     * @return \Illuminate\Http\JsonResponse|void
+     * @return ResponseFactory|JsonResponse
      */
     public function getUserInformation($teamId, $userId)
     {
@@ -338,7 +339,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @GET("/users/{teamId}", as="users.info", where={"teamId": "[0-9]+"})
      *
      * @param $teamId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function getListOfUsersInTeam($teamId)
     {
@@ -368,9 +369,9 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
              * The Team was not found
              */
             $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
-                'teamId'      => $teamId,
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+                'teamId' => $teamId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
@@ -381,9 +382,9 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
              * The authenticated User does not own the given Team
              */
             $this->getLogger()->log(Logger::ERROR, "Authenticated user does not own the specified team", [
-                'teamId'      => $teamId,
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+                'teamId' => $teamId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
@@ -409,16 +410,30 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @PUT("/user/{userId}", as="user.edit", where={"userId": "([0-9]+)"})
      *
      * @param $userId
-     * @return ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function editUserAccount($userId)
     {
         try {
 
-            $command = new EditUserAccount($userId, $this->getRequest()->json()->all());
+            $command        = new EditUserAccount($userId, $this->getRequest()->json()->all());
             $requestingUser = $this->getBus()->handle($command);
 
             return response()->json($requestingUser);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid input was provided
+             */
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'userId'      => $userId ?? null,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
 
         } catch (UserNotFoundException $e) {
 
@@ -489,7 +504,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * Generate an error response to return to customer
      *
      * @param string $messageKey
-     * @return ResponseFactory
+     * @return ResponseFactory|JsonResponse
      */
     protected function generateErrorResponse($messageKey = '')
     {

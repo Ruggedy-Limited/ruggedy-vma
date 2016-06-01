@@ -41,7 +41,7 @@ class GetUserInformation extends CommandHandler
     }
 
     /**
-     *
+     * Process the GetUserInformation command
      *
      * @param GetUserInformationCommand $command
      * @return User
@@ -61,7 +61,7 @@ class GetUserInformation extends CommandHandler
             throw new Exception("Could not get the authenticated user");
         }
 
-        // Make sure we have all the required parameters
+        // Make sure all the required members are set on the command
         $teamId = $command->getTeamId();
         $userId = $command->getUserId();
         if (!isset($teamId, $userId)) {
