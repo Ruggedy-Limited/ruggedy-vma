@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Commands\CreateProject;
+use App\Commands\DeleteProject;
 use App\Commands\EditUserAccount;
 use App\Commands\GetUserInformation;
 use App\Commands\GetListOfUsersInTeam;
@@ -13,6 +15,7 @@ use App\Contracts\GivesUserFeedback;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
+use App\Exceptions\ProjectNotFoundException;
 use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\UserNotInTeamException;
@@ -530,45 +533,60 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @POST("/project/{userId?}", as="project.create", where={"userId":"[0-9]+"})
      *
      * @param $userId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     * @return ResponseFactory|JsonResponse
      */
     public function createProject($userId)
     {
-        $requestingUser = Auth::user();
-        if (empty($userId)) {
-            $requestedUser = $requestingUser;
-        }
-
-        if (isset($userId)) {
-            $requestedUser = User::find($userId);
-        }
-
-        if (empty($requestedUser)) {
-            $this->getLogger()->log(Logger::ERROR, "Could not get a valid user account", [
-                'userId'         => $userId ?: null,
-                'requestingUser' => $requestingUser->id ?: null,
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
-        }
-
-        $projectFields = $this->getRequest()->json()->all();
-        $projectFields['user_id'] = $requestedUser->id;
-
         try {
-            $project = Project::forceCreate($projectFields);
-        } catch (Exception $e) {
-            $this->getLogger()->log(Logger::ERROR, "Unable to create a new project", [
-                'userId'        => $requestedUser->id ?: null,
-                'projectFields' => $projectFields ?: null,
-                'exception'     => $e->getMessage(),
-                'trace'         => $this->getLogger()->getTraceAsArrayOfLines($e),
+            
+            $command = new CreateProject($userId, $this->getRequest()->json()->all());
+            $project = $this->getBus()->handle($command);
+
+            return response()->json($project);
+            
+        } catch (InvalidInputException $e) {
+            
+            /**
+             * Invalid Input
+             */
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'userId'      => $userId ?? null,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+            
+        } catch (UserNotFoundException $e) {
+            
+            /**
+             * User was not found
+             */
+            $this->getLogger()->log(Logger::ERROR, "Requested User does not exist", [
+                'userId'      => $userId,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+            
+        } catch (Exception $e) {
 
-            return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_CREATE_PROJECT);
+            /**
+             * Unspecified Exception
+             */
+            $this->getLogger()->log(Logger::ERROR, "Failed to create a new Project", [
+                'userId'      => $userId,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+            
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+            
         }
-
-        return response()->json($project);
     }
 
     /**
@@ -582,60 +600,68 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function deleteProject($projectId, $confirm = null)
     {
-        if (!isset($projectId)) {
+        try {
+            $command = new DeleteProject(intval($projectId), boolval($confirm));
+            $project = $this->getBus()->handle($command);
+
+            return response()->json($project);
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid Input
+             */
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'reason' => 'Required parameter $projectId is not set',
+                'projectId' => $projectId ?? null,
+                'confirm'   => $confirm ?? null,
+                'reason'    => $e->getMessage(),
+                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-        }
 
-        $project = Project::with('owner')->find($projectId);
-        if (empty($project)) {
+        } catch (ProjectNotFoundException $e) {
+
+            /**
+             * The Project was not found
+             */
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'projectId' => $projectId,
+                'confirm'   => $confirm ?? null,
+                'reason'    => $e->getMessage(),
+                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
             return $this->generateErrorResponse(MessagingModel::ERROR_PROJECT_DOES_NOT_EXIST);
-        }
 
-        $requestingUser = Auth::user();
-        $projectOwner = $project->owner;
-        if (!isset($projectOwner->id, $requestingUser->id)) {
-            $this->getLogger()->log(Logger::ERROR, "Could not get required User ID", [
-                'projectOwnerId'   => $project->owner->id ?: null,
-                'requestingUserId' => $requestingUser->id ?: null,
+        } catch (ActionNotPermittedException $e) {
+
+            /**
+             * The authenticate User does not have permission to delete the Project
+             */
+            $this->getLogger()->log(Logger::ERROR, "Permission Denied", [
+                'projectId' => $projectId,
+                'confirm'   => $confirm,
+                'reason'    => $e->getMessage(),
+                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_PROJECT_DOES_NOT_EXIST);
+
+        } catch (Exception $e) {
+
+            /**
+             * Unspecified Exception
+             */
+            $this->getLogger()->log(Logger::ERROR, "Permission Denied", [
+                'projectId' => $projectId,
+                'confirm'   => $confirm,
+                'reason'    => $e->getMessage(),
+                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+
         }
-
-
-        if ($projectOwner->id !== $requestingUser->id) {
-            $this->getLogger()->log(Logger::ALERT, "Attempt to delete project without permission", [
-                'requestingUserId' => $requestingUser->id,
-                'projectOwnerId'   => $projectOwner->id,
-                'projectId'        => $projectId,
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DELETE_PROJECT_PERMISSION);
-        }
-
-        if (empty($confirm)) {
-            return $this->generateErrorResponse(MessagingModel::WARNING_DELETING_PROJECT, false);
-        }
-
-        try {
-            $project->delete();
-        } catch (Exception $e) {
-            $this->getLogger()->log(Logger::ERROR, "Could not delete Project", [
-                'projectId'      => $projectId,
-                'confirm'        => $confirm,
-                'requestingUser' => $requestingUser->id ?: null,
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_DELETE_PROJECT);
-        }
-
-        $response = new \stdClass();
-        $response->id = $projectId;
-        return response()->json($response);
     }
 
     /**
