@@ -21,7 +21,8 @@
         "laravel-doctrine/migrations": "~1.0.7",
         "laracasts/flash": "~2.0.0",
         "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": "^3.0",
-        "mysql-workbench-schema-exporter/doctrine2-exporter": "^3.0"
+        "mysql-workbench-schema-exporter/doctrine2-exporter": "^3.0",
+        "madewithlove/tactician-laravel": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
