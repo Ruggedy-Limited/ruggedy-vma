@@ -3,21 +3,33 @@
 namespace App\Http\Controllers;
 
 use App;
-use App\User;
-use App\Team;
-use App\Project;
-use App\Workspace;
-use App\Services\JsonLogService;
-use Illuminate\Translation\Translator;
-use Illuminate\Http\Request;
-use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
-use Illuminate\Support\Facades\Validator;
-use App\Contracts\GivesUserFeedback;
+use App\Commands\EditUserAccount;
+use App\Commands\GetUserInformation;
+use App\Commands\GetListOfUsersInTeam;
+use App\Commands\InviteToTeam;
+use App\Commands\RemoveFromTeam;
 use App\Contracts\CustomLogging;
+use App\Contracts\GivesUserFeedback;
+use App\Exceptions\ActionNotPermittedException;
+use App\Exceptions\InvalidEmailException;
+use App\Exceptions\InvalidInputException;
+use App\Exceptions\TeamNotFoundException;
+use App\Exceptions\UserNotFoundException;
+use App\Exceptions\UserNotInTeamException;
+use App\Http\Responses\ErrorResponse;
 use App\Models\MessagingModel;
+use App\Services\JsonLogService;
+use App\Team as EloquentTeam;
+use App\User as EloquentUser;
+use Doctrine\ORM\ORMException;
 use Exception;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Translation\Translator;
+use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
+use League\Tactician\CommandBus;
 use Monolog\Logger;
-use Illuminate\Support\Facades\Auth;
 
 
 /**
@@ -30,12 +42,23 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
     
     /** @var  JsonLogService */
     protected $logger;
-    
-    public function __construct(Request $request, Translator $translator, JsonLogService $logger)
+    /** @var  CommandBus */
+    protected $bus;
+
+    /**
+     * ApiController constructor.
+     *
+     * @param Request $request
+     * @param Translator $translator
+     * @param JsonLogService $logger
+     * @param CommandBus $bus
+     */
+    public function __construct(Request $request, Translator $translator, JsonLogService $logger, CommandBus $bus)
     {
         parent::__construct($request, $translator);
         $this->setLoggerContext($logger);
         $this->setLogger($logger);
+        $this->bus = $bus;
     }
 
     /**
@@ -44,66 +67,75 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @Post("/user/{teamId}", as="user.invite", where={"teamId": "[0-9]+"})
      *
      * @param $teamId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     * @return ResponseFactory|JsonResponse
      */
     public function inviteToTeam($teamId)
     {
-        // Make sure we have all the required parameters
-        if (!isset($teamId)) {
+        try {
+            // Create a command and send it through the Command Bus
+            $command = new InviteToTeam($teamId, $this->getRequest()->json('email', null));
+            $invitation = $this->getBus()->handle($command);
+
+            // Hide the team details and return the invitation
+            $invitation->setHidden(['team']);
+            return response()->json($invitation);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid user input provided
+             */
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'details' => 'The $teamId parameter is required and was not set'
+                'teamId' => $teamId ?? null,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-        }
 
-        // Check that the team exists
-        $team = Team::find($teamId);
-        if (empty($team)) {
+        } catch (TeamNotFoundException $e) {
+
+            /**
+             * A related team was not found in the database for the given team ID
+             */
             $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
                 'teamId' => $teamId,
+                'email'  => $this->getRequest()->json('email', null),
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_TEAM);
-        }
 
-        // Check for a valid email in the POST payload
-        /** @var \Illuminate\Contracts\Validation\Validator $validation */
-        $email = $this->getRequest()->json('email');
-        $validation = Validator::make(['email' => $email], [
-            'email' => 'required|email'
-        ]);
+        } catch (InvalidEmailException $e) {
 
-        $email = $this->getRequest()->json('email');
-        if (empty($email) || $validation->fails()) {
-            $this->getLogger()->log(Logger::ERROR, "Invalid email address given", [
+            /**
+             * Received an invalid email address
+             */
+            $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
                 'teamId' => $teamId,
-                'email'  => $email,
+                'email'  => $this->getRequest()->json('email', null),
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL);
-        }
 
-        // Create a SendInvitation interaction
-        $sendInvitation = App::make(SendInvitation::class);
-
-        try {
-            // Send the invitation
-            $invitation = $sendInvitation->handle($team, $email);
         } catch (Exception $e) {
+
+            /**
+             * Unknown error
+             */
             $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
-                'teamId'    =>  $teamId,
-                'email'     => $email,
-                'exception' => $e->getMessage(),
-                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
+                'teamId' => $teamId,
+                'email'  => $this->getRequest()->json('email', null),
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_GENERAL);
-        }
 
-        // Hide the team details and return the invitation
-        $invitation->setHidden(['team']);
-        return response()->json($invitation);
+        }
     }
 
     /**
@@ -112,71 +144,89 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @Delete("/user/{teamId}/{userId}", as="user.remove", where={"teamId": "[0-9]+", "userId": "[0-9]+"})
      *
      * @param $teamId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     * @param $userId
+     * @return ResponseFactory|JsonResponse
      */
     public function removeFromTeam($teamId, $userId)
     {
-        // Make sure we have all the required parameters
-        if (!isset($teamId, $userId)) {
+        try {
+            // Create a command and send it through the Command Bus
+            $command = new RemoveFromTeam($teamId, $userId);
+            $responseData = $this->getBus()->handle($command);
+
+            return response()->json($responseData);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid input given
+             */
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
                 'teamId' => $teamId ?? null,
                 'userId' => $userId ?? null,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-        }
 
-        // Check for a valid team
-        $team = Team::find($teamId);
-        if (empty($team)) {
+        } catch (TeamNotFoundException $e) {
+
+            /**
+             * The Team was not found
+             */
             $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
                 'teamId' => $teamId,
                 'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-            
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
-        }
 
-        // Check that the User exists
-        $user = User::find($userId);
-        if (empty($user)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
+
+        } catch (UserNotFoundException $e) {
+
+            /**
+             * The User was not found
+             */
             $this->getLogger()->log(Logger::ERROR, "User not found in database or team", [
                 'teamId' => $teamId,
                 'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
-        }
 
-        try {
-            // Check that the user exists in the team
-            if (empty($user->teams()->wherePivot('team_id', $teamId)->first()->id)
-                || $user->teams()->wherePivot('team_id', $teamId)->first()->id !== intval($teamId)) {
-                return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
-            }
+        } catch (UserNotInTeamException $e) {
 
-            // Detach the team from the user
-            $user->teams()->detach($teamId);
-        } catch (Exception $e) {
-            $this->getLogger()->log(Logger::ERROR, "Could not remove user from team", [
-                'teamId'    => $teamId,
-                'userId'    => $userId,
-                'reason'    => "Query failed",
-                'exception' => $e->getMessage(),
-                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
+            /**
+             * The given User is not part of the given Team
+             */
+            $this->getLogger()->log(Logger::ERROR, "The given User is not part of the given Team", [
+                'teamId' => $teamId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-            
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-        }
 
-        // Get the team information and return the user and the team information
-        $team = Team::find($teamId);
-        
-        return response()->json([
-            $user->getTable() => $user,
-            $team->getTable() => $team
-        ]);
-        
+            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
+
+        } catch (Exception $e) {
+
+            /**
+             * Unknown error
+             */
+            $this->getLogger()->log(Logger::ERROR, "Could not remove user from team", [
+                'teamId' => $teamId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+
+        }
     }
 
     /**
@@ -186,89 +236,101 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      *
      * @param $teamId
      * @param $userId
-     * @return \Illuminate\Http\JsonResponse|void
+     * @return ResponseFactory|JsonResponse
      */
     public function getUserInformation($teamId, $userId)
     {
-        // Make sure we have all the required parameters
-        if (!isset($teamId, $userId)) {
+        try {
+
+            $command = new GetUserInformation($teamId, $userId);
+            $queriedUser = $this->getBus()->handle($command);
+
+            return response()->json($queriedUser);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid input was provided
+             */
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
                 'teamId' => $teamId ?? null,
                 'userId' => $userId ?? null,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-        }
 
-        // Make sure the user exists
-        /** @var User $queriedUser */
-        $queriedUser = User::find($userId);
-        if (empty($queriedUser)) {
+        } catch (UserNotFoundException $e) {
+
+            /**
+             * The User was not found
+             */
             $this->getLogger()->log(Logger::ERROR, "Requested user does not exist", [
-                'requestParams' => $this->getRequest()->all(),
                 'teamId' => $teamId,
-                'userId'        => $userId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
-        }
 
-        // Make sure the team exists
-        /** @var Team $team */
-        $team = Team::find($teamId);
-        if (empty($team)) {
+        } catch (TeamNotFoundException $e) {
+
+            /**
+             * The Team was not found
+             */
             $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
-                'requestParams' => $this->getRequest()->all(),
                 'teamId' => $teamId,
-                'userId'        => $userId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
-        }
-
-        // Get the authenticated
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
-                'requestParams' => $this->getRequest()->all(),
-                'teamId'        => $teamId,
-                'userId'        => $userId,
-            ]);
             
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-        }
+        } catch (ActionNotPermittedException $e) {
 
-        // Make sure that the user own the given team
-        if (!$requestingUser->ownsTeam($team)) {
+            /**
+             * The authenticated user does not own the specified team
+             */
             $this->getLogger()->log(Logger::DEBUG, "Authenticated user does not own the specified team", [
-                'requestParams' => $this->getRequest()->all(),
-                'teamId'        => $teamId,
-                'userId'        => $userId,
+                'teamId' => $teamId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-            
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
-        }
 
-        // Make sure the given user is on the team
-        if (!$queriedUser->onTeam($team)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
+
+        } catch (UserNotInTeamException $e) {
+
+            /**
+             * The User is not in the given Team
+             */
             $this->getLogger()->log(Logger::DEBUG, "Given user is not on the specified team", [
-                'requestParams' => $this->getRequest()->all(),
-                'teamId'        => $teamId,
-                'userId'        => $userId,
+                'teamId' => $teamId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
-        }
 
-        // Unless the authenticated user is requesting information about their own account, show only certain fields
-        if ($requestingUser->id !== intval($userId)) {
-            $queriedUser->setVisible([
-                'name', 'email', 'photo_url', 'uses_two_factor_auth',
+        } catch (Exception $e) {
+
+            /**
+             * Unspecified Exception
+             */
+            $this->getLogger()->log(Logger::ERROR, "Unspecified Exception", [
+                'teamId' => $teamId,
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-        }
 
-        return response()->json($queriedUser);
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
     }
 
     /**
@@ -277,57 +339,69 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @GET("/users/{teamId}", as="users.info", where={"teamId": "[0-9]+"})
      *
      * @param $teamId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function getListOfUsersInTeam($teamId)
     {
-        // Make sure we have all the required parameters
-        if (!isset($teamId)) {
+        try {
+
+            $command = new GetListOfUsersInTeam($teamId);
+            $users = $this->getBus()->handle($command);
+
+            return response()->json($users);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid input was provided
+             */
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'details' => 'The $teamId parameter is required and was not set'
+                'teamId' => $teamId ?? null,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-        }
 
-        // Check that the team exists
-        $team = Team::find($teamId);
-        if (empty($team)) {
-            $this->getLogger()->log(Logger::WARNING, "A team with the given ID could not be found", [
+        } catch (TeamNotFoundException $e) {
+
+            /**
+             * The Team was not found
+             */
+            $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
                 'teamId' => $teamId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
-        }
 
-        // Check that we can
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
-                'requestParams' => $this->getRequest()->all(),
-                'teamId'        => $teamId,
+        } catch (ActionNotPermittedException $e) {
+
+            /**
+             * The authenticated User does not own the given Team
+             */
+            $this->getLogger()->log(Logger::ERROR, "Authenticated user does not own the specified team", [
+                'teamId' => $teamId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
+
+        } catch (Exception $e) {
+
+            /**
+             * Unspecified Exception
+             */
+            $this->getLogger()->log(Logger::ERROR, "Unspecified Exception", [
+                'teamId' => $teamId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
-
-        // Make sure that the user own the given team
-        if (!$requestingUser->ownsTeam($team)) {
-            $this->getLogger()->log(Logger::DEBUG, "Authenticated user does not own the specified team", [
-                'requestParams' => $this->getRequest()->all(),
-                'teamId'        => $teamId,
-                'userId'        => $requestingUser->id,
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
-        }
-
-        // Get the list of team members and return them
-        $teamMembers = $team->users()->get([
-            'name', 'email', 'photo_url', 'uses_two_factor_auth',
-        ])->all();
-
-        return response()->json($teamMembers);
     }
 
     /**
@@ -336,60 +410,118 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      * @PUT("/user/{userId}", as="user.edit", where={"userId": "([0-9]+)"})
      *
      * @param $userId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function editUserAccount($userId)
     {
-        // Get the authenticated user
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
-        }
+        try {
 
-        // Check that the user is editing their own account
-        if ($requestingUser->id !== intval($userId)) {
-            $this->getLogger()->log(Logger::ALERT, "User attempting to edit someone elses account", [
-                'requestingUserId' => $requestingUser->id ?: null,
-                'requestedUserId'  => $userId,
+            $command        = new EditUserAccount($userId, $this->getRequest()->json()->all());
+            $requestingUser = $this->getBus()->handle($command);
+
+            return response()->json($requestingUser);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid input was provided
+             */
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'userId'      => $userId ?? null,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+
+        } catch (UserNotFoundException $e) {
+
+            /**
+             * The User was not found
+             */
+            $this->getLogger()->log(Logger::ERROR, "Requested user does not exist", [
+                'userId'      => $userId,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+
+        } catch (ActionNotPermittedException $e) {
+
+            /**
+             * The authenticated User does not have permission to edit the given User account
+             */
+            $this->getLogger()->log(Logger::ERROR, "Authenticated user does not own the specified team", [
+                'userId'      => $userId,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_CANNOT_EDIT_ACCOUNT);
-        }
 
-        // Apply the changes to the User Model
-        $profileChanges = $this->getRequest()->json()->all();
-        $requestingUser->forceFill($profileChanges);
 
-        // Save the changes
-        try {
-            $requestingUser->save();
-        } catch (Exception $e) {
+        } catch (ORMException $e) {
+
+            /**
+             * Database Error
+             */
+            $this->getLogger()->log(Logger::ERROR, "Could not update user account", [
+                'userId'      => $userId,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
             // Handle the case where the changes result in a duplicate email address
-            if (preg_match("/Duplicate entry '{$requestingUser->email}' for key 'users_email_unique'/", $e->getMessage())) {
+            if (preg_match("/Duplicate entry '(.*)' for key 'users_email_unique'/", $e->getMessage())) {
                 return $this->generateErrorResponse(MessagingModel::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS);
             }
 
-            // Handle the case where the person supplied a field that doesn't exist in the database
-            if (preg_match("/Column not found/", $e->getMessage())) {
-                return $this->generateErrorResponse(MessagingModel::ERROR_FIELD_DOES_NOT_EXIST);
-            }
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
 
+        } catch (Exception $e) {
+
+            /**
+             * Unspecified Exception
+             */
             $this->getLogger()->log(Logger::ERROR, "Could not update user account", [
-                'user'           => $requestingUser->toArray(),
-                'profileChanges' => $profileChanges,
-                'exception'      => $e->getMessage(),
-                'trace'          => $this->getLogger()->getTraceAsArrayOfLines($e),
+                'userId'      => $userId,
+                'requestBody' => $this->getRequest()->json(),
+                'reason'      => $e->getMessage(),
+                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
 
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+
+        }
+    }
+
+    /**
+     * Generate an error response to return to customer
+     *
+     * @param string $messageKey
+     * @return ResponseFactory|JsonResponse
+     */
+    protected function generateErrorResponse($messageKey = '')
+    {
+        $translatorNamespace = null;
+        if (!method_exists($this, 'getTranslatorNamespace')) {
+            return new ErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
 
-        $requestingUser->setVisible([
-            'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
-        ]);
-        
-        return response()->json($requestingUser);
+        $translatorNamespace = $this->getTranslatorNamespace();
+        $message = $this->getTranslator()->get($translatorNamespace . '.' . $messageKey);
+
+        if ($message == 'messages.' . $messageKey) {
+            $message = MessagingModel::ERROR_DEFAULT;
+        }
+
+        $errorResponse = new ErrorResponse($message);
+        return response()->json($errorResponse);
     }
 
     /**
@@ -432,7 +564,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
                 'exception'     => $e->getMessage(),
                 'trace'         => $this->getLogger()->getTraceAsArrayOfLines($e),
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_CREATE_PROJECT);
         }
 
@@ -454,10 +586,10 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
                 'reason' => 'Required parameter $projectId is not set',
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
         }
-        
+
         $project = Project::with('owner')->find($projectId);
         if (empty($project)) {
             return $this->generateErrorResponse(MessagingModel::ERROR_PROJECT_DOES_NOT_EXIST);
@@ -488,7 +620,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         if (empty($confirm)) {
             return $this->generateErrorResponse(MessagingModel::WARNING_DELETING_PROJECT, false);
         }
-        
+
         try {
             $project->delete();
         } catch (Exception $e) {
@@ -497,7 +629,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
                 'confirm'        => $confirm,
                 'requestingUser' => $requestingUser->id ?: null,
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_COULD_NOT_DELETE_PROJECT);
         }
 
@@ -573,9 +705,9 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
     /**
      * Get a list of projects on a particular person's account
-     * 
+     *
      * @GET("/projects/{userId}", as="projects.list", where={"userId":"[0-9]+"})
-     * 
+     *
      * @param $userId
      * @return \Illuminate\Contracts\Routing\ResponseFactory
      */
@@ -585,10 +717,10 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
             $this->getLogger()->log(Logger::ERROR, "Invalid input", [
                 'reason' => 'Required paramter $userId is not set',
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
         }
-        
+
         $requestingUser = Auth::user();
         if (empty($requestingUser)) {
             $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
@@ -598,13 +730,13 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
-        
+
         if ($requestingUser->id !== intval($userId)) {
             $this->getLogger()->log(Logger::ALERT, "User trying to list another user's Projects", [
                 'userId'           => $userId,
                 'requestingUserId' => $requestingUser->id,
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_LIST_PROJECTS_PERMISSION);
         }
 
@@ -637,7 +769,7 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
             return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
         }
-        
+
         $requestingUser = Auth::user();
         if (empty($requestingUser)) {
             $this->getLogger()->log(Logger::ERROR, "Could not get the authenticated user", [
@@ -657,13 +789,13 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
             return $this->generateErrorResponse(MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST);
         }
-        
+
         if (!isset($project->owner->id)) {
             $this->getLogger()->log(Logger::ERROR, "Could not get a required user ID", [
                 'projectId'        => $projectId,
                 'requestingUserId' => $requestingUser->id,
             ]);
-            
+
             return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
         }
 
@@ -858,15 +990,15 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
 
         return response()->json($requestingUser->workspaces()->get()->all());
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
 
     /**
      * Get the namespace for the translator to find the relevant response message
@@ -919,5 +1051,21 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
     public function setLogger($logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @return CommandBus
+     */
+    public function getBus()
+    {
+        return $this->bus;
+    }
+
+    /**
+     * @param CommandBus $bus
+     */
+    public function setBus($bus)
+    {
+        $this->bus = $bus;
     }
 }
