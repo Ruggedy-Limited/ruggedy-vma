@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Collection;
 use JsonSerializable;
@@ -14,6 +15,16 @@ use stdClass;
 
 abstract class AbstractEntity implements Jsonable, JsonSerializable
 {
+    /** Excluded field name constants */
+    const INITIALIZER_FIELD = '__initializer__';
+    const CLONER_FIELD      = '__cloner__';
+    const IS_INITIALIZED    = '__isInitialized__';
+    const PASSWORD_FIELD    = 'password';
+
+    /** TINYINT deleted field value constants */
+    const IS_DELETED  = 1;
+    const NOT_DELETED = 0;
+
     /**
      * @var \DateTime
      */
@@ -117,14 +128,6 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     }
 
     /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->toJson();
-    }
-
-    /**
      * Create a stdClass object of $this so that all the members are public and can be converted to a string
      *
      * @param array $onlyTheseAttributes
@@ -138,7 +141,8 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
         $members->filter(function($memberValue, $memberName) use ($onlyTheseAttributes)
         {
             // Explicitly excluded items
-            if ($memberName == "__isInitialized__" || $memberName == "password") {
+            $excludedSearchResult = $this->getExcludedFields()->search($memberName);
+            if ($excludedSearchResult !== false) {
                 return false;
             }
 
@@ -156,6 +160,16 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
             // value for the JSON representation
             if ($memberValue instanceof DateTime || $memberValue instanceof Carbon) {
                 $memberValue = $memberValue->format(env('APP_DATE_FORMAT'));
+            }
+
+            if ($memberValue instanceof PersistentCollection) {
+                $collectionForEncoding = [];
+                /** @var AbstractEntity $entity */
+                foreach ($memberValue->toArray() as $entity) {
+                    $collectionForEncoding[] = $entity->toStdClass(['id', 'name', 'created_at', 'updated_at']);
+                }
+
+                $memberValue = $collectionForEncoding;
             }
 
             if (is_object($memberValue) && !method_exists($memberValue, 'getId')) {
@@ -178,5 +192,18 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
         });
 
         return $objectForJson;
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function getExcludedFields()
+    {
+        return new Collection([
+            self::INITIALIZER_FIELD,
+            self::CLONER_FIELD,
+            self::IS_INITIALIZED,
+            self::PASSWORD_FIELD
+        ]);
     }
 }

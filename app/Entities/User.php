@@ -3,8 +3,8 @@
 namespace App\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
+use stdClass;
 
 /**
  * App\Entities\User
@@ -23,6 +23,25 @@ class User extends Base\User implements Authenticatable
     public function ownsTeam(Team $team)
     {
         return $this->getTeams()->contains($team);
+    }
+
+    /**
+     * Override the AbstractEntity method, just to provide a default set of attributes to include when coercing to
+     * stdClass for JSON
+     *
+     * @param array $onlyTheseAttributes
+     * @return stdClass
+     */
+    public function toStdClass($onlyTheseAttributes = [])
+    {
+        // Set a list of attributes to include by default when no specific list is given
+        if (empty($onlyTheseAttributes)) {
+            $onlyTheseAttributes = [
+                'id', 'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
+            ];
+        }
+
+        return parent::toStdClass($onlyTheseAttributes);
     }
 
     /**
