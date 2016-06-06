@@ -25,12 +25,4 @@ class GetListOfUsersInTeam extends Command
     {
         return $this->teamId;
     }
-
-    /**
-     * @param int $teamId
-     */
-    public function setTeamId($teamId)
-    {
-        $this->teamId = $teamId;
-    }
 }

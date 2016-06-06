@@ -32,26 +32,10 @@ class DeleteProject extends Command
     }
 
     /**
-     * @param int $projectId
-     */
-    public function setProjectId($projectId)
-    {
-        $this->projectId = $projectId;
-    }
-
-    /**
      * @return boolean
      */
     public function isConfirm()
     {
         return $this->confirm;
-    }
-
-    /**
-     * @param boolean $confirm
-     */
-    public function setConfirm($confirm)
-    {
-        $this->confirm = $confirm;
     }
 }

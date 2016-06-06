@@ -32,26 +32,10 @@ class CreateProject extends Command
     }
 
     /**
-     * @param int $userId
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-    }
-
-    /**
      * @return array
      */
     public function getProjectDetails()
     {
         return $this->projectDetails;
-    }
-
-    /**
-     * @param array $projectDetails
-     */
-    public function setProjectDetails($projectDetails)
-    {
-        $this->projectDetails = $projectDetails;
     }
 }

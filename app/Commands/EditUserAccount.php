@@ -31,26 +31,10 @@ class EditUserAccount extends Command
     }
 
     /**
-     * @param mixed $userId
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-    }
-
-    /**
      * @return array
      */
     public function getRequestedChanges()
     {
         return $this->requestedChanges;
-    }
-
-    /**
-     * @param array $requestedChanges
-     */
-    public function setRequestedChanges($requestedChanges)
-    {
-        $this->requestedChanges = $requestedChanges;
     }
 }
