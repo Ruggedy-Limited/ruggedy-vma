@@ -1,10 +1,10 @@
 <?php
 
-
 namespace App\Exceptions;
 
+use Exception;
 
-class WorkspaceNotFoundException
+
+class WorkspaceNotFoundException extends Exception
 {
-
 }
