@@ -33,7 +33,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'users',
         'teams',
         'team_users',
-        'projects'
+        'projects',
+        'workspaces',
     ];
 
     /**

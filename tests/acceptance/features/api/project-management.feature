@@ -15,8 +15,8 @@ Feature: As an account or team owner
       | 2  | Greg Symons    | gregsymons@dispostable.com | $2y$10$0WLCM1EUuJce.zSlS1N4h.XRn7u8uDbyxslTkFOI0ka0fxSIXmjhC | NULL           | /myphoto.jpg | 0                    | NULL     | NZ           | 06134582354 | NULL                  | 2               | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-20 11:51:29 | 2016-05-10 11:51:43        | 2016-05-10 11:51:29 | 2016-05-10 11:51:43 |
       | 3  | Another Person | another@dispostable.com    | $2y$10$0WLCM1EUuJce.zSlS1N4h.XRn7u8uDbyxslTkFOI0ka0fxSIXmjhC | NULL           | /aphoto.jpg  | 0                    | NULL     | AUS          | 08134582354 | NULL                  | 3               | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-20 11:51:29 | 2016-05-10 11:51:43        | 2016-05-10 11:51:29 | 2016-05-10 11:51:43 |
     And the following existing Teams:
-      | id | owner_id | name       | photo_url | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | created_at          | updated_at          |
-      | 1  | 1        | Johns Team | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 |
+      | id | owner_id | name        | photo_url | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | created_at          | updated_at          |
+      | 1  | 1        | Johns Team  | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 |
       | 2  | 3        | Jack's Team | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-11 11:39:01 | 2016-05-11 11:39:01 | 2016-05-09 14:39:01 |
     And the following Users in Team 1:
       | id | role   |
@@ -35,6 +35,7 @@ Feature: As an account or team owner
     When I request "/api/project/1"
     Then the HTTP response code should be 200
     And the response is JSON
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the response has a "name" property
@@ -50,6 +51,7 @@ Feature: As an account or team owner
     When I request "/api/project/2"
     Then the HTTP response code should be 200
     And the response is JSON
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the response has a "name" property
@@ -90,24 +92,19 @@ Feature: As an account or team owner
     When I request "/api/project/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a project will delete all the data related to that project. This is not reversable. Please confirm."
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "My Project"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is int
+    And the "deleted" property equals "0"
 
   Scenario: Delete and confirm deletion of a Project from my account
     Given that I want to delete a "Project"
-    When I request "/api/project/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a project will delete all the data related to that project. This is not reversable. Please confirm."
     When I request "/api/project/1/confirm"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -115,30 +112,31 @@ Feature: As an account or team owner
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "My Project"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is int
+    And the "deleted" property equals "1"
 
   Scenario: Delete a Project on someone else's account where I have Project write access
     Given that I want to delete a "Project"
     When I request "/api/project/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a project will delete all the data related to that project. This is not reversable. Please confirm."
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "A Project"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is int
+    And the "deleted" property equals "0"
 
   Scenario: Delete and confirm deletion of a Project on someone else's account where I have Project write access
     Given that I want to delete a "Project"
-    When I request "/api/project/2"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a project will delete all the data related to that project. This is not reversable. Please confirm."
     When I request "/api/project/2/confirm"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -146,6 +144,12 @@ Feature: As an account or team owner
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "A Project"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is int
+    And the "deleted" property equals "1"
 
   Scenario: I attempt to delete a Project on someone else's account where I don't have Project write access
     Given that I want to delete a "Project"
@@ -190,6 +194,7 @@ Feature: As an account or team owner
     When I request "/api/project/2"
     Then the HTTP response code should be 200
     And the response is JSON
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "2"
