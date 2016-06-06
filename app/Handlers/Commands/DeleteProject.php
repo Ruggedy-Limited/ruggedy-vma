@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\DeleteProject as DeleteProjectCommand;
+use App\Entities\Base\AbstractEntity;
 use App\Entities\Project;
 use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
@@ -17,8 +18,10 @@ use stdClass;
 
 class DeleteProject extends CommandHandler
 {
+    /** @var ProjectRepository */
     protected $projectRepository;
-
+    
+    /** @var EntityManager */
     protected $em;
 
     /**
@@ -66,17 +69,18 @@ class DeleteProject extends CommandHandler
         }
 
         // Check that the User has permission to delete the Project
-        if ($requestingUser !== $project->getUser()->getId()) {
+        if ($requestingUser->getId() !== $project->getUser()->getId()) {
             throw new ActionNotPermittedException("User does not have permission to delete this Project");
         }
 
         // If the deletion has been confirmed, then set the deleted flag on the Project and save to the database
         if ($command->isConfirm()) {
-            $project->setDeleted(true);
+            $project->setDeleted(AbstractEntity::IS_DELETED);
+            $this->getEm()->persist($project);
             $this->getEm()->flush($project);
         }
 
-        return $project->toStdClass(['id', 'name']);
+        return $project->toStdClass(['id', 'name', 'workspaces', 'deleted']);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\CreateProject as CreateProjectCommand;
+use App\Entities\Base\AbstractEntity;
 use App\Entities\Project;
 use App\Entities\User;
 use App\Exceptions\InvalidInputException;
@@ -16,7 +17,7 @@ use stdClass;
 
 class CreateProject
 {
-    
+    /** @var UserRepository */
     protected $userRepository;
     
     /** @var EntityManager */
@@ -66,17 +67,24 @@ class CreateProject
             throw new UserNotFoundException("A User related to the given user ID was not found");
         }
 
+        //TODO: Check User permissions for creating Projects
+
+        // Create a new Project entity
         $project = new Project();
         $project->setFromArray($command->getProjectDetails());
         $project->setUser($projectOwner);
+        $project->setUserId($projectOwner->getId());
+        $project->setDeleted(AbstractEntity::NOT_DELETED);
 
+        // Add the project to the user in the current session
         $requestingUser->addProject($project);
 
+        // Persist the Project in the Database
         $this->getEm()->persist($project);
         $this->getEm()->flush($project);
 
         return $project->toStdClass([
-            'id', 'name'
+            'id', 'name', 'user_id'
         ]);
     }
 

@@ -101,10 +101,10 @@ class RemoveFromTeam extends CommandHandler
         $this->getEm()->persist($user);
         $this->getEm()->flush($user);
 
-        return new Collection([
-            'user' => $user,
-            'team' => $team
-        ]);
+        return [
+            'user' => $user->toStdClass(['id', 'email', 'name']),
+            'team' => $team->toStdClass(['id', 'name'])
+        ];
     }
 
     /**
