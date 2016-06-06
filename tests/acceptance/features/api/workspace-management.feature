@@ -54,6 +54,7 @@ Feature: As an account or team owner
     When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the response has a "name" property
@@ -97,24 +98,19 @@ Feature: As an account or team owner
     When I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "John's Workspace"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is integer
+    And the "deleted" property equals "0"
 
   Scenario: Delete and confirm deletion of a Workspace from my account
     Given that I want to delete a "Workspace"
-    When I request "/api/workspace/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
     When I request "/api/workspace/1/confirm"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -122,30 +118,31 @@ Feature: As an account or team owner
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "John's Workspace"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is integer
+    And the "deleted" property equals "1"
 
   Scenario: Delete a Workspace on someone else's account where I have write access
     Given that I want to delete a "Workspace"
     When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "Someone's Workspace"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is integer
+    And the "deleted" property equals "0"
 
   Scenario: Delete and confirm deletion of a Workspace on someone else's account where I have Workspace write access
     Given that I want to delete a "Workspace"
-    When I request "/api/workspace/2"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "false"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Deleting a workspace will delete all the data related to that workspace. This is not reversable. Please confirm."
     When I request "/api/workspace/2/confirm"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -153,6 +150,12 @@ Feature: As an account or team owner
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "Someone's Workspace"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is integer
+    And the "deleted" property equals "1"
 
   Scenario: I attempt to delete a Workspace on someone else's account where I don't have Workspace write access
     Given that I want to delete a "Workspace"
@@ -164,7 +167,7 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, you don't have permission to delete Workspaces from that Project."
+    And the "message" property equals "Sorry, you don't have permission to delete that Workspace."
 
   Scenario: I attempt to delete a non-existent Workspace
     Given that I want to delete a "Workspace"
@@ -176,7 +179,7 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we that Workspace does not exist."
+    And the "message" property equals "Sorry, that Workspace does not exist."
 
   Scenario: Edit the name of one of my workspaces
     Given that I want to update a "Workspace"
@@ -184,6 +187,7 @@ Feature: As an account or team owner
     When I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "1"
@@ -203,6 +207,7 @@ Feature: As an account or team owner
     When I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
+    And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "2"

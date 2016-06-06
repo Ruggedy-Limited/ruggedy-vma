@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Commands\Command;
+use App\Commands\CreateWorkspace;
 use App\Commands\DeleteProject;
+use App\Commands\DeleteWorkspace;
 use App\Commands\EditProject;
 use App\Commands\EditUserAccount;
+use App\Commands\EditWorkspace;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersProjects;
 use App\Commands\GetUserInformation;
@@ -16,6 +19,7 @@ use App\Exceptions\ProjectNotFoundException;
 use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\UserNotInTeamException;
+use App\Exceptions\WorkspaceNotFoundException;
 use Doctrine\ORM\ORMException;
 use Illuminate\Support\Collection;
 use Exception;
@@ -79,6 +83,9 @@ class MessagingModel
             DeleteProject::class          => static::ERROR_DELETE_PROJECT_PERMISSION,
             EditProject::class            => static::ERROR_EDIT_PROJECT_PERMISSION,
             GetListOfUsersProjects::class => static::ERROR_LIST_PROJECTS_PERMISSION,
+            CreateWorkspace::class        => static::ERROR_WORKSPACE_CREATE_PERMISSION,
+            DeleteWorkspace::class        => static::ERROR_DELETE_WORKSPACE_PERMISSION,
+            EditWorkspace::class          => static::ERROR_EDIT_WORKSPACE_PERMISSION,
         ]);
 
         static::$commandMessageMap = new Collection([
@@ -90,6 +97,7 @@ class MessagingModel
             UserNotFoundException::class       => static::ERROR_USER_DOES_NOT_EXIST,
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
+            WorkspaceNotFoundException::class  => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
         ]);
     }
 

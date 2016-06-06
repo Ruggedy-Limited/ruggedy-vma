@@ -9,6 +9,7 @@ use App\Commands\CreateWorkspace;
 use App\Commands\DeleteProject;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditProject;
+use App\Commands\EditWorkspace;
 use App\Commands\EditUserAccount;
 use App\Commands\GetUserInformation;
 use App\Commands\GetListOfUsersInTeam;
@@ -275,70 +276,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function editWorkspace($workspaceId)
     {
-        try {
-
-            $command = new EditWorkspace($workspaceId, $this->getRequest()->json()->all());
-            $workspace = $this->getBus()->handle($command);
-
-            return response()->json($workspace);
-
-        } catch (InvalidInputException $e) {
-
-            /**
-             * Invalid Input
-             */
-            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'workspaceId'   => $workspaceId ?? null,
-                'requestBody' => $this->getRequest()->json()->all(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-
-
-        } catch (WorkspaceNotFoundException $e) {
-
-            /**
-             * Workspace not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "Workspace not found", [
-                'workspaceId'   => $workspaceId,
-                'requestBody' => $this->getRequest()->json()->all(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST);
-
-        } catch (ActionNotPermittedException $e) {
-
-            /**
-             * User does not have permission to perform this action
-             */
-            $this->getLogger()->log(Logger::ERROR, "Permission Denied", [
-                'workspaceId'   => $workspaceId,
-                'requestBody' => $this->getRequest()->json()->all(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_EDIT_WORKSPACE_PERMISSION);
-
-        } catch (Exception $e) {
-
-            /**
-             * Unspecified Exception
-             */
-            $this->getLogger()->log(Logger::ERROR, "Could not edit Workspace", [
-                'workspaceId'   => $workspaceId,
-                'requestBody' => $this->getRequest()->json()->all(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-        }
+        $command = new EditWorkspace(intval($workspaceId), $this->getRequest()->json()->all());
+        return $this->sendCommandToBusHelper($command);
     }
 
     /**
