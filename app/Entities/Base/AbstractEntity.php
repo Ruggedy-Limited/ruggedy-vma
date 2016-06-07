@@ -4,7 +4,6 @@ namespace App\Entities\Base;
 
 use Carbon\Carbon;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Contracts\Support\Jsonable;
@@ -125,6 +124,14 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     public function jsonSerialize()
     {
         return $this->toStdClass();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
     }
 
     /**
