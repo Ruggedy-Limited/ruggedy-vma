@@ -19,7 +19,7 @@ abstract class CreateSomething extends Command
      */
     public function __construct(int $id, array $details)
     {
-        $this->id             = $id;
+        $this->id      = $id;
         $this->details = $details;
     }
 
