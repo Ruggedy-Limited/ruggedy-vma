@@ -18,8 +18,10 @@ use stdClass;
 
 class DeleteWorkspace extends CommandHandler
 {
+    /** @var WorkspaceRepository */
     protected $workspaceRepository;
-    
+
+    /** @var EntityManager */
     protected $em;
 
     /**
@@ -54,7 +56,7 @@ class DeleteWorkspace extends CommandHandler
         }
 
         // Make sure that all the required members are set on the command
-        $workspaceId = $command->getWorkspaceId();
+        $workspaceId = $command->getId();
         if (!isset($workspaceId)) {
             throw new InvalidInputException("The required projectId member is not set on the command object");
         }

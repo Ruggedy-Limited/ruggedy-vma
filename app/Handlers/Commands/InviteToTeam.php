@@ -21,8 +21,10 @@ class InviteToTeam extends CommandHandler
 {
     /** @var TeamRepository  */
     protected $repository;
+
     /** @var Factory  */
     protected $validator;
+
     /** @var  SendInvitation */
     protected $service;
 

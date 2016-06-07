@@ -55,7 +55,7 @@ class EditWorkspace extends CommandHandler
         }
 
         // Make sure all the required members are set on the command
-        $workspaceId      = $command->getWorkspaceId();
+        $workspaceId      = $command->getId();
         $requestedChanges = $command->getRequestedChanges();
         if (!isset($workspaceId) || empty($requestedChanges)) {
             throw new InvalidInputException("One or more required members were not set on the command object");

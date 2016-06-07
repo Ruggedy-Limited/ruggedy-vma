@@ -56,7 +56,7 @@ class DeleteProject extends CommandHandler
         }
 
         // Make sure that all the required members are set on the command
-        $projectId = $command->getProjectId();
+        $projectId = $command->getId();
         if (!isset($projectId)) {
             throw new InvalidInputException("The required projectId member is not set on the command object");
         }

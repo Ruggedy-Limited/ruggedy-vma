@@ -47,7 +47,7 @@ class GetListOfUsersProjects extends CommandHandler
         }
 
         // Make sure all the required members are set on the command
-        $userId = $command->getUserId();
+        $userId = $command->getId();
         if (!isset($userId)) {
             throw new InvalidInputException("The required User ID was not set on the given command");
         }

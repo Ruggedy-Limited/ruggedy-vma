@@ -21,8 +21,10 @@ class GetUserInformation extends CommandHandler
 {
     /** @var TeamRepository  */
     protected $teamRepository;
+    
     /** @var UserRepository  */
     protected $userRepository;
+    
     /** @var EntityManager  */
     protected $em;
 

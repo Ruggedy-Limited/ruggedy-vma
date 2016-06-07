@@ -55,7 +55,7 @@ class EditProject extends CommandHandler
         }
 
         // Make sure all the required members are set on the command
-        $projectId        = $command->getProjectId();
+        $projectId        = $command->getId();
         $requestedChanges = $command->getRequestedChanges();
         if (!isset($projectId) || empty($requestedChanges)) {
             throw new InvalidInputException("One or more required members were not set on the command object");

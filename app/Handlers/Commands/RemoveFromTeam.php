@@ -14,7 +14,6 @@ use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -22,8 +21,10 @@ class RemoveFromTeam extends CommandHandler
 {
     /** @var UserRepository  */
     protected $userRepository;
+
     /** @var TeamRepository  */
     protected $teamRepository;
+
     /** @var EntityManager  */
     protected $em;
 
@@ -102,8 +103,8 @@ class RemoveFromTeam extends CommandHandler
         $this->getEm()->flush($user);
 
         return [
-            'user' => $user->toStdClass(['id', 'email', 'name']),
-            'team' => $team->toStdClass(['id', 'name'])
+            'user' => $user,
+            'team' => $team,
         ];
     }
 

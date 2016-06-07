@@ -52,9 +52,10 @@ class CreateProject
             throw new Exception("Could not get the authenticated user");
         }
 
-        $userId = $command->getUserId();
+        $userId         = $command->getId();
+        $projectDetails = $command->getDetails();
         // Check that the required member is set on the command
-        if (!isset($userId) || empty($command->getProjectDetails())) {
+        if (!isset($userId) || empty($projectDetails)) {
             throw new InvalidInputException("One or more required members were not set on the given command object");
         }
         
@@ -71,7 +72,7 @@ class CreateProject
 
         // Create a new Project entity
         $project = new Project();
-        $project->setFromArray($command->getProjectDetails());
+        $project->setFromArray($projectDetails);
         $project->setUser($projectOwner);
         $project->setUserId($projectOwner->getId());
         $project->setDeleted(AbstractEntity::NOT_DELETED);
