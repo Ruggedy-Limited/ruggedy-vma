@@ -17,6 +17,7 @@ class EditUserAccount extends CommandHandler
 {
     /** @var UserRepository */
     protected $userRepository;
+    
     /** @var EntityManager */
     protected $em;
 
@@ -49,7 +50,7 @@ class EditUserAccount extends CommandHandler
             throw new Exception("Could not get the authenticated user");
         }
 
-        $userId = $command->getUserId();
+        $userId = $command->getId();
         // Check that the required member is set on the command
         if (!isset($userId)) {
             throw new InvalidInputException("The required userId member is not set on the command object");

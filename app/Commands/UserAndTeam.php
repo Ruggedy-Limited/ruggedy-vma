@@ -31,26 +31,10 @@ abstract class UserAndTeam extends Command
     }
 
     /**
-     * @param mixed $teamId
-     */
-    public function setTeamId($teamId)
-    {
-        $this->teamId = $teamId;
-    }
-
-    /**
      * @return mixed
      */
     public function getUserId()
     {
         return $this->userId;
-    }
-
-    /**
-     * @param mixed $userId
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
     }
 }

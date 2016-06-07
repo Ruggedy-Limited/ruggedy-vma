@@ -4,8 +4,10 @@ namespace Tests\Acceptance\Features\Bootstrap;
 
 use App\Exceptions\FeatureBackgroundSetupFailedException;
 use App\Exceptions\InvalidConfigurationException;
+use App\Project;
 use App\Team;
 use App\User;
+use App\Workspace;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
@@ -31,6 +33,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'users',
         'teams',
         'team_users',
+        'projects',
+        'workspaces',
     ];
 
     /**

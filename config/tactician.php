@@ -17,7 +17,6 @@ return [
 
     'middlewares' => [
         LockingMiddleware::class,
-        TransactionMiddleware::class,
         CommandHandlerMiddleware::class,
     ],
 

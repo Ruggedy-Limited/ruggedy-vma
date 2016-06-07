@@ -21,8 +21,10 @@ class GetListOfUsersInTeam extends CommandHandler
 {
     /** @var TeamRepository  */
     protected $teamRepository;
+
     /** @var UserRepository  */
     protected $userRepository;
+    
     /** @var EntityManager  */
     protected $em;
 
@@ -62,7 +64,7 @@ class GetListOfUsersInTeam extends CommandHandler
         }
 
         // Make sure all the required members are set on the command
-        $teamId = $command->getTeamId();
+        $teamId = $command->getId();
         if (!isset($teamId)) {
             throw new InvalidInputException("Both a valid team ID and user ID are required");
         }

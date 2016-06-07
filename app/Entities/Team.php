@@ -4,6 +4,8 @@ namespace App\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use stdClass;
+
 
 /**
  * App\Entities\Team
@@ -29,6 +31,25 @@ class Team extends Base\Team
     {
         parent::__construct();
         $this->users = new ArrayCollection();
+    }
+
+    /**
+     * Override the AbstractEntity method, just to provide a default set of attributes to include when coercing to
+     * stdClass for JSON
+     *
+     * @param array $onlyTheseAttributes
+     * @return stdClass
+     */
+    public function toStdClass($onlyTheseAttributes = [])
+    {
+        // Set a list of attributes to include by default when no specific list is given
+        if (empty($onlyTheseAttributes)) {
+            $onlyTheseAttributes = [
+                'id', 'name', 'created_at', 'updated_at'
+            ];
+        }
+
+        return parent::toStdClass($onlyTheseAttributes);
     }
 
     /**

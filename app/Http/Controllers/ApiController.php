@@ -3,27 +3,32 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Commands\Command;
+use App\Commands\CreateProject;
+use App\Commands\CreateWorkspace;
+use App\Commands\DeleteProject;
+use App\Commands\DeleteWorkspace;
+use App\Commands\EditProject;
+use App\Commands\EditWorkspace;
 use App\Commands\EditUserAccount;
 use App\Commands\GetUserInformation;
 use App\Commands\GetListOfUsersInTeam;
+use App\Commands\GetListOfUsersProjects;
 use App\Commands\InviteToTeam;
 use App\Commands\RemoveFromTeam;
 use App\Contracts\CustomLogging;
 use App\Contracts\GivesUserFeedback;
 use App\Exceptions\ActionNotPermittedException;
-use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
-use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
-use App\Exceptions\UserNotInTeamException;
 use App\Http\Responses\ErrorResponse;
 use App\Models\MessagingModel;
 use App\Services\JsonLogService;
 use App\Team as EloquentTeam;
 use App\User as EloquentUser;
-use Doctrine\ORM\ORMException;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Translation\Translator;
@@ -61,6 +66,10 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         $this->bus = $bus;
     }
 
+    /*********
+     * USERS *
+     *********/
+
     /**
      * Allow a team administrator to add a new user to their team
      *
@@ -71,71 +80,14 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function inviteToTeam($teamId)
     {
-        try {
-            // Create a command and send it through the Command Bus
-            $command = new InviteToTeam($teamId, $this->getRequest()->json('email', null));
-            $invitation = $this->getBus()->handle($command);
-
+        $command = new InviteToTeam($teamId, $this->getRequest()->json('email', null));
+        return $this->sendCommandToBusHelper($command, function($invitation)
+        {
             // Hide the team details and return the invitation
+            /** @var Model $invitation */
             $invitation->setHidden(['team']);
-            return response()->json($invitation);
-
-        } catch (InvalidInputException $e) {
-            
-            /**
-             * Invalid user input provided
-             */
-            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'teamId' => $teamId ?? null,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-
-        } catch (TeamNotFoundException $e) {
-
-            /**
-             * A related team was not found in the database for the given team ID
-             */
-            $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
-                'teamId' => $teamId,
-                'email'  => $this->getRequest()->json('email', null),
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_TEAM);
-
-        } catch (InvalidEmailException $e) {
-
-            /**
-             * Received an invalid email address
-             */
-            $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
-                'teamId' => $teamId,
-                'email'  => $this->getRequest()->json('email', null),
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_INVALID_EMAIL);
-
-        } catch (Exception $e) {
-
-            /**
-             * Unknown error
-             */
-            $this->getLogger()->log(Logger::ERROR, "Could not send team invitation", [
-                'teamId' => $teamId,
-                'email'  => $this->getRequest()->json('email', null),
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_SENDING_INVITE_GENERAL);
-
-        }
+            return $invitation;
+        });
     }
 
     /**
@@ -149,84 +101,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function removeFromTeam($teamId, $userId)
     {
-        try {
-            // Create a command and send it through the Command Bus
-            $command = new RemoveFromTeam($teamId, $userId);
-            $responseData = $this->getBus()->handle($command);
-
-            return response()->json($responseData);
-
-        } catch (InvalidInputException $e) {
-
-            /**
-             * Invalid input given
-             */
-            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'teamId' => $teamId ?? null,
-                'userId' => $userId ?? null,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-
-        } catch (TeamNotFoundException $e) {
-
-            /**
-             * The Team was not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "Team not found in database", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
-            
-        } catch (UserNotFoundException $e) {
-
-            /**
-             * The User was not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "User not found in database or team", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
-            
-        } catch (UserNotInTeamException $e) {
-
-            /**
-             * The given User is not part of the given Team
-             */
-            $this->getLogger()->log(Logger::ERROR, "The given User is not part of the given Team", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
-            
-        } catch (Exception $e) {
-
-            /**
-             * Unknown error
-             */
-            $this->getLogger()->log(Logger::ERROR, "Could not remove user from team", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-            
-        }
+        $command = new RemoveFromTeam($teamId, $userId);
+        return $this->sendCommandToBusHelper($command);
     }
 
     /**
@@ -240,97 +116,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function getUserInformation($teamId, $userId)
     {
-        try {
-
-            $command = new GetUserInformation($teamId, $userId);
-            $queriedUser = $this->getBus()->handle($command);
-
-            return response()->json($queriedUser);
-
-        } catch (InvalidInputException $e) {
-
-            /**
-             * Invalid input was provided
-             */
-            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'teamId' => $teamId ?? null,
-                'userId' => $userId ?? null,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-            
-        } catch (UserNotFoundException $e) {
-
-            /**
-             * The User was not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "Requested user does not exist", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
-            
-        } catch (TeamNotFoundException $e) {
-
-            /**
-             * The Team was not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
-            
-        } catch (ActionNotPermittedException $e) {
-
-            /**
-             * The authenticated user does not own the specified team
-             */
-            $this->getLogger()->log(Logger::DEBUG, "Authenticated user does not own the specified team", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
-
-        } catch (UserNotInTeamException $e) {
-
-            /**
-             * The User is not in the given Team
-             */
-            $this->getLogger()->log(Logger::DEBUG, "Given user is not on the specified team", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST);
-
-        } catch (Exception $e) {
-
-            /**
-             * Unspecified Exception
-             */
-            $this->getLogger()->log(Logger::ERROR, "Unspecified Exception", [
-                'teamId' => $teamId,
-                'userId' => $userId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-        }
+        $command = new GetUserInformation($teamId, $userId);
+        return $this->sendCommandToBusHelper($command);
     }
 
     /**
@@ -343,65 +130,8 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function getListOfUsersInTeam($teamId)
     {
-        try {
-
-            $command = new GetListOfUsersInTeam($teamId);
-            $users = $this->getBus()->handle($command);
-
-            return response()->json($users);
-
-        } catch (InvalidInputException $e) {
-
-            /**
-             * Invalid input was provided
-             */
-            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'teamId' => $teamId ?? null,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-
-        } catch (TeamNotFoundException $e) {
-
-            /**
-             * The Team was not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "Requested team does not exist", [
-                'teamId' => $teamId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_TEAM_DOES_NOT_EXIST);
-
-        } catch (ActionNotPermittedException $e) {
-
-            /**
-             * The authenticated User does not own the given Team
-             */
-            $this->getLogger()->log(Logger::ERROR, "Authenticated user does not own the specified team", [
-                'teamId' => $teamId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_NOT_TEAM_OWNER);
-
-        } catch (Exception $e) {
-
-            /**
-             * Unspecified Exception
-             */
-            $this->getLogger()->log(Logger::ERROR, "Unspecified Exception", [
-                'teamId' => $teamId,
-                'reason' => $e->getMessage(),
-                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-        }
+        $command = new GetListOfUsersInTeam($teamId);
+        return $this->sendCommandToBusHelper($command);
     }
 
     /**
@@ -414,90 +144,69 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
      */
     public function editUserAccount($userId)
     {
-        try {
+        $command = new EditUserAccount($userId, $this->getRequest()->json()->all());
+        return $this->sendCommandToBusHelper($command);
+    }
 
-            $command        = new EditUserAccount($userId, $this->getRequest()->json()->all());
-            $requestingUser = $this->getBus()->handle($command);
+    /************
+     * PROJECTS *
+     ************/
 
-            return response()->json($requestingUser);
+    /**
+     * Create a project in the given user account or in the authenticated user's account if no userId is given
+     *
+     * @POST("/project/{userId?}", as="project.create", where={"userId":"[0-9]+"})
+     *
+     * @param $userId
+     * @return ResponseFactory|JsonResponse
+     */
+    public function createProject($userId)
+    {
+        $command = new CreateProject($userId, $this->getRequest()->json()->all());
+        return $this->sendCommandToBusHelper($command);
+    }
 
-        } catch (InvalidInputException $e) {
+    /**
+     * Delete a project
+     *
+     * @DELETE("/project/{projectId}/{confirm?}", as="project.delete", where={"projectId":"[0-9]+", "confirm":"^confirm$"})
+     *
+     * @param $projectId
+     * @param null $confirm
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function deleteProject($projectId, $confirm = null)
+    {
+        $command = new DeleteProject(intval($projectId), boolval($confirm));
+        return $this->sendCommandToBusHelper($command);
+    }
 
-            /**
-             * Invalid input was provided
-             */
-            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
-                'userId'      => $userId ?? null,
-                'requestBody' => $this->getRequest()->json(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
+    /**
+     * Edit Project Details
+     *
+     * @PUT("/project/{projectId}", as="project.edit", where={"projectId":"[0-9]+"})
+     *
+     * @param $projectId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function editProject($projectId)
+    {
+        $command = new EditProject($projectId, $this->getRequest()->json()->all());
+        return $this->sendCommandToBusHelper($command);
+    }
 
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
-
-        } catch (UserNotFoundException $e) {
-
-            /**
-             * The User was not found
-             */
-            $this->getLogger()->log(Logger::ERROR, "Requested user does not exist", [
-                'userId'      => $userId,
-                'requestBody' => $this->getRequest()->json(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
-
-        } catch (ActionNotPermittedException $e) {
-
-            /**
-             * The authenticated User does not have permission to edit the given User account
-             */
-            $this->getLogger()->log(Logger::ERROR, "Authenticated user does not own the specified team", [
-                'userId'      => $userId,
-                'requestBody' => $this->getRequest()->json(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_CANNOT_EDIT_ACCOUNT);
-
-
-        } catch (ORMException $e) {
-
-            /**
-             * Database Error
-             */
-            $this->getLogger()->log(Logger::ERROR, "Could not update user account", [
-                'userId'      => $userId,
-                'requestBody' => $this->getRequest()->json(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            // Handle the case where the changes result in a duplicate email address
-            if (preg_match("/Duplicate entry '(.*)' for key 'users_email_unique'/", $e->getMessage())) {
-                return $this->generateErrorResponse(MessagingModel::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS);
-            }
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-
-        } catch (Exception $e) {
-
-            /**
-             * Unspecified Exception
-             */
-            $this->getLogger()->log(Logger::ERROR, "Could not update user account", [
-                'userId'      => $userId,
-                'requestBody' => $this->getRequest()->json(),
-                'reason'      => $e->getMessage(),
-                'trace'       => $this->getLogger()->getTraceAsArrayOfLines($e),
-            ]);
-
-            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
-
-        }
+    /**
+     * Get a list of projects on a particular person's account
+     *
+     * @GET("/projects/{userId}", as="projects.list", where={"userId":"[0-9]+"})
+     *
+     * @param $userId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function getProjectsForUser($userId)
+    {
+        $command  = new GetListOfUsersProjects(intval($userId));
+        return $this->sendCommandToBusHelper($command);
     }
 
     /**
@@ -523,6 +232,161 @@ class ApiController extends Controller implements GivesUserFeedback, CustomLoggi
         $errorResponse = new ErrorResponse($message);
         return response()->json($errorResponse);
     }
+
+    /**************
+     * WORKSPACES *
+     **************/
+    
+    /**
+     * Create a workspace in the given project
+     *
+     * @POST("/workspace/{projectId}", as="workspace.create", where={"projectId":"[0-9]+"})
+     *
+     * @param $projectId
+     * @return ResponseFactory|JsonResponse
+     */
+    public function createWorkspace($projectId)
+    {
+        $command = new CreateWorkspace($projectId, $this->getRequest()->json()->all());
+        return $this->sendCommandToBusHelper($command);
+    }
+
+    /**
+     * Delete a workspace
+     *
+     * @DELETE("/workspace/{workspaceId}/{confirm?}", as="workspace.delete", where={"workspaceId":"[0-9]+", "confirm":"^confirm$"})
+     *
+     * @param $workspaceId
+     * @param null $confirm
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function deleteWorkspace($workspaceId, $confirm = null)
+    {
+        $command = new DeleteWorkspace(intval($workspaceId), boolval($confirm));
+        return $this->sendCommandToBusHelper($command);
+    }
+
+    /**
+     * Edit Workspace Details
+     *
+     * @PUT("/workspace/{workspaceId}", as="workspace.edit", where={"workspaceId":"[0-9]+"})
+     *
+     * @param $workspaceId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function editWorkspace($workspaceId)
+    {
+        $command = new EditWorkspace(intval($workspaceId), $this->getRequest()->json()->all());
+        return $this->sendCommandToBusHelper($command);
+    }
+
+    /**
+     * Get a list of workspaces on a particular person's account
+     *
+     * @GET("/workspaces/{userId}", as="workspaces.list", where={"userId":"[0-9]+"})
+     *
+     * @param $userId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function getWorkspacesForUser($userId)
+    {
+        try {
+
+            $command  = new GetListOfUsersWorkspaces(intval($userId));
+            $workspaces = $this->getBus()->handle($command);
+
+            return response()->json($workspaces);
+
+        } catch (InvalidInputException $e) {
+
+            /**
+             * Invalid Input
+             */
+            $this->getLogger()->log(Logger::ERROR, "Invalid input", [
+                'userId' => $userId ?? null,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+
+        } catch (UserNotFoundException $e) {
+
+            /**
+             * The User was not found
+             */
+            $this->getLogger()->log(Logger::ERROR, "The given User was not found or has been deleted", [
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_USER_DOES_NOT_EXIST);
+
+        } catch (ActionNotPermittedException $e) {
+
+            /**
+             * The authenticated User does not have permission to list those Workspaces
+             */
+            $this->getLogger()->log(Logger::ERROR, "Permission Denied", [
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_LIST_WORKSPACES_PERMISSION);
+
+        } catch (Exception $e) {
+
+            /**
+             * Unspecified Exception
+             */
+            $this->getLogger()->log(Logger::ERROR, "Could not get a list of Workspaces", [
+                'userId' => $userId,
+                'reason' => $e->getMessage(),
+                'trace'  => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+
+            return $this->generateErrorResponse(MessagingModel::ERROR_DEFAULT);
+        }
+    }
+
+
+    /**
+     * Send a command over the command bus and handle exceptions
+     *
+     * @param Command $command
+     * @param null $closure
+     * @return ResponseFactory|JsonResponse
+     */
+    protected function sendCommandToBusHelper(Command $command, $closure = null)
+    {
+        try {
+            $result = $this->getBus()->handle($command);
+
+            if (!empty($closure) && is_callable($closure)) {
+                $result = $closure($result);
+            }
+
+            return response()->json($result);
+        } catch (Exception $e) {
+            $this->getLogger()->log(Logger::ERROR, "Error processing command", [
+                'requestUri'        => $this->getRequest()->getUri(),
+                'requestParameters' => $this->getRequest()->all(),
+                'requestBody'       => $this->getRequest()->getContent() ?? null,
+                'reason'            => $e->getMessage(),
+                'trace'             => $this->getLogger()->getTraceAsArrayOfLines($e),
+            ]);
+            
+            return $this->generateErrorResponse(
+                MessagingModel::getMessageKeyByExceptionAndCommand($e, $command)
+            );
+        }
+    }
+
+
+
+
 
     /**
      * Get the namespace for the translator to find the relevant response message

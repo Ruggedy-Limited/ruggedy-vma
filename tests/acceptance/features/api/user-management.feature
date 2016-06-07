@@ -51,7 +51,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not send the invitation because we couldn't find a valid team in your request."
+    And the "message" property equals "Sorry, that team does not exist."
 
   Scenario: I attempt to add a person to one of the teams on my account, but I don't provide a valid email address
     Given that I want to add a "Person" to my team
@@ -64,7 +64,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not send the invitation because we couldn't find a valid email in your request."
+    And the "message" property equals "Sorry, the email address you provided is invalid."
 
   Scenario: Removing a person from one of the teams on my account
     Given that I want to remove a "Person" from my team
@@ -105,7 +105,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "message" property is string
     And the "message" property equals "Sorry, that person is not part of that team."
 
-  Scenario: Get all possbile information regarding a team member
+  Scenario: Get all possible information regarding a team member
     Given that I want to get information about a "Person" on one of my teams
     When I request "/api/user/1/2"
     Then the HTTP response code should be 200

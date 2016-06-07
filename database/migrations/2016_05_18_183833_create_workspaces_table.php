@@ -17,6 +17,7 @@ class CreateWorkspacesTable extends Migration
             $table->string('name');
             $table->integer('user_id', false, true);
             $table->integer('project_id', false, true);
+            $table->tinyInteger('deleted', false, true)->default(0);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('project_id')->references('id')->on('projects');
