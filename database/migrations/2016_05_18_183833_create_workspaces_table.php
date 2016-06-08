@@ -1,36 +1,46 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use App\Utils\RawMigration;
 
-class CreateWorkspacesTable extends Migration
+
+class CreateWorkspacesTable extends RawMigration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * @inheritdoc
+     * @return string
      */
-    public function up()
+    function getRawSqlMigration()
     {
-        Schema::create('workspaces', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->integer('user_id', false, true);
-            $table->integer('project_id', false, true);
-            $table->tinyInteger('deleted', false, true)->default(0);
-            $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('project_id')->references('id')->on('projects');
-        });
-    }
+        return <<<SQL
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+        
+CREATE TABLE IF NOT EXISTS `workspaces` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `name` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL COMMENT '',
+  `user_id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `project_id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `deleted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '',
+  `created_at` TIMESTAMP NULL DEFAULT NULL COMMENT '',
+  `updated_at` TIMESTAMP NULL DEFAULT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  INDEX `workspaces_fk_user` (`user_id` ASC)  COMMENT '',
+  INDEX `workspaces_fk_project` (`project_id` ASC)  COMMENT '',
+  CONSTRAINT `workspaces_fk_project`
+    FOREIGN KEY (`project_id`)
+    REFERENCES `projects` (`id`),
+  CONSTRAINT `workspaces_fk_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_unicode_ci;
+        
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SQL;
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('workspaces');
     }
 }
