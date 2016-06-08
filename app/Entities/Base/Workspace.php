@@ -35,7 +35,7 @@ class Workspace extends AbstractEntity
     protected $project_id;
 
     /**
-     * @ORM\Column(name="`deleted`", type="smallint", options={"unsigned":true})
+     * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
      */
     protected $deleted;
 
@@ -160,7 +160,7 @@ class Workspace extends AbstractEntity
     /**
      * Set the value of deleted.
      *
-     * @param integer $deleted
+     * @param boolean $deleted
      * @return \App\Entities\Base\Workspace
      */
     public function setDeleted($deleted)
@@ -173,7 +173,7 @@ class Workspace extends AbstractEntity
     /**
      * Get the value of deleted.
      *
-     * @return integer
+     * @return boolean
      */
     public function getDeleted()
     {

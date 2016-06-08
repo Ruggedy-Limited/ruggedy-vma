@@ -31,7 +31,7 @@ class Project extends AbstractEntity
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`deleted`", type="smallint", options={"unsigned":true})
+     * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
      */
     protected $deleted;
 
@@ -134,7 +134,7 @@ class Project extends AbstractEntity
     /**
      * Set the value of deleted.
      *
-     * @param integer $deleted
+     * @param boolean $deleted
      * @return \App\Entities\Base\Project
      */
     public function setDeleted($deleted)
@@ -147,7 +147,7 @@ class Project extends AbstractEntity
     /**
      * Get the value of deleted.
      *
-     * @return integer
+     * @return boolean
      */
     public function getDeleted()
     {
