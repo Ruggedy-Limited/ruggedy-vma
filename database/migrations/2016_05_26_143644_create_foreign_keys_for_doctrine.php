@@ -15,16 +15,8 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-ALTER TABLE `projects` 
-DROP FOREIGN KEY `projects_user_id_foreign`;
-
-ALTER TABLE `workspaces` 
-DROP FOREIGN KEY `workspaces_project_id_foreign`,
-DROP FOREIGN KEY `workspaces_user_id_foreign`;
-
 ALTER TABLE `announcements` 
-CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ,
-ADD INDEX `announcements_fk_user_idx` (`user_id` ASC)  COMMENT '';
+CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
 
 ALTER TABLE `api_tokens` 
 CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
@@ -39,34 +31,20 @@ CHANGE COLUMN `team_id` `team_id` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT '' 
 
 ALTER TABLE `notifications` 
 CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ,
-CHANGE COLUMN `created_by` `created_by` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT '' ,
-ADD INDEX `notifications_fk_user_created_idx` (`created_by` ASC)  COMMENT '';
-
-ALTER TABLE `projects` 
-DROP INDEX `projects_user_id_foreign` ,
-ADD INDEX `projects_fk_user` (`user_id` ASC)  COMMENT '';
+CHANGE COLUMN `created_by` `created_by` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT '' ;
 
 ALTER TABLE `subscriptions` 
-CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ,
-ADD INDEX `subscriptions_fk_user_id_idx` (`user_id` ASC)  COMMENT '';
+CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
 
 ALTER TABLE `team_subscriptions` 
-CHANGE COLUMN `team_id` `team_id` INT(10) UNSIGNED NOT NULL COMMENT '' ,
-ADD INDEX `team_subscriptions_fk_team_idx` (`team_id` ASC)  COMMENT '';
+CHANGE COLUMN `team_id` `team_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
 
 ALTER TABLE `team_users` 
 CHANGE COLUMN `team_id` `team_id` INT(10) UNSIGNED NOT NULL COMMENT '' ,
-CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ,
-ADD INDEX `fk_user_id_idx` (`user_id` ASC)  COMMENT '';
+CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
 
 ALTER TABLE `teams` 
 CHANGE COLUMN `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
-
-ALTER TABLE `workspaces` 
-DROP INDEX `workspaces_user_id_foreign` ,
-ADD INDEX `workspaces_fk_user` (`user_id` ASC)  COMMENT '',
-DROP INDEX `workspaces_project_id_foreign` ,
-ADD INDEX `workspaces_fk_project` (`project_id` ASC)  COMMENT '';
 
 ALTER TABLE `announcements` 
 ADD CONSTRAINT `announcements_fk_user`
@@ -118,11 +96,6 @@ ADD CONSTRAINT `notifications_fk_user_created`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-ALTER TABLE `projects` 
-ADD CONSTRAINT `projects_fk_user`
-  FOREIGN KEY (`user_id`)
-  REFERENCES `users` (`id`);
-
 ALTER TABLE `subscriptions` 
 ADD CONSTRAINT `subscriptions_fk_user_id`
   FOREIGN KEY (`user_id`)
@@ -155,14 +128,6 @@ ADD CONSTRAINT `teams_fk_owner`
   REFERENCES `users` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
-
-ALTER TABLE `workspaces` 
-ADD CONSTRAINT `workspaces_fk_project`
-  FOREIGN KEY (`project_id`)
-  REFERENCES `projects` (`id`),
-ADD CONSTRAINT `workspaces_fk_user`
-  FOREIGN KEY (`user_id`)
-  REFERENCES `users` (`id`);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

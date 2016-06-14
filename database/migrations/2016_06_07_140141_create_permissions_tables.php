@@ -17,8 +17,9 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 CREATE TABLE IF NOT EXISTS `components` (
-  `id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
   `name` VARCHAR(45) NOT NULL COMMENT '',
+  `class_name` VARCHAR(100) NOT NULL COMMENT 'The class used to store row instances in the application',
   `created_at` DATETIME NOT NULL COMMENT '',
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '',
   PRIMARY KEY (`id`)  COMMENT '')
@@ -27,10 +28,12 @@ DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `component_permissions` (
-  `id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
   `component_id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `instance_id` INT(10) UNSIGNED NOT NULL COMMENT 'The id of the instance of the relevant component',
   `permission` ENUM('r', 'rw') NOT NULL DEFAULT 'r' COMMENT '',
-  `user_id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `user_id` INT(10) UNSIGNED COMMENT '',
+  `team_id` INT(10) UNSIGNED COMMENT '',
   `granted_by` INT(10) UNSIGNED NOT NULL COMMENT '',
   `created_at` DATETIME NOT NULL COMMENT '',
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '',
@@ -48,6 +51,11 @@ CREATE TABLE IF NOT EXISTS `component_permissions` (
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
+  CONSTRAINT `component_permissions_team_fk`
+    FOREIGN KEY (`team_id`)
+    REFERENCES `teams` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `component_permissions_user_granted_fk`
     FOREIGN KEY (`granted_by`)
     REFERENCES `users` (`id`)
@@ -57,20 +65,19 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
-INSERT INTO `components` (`name`, `created_at`, `updated_at`) VALUES
-('User Account', NOW(), NOW()),
-('Team', NOW(), NOW()),
-('Project', NOW(), NOW()),
-('Workspace', NOW(), NOW()),
-('Asset', NOW(), NOW()),
-('Scanner App', NOW(), NOW()),
-('Event', NOW(), NOW()),
-('Rule', NOW(), NOW());
+INSERT INTO `components` (`name`, `class_name`, `created_at`, `updated_at`) VALUES
+('User Account', 'User', NOW(), NOW()),
+('Team', 'Team', NOW(), NOW()),
+('Project', 'Project', NOW(), NOW()),
+('Workspace', 'Workspace', NOW(), NOW()),
+('Asset', 'Asset', NOW(), NOW()),
+('Scanner App', 'ScannerApp', NOW(), NOW()),
+('Event', 'Event', NOW(), NOW()),
+('Rule', 'Rule', NOW(), NOW());
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 SQL;
-
     }
 }
