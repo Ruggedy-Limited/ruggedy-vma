@@ -18,6 +18,10 @@ Feature: As an account or team owner
     And the following existing teams:
       | id | owner_id | name       | photo_url | stripe_id | current_billing_plan | card_brand | card_last_four | card_country | billing_address | billing_address_line_2 | billing_city | billing_state | billing_zip | billing_country | vat_id | extra_billing_information | trial_ends_at       | created_at          | updated_at          |
       | 1  | 1        | Johns Team | NULL      | NULL      | NULL                 | NULL       | NULL           | NULL         | NULL            | NULL                   | NULL         | NULL          | NULL        | NULL            | NULL   | NULL                      | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 | 2016-05-09 14:39:01 |
+    And the following Users in Team 1:
+      | id | role   |
+      | 1  | owner  |
+      | 2  | member |
     And the following existing Projects:
       | id | name              | user_id | created_at          | updated_at          |
       | 1  | John's Project    | 1       | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
@@ -106,8 +110,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "John's Workspace"
     And the response has a "deleted" property
-    And the type of the "deleted" property is integer
-    And the "deleted" property equals "0"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "false"
 
   Scenario: Delete and confirm deletion of a Workspace from my account
     Given that I want to delete a "Workspace"
@@ -122,8 +126,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "John's Workspace"
     And the response has a "deleted" property
-    And the type of the "deleted" property is integer
-    And the "deleted" property equals "1"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "true"
 
   Scenario: Delete a Workspace on someone else's account where I have write access
     Given that I want to delete a "Workspace"
@@ -138,8 +142,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "Someone's Workspace"
     And the response has a "deleted" property
-    And the type of the "deleted" property is integer
-    And the "deleted" property equals "0"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "false"
 
   Scenario: Delete and confirm deletion of a Workspace on someone else's account where I have Workspace write access
     Given that I want to delete a "Workspace"
@@ -154,8 +158,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "Someone's Workspace"
     And the response has a "deleted" property
-    And the type of the "deleted" property is integer
-    And the "deleted" property equals "1"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "true"
 
   Scenario: I attempt to delete a Workspace on someone else's account where I don't have Workspace write access
     Given that I want to delete a "Workspace"
@@ -180,6 +184,9 @@ Feature: As an account or team owner
     And the response has a "message" property
     And the type of the "message" property is string
     And the "message" property equals "Sorry, that Workspace does not exist."
+
+  Scenario: Get a list of workspaces in a Project
+
 
   Scenario: Edit the name of one of my workspaces
     Given that I want to update a "Workspace"
