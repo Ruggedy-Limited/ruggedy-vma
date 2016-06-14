@@ -25,6 +25,11 @@ class Component extends AbstractEntity
     protected $name;
 
     /**
+     * @ORM\Column(name="`class_name`", type="string", length=100)
+     */
+    protected $class_name;
+
+    /**
      * @ORM\Column(name="`created_at`", type="datetime")
      */
     protected $created_at;
@@ -77,6 +82,29 @@ class Component extends AbstractEntity
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of class_name.
+     *
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->class_name;
+    }
+
+    /**
+     * Set the value of class_name.
+     *
+     * @param string $class_name
+     * @return \App\Entities\Base\Component
+     */
+    public function setClassName($class_name)
+    {
+        $this->class_name = $class_name;
 
         return $this;
     }

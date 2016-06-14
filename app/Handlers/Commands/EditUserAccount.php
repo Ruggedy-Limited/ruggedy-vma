@@ -44,11 +44,7 @@ class EditUserAccount extends CommandHandler
     public function handle(EditUserAccountCommand $command)
     {
         // Get the authenticated user
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get the authenticated user");
-        }
+        $requestingUser = $this->authenticate();
 
         $userId = $command->getId();
         // Check that the required member is set on the command

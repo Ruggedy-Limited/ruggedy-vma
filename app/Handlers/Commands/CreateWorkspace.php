@@ -49,11 +49,7 @@ class CreateWorkspace extends CommandHandler
     public function handle(CreateWorkspaceCommand $command)
     {
         // Get the authenticated User
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get an authenticated User");
-        }
+        $requestingUser = $this->authenticate();
 
         // Make sure that all the required members are set on the command
         $projectId        = $command->getId();
@@ -79,7 +75,7 @@ class CreateWorkspace extends CommandHandler
         $workspace->setFromArray($workspaceDetails);
         $workspace->setUser($requestingUser);
         $workspace->setProject($project);
-        $workspace->setDeleted(AbstractEntity::NOT_DELETED);
+        $workspace->setDeleted(false);
         
         $this->getEm()->persist($workspace);
         $this->getEm()->flush($workspace);

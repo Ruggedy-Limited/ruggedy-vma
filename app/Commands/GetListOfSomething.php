@@ -10,13 +10,13 @@ abstract class GetListOfSomething extends Command
     protected $id;
     
     /**
-     * GetListOfUsersProjects constructor.
+     * GetListOfSomething constructor.
      *
-     * @param int $userId
+     * @param int $id
      */
-    public function __construct(int $userId)
+    public function __construct(int $id)
     {
-        $this->id = $userId;
+        $this->id = $id;
     }
 
     /**

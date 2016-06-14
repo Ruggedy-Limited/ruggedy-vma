@@ -48,11 +48,7 @@ class EditProject extends CommandHandler
     public function handle(EditProjectCommand $command)
     {
         // Get the authenticated User
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get an authenticated User");
-        }
+        $requestingUser = $this->authenticate();
 
         // Make sure all the required members are set on the command
         $projectId        = $command->getId();
@@ -64,7 +60,7 @@ class EditProject extends CommandHandler
         // Make sure the Project exists
         /** @var Project $project */
         $project = $this->getProjectRepository()->find($projectId);
-        if (empty($project) || $project->getDeleted() === AbstractEntity::IS_DELETED) {
+        if (empty($project) || !empty($project->getDeleted())) {
             throw new ProjectNotFoundException("The Project was not found or has been deleted");
         }
 

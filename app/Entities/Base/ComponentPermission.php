@@ -24,6 +24,11 @@ class ComponentPermission extends AbstractEntity
     protected $component_id;
 
     /**
+     * @ORM\Column(name="`instance_id`", type="integer", options={"unsigned":true})
+     */
+    protected $instance_id;
+
+    /**
      * @ORM\Column(name="`permission`", type="string")
      */
     protected $permission;
@@ -114,6 +119,29 @@ class ComponentPermission extends AbstractEntity
     public function getComponentId()
     {
         return $this->component_id;
+    }
+
+    /**
+     * Get the value of instance_id
+     *
+     * @return integer
+     */
+    public function getInstanceId()
+    {
+        return $this->instance_id;
+    }
+
+    /**
+     * Set the value of instance_id.
+     *
+     * @param integer $instance_id
+     * @return \App\Entities\Base\ComponentPermission
+     */
+    public function setInstanceId($instance_id)
+    {
+        $this->instance_id = $instance_id;
+
+        return $this;
     }
 
     /**

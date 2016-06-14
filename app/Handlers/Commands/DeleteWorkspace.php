@@ -49,11 +49,7 @@ class DeleteWorkspace extends CommandHandler
     public function handle(DeleteWorkspaceCommand $command)
     {
         // Get the authenticated user
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get the authenticated user");
-        }
+        $requestingUser = $this->authenticate();
 
         // Make sure that all the required members are set on the command
         $workspaceId = $command->getId();
@@ -64,7 +60,7 @@ class DeleteWorkspace extends CommandHandler
         // Check that the project exists
         /** @var Workspace $workspace */
         $workspace = $this->getWorkspaceRepository()->find($workspaceId);
-        if (empty($workspace)) {
+        if (empty($workspace) || !empty($workspace->getDeleted())) {
             throw new WorkspaceNotFoundException("A Project with the given project ID was not found");
         }
 
@@ -75,7 +71,7 @@ class DeleteWorkspace extends CommandHandler
 
         // If the deletion has been confirmed, then set the deleted flag on the Project and save to the database
         if ($command->isConfirm()) {
-            $workspace->setDeleted(AbstractEntity::IS_DELETED);
+            $workspace->setDeleted(true);
             $this->getEm()->persist($workspace);
             $this->getEm()->flush($workspace);
         }

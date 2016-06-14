@@ -57,11 +57,7 @@ class GetUserInformation extends CommandHandler
     public function handle(GetUserInformationCommand $command)
     {
         // Get the authenticated user
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get the authenticated user");
-        }
+        $requestingUser = $this->authenticate();
 
         // Make sure all the required members are set on the command
         $teamId = $command->getTeamId();
