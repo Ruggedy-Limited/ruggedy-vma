@@ -16,15 +16,20 @@ class Component extends AbstractEntity
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
+     * The name of the component and the name of the
+     *
      * @ORM\Column(name="`name`", type="string", length=45)
      */
     protected $name;
 
     /**
+     * The class used to store row instances in the application
+     *
      * @ORM\Column(name="`class_name`", type="string", length=100)
      */
     protected $class_name;
@@ -87,13 +92,13 @@ class Component extends AbstractEntity
     }
 
     /**
-     * Get the value of class_name.
+     * Get the value of name.
      *
      * @return string
      */
-    public function getClassName()
+    public function getName()
     {
-        return $this->class_name;
+        return $this->name;
     }
 
     /**
@@ -110,13 +115,13 @@ class Component extends AbstractEntity
     }
 
     /**
-     * Get the value of name.
+     * Get the value of class_name.
      *
      * @return string
      */
-    public function getName()
+    public function getClassName()
     {
-        return $this->name;
+        return $this->class_name;
     }
 
     /**
@@ -203,6 +208,6 @@ class Component extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'created_at', 'updated_at');
+        return array('id', 'name', 'class_name', 'created_at', 'updated_at');
     }
 }

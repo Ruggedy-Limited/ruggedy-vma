@@ -8,13 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\ComponentPermission
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`component_permissions`", indexes={@ORM\Index(name="component_permissions_component_fk_idx", columns={"`component_id`"}), @ORM\Index(name="component_permissions_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="component_permissions_user_granted_fk_idx", columns={"`granted_by`"})})
+ * @ORM\Table(name="`component_permissions`", indexes={@ORM\Index(name="component_permissions_component_fk_idx", columns={"`component_id`"}), @ORM\Index(name="component_permissions_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="component_permissions_user_granted_fk_idx", columns={"`granted_by`"}), @ORM\Index(name="component_permissions_team_fk_idx", columns={"`team_id`"})})
  */
 class ComponentPermission extends AbstractEntity
 {
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -24,6 +25,8 @@ class ComponentPermission extends AbstractEntity
     protected $component_id;
 
     /**
+     * The id of the instance of the relevant component
+     *
      * @ORM\Column(name="`instance_id`", type="integer", options={"unsigned":true})
      */
     protected $instance_id;
@@ -34,9 +37,14 @@ class ComponentPermission extends AbstractEntity
     protected $permission;
 
     /**
-     * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="`user_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $user_id;
+
+    /**
+     * @ORM\Column(name="`team_id`", type="integer", nullable=true, options={"unsigned":true})
+     */
+    protected $team_id;
 
     /**
      * @ORM\Column(name="`granted_by`", type="integer", options={"unsigned":true})
@@ -61,9 +69,15 @@ class ComponentPermission extends AbstractEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="componentPermissionRelatedByUserIds", cascade={"persist"})
-     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`")
      */
     protected $userRelatedByUserId;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Team", inversedBy="componentPermissions", cascade={"persist"})
+     * @ORM\JoinColumn(name="`team_id`", referencedColumnName="`id`")
+     */
+    protected $team;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="componentPermissionRelatedByGrantedBies", cascade={"persist"})
@@ -122,16 +136,6 @@ class ComponentPermission extends AbstractEntity
     }
 
     /**
-     * Get the value of instance_id
-     *
-     * @return integer
-     */
-    public function getInstanceId()
-    {
-        return $this->instance_id;
-    }
-
-    /**
      * Set the value of instance_id.
      *
      * @param integer $instance_id
@@ -142,6 +146,16 @@ class ComponentPermission extends AbstractEntity
         $this->instance_id = $instance_id;
 
         return $this;
+    }
+
+    /**
+     * Get the value of instance_id.
+     *
+     * @return integer
+     */
+    public function getInstanceId()
+    {
+        return $this->instance_id;
     }
 
     /**
@@ -188,6 +202,29 @@ class ComponentPermission extends AbstractEntity
     public function getUserId()
     {
         return $this->user_id;
+    }
+
+    /**
+     * Set the value of team_id.
+     *
+     * @param integer $team_id
+     * @return \App\Entities\Base\ComponentPermission
+     */
+    public function setTeamId($team_id)
+    {
+        $this->team_id = $team_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of team_id.
+     *
+     * @return integer
+     */
+    public function getTeamId()
+    {
+        return $this->team_id;
     }
 
     /**
@@ -306,6 +343,29 @@ class ComponentPermission extends AbstractEntity
     }
 
     /**
+     * Set Team entity (many to one).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\ComponentPermission
+     */
+    public function setTeam(Team $team = null)
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity (many to one).
+     *
+     * @return \App\Entities\Base\Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
+    }
+
+    /**
      * Set User entity related by `granted_by` (many to one).
      *
      * @param \App\Entities\Base\User $user
@@ -330,6 +390,6 @@ class ComponentPermission extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'component_id', 'permission', 'user_id', 'granted_by', 'created_at', 'updated_at');
+        return array('id', 'component_id', 'instance_id', 'permission', 'user_id', 'team_id', 'granted_by', 'created_at', 'updated_at');
     }
 }

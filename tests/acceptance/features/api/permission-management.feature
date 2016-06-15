@@ -65,18 +65,18 @@ Feature: As an owner of a team
       | 8  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And the following existing ComponentPermissions:
       | id | component_id | instance_id | permission | user_id | team_id | granted_by | created_at          | updated_at          |
-      | 1  | 1            | 1           | rw         | 5       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 2  | 1            | 1           | r          | 6       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 3  | 2            | 1           | rw         | 7       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 4  | 2            | 1           | r          | 8       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 5  | 3            | 4           | rw         | 9       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 6  | 3            | 4           | r          | 3       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 7  | 4            | 4           | rw         | 9       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 8  | 4            | 4           | r          | 3       |         | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 9  | 3            | 4           | rw         |         | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 10 | 3            | 4           | r          |         | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 11 | 4            | 4           | rw         |         | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 12 | 4            | 4           | r          |         | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 1  | 1            | 1           | rw         | 5       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 2  | 1            | 1           | r          | 6       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 3  | 2            | 1           | rw         | 7       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 4  | 2            | 1           | r          | 8       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 5  | 3            | 4           | rw         | 9       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 6  | 3            | 4           | r          | 3       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 7  | 4            | 4           | rw         | 9       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 8  | 4            | 4           | r          | 3       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 9  | 3            | 4           | rw         | NULL    | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 10 | 3            | 4           | r          | NULL    | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 11 | 4            | 4           | rw         | NULL    | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 12 | 4            | 4           | r          | NULL    | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   Scenario: Grant read/write permissions for a Project to a user
@@ -87,41 +87,43 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "2"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "rw"
-    And the response has a "project_permissions" property
-    And the type of the "project_permissions" property is array
-    And the "project_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 1           | 2       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "1"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "2"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "rw"
+    And the response has a "all_permissions" property
+    And the type of the "all_permissions" property is array
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | permission |
+    | 1           | 2       | rw         |
 
   Scenario: Grant read only permissions for a Project to a user
     Given that I want to make a new "Permission"
-    And that its "userID" is "2"
+    And that its "userId" is "2"
     And that its "permission" is "r"
     When I request "/api/acl/project/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "2"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "r"
-    And the "project_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 1           | 2       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "1"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "2"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "r"
+    And the response has a "all_permissions" property
+    And the type of the "all_permissions" property is array
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | permission |
+    | 1           | 2       | r          |
 
   Scenario: I attempt to grant permissions for a Project that I don't own
     Given that I want to make a new "Permission"
@@ -177,55 +179,55 @@ Feature: As an owner of a team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, that User does not exist."
+    And the "message" property equals "Sorry, that person does not exist."
 
   Scenario: Change a users permissions on a Project from read/write to read only
     Given that I want to update a "Permission"
-    And that its "userID" is "9"
+    And that its "userId" is "9"
     And that its "permission" is "r"
-    When I request "/api/acl/project/1"
+    When I request "/api/acl/project/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "9"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "r"
-    And the "project_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | r         |
-    | 4           | 3       | r         |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "9"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "r"
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | permission |
+    | 4           | 9       | r          |
+    | 4           | 3       | r          |
 
   Scenario: Change a users permissions on a Project from read only to read/write
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "rw"
-    When I request "/api/acl/project/1"
+    When I request "/api/acl/project/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "3"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "rw"
-    And the "project_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | rw        |
-    | 4           | 3       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "3"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "rw"
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | permission |
+    | 4           | 9       | rw         |
+    | 4           | 3       | rw         |
 
   Scenario: Attempt to change permissions on a Project I own, but provide an invalid permission option
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "delete"
     When I request "/api/acl/project/4"
     Then the HTTP response code should be 200
@@ -239,7 +241,7 @@ Feature: As an owner of a team
     
   Scenario: Attempt to change permissions on a Project I don't own
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "rw"
     When I request "/api/acl/project/2"
     Then the HTTP response code should be 200
@@ -253,7 +255,7 @@ Feature: As an owner of a team
 
   Scenario: Attempt to change permissions on a non-existent Project
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "rw"
     When I request "/api/acl/project/40"
     Then the HTTP response code should be 200
@@ -267,7 +269,7 @@ Feature: As an owner of a team
 
   Scenario: Attempt to change permissions for a Project, but the given user ID does not exist
     Given that I want to update a "Permission"
-    And that its "userID" is "30"
+    And that its "userId" is "30"
     And that its "permission" is "rw"
     When I request "/api/acl/project/4"
     Then the HTTP response code should be 200
@@ -277,7 +279,7 @@ Feature: As an owner of a team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, that User does not exist."
+    And the "message" property equals "Sorry, that person does not exist."
 
   Scenario: Revoke all permissions related to a Project for a user
     Given that I want to remove a "Permission" from my team
@@ -285,17 +287,16 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "4"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "3"
-    And the response has a "permission" property
-    And the "permission" property equals "null"
-    And the "project_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "3"
+    And the response has a "affected_permissions.permission" property
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | permission |
+    | 4           | 9       | rw         |
 
   Scenario: Attempt to revoke permissions on a Project I don't own
     Given that I want to remove a "Permission" from my team
@@ -319,7 +320,7 @@ Feature: As an owner of a team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we couldn't change/add those permissions. You can only modify permissions on your own things."
+    And the "message" property equals "Sorry, that Project does not exist."
 
   Scenario: Retrieve the current permissions for a particular Project
     Given that I want to get information about "Permission"
@@ -327,13 +328,10 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "4"
-    And the "project_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | rw        |
-    | 4           | 3       | r         |
+    And the array response has the following items:
+    | instance_id | user_id | permission |
+    | 4           | 9       | rw         |
+    | 4           | 3       | r          |
 
   Scenario: I attempt to retrieve the permissions for a project that I don't own
     Given that I want to get information about "Permission"
@@ -367,20 +365,22 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "4"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "2"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "rw"
-    And the "workspace_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 2       | rw        |
-    | 4           | 3       | r         |
-    | 4           | 9       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "2"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "rw"
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | team_id | permission |
+    | 4           | 9       | *       | rw         |
+    | 4           | 3       | *       | r          |
+    | 4           | *       | 1       | rw         |
+    | 4           | *       | 2       | r          |
+    | 4           | 2       | *       | rw         |
 
   Scenario: Grant read only permissions for a Workspace to a user
     Given that I want to make a new "Permission"
@@ -390,20 +390,22 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "4"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "2"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "r"
-    And the "workspace_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 2       | r         |
-    | 4           | 3       | r         |
-    | 4           | 9       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "2"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "r"
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | team_id | permission |
+    | 4           | 9       | *       | rw         |
+    | 4           | 3       | *       | r          |
+    | 4           | *       | 1       | rw         |
+    | 4           | *       | 2       | r          |
+    | 4           | 2       | *       | r          |
 
   Scenario: I attempt to grant permissions for a Workspace that I don't own
     Given that I want to make a new "Permission"
@@ -445,7 +447,7 @@ Feature: As an owner of a team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, there is no such permission option."
+    And the "message" property equals "Sorry, there is no such permission option. Please use only 'r' or 'rw'."
 
   Scenario: I attempt to grant permissions for a Workspace, but the given user ID does not exist
     Given that I want to make a new "Permission"
@@ -459,55 +461,59 @@ Feature: As an owner of a team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, that User does not exist."
+    And the "message" property equals "Sorry, that person does not exist."
 
   Scenario: Change a users permissions on a Workspace from read/write to read only
     Given that I want to update a "Permission"
-    And that its "userID" is "9"
+    And that its "userId" is "9"
     And that its "permission" is "r"
-    When I request "/api/acl/workspace/1"
+    When I request "/api/acl/workspace/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "9"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "r"
-    And the "workspace_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | r         |
-    | 4           | 3       | r         |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "9"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "r"
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | team_id | permission |
+    | 4           | 9       | *       | r          |
+    | 4           | 3       | *       | r          |
+    | 4           | *       | 1       | rw         |
+    | 4           | *       | 2       | r          |
 
   Scenario: Change a users permissions on a Workspace from read only to read/write
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "rw"
-    When I request "/api/acl/workspace/1"
+    When I request "/api/acl/workspace/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "3"
-    And the response has a "permission" property
-    And the type of the "permission" property is string
-    And the "permission" property equals "rw"
-    And the "workspace_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | rw        |
-    | 4           | 3       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "3"
+    And the response has a "affected_permissions.permission" property
+    And the type of the "affected_permissions.permission" property is string
+    And the "affected_permissions.permission" property equals "rw"
+    And the "all_permissions" array property has the following items:
+      | instance_id | user_id | team_id | permission |
+      | 4           | 9       | *       | rw         |
+      | 4           | 3       | *       | rw         |
+      | 4           | *       | 1       | rw         |
+      | 4           | *       | 2       | r          |
 
   Scenario: Attempt to change permissions on a Workspace I own, but provide an invalid permission option
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "delete"
     When I request "/api/acl/workspace/4"
     Then the HTTP response code should be 200
@@ -521,7 +527,7 @@ Feature: As an owner of a team
 
   Scenario: Attempt to change permissions on a Workspace I don't own
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "rw"
     When I request "/api/acl/workspace/2"
     Then the HTTP response code should be 200
@@ -535,7 +541,7 @@ Feature: As an owner of a team
 
   Scenario: Attempt to change permissions on a non-existent Workspace
     Given that I want to update a "Permission"
-    And that its "userID" is "3"
+    And that its "userId" is "3"
     And that its "permission" is "rw"
     When I request "/api/acl/workspace/40"
     Then the HTTP response code should be 200
@@ -549,7 +555,7 @@ Feature: As an owner of a team
 
   Scenario: Attempt to change permissions for a Workspace, but the given user ID does not exist
     Given that I want to update a "Permission"
-    And that its "userID" is "30"
+    And that its "userId" is "30"
     And that its "permission" is "rw"
     When I request "/api/acl/workspace/4"
     Then the HTTP response code should be 200
@@ -559,7 +565,7 @@ Feature: As an owner of a team
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, that User does not exist."
+    And the "message" property equals "Sorry, that person does not exist."
 
   Scenario: Revoke all permissions related to a Workspace for a user
     Given that I want to remove a "Permission" from my team
@@ -567,17 +573,18 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "4"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "3"
-    And the response has a "permission" property
-    And the "permission" property equals "null"
-    And the "workspace_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | rw        |
+    And the response has a "affected_permissions.instance_id" property
+    And the type of the "affected_permissions.instance_id" property is integer
+    And the "affected_permissions.instance_id" property equals "4"
+    And the response has a "affected_permissions.user_id" property
+    And the type of the "affected_permissions.user_id" property is integer
+    And the "affected_permissions.user_id" property equals "3"
+    And the response has a "affected_permissions.permission" property
+    And the "all_permissions" array property has the following items:
+    | instance_id | user_id | team_id | permission |
+    | 4           | 9       | *       | rw         |
+    | 4           | *       | 1       | rw         |
+    | 4           | *       | 2       | r          |
 
   Scenario: Attempt to revoke permissions on a Workspace I don't own
     Given that I want to remove a "Permission" from my team
@@ -609,13 +616,10 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "4"
-    And the "workspace_permissions" array property has the following items:
-    | instance_id | user_id | permisson |
-    | 4           | 9       | rw        |
-    | 4           | 3       | r         |
+    And the array response has the following items:
+    | instance_id | user_id | permission |
+    | 4           | 9       | rw         |
+    | 4           | 3       | r          |
 
   Scenario: I attempt to retrieve the permissions for a workspace that I don't own
     Given that I want to get information about "Permission"

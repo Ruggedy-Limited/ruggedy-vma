@@ -14,12 +14,12 @@ class ComponentRepository extends EntityRepository
      * @param string $componentName
      * @return array|null
      */
-    public function findByComponentName(string $componentName)
+    public function findOneByComponentName(string $componentName)
     {
         if (empty($componentName)) {
             return null;
         }
         
-        return $this->findBy([Component::COMPONENT_NAME_FIELD => $componentName]);
+        return $this->findOneBy([Component::COMPONENT_NAME_FIELD => $componentName]);
     }
 }

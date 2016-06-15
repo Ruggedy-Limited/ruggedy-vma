@@ -14,14 +14,15 @@ class ComponentPermissionRepository extends EntityRepository
      * @param int $componentInstanceId
      * @return Collection
      */
-    public function findByComponentInstanceId(int $componentInstanceId): Collection
+    public function findByComponentAndComponentInstanceId(int $componentId, $componentInstanceId): Collection
     {
-        if (!isset($componentInstanceId)) {
+        if (!isset($componentId, $componentInstanceId)) {
             return new Collection();
         }
 
         $resultSet = $this->findBy([
-            'instance_id' => $componentInstanceId
+            'component_id' => $componentId,
+            'instance_id'  => $componentInstanceId,
         ]);
 
         if (empty($resultSet)) {
@@ -37,24 +38,18 @@ class ComponentPermissionRepository extends EntityRepository
      * @param int $componentId
      * @param int $componentInstanceId
      * @param int $userId
-     * @return Collection
+     * @return null|object
      */
-    public function findByComponentInstanceAndUserIds(int $componentId, int $componentInstanceId, int $userId): Collection
+    public function findOneByComponentInstanceAndUserIds(int $componentId, int $componentInstanceId, int $userId)
     {
         if (!isset($componentId, $componentInstanceId, $userId)) {
-            return new Collection();
+            return null;
         }
 
-        $resultSet = $this->findBy([
+        return $this->findOneBy([
             'component_id' => $componentId,
             'instance_id'  => $componentInstanceId,
             'user_id'      => $userId,
         ]);
-
-        if (empty($resultSet)) {
-            return new Collection();
-        }
-
-        return new Collection($resultSet);
     }
 }

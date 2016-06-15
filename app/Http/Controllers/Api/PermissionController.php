@@ -8,7 +8,7 @@ use App\Commands\UpsertPermission;
 
 
 /**
- * @Controller(prefix="api")
+ * @Controller(prefix="api/acl")
  * @Middleware("auth:api")
  */
 class PermissionController extends AbstractController
@@ -16,8 +16,8 @@ class PermissionController extends AbstractController
     /**
      * Create a new permission
      *
-     * @POST('/acl/{componentName}/{componentInstanceId}', as="acl.create", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+"}
-     * @PUT('/acl/{componentName}/{componentInstanceId}', as="acl.edit", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+"}
+     * @POST("/{componentName}/{componentInstanceId}", as="acl.create", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+"})
+     * @PUT("/{componentName}/{componentInstanceId}", as="acl.edit", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+"})
      *
      * @param $componentName
      * @param $componentInstanceId
@@ -35,13 +35,13 @@ class PermissionController extends AbstractController
     /**
      * Delete a permission
      *
-     * @DELETE('/acl/{componentName}/{componentInstanceId}/{userId}', as="acl.delete", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+", "userId":"[0-9]+"}
+     * @DELETE("/{componentName}/{componentInstanceId}/{userId}", as="acl.delete", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+", "userId":"[0-9]+"})
      *
      * @param $componentName
      * @param $componentInstanceId
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
      */
-    public function editPermission($componentName, $componentInstanceId, $userId)
+    public function revokePermission($componentName, $componentInstanceId, $userId)
     {
         $command = new RevokePermission($componentInstanceId, $componentName, $userId);
         return $this->sendCommandToBusHelper($command);
@@ -50,7 +50,7 @@ class PermissionController extends AbstractController
     /**
      * Get the permissions related to a component instance
      *
-     * @DELETE('/acl/{componentName}/{componentInstanceId}/{userId}', as="acl.delete", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+", "userId":"[0-9]+"}
+     * @GET("/{componentName}/{componentInstanceId}", as="acl.list", where={"componentName":"[a-z_]+", "componentInstanceId":"[0-9]+", "userId":"[0-9]+"})
      *
      * @param $componentName
      * @param $componentInstanceId

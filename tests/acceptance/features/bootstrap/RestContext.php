@@ -237,7 +237,7 @@ class RestContext extends FeatureContext implements Context
      *
      * @param TableNode $table
      */
-    public function theArrayPropertyHasTheFollowingItems(TableNode $table, string $propertyName)
+    public function theArrayPropertyHasTheFollowingItems(string $propertyName, TableNode $table)
     {
         $this->arrayHasTheFollowingItems($table, $propertyName);
     }
@@ -251,13 +251,13 @@ class RestContext extends FeatureContext implements Context
      */
     protected function arrayHasTheFollowingItems(TableNode $table, $key = null)
     {
-        $response = $this->responseIsJsonHelper(true);
+        $response = $dataSet = $this->responseIsJsonHelper(true);
 
         if (!empty($key)) {
-            $response = $this->getValueOfProperty($key, $response);
+            $dataSet = $this->getValueOfProperty($key, $response);
         }
 
-        $this->theTypeIsHelper($response, 'array');
+        $this->theTypeIsHelper($dataSet, 'array');
 
         foreach ($table as $index => $row) {
             $row = $this->sanitiseRowHelper($row);
@@ -267,9 +267,9 @@ class RestContext extends FeatureContext implements Context
                     continue;
                 }
 
-                PHPUnit_Framework_Assert::assertNotEmpty($response);
-                PHPUnit_Framework_Assert::assertArrayHasKey($field, $response[$index]);
-                PHPUnit_Framework_Assert::assertEquals($value, $response[$index][$field]);
+                PHPUnit_Framework_Assert::assertNotEmpty($dataSet);
+                PHPUnit_Framework_Assert::assertArrayHasKey($field, $dataSet[$index]);
+                PHPUnit_Framework_Assert::assertEquals($value, $dataSet[$index][$field]);
             }
         }
     }
@@ -377,26 +377,28 @@ class RestContext extends FeatureContext implements Context
     protected function theResponseHasAPropertyHelper($propertyName, bool $doesNotHaveAProperty = false) {
         $data = $this->responseIsJsonHelper(true);
         // Get the property name and the data, taking into account that there may be dot syntax in the property name
-        list($propertyName, $data) = $this->getValueOfProperty($propertyName, $data, $doesNotHaveAProperty);
+        $data = $this->getValueOfProperty($propertyName, $data, $doesNotHaveAProperty);
 
         // We're checking that $data->$propertyName is NOT set and it is. Throw an exception to fail the test.
-        if (!empty($doesNotHaveAProperty) && isset($data[$propertyName])) {
+        if (!empty($doesNotHaveAProperty) && isset($data)) {
             throw new InvalidResponseException("Property '".$propertyName."' IS set!" . PHP_EOL);
         }
 
-        if (empty($doesNotHaveAProperty)) {
-            return $data[$propertyName];
+        if (empty($doesNotHaveAProperty) && !isset($data)) {
+            throw new InvalidResponseException("Property '".$propertyName."' is NOT set!" . PHP_EOL);
         }
+
+        return $data;
     }
 
     /**
      * @param $propertyName
      * @param array $data
      * @param bool $doesNotHaveAProperty
-     * @return array
+     * @return mixed
      * @throws InvalidResponseException
      */
-    protected function getValueOfProperty($propertyName, array $data, bool $doesNotHaveAProperty = false): array
+    protected function getValueOfProperty($propertyName, array $data, bool $doesNotHaveAProperty = false)
     {
         // If empty parameters are passed
         if (empty($propertyName) || empty($data)) {
@@ -405,25 +407,37 @@ class RestContext extends FeatureContext implements Context
 
         // There is no dot syntax in the property name so we're just looking for a property in the first level
         if (strpos($propertyName, '.') === false) {
-            if (empty($doesNotHaveAProperty) && !isset($data[$propertyName])) {
+            if (empty($doesNotHaveAProperty)) {
                 PHPUnit_Framework_Assert::assertArrayHasKey(
                     $propertyName,
                     $data,
                     "Property '".$propertyName."' is NOT set!" . PHP_EOL
                 );
+
+                return $data[$propertyName];
             }
-            return [$propertyName, $data];
+
+            if (!empty($doesNotHaveAProperty)) {
+                PHPUnit_Framework_Assert::assertArrayNotHasKey(
+                    $propertyName,
+                    $data,
+                    "Property '".$propertyName."' IS set!" . PHP_EOL
+                );
+
+                return null;
+            }
         }
 
         // There is dot syntax in the property name. Check that the property exists, then return the parent level of the
         // object and the last part of the dot syntax string as the property name to check
         $properties         = explode(".", $propertyName);
-        $propertyNameResult = array_pop($properties);
+        $propertyNameResult = end($properties);
+        reset($properties);
 
         foreach ($properties as $property) {
             // If we are looking for a set property and we encounter and unset property at any point while traversing
             // deeper into the object heirarchy, throw an exception
-            if (empty($doesNotHaveAProperty) && !isset($data[$property])) {
+            if (empty($doesNotHaveAProperty)) {
                 PHPUnit_Framework_Assert::assertArrayHasKey(
                     $property,
                     $data,
@@ -435,13 +449,14 @@ class RestContext extends FeatureContext implements Context
             // traversing deeper into the object heirarchy, return the current property and it's parent so we know the
             // step will pass
             if (!empty($doesNotHaveAProperty) && empty($data[$property])) {
-                return [$property, $data];
+                $data = null;
+                continue;
             }
 
             $data = $data[$property];
         }
 
-        return [$propertyNameResult, $data];
+        return $data;
     }
 
     /**

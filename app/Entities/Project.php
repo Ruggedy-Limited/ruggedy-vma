@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Contracts\HasOwnerUserEntity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -11,6 +12,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity(repositoryClass="App\Repositories\ProjectRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Project extends Base\Project
+class Project extends Base\Project implements HasOwnerUserEntity
 {
 }

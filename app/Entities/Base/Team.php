@@ -116,6 +116,12 @@ class Team extends AbstractEntity
     protected $updated_at;
 
     /**
+     * @ORM\OneToMany(targetEntity="ComponentPermission", mappedBy="team", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`team_id`", nullable=false)
+     */
+    protected $componentPermissions;
+
+    /**
      * @ORM\OneToMany(targetEntity="Invitation", mappedBy="team", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`team_id`", nullable=false)
      */
@@ -141,6 +147,7 @@ class Team extends AbstractEntity
 
     public function __construct()
     {
+        $this->componentPermissions = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->invoices = new ArrayCollection();
         $this->teamSubscriptions = new ArrayCollection();
@@ -604,6 +611,42 @@ class Team extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Add ComponentPermission entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\ComponentPermission $componentPermission
+     * @return \App\Entities\Base\Team
+     */
+    public function addComponentPermission(ComponentPermission $componentPermission)
+    {
+        $this->componentPermissions[] = $componentPermission;
+
+        return $this;
+    }
+
+    /**
+     * Remove ComponentPermission entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\ComponentPermission $componentPermission
+     * @return \App\Entities\Base\Team
+     */
+    public function removeComponentPermission(ComponentPermission $componentPermission)
+    {
+        $this->componentPermissions->removeElement($componentPermission);
+
+        return $this;
+    }
+
+    /**
+     * Get ComponentPermission entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComponentPermissions()
+    {
+        return $this->componentPermissions;
     }
 
     /**

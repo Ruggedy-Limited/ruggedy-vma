@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Contracts\HasOwnerUserEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use stdClass;
@@ -13,7 +14,7 @@ use stdClass;
  * @ORM\Entity(repositoryClass="App\Repositories\TeamRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Team extends Base\Team
+class Team extends Base\Team implements HasOwnerUserEntity
 {
     /**
      * @ORM\ManyToMany(targetEntity="User")

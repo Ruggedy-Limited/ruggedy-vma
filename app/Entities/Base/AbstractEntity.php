@@ -2,6 +2,7 @@
 
 namespace App\Entities\Base;
 
+use App\Contracts\HasGetId;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +13,7 @@ use JsonSerializable;
 use stdClass;
 
 
-abstract class AbstractEntity implements Jsonable, JsonSerializable
+abstract class AbstractEntity implements Jsonable, JsonSerializable, HasGetId
 {
     /** Excluded field name constants */
     const INITIALIZER_FIELD = '__initializer__';
@@ -24,12 +25,15 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     const IS_DELETED  = 1;
     const NOT_DELETED = 0;
 
+    /** @var integer */
+    protected $id;
+
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $created_at;
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $updated_at;
 
@@ -62,7 +66,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
 
         $format = 'Y-m-d';
         if ($hours) {
-            $format = "$format H:i:s";
+            $format .= " H:i:s";
         }
 
         return $date->format($format);
@@ -212,5 +216,21 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
             self::IS_INITIALIZED,
             self::PASSWORD_FIELD
         ]);
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 }
