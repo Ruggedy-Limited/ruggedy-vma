@@ -12,7 +12,7 @@ abstract class AbstractPermission extends Command
     protected $componentName;
 
     /**
-     * RevokePermission constructor.
+     * AbstractPermission constructor.
      *
      * @param int $id
      * @param string $componentName

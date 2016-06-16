@@ -37,7 +37,7 @@ class ComponentPermission extends Base\ComponentPermission
         // Set a list of attributes to include by default when no specific list is given
         if (empty($onlyTheseAttributes)) {
             $onlyTheseAttributes = [
-                'component' ,'instance_id', 'user_id', 'permission', 'team_id', 'granted_by', 'created_at', 'updated_at'
+                'component' ,'instance_id', 'user_id', 'team_id', 'permission', 'granted_by', 'created_at', 'updated_at'
             ];
         }
 

@@ -218,7 +218,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     protected function getEloquentModelClassHelper(string $objectType): string
     {
-        $rootNamespace = env('APP_MODEL_NAMESPACE');
+        $rootNamespace = env('APP_TEST_MODEL_NAMESPACE');
         if (empty($rootNamespace)) {
             throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
         }

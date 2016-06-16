@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Commands\GetListOfPermissions;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 
 
 /**
@@ -21,7 +23,7 @@ class PermissionController extends AbstractController
      *
      * @param $componentName
      * @param $componentInstanceId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function upsertPermission($componentName, $componentInstanceId)
     {
@@ -39,7 +41,7 @@ class PermissionController extends AbstractController
      *
      * @param $componentName
      * @param $componentInstanceId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function revokePermission($componentName, $componentInstanceId, $userId)
     {
@@ -54,7 +56,7 @@ class PermissionController extends AbstractController
      *
      * @param $componentName
      * @param $componentInstanceId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     * @return ResponseFactory|JsonResponse
      */
     public function getComponentPermissions($componentName, $componentInstanceId)
     {

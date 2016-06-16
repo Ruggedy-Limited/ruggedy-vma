@@ -9,6 +9,7 @@ use App\Exceptions\InvalidComponentEntityException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
 use App\Exceptions\UserNotFoundException;
+use Exception;
 use Illuminate\Support\Collection;
 
 
@@ -24,7 +25,7 @@ class UpsertPermission extends AbstractPermissionHandler
      * @throws InvalidInputException
      * @throws InvalidPermissionException
      * @throws UserNotFoundException
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(UpsertPermissionCommand $command)
     {
@@ -39,15 +40,15 @@ class UpsertPermission extends AbstractPermissionHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Get the component in order to get the component's Doctrine entity class
+        // Fetch the component in order to get the component's Doctrine entity class
         $this->fetchAndSetComponent($componentName);
         
-        // Get the component instance
+        // Fetch the component instance
         $this->fetchAndSetComponentInstance($id);
         
         $this->checkPermissions();
 
-        // Get the User that the permissions are being created for
+        // Fetch the User that the permissions are being created for
         $this->fetchAndSetUser($userId);
         
         // Validate the permissions

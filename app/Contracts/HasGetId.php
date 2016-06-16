@@ -3,6 +3,9 @@
 namespace App\Contracts;
 
 
+/**
+ * An Interface for Entities that have a $id member and the related getId() getter method
+ */
 interface HasGetId
 {
     /**

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Commands;
 
 
@@ -10,7 +9,7 @@ class UpsertPermission extends RevokePermission
     protected $permission;
 
     /**
-     * CreatePermission constructor.
+     * UpsertPermission constructor.
      *
      * @param int $id
      * @param string $componentName
@@ -20,7 +19,7 @@ class UpsertPermission extends RevokePermission
     public function __construct(int $id, string $componentName, int $userId, string $permission)
     {
         parent::__construct($id, $componentName, $userId);
-        $this->permission    = $permission;
+        $this->permission = $permission;
     }
 
     /**

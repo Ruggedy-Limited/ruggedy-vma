@@ -29,11 +29,12 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
 
     /** @var  JsonLogService */
     protected $logger;
+
     /** @var  CommandBus */
     protected $bus;
 
     /**
-     * ApiController constructor.
+     * AbstractController constructor.
      *
      * @param Request $request
      * @param Translator $translator
@@ -43,9 +44,11 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     public function __construct(Request $request, Translator $translator, JsonLogService $logger, CommandBus $bus)
     {
         parent::__construct($request, $translator);
+
         $this->setLoggerContext($logger);
-        $this->setLogger($logger);
-        $this->bus = $bus;
+
+        $this->logger = $logger;
+        $this->bus    = $bus;
     }
 
     /**
@@ -81,7 +84,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     }
 
     /**
-     * Generate an error response to return to customer
+     * Generate an error response to return to the customer
      *
      * @param string $messageKey
      * @return ResponseFactory|JsonResponse
@@ -94,8 +97,9 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
         }
 
         $translatorNamespace = $this->getTranslatorNamespace();
-        $message = $this->getTranslator()->get($translatorNamespace . '.' . $messageKey);
+        $message             = $this->getTranslator()->get($translatorNamespace . '.' . $messageKey);
 
+        // The message was not found in the language file
         if ($message == 'messages.' . $messageKey) {
             $message = MessagingModel::ERROR_DEFAULT;
         }

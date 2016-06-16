@@ -251,10 +251,10 @@ class RestContext extends FeatureContext implements Context
      */
     protected function arrayHasTheFollowingItems(TableNode $table, $key = null)
     {
-        $response = $dataSet = $this->responseIsJsonHelper(true);
+        $dataSet = $this->responseIsJsonHelper(true);
 
         if (!empty($key)) {
-            $dataSet = $this->getValueOfProperty($key, $response);
+            $dataSet = $this->getValueOfProperty($key, $dataSet);
         }
 
         $this->theTypeIsHelper($dataSet, 'array');

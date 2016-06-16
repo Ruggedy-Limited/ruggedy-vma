@@ -52,7 +52,7 @@ abstract class AbstractPermissionHandler extends CommandHandler
     protected $validPermissions;
 
     /**
-     * GetListOfPermissions constructor.
+     * AbstractPermissionHandler constructor.
      *
      * @param ComponentPermissionRepository $componentPermissionRepository
      * @param ComponentRepository $componentRepository
@@ -78,7 +78,7 @@ abstract class AbstractPermissionHandler extends CommandHandler
     }
 
     /**
-     * Get the component record
+     * Get the component record and set it on the handler
      *
      * @param string $componentName
      * @throws ComponentNotFoundException
@@ -99,7 +99,7 @@ abstract class AbstractPermissionHandler extends CommandHandler
     }
 
     /**
-     * Get the component instance
+     * Get the component instance and set it on the handler
      *
      * @param int $id
      * @throws ComponentNotFoundException
@@ -115,7 +115,8 @@ abstract class AbstractPermissionHandler extends CommandHandler
 
         // Get an EntityRepository for the component instance
         $entityClass      = $component->getClassName();
-        $entityRepository = $this->getEm()->getRepository("App\\Entities\\" . $entityClass);
+        $entityNamespace  = env('APP_MODEL_NAMESPACE');
+        $entityRepository = $this->getEm()->getRepository($entityNamespace . "\\" . $entityClass);
         if (empty($entityRepository) || !($entityRepository instanceof EntityRepository)) {
             throw new InvalidComponentEntityException("Could not create an EntityRepository"
                 . " from the entity class name");
@@ -125,7 +126,8 @@ abstract class AbstractPermissionHandler extends CommandHandler
         /** @var HasGetId $componentInstance */
         $componentInstance = $entityRepository->find($id);
         if (empty($componentInstance) || !($componentInstance instanceof HasGetId)) {
-            $exceptionClass = "App\\Exceptions\\" . $entityClass . "NotFoundException";
+            $exceptionNamespace = env('APP_EXCEPTION_NAMESPACE');
+            $exceptionClass = $exceptionNamespace . "\\" . $entityClass . "NotFoundException";
             $message        = "That {$component->getName()} does not exist";
 
             if (!class_exists($exceptionClass)) {
@@ -158,7 +160,7 @@ abstract class AbstractPermissionHandler extends CommandHandler
     }
 
     /**
-     * Get the User to apply to permission changes to
+     * Get the User to apply to permission changes to and set it on the handler
      *
      * @param int $userId
      * @throws UserNotFoundException
