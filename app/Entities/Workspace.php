@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Contracts\HasOwnerUserEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,6 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repositories\WorkspaceRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Workspace extends Base\Workspace
+class Workspace extends Base\Workspace implements HasOwnerUserEntity
 {
 }

@@ -55,11 +55,7 @@ class InviteToTeam extends CommandHandler
     public function handle(InviteToTeamCommand $command)
     {
         // Get the authenticated user
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get the authenticated user");
-        }
+        $requestingUser = $this->authenticate();
 
         $teamId = $command->getTeamId();
         $email  = $command->getEmail();

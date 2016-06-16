@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 
-class CreateProject
+class CreateProject extends CommandHandler
 {
     /** @var UserRepository */
     protected $userRepository;
@@ -46,11 +46,7 @@ class CreateProject
     public function handle(CreateProjectCommand $command)
     {
         // Get the authenticated user
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get the authenticated user");
-        }
+        $requestingUser = $this->authenticate();
 
         $userId         = $command->getId();
         $projectDetails = $command->getDetails();
@@ -75,7 +71,7 @@ class CreateProject
         $project->setFromArray($projectDetails);
         $project->setUser($projectOwner);
         $project->setUserId($projectOwner->getId());
-        $project->setDeleted(AbstractEntity::NOT_DELETED);
+        $project->setDeleted(false);
 
         // Add the project to the user in the current session
         $requestingUser->addProject($project);

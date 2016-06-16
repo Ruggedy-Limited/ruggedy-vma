@@ -9,12 +9,17 @@ use App\Commands\DeleteWorkspace;
 use App\Commands\EditProject;
 use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
+use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersProjects;
 use App\Commands\GetUserInformation;
+use App\Commands\RevokePermission;
+use App\Commands\UpsertPermission;
 use App\Exceptions\ActionNotPermittedException;
+use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
+use App\Exceptions\InvalidPermissionException;
 use App\Exceptions\ProjectNotFoundException;
 use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
@@ -62,6 +67,12 @@ class MessagingModel
     const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_workspace_permission";
     const ERROR_LIST_WORKSPACES_PERMISSION  = "error_list_workspaces_permission";
     
+    /** API Permission Management */
+    const ERROR_AUTH_USER_NOT_OWNER       = 'error_auth_user_not_owner';
+    const ERROR_AUTH_USER_NOT_OWNER_LIST  = 'error_auth_user_not_owner_list';
+    const ERROR_COMPONENT_DOES_NOT_EXIST  = 'error_component_does_not_exist';
+    const ERROR_PERMISSION_DOES_NOT_EXIST = 'error_permission_does_not_exist';
+    
     /** @var Collection */
     public static $commandMessageMap;
 
@@ -86,6 +97,9 @@ class MessagingModel
             CreateWorkspace::class        => static::ERROR_WORKSPACE_CREATE_PERMISSION,
             DeleteWorkspace::class        => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class          => static::ERROR_EDIT_WORKSPACE_PERMISSION,
+            UpsertPermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
+            RevokePermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
+            GetListOfPermissions::class   => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
         ]);
 
         static::$commandMessageMap = new Collection([
@@ -98,6 +112,8 @@ class MessagingModel
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
             WorkspaceNotFoundException::class  => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
+            ComponentNotFoundException::class  => static::ERROR_COMPONENT_DOES_NOT_EXIST,
+            InvalidPermissionException::class  => static::ERROR_PERMISSION_DOES_NOT_EXIST,
         ]);
     }
 

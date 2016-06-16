@@ -35,6 +35,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'team_users',
         'projects',
         'workspaces',
+        'components',
+        'component_permissions',
     ];
 
     /**
@@ -86,23 +88,17 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             // Disable foreign key checks so that this doesn't fail for the wrong reasons
             Schema::disableForeignKeyConstraints();
 
-            try {
-                foreach ($table as $row) {
-                    // Create ans save each row using Eloquent ORM
-                    $row   = $this->sanitiseRowHelper($row);
-                    $model = $modelClassPath::forceCreate($row);
-                    $model->saveOrFail();
-                }
-
-                // Re-enable foreign key checks
-                Schema::enableForeignKeyConstraints();
-
-                return true;
-            } catch (Exception $e) {
-                // Re-enable foreign key checks and throw an exception
-                Schema::enableForeignKeyConstraints();
-                throw new FeatureBackgroundSetupFailedException("Failed when setting up database.");
+            foreach ($table as $row) {
+                // Create ans save each row using Eloquent ORM
+                $row   = $this->sanitiseRowHelper($row);
+                $model = $modelClassPath::forceCreate($row);
+                $model->saveOrFail();
             }
+
+            // Re-enable foreign key checks
+            Schema::enableForeignKeyConstraints();
+
+            return true;
         }
 
         return false;
@@ -222,7 +218,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     protected function getEloquentModelClassHelper(string $objectType): string
     {
-        $rootNamespace = env('APP_MODEL_NAMESPACE');
+        $rootNamespace = env('APP_TEST_MODEL_NAMESPACE');
         if (empty($rootNamespace)) {
             throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
         }

@@ -173,6 +173,18 @@ class User extends AbstractEntity
     protected $apiTokens;
 
     /**
+     * @ORM\OneToMany(targetEntity="ComponentPermission", mappedBy="userRelatedByUserId", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $componentPermissionRelatedByUserIds;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ComponentPermission", mappedBy="userRelatedByGrantedBy", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`granted_by`", nullable=false)
+     */
+    protected $componentPermissionRelatedByGrantedBies;
+
+    /**
      * @ORM\OneToMany(targetEntity="Invitation", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -224,6 +236,8 @@ class User extends AbstractEntity
     {
         $this->announcements = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
+        $this->componentPermissionRelatedByUserIds = new ArrayCollection();
+        $this->componentPermissionRelatedByGrantedBies = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->invoices = new ArrayCollection();
         $this->notificationRelatedByUserIds = new ArrayCollection();
@@ -971,6 +985,78 @@ class User extends AbstractEntity
     public function getApiTokens()
     {
         return $this->apiTokens;
+    }
+
+    /**
+     * Add ComponentPermission entity related by `user_id` to collection (one to many).
+     *
+     * @param \App\Entities\Base\ComponentPermission $componentPermission
+     * @return \App\Entities\Base\User
+     */
+    public function addComponentPermissionRelatedByUserId(ComponentPermission $componentPermission)
+    {
+        $this->componentPermissionRelatedByUserIds[] = $componentPermission;
+
+        return $this;
+    }
+
+    /**
+     * Remove ComponentPermission entity related by `user_id` from collection (one to many).
+     *
+     * @param \App\Entities\Base\ComponentPermission $componentPermission
+     * @return \App\Entities\Base\User
+     */
+    public function removeComponentPermissionRelatedByUserId(ComponentPermission $componentPermission)
+    {
+        $this->componentPermissionRelatedByUserIds->removeElement($componentPermission);
+
+        return $this;
+    }
+
+    /**
+     * Get ComponentPermission entity related by `user_id` collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComponentPermissionRelatedByUserIds()
+    {
+        return $this->componentPermissionRelatedByUserIds;
+    }
+
+    /**
+     * Add ComponentPermission entity related by `granted_by` to collection (one to many).
+     *
+     * @param \App\Entities\Base\ComponentPermission $componentPermission
+     * @return \App\Entities\Base\User
+     */
+    public function addComponentPermissionRelatedByGrantedBy(ComponentPermission $componentPermission)
+    {
+        $this->componentPermissionRelatedByGrantedBies[] = $componentPermission;
+
+        return $this;
+    }
+
+    /**
+     * Remove ComponentPermission entity related by `granted_by` from collection (one to many).
+     *
+     * @param \App\Entities\Base\ComponentPermission $componentPermission
+     * @return \App\Entities\Base\User
+     */
+    public function removeComponentPermissionRelatedByGrantedBy(ComponentPermission $componentPermission)
+    {
+        $this->componentPermissionRelatedByGrantedBies->removeElement($componentPermission);
+
+        return $this;
+    }
+
+    /**
+     * Get ComponentPermission entity related by `granted_by` collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComponentPermissionRelatedByGrantedBies()
+    {
+        return $this->componentPermissionRelatedByGrantedBies;
     }
 
     /**

@@ -48,11 +48,7 @@ class EditWorkspace extends CommandHandler
     public function handle(EditWorkspaceCommand $command)
     {
         // Get the authenticated User
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get an authenticated User");
-        }
+        $requestingUser = $this->authenticate();
 
         // Make sure all the required members are set on the command
         $workspaceId      = $command->getId();
@@ -64,7 +60,7 @@ class EditWorkspace extends CommandHandler
         // Make sure the Project exists
         /** @var Workspace $workspace */
         $workspace = $this->getWorkspaceRepository()->find($workspaceId);
-        if (empty($workspace) || $workspace->getDeleted() === AbstractEntity::IS_DELETED) {
+        if (empty($workspace) || !empty($workspace->getDeleted())) {
             throw new WorkspaceNotFoundException("The Project was not found or has been deleted");
         }
 

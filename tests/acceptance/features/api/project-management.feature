@@ -100,8 +100,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "My Project"
     And the response has a "deleted" property
-    And the type of the "deleted" property is int
-    And the "deleted" property equals "0"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "false"
 
   Scenario: Delete and confirm deletion of a Project from my account
     Given that I want to delete a "Project"
@@ -116,8 +116,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "My Project"
     And the response has a "deleted" property
-    And the type of the "deleted" property is int
-    And the "deleted" property equals "1"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "true"
 
   Scenario: Delete a Project on someone else's account where I have Project write access
     Given that I want to delete a "Project"
@@ -132,8 +132,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "A Project"
     And the response has a "deleted" property
-    And the type of the "deleted" property is int
-    And the "deleted" property equals "0"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "true"
 
   Scenario: Delete and confirm deletion of a Project on someone else's account where I have Project write access
     Given that I want to delete a "Project"
@@ -148,8 +148,8 @@ Feature: As an account or team owner
     And the type of the "name" property is string
     And the "name" property equals "A Project"
     And the response has a "deleted" property
-    And the type of the "deleted" property is int
-    And the "deleted" property equals "1"
+    And the type of the "deleted" property is bool
+    And the "deleted" property equals "true"
 
   Scenario: I attempt to delete a Project on someone else's account where I don't have Project write access
     Given that I want to delete a "Project"

@@ -40,11 +40,7 @@ class GetListOfUsersProjects extends CommandHandler
     public function handle(GetListOfUsersProjectsCommand $command)
     {
         // Get the authenticated User
-        /** @var User $requestingUser */
-        $requestingUser = Auth::user();
-        if (empty($requestingUser)) {
-            throw new Exception("Could not get authenticated User");
-        }
+        $requestingUser = $this->authenticate();
 
         // Make sure all the required members are set on the command
         $userId = $command->getId();
