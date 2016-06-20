@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * App\Entities\Base\Asset
  *
- * @ORM\Entity(repositoryClass="App\Repositories\AssetRepository")
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="`assets`", indexes={@ORM\Index(name="assets_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="assets_user_fk_idx", columns={"`user_id`"})})
  */
 class Asset extends AbstractEntity
