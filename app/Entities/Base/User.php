@@ -173,6 +173,12 @@ class User extends AbstractEntity
     protected $apiTokens;
 
     /**
+     * @ORM\OneToMany(targetEntity="Asset", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $assets;
+
+    /**
      * @ORM\OneToMany(targetEntity="ComponentPermission", mappedBy="userRelatedByUserId", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -236,6 +242,7 @@ class User extends AbstractEntity
     {
         $this->announcements = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
+        $this->assets = new ArrayCollection();
         $this->componentPermissionRelatedByUserIds = new ArrayCollection();
         $this->componentPermissionRelatedByGrantedBies = new ArrayCollection();
         $this->invitations = new ArrayCollection();
@@ -985,6 +992,42 @@ class User extends AbstractEntity
     public function getApiTokens()
     {
         return $this->apiTokens;
+    }
+
+    /**
+     * Add Asset entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Asset $asset
+     * @return \App\Entities\Base\User
+     */
+    public function addAsset(Asset $asset)
+    {
+        $this->assets[] = $asset;
+
+        return $this;
+    }
+
+    /**
+     * Remove Asset entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Asset $asset
+     * @return \App\Entities\Base\User
+     */
+    public function removeAsset(Asset $asset)
+    {
+        $this->assets->removeElement($asset);
+
+        return $this;
+    }
+
+    /**
+     * Get Asset entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAssets()
+    {
+        return $this->assets;
     }
 
     /**
