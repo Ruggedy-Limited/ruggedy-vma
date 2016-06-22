@@ -66,7 +66,7 @@ class CreateWorkspace extends CommandHandler
             throw new ProjectNotFoundException("The Project was not found or has been deleted");
         }
 
-        // Check that the authenticated User has permission to create Workspace or the given Project
+        // Check that the authenticated User has permission to create Workspace on the given Project
         if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $project)) {
             throw new ActionNotPermittedException("The authenticated user does not have permission to "
                 . "create Workspaces for the given Project");
