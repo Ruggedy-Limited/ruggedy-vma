@@ -3,6 +3,11 @@
 namespace App\Providers;
 
 use App\Auth\RuggedyTokenGuard;
+use App\Entities\Project;
+use App\Entities\Team;
+use App\Entities\User;
+use App\Entities\Workspace;
+use App\Policies\ComponentPolicy;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +20,10 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        User::class      => ComponentPolicy::class,
+        Team::class      => ComponentPolicy::class,
+        Project::class   => ComponentPolicy::class,
+        Workspace::class => ComponentPolicy::class,
     ];
 
     /**
