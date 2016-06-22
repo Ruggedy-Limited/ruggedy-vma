@@ -7,6 +7,7 @@ use App\Repositories\ApiTokenRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,16 +27,21 @@ class RuggedyTokenGuard
     /** @var UserRepository  */
     protected $userRepository;
 
+    /** @var EntityManager */
+    protected $em;
+
     /**
      * Create a new token guard instance.
      *
      * @param  ApiTokenRepository $tokens
      * @param UserRepository $userRepository
+     * @param EntityManager $em
      */
-    public function __construct(ApiTokenRepository $tokens, UserRepository $userRepository)
+    public function __construct(ApiTokenRepository $tokens, UserRepository $userRepository, EntityManager $em)
     {
         $this->tokens         = $tokens;
         $this->userRepository = $userRepository;
+        $this->em             = $em;
     }
 
     /**
@@ -59,14 +65,15 @@ class RuggedyTokenGuard
         // of course this method will return null and no user will be authenticated.
         Auth::setDefaultDriver('api');
 
-        if (app('em')->contains($token)) {
+        if ($this->em->contains($token)) {
             $token->setLastUsedAt(new DateTime());
-            app('em')->persist($token);
-            app('em')->flush($token);
+            $this->em->persist($token);
+            $this->em->flush($token);
         }
 
-        $token->getUser()->addApiToken($token);
         $user = $token->getUser();
+        $user->addApiToken($token);
+        
         return $user;
     }
 
