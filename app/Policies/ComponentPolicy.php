@@ -20,6 +20,7 @@ class ComponentPolicy
      */
     const ACTION_CREATE = 'create';
     const ACTION_UPDATE = 'update';
+    const ACTION_EDIT   = 'edit';
     const ACTION_DELETE = 'delete';
     const ACTION_VIEW   = 'view';
     const ACTION_LIST   = 'list';

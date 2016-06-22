@@ -8,6 +8,9 @@ use App\Entities\Team;
 use App\Entities\User;
 use App\Entities\Workspace;
 use App\Policies\ComponentPolicy;
+use DoctrineProxies\__CG__\App\Entities\Project as ProjectProxy;
+use DoctrineProxies\__CG__\App\Entities\Team as TeamProxy;
+use DoctrineProxies\__CG__\App\Entities\User as UserProxy;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -20,10 +23,14 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        User::class      => ComponentPolicy::class,
-        Team::class      => ComponentPolicy::class,
-        Project::class   => ComponentPolicy::class,
-        Workspace::class => ComponentPolicy::class,
+        User::class         => ComponentPolicy::class,
+        UserProxy::class    => ComponentPolicy::class,
+        Team::class         => ComponentPolicy::class,
+        TeamProxy::class    => ComponentPolicy::class,
+        Project::class      => ComponentPolicy::class,
+        ProjectProxy::class => ComponentPolicy::class,
+        Workspace::class    => ComponentPolicy::class,
+
     ];
 
     /**
