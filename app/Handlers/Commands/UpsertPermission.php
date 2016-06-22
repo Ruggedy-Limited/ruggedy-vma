@@ -40,19 +40,10 @@ class UpsertPermission extends AbstractPermissionHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Fetch the component in order to get the component's Doctrine entity class
-        $this->fetchAndSetComponent($componentName);
-        
-        // Fetch the component instance
-        $this->fetchAndSetComponentInstance($id);
-        
-        $this->checkPermissions();
+        $this->getService()->initialise($componentName, $id, $userId);
 
-        // Fetch the User that the permissions are being created for
-        $this->fetchAndSetUser($userId);
-        
         // Validate the permissions
-        if (!$this->getValidPermissions()->contains($permission)) {
+        if (!$this->getService()->getValidPermissions()->contains($permission)) {
             throw new InvalidPermissionException("The given value for 'permission' is not a valid permission option");
         }
 
@@ -64,10 +55,11 @@ class UpsertPermission extends AbstractPermissionHandler
         $this->getEm()->flush($permissionEntity);
         
         // Get all the permissions for this component instance to return
-        $componentInstancePermissions = $this->getComponentPermissionRepository()
+        $componentInstancePermissions = $this->getService()
+            ->getComponentPermissionRepository()
             ->findByComponentAndComponentInstanceId(
-                $this->getComponent()->getId(),
-                $this->getComponentInstance()->getId()
+                $this->getService()->getComponent()->getId(),
+                $this->getService()->getComponentInstance()->getId()
             );
 
         // Create a collection containing the created permission and a Collection

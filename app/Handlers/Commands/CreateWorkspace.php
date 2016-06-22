@@ -10,6 +10,7 @@ use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\ProjectNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\ProjectRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -58,7 +59,7 @@ class CreateWorkspace extends CommandHandler
             throw new InvalidInputException("One or more of the required members are not set on the command object");
         }
 
-        // Check that the Project exists
+        // Check that the parent Project exists
         /** @var Project $project */
         $project = $this->getProjectRepository()->find($projectId);
         if (empty($project) || $project->getDeleted() === AbstractEntity::IS_DELETED) {
@@ -66,14 +67,14 @@ class CreateWorkspace extends CommandHandler
         }
 
         // Check that the authenticated User has permission to create Workspace or the given Project
-        if ($requestingUser->getId() !== $project->getUser()->getId()) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $project)) {
             throw new ActionNotPermittedException("The authenticated user does not have permission to "
                 . "create Workspaces for the given Project");
         }
 
         $workspace = new Workspace();
         $workspace->setFromArray($workspaceDetails);
-        $workspace->setUser($requestingUser);
+        $workspace->setUser($project->getUser());
         $workspace->setProject($project);
         $workspace->setDeleted(false);
         

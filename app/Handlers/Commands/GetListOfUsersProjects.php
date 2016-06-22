@@ -55,7 +55,7 @@ class GetListOfUsersProjects extends CommandHandler
         }
 
         // Make sure the User has permission to list these projects
-        if ($requestingUser->getId() !== $user->getId()) {
+        if ($requestingUser->cannot('list', $user)) {
             throw new ActionNotPermittedException("The authenticated User does not have permission to list those Projects");
         }
 

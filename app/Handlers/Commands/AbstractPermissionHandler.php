@@ -2,79 +2,37 @@
 
 namespace App\Handlers\Commands;
 
-use App\Contracts\HasGetId;
-use App\Contracts\HasOwnerUserEntity;
-use App\Entities\Base\AbstractEntity;
-use App\Entities\Component;
 use App\Entities\ComponentPermission;
 use App\Entities\User;
-use App\Exceptions\ActionNotPermittedException;
-use App\Exceptions\ComponentNotFoundException;
-use App\Exceptions\InvalidComponentEntityException;
 use App\Exceptions\InvalidInputException;
-use App\Exceptions\UserNotFoundException;
-use App\Repositories\ComponentPermissionRepository;
-use App\Repositories\ComponentRepository;
-use App\Repositories\UserRepository;
+use App\Services\PermissionService;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Exception;
-use Illuminate\Support\Collection;
 
 
 abstract class AbstractPermissionHandler extends CommandHandler
 {
-    /** @var ComponentRepository */
-    protected $componentRepository;
-
-    /** @var ComponentPermissionRepository */
-    protected $componentPermissionRepository;
-
-    /** @var UserRepository */
-    protected $userRepository;
-
     /** @var EntityManager */
     protected $em;
 
     /** @var User */
-    protected $user;
-
-    /** @var User */
     protected $authenticatedUser;
 
-    /** @var Component */
-    protected $component;
-
-    /** @var AbstractEntity */
-    protected $componentInstance;
-
-    /** @var Collection */
-    protected $validPermissions;
+    /** @var PermissionService */
+    protected $service;
 
     /**
      * AbstractPermissionHandler constructor.
      *
-     * @param ComponentPermissionRepository $componentPermissionRepository
-     * @param ComponentRepository $componentRepository
-     * @param UserRepository $userRepository
+     * @param PermissionService $service
      * @param EntityManager $em
      * @throws Exception
      */
-    public function __construct(
-        ComponentPermissionRepository $componentPermissionRepository, ComponentRepository $componentRepository,
-        UserRepository $userRepository, EntityManager $em
-    )
+    public function __construct(PermissionService $service, EntityManager $em)
     {
-        $this->componentPermissionRepository = $componentPermissionRepository;
-        $this->componentRepository           = $componentRepository;
-        $this->userRepository                = $userRepository;
-        $this->em                            = $em;
-        $this->authenticatedUser             = $this->authenticate();
-
-        $this->validPermissions = new Collection([
-            ComponentPermission::PERMISSION_READ_ONLY,
-            ComponentPermission::PERMISSION_READ_WRITE,
-        ]);
+        $this->service           = $service;
+        $this->em                = $em;
+        $this->authenticatedUser = $this->authenticate();
     }
 
     /**
@@ -187,9 +145,9 @@ abstract class AbstractPermissionHandler extends CommandHandler
      */
     protected function findOrCreatePermissionEntity(int $id, string $permission = null): ComponentPermission
     {
-        $component         = $this->getComponent();
-        $componentInstance = $this->getComponentInstance();
-        $user              = $this->getUser();
+        $component         = $this->getService()->getComponent();
+        $componentInstance = $this->getService()->getComponentInstance();
+        $user              = $this->getService()->getUser();
         $requestingUser    = $this->getAuthenticatedUser();
 
         // Check that the command handler state is set as required
@@ -198,7 +156,8 @@ abstract class AbstractPermissionHandler extends CommandHandler
         }
 
         /** @var ComponentPermission $permissionEntity */
-        $permissionEntity = $this->getComponentPermissionRepository()
+        $permissionEntity = $this->getService()
+            ->getComponentPermissionRepository()
             ->findOneByComponentInstanceAndUserIds($component->getId(), $id, $user->getId());
 
         if (empty($permissionEntity)) {
@@ -219,67 +178,11 @@ abstract class AbstractPermissionHandler extends CommandHandler
     }
 
     /**
-     * Convert a URL slug with dashes into words with the first letter capitilised
-     *
-     * @param string $componentNameFromUrl
-     * @return string
-     */
-    public static function covertUrlParameterToComponentNameHelper(string $componentNameFromUrl): string
-    {
-        if (empty($componentNameFromUrl)) {
-            return '';
-        }
-
-        // Replace dashes with spaces and capitalise all the words
-        return ucwords(str_replace("-", " ", $componentNameFromUrl));
-    }
-
-    /**
-     * @return ComponentRepository
-     */
-    public function getComponentRepository()
-    {
-        return $this->componentRepository;
-    }
-
-    /**
-     * @return ComponentPermissionRepository
-     */
-    public function getComponentPermissionRepository()
-    {
-        return $this->componentPermissionRepository;
-    }
-
-    /**
-     * @return UserRepository
-     */
-    public function getUserRepository()
-    {
-        return $this->userRepository;
-    }
-
-    /**
      * @return EntityManager
      */
     public function getEm()
     {
         return $this->em;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
     }
 
     /**
@@ -299,42 +202,10 @@ abstract class AbstractPermissionHandler extends CommandHandler
     }
 
     /**
-     * @return Component
+     * @return PermissionService
      */
-    public function getComponent()
+    public function getService()
     {
-        return $this->component;
-    }
-
-    /**
-     * @param Component $component
-     */
-    public function setComponent($component)
-    {
-        $this->component = $component;
-    }
-
-    /**
-     * @return HasGetId|HasOwnerUserEntity
-     */
-    public function getComponentInstance()
-    {
-        return $this->componentInstance;
-    }
-
-    /**
-     * @param HasGetId $componentInstance
-     */
-    public function setComponentInstance($componentInstance)
-    {
-        $this->componentInstance = $componentInstance;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getValidPermissions()
-    {
-        return $this->validPermissions;
+        return $this->service;
     }
 }

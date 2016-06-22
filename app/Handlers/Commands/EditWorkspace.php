@@ -65,7 +65,7 @@ class EditWorkspace extends CommandHandler
         }
 
         // Make sure the authenticated User has permission to edit the Project
-        if ($requestingUser->getId() !== $workspace->getUser()->getId()) {
+        if ($requestingUser->cannot('edit', $workspace)) {
             throw new ActionNotPermittedException("The User does not have permission to edit the Project");
         }
 

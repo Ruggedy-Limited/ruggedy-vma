@@ -65,7 +65,7 @@ class EditProject extends CommandHandler
         }
 
         // Make sure the authenticated User has permission to edit the Project
-        if ($requestingUser->getId() !== $project->getUser()->getId()) {
+        if ($requestingUser->cannot('edit', $project)) {
             throw new ActionNotPermittedException("The User does not have permission to edit the Project");
         }
 

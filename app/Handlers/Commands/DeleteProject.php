@@ -9,6 +9,7 @@ use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\ProjectNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\ProjectRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -65,7 +66,7 @@ class DeleteProject extends CommandHandler
         }
 
         // Check that the User has permission to delete the Project
-        if ($requestingUser->getId() !== $project->getUser()->getId()) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_DELETE, $project)) {
             throw new ActionNotPermittedException("User does not have permission to delete this Project");
         }
 
