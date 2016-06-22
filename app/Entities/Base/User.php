@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\User
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`users`", uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
+ * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk_idx", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
 class User extends AbstractEntity
 {
@@ -237,6 +237,12 @@ class User extends AbstractEntity
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
     protected $workspaces;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Team", inversedBy="users", cascade={"persist"})
+     * @ORM\JoinColumn(name="`current_team_id`", referencedColumnName="`id`")
+     */
+    protected $team;
 
     public function __construct()
     {
@@ -1388,6 +1394,29 @@ class User extends AbstractEntity
     public function getWorkspaces()
     {
         return $this->workspaces;
+    }
+
+    /**
+     * Set Team entity (many to one).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\User
+     */
+    public function setTeam(Team $team = null)
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity (many to one).
+     *
+     * @return \App\Entities\Base\Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
     }
 
     public function __sleep()

@@ -6,8 +6,10 @@ use App\Commands\CreateProject as CreateProjectCommand;
 use App\Entities\Base\AbstractEntity;
 use App\Entities\Project;
 use App\Entities\User;
+use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -50,21 +52,29 @@ class CreateProject extends CommandHandler
 
         $userId         = $command->getId();
         $projectDetails = $command->getDetails();
+
         // Check that the required member is set on the command
         if (!isset($userId) || empty($projectDetails)) {
             throw new InvalidInputException("One or more required members were not set on the given command object");
         }
-        
+
+        // Assign the Project Owner
         $projectOwner = $requestingUser;
         if ($requestingUser->getId() !== $userId) {
             $projectOwner = $this->getUserRepository()->find($userId);
         }
-        
+
+        // Exit if the Project owner does not exist in the database
         if (empty($projectOwner)) {
             throw new UserNotFoundException("A User related to the given user ID was not found");
         }
 
-        //TODO: Check User permissions for creating Projects
+        // Check that the authenticated user has permission to create a Project on the given User account
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $projectOwner)) {
+            throw new ActionNotPermittedException(
+                "The authenticated User does not have permission to create a Project on this User account"
+            );
+        }
 
         // Create a new Project entity
         $project = new Project();

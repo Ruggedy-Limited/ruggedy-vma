@@ -140,6 +140,12 @@ class Team extends AbstractEntity
     protected $teamSubscriptions;
 
     /**
+     * @ORM\OneToMany(targetEntity="User", mappedBy="team", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`current_team_id`", nullable=false)
+     */
+    protected $users;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="teams", cascade={"persist"})
      * @ORM\JoinColumn(name="`owner_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -151,6 +157,7 @@ class Team extends AbstractEntity
         $this->invitations = new ArrayCollection();
         $this->invoices = new ArrayCollection();
         $this->teamSubscriptions = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     /**
@@ -755,6 +762,42 @@ class Team extends AbstractEntity
     public function getTeamSubscriptions()
     {
         return $this->teamSubscriptions;
+    }
+
+    /**
+     * Add User entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Team
+     */
+    public function addUser(User $user)
+    {
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove User entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\User $user
+     * @return \App\Entities\Base\Team
+     */
+    public function removeUser(User $user)
+    {
+        $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * Get User entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 
     /**

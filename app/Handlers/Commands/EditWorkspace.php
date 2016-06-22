@@ -9,6 +9,7 @@ use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\WorkspaceNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -65,7 +66,7 @@ class EditWorkspace extends CommandHandler
         }
 
         // Make sure the authenticated User has permission to edit the Project
-        if ($requestingUser->getId() !== $workspace->getUser()->getId()) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
             throw new ActionNotPermittedException("The User does not have permission to edit the Project");
         }
 

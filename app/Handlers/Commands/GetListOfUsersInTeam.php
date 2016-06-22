@@ -10,6 +10,7 @@ use App\Exceptions\InvalidInputException;
 use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\UserNotInTeamException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
@@ -73,8 +74,10 @@ class GetListOfUsersInTeam extends CommandHandler
         }
 
         // Make sure that the user own the given team
-        if (!$requestingUser->ownsTeam($team)) {
-            throw new ActionNotPermittedException("The authenticated user is not the owner of the given team");
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_LIST, $team)) {
+            throw new ActionNotPermittedException(
+                "The authenticated user does not have permission to list those people"
+            );
         }
 
         return $team->getUsers()->toArray();

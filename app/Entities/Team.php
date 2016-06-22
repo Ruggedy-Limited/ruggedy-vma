@@ -2,8 +2,10 @@
 
 namespace App\Entities;
 
-use App\Contracts\HasOwnerUserEntity;
+use App\Contracts\HasComponentPermissions;
+use App\Contracts\SystemComponent;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use stdClass;
 
@@ -14,8 +16,14 @@ use stdClass;
  * @ORM\Entity(repositoryClass="App\Repositories\TeamRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Team extends Base\Team implements HasOwnerUserEntity
+class Team extends Base\Team implements SystemComponent, HasComponentPermissions
 {
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="teams", cascade={"persist"}, fetch="EAGER")
+     * @ORM\JoinColumn(name="`owner_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $user;
+
     /**
      * @ORM\ManyToMany(targetEntity="User")
      * @ORM\JoinTable(name="team_users",
@@ -54,32 +62,23 @@ class Team extends Base\Team implements HasOwnerUserEntity
     }
 
     /**
-     * @return ArrayCollection
+     * A more sensible alias for the generated Entity's getComponentPermissionRelatedByUserIds() method
+     *
+     * @return Collection
      */
-    public function getUsers()
+    public function getPermissions(): Collection
     {
-        return $this->users;
+        return parent::getComponentPermissions();
     }
 
     /**
-     * Add a User to this Team
+     * Get the parent Entity of this Entity
      *
-     * @param User $user
+     * @return null
      */
-    public function addUser(User $user)
+    public function getParent()
     {
-        $this->users->add($user);
-    }
-
-    /**
-     * Remove a User from this Team
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function removeUser(User $user)
-    {
-        return $this->users->removeElement($user);
+        return null;
     }
 
     /**

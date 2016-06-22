@@ -9,6 +9,7 @@ use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\ProjectNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\ProjectRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -65,7 +66,7 @@ class EditProject extends CommandHandler
         }
 
         // Make sure the authenticated User has permission to edit the Project
-        if ($requestingUser->getId() !== $project->getUser()->getId()) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_EDIT, $project)) {
             throw new ActionNotPermittedException("The User does not have permission to edit the Project");
         }
 

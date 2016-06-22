@@ -9,12 +9,15 @@ use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\TeamNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\TeamRepository;
 use App\Team as EloquentTeam;
+use Doctrine\ORM\Proxy\Proxy;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Factory;
 use Laravel\Spark\Contracts\Interactions\Settings\Teams\SendInvitation;
+use LaravelDoctrine\ORM\Facades\EntityManager;
 
 
 class InviteToTeam extends CommandHandler
@@ -72,8 +75,10 @@ class InviteToTeam extends CommandHandler
         }
 
         // Check that the authenticated User owns the given Team
-        if (!$requestingUser->ownsTeam($team)) {
-            throw new ActionNotPermittedException("The authenticated User does not own the given Team");
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_UPDATE, $team)) {
+            throw new ActionNotPermittedException(
+                "The authenticated User does not have permission to invite people to this Team"
+            );
         }
 
         // Check for a valid email in the POST payload

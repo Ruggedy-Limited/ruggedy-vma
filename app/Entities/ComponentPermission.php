@@ -2,7 +2,7 @@
 
 namespace App\Entities;
 
-use App\Contracts\HasGetId;
+use App\Contracts\SystemComponent;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Collection;
 use stdClass;
@@ -70,7 +70,7 @@ class ComponentPermission extends Base\ComponentPermission
         // Get the related entity using the getter method and if it is set, get it's ID and populate the relevant
         // member with the ID value
         $relatedEntity = $this->$getter();
-        if (isset($relatedEntity) && $relatedEntity instanceof HasGetId) {
+        if (isset($relatedEntity) && $relatedEntity instanceof SystemComponent) {
             $this->$member = $relatedEntity->getId();
         }
     }

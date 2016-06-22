@@ -3,10 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\RevokePermission as RevokePermissionCommand;
-use App\Entities\Base\AbstractEntity;
-use App\Entities\Component;
 use App\Entities\ComponentPermission;
-use App\Entities\User;
 use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\InvalidComponentEntityException;
 use App\Exceptions\InvalidInputException;
@@ -37,15 +34,7 @@ class RevokePermission extends AbstractPermissionHandler
         }
 
         // Fetch the component in order to get the component's Doctrine entity class
-        $this->fetchAndSetComponent($componentName);
-
-        // fetch the component instance
-        $this->fetchAndSetComponentInstance($id);
-
-        $this->checkPermissions();
-
-        // Fetch the User that the permissions are being created for
-        $this->fetchAndSetUser($userId);
+        $this->getService()->initialise($componentName, $id, $userId);
 
         $permissionEntity = $this->findOrCreatePermissionEntity($id);
 
@@ -59,10 +48,10 @@ class RevokePermission extends AbstractPermissionHandler
         }
 
         // Get all the permissions for this component instance to return
-        $componentInstancePermissions = $this->getComponentPermissionRepository()
+        $componentInstancePermissions = $this->getService()->getComponentPermissionRepository()
             ->findByComponentAndComponentInstanceId(
-                $this->getComponent()->getId(),
-                $this->getComponentInstance()->getId()
+                $this->getService()->getComponent()->getId(),
+                $this->getService()->getComponentInstance()->getId()
             );
 
         return new Collection([
