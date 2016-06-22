@@ -46,6 +46,9 @@ CHANGE COLUMN `user_id` `user_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
 ALTER TABLE `teams` 
 CHANGE COLUMN `owner_id` `owner_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
 
+ALTER TABLE `users` 
+CHANGE COLUMN `current_team_id` `current_team_id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
+
 ALTER TABLE `announcements` 
 ADD CONSTRAINT `announcements_fk_user`
   FOREIGN KEY (`user_id`)
@@ -128,7 +131,13 @@ ADD CONSTRAINT `teams_fk_owner`
   REFERENCES `users` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
-
+  
+ALTER TABLE `users` 
+ADD CONSTRAINT `users_current_team_fk`
+  FOREIGN KEY (`current_team_id`)
+  REFERENCES `teams` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
