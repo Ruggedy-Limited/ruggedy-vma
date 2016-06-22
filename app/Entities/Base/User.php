@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\User
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`users`", uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
+ * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk_idx", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
 class User extends AbstractEntity
 {
@@ -71,7 +71,7 @@ class User extends AbstractEntity
     protected $two_factor_reset_code;
 
     /**
-     * @ORM\Column(name="`current_team_id`", type="integer", nullable=true)
+     * @ORM\Column(name="`current_team_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $current_team_id;
 
@@ -173,6 +173,12 @@ class User extends AbstractEntity
     protected $apiTokens;
 
     /**
+     * @ORM\OneToMany(targetEntity="Asset", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $assets;
+
+    /**
      * @ORM\OneToMany(targetEntity="ComponentPermission", mappedBy="userRelatedByUserId", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -232,10 +238,17 @@ class User extends AbstractEntity
      */
     protected $workspaces;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Team", inversedBy="users", cascade={"persist"})
+     * @ORM\JoinColumn(name="`current_team_id`", referencedColumnName="`id`")
+     */
+    protected $team;
+
     public function __construct()
     {
         $this->announcements = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
+        $this->assets = new ArrayCollection();
         $this->componentPermissionRelatedByUserIds = new ArrayCollection();
         $this->componentPermissionRelatedByGrantedBies = new ArrayCollection();
         $this->invitations = new ArrayCollection();
@@ -988,6 +1001,42 @@ class User extends AbstractEntity
     }
 
     /**
+     * Add Asset entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Asset $asset
+     * @return \App\Entities\Base\User
+     */
+    public function addAsset(Asset $asset)
+    {
+        $this->assets[] = $asset;
+
+        return $this;
+    }
+
+    /**
+     * Remove Asset entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Asset $asset
+     * @return \App\Entities\Base\User
+     */
+    public function removeAsset(Asset $asset)
+    {
+        $this->assets->removeElement($asset);
+
+        return $this;
+    }
+
+    /**
+     * Get Asset entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAssets()
+    {
+        return $this->assets;
+    }
+
+    /**
      * Add ComponentPermission entity related by `user_id` to collection (one to many).
      *
      * @param \App\Entities\Base\ComponentPermission $componentPermission
@@ -1345,6 +1394,29 @@ class User extends AbstractEntity
     public function getWorkspaces()
     {
         return $this->workspaces;
+    }
+
+    /**
+     * Set Team entity (many to one).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\User
+     */
+    public function setTeam(Team $team = null)
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity (many to one).
+     *
+     * @return \App\Entities\Base\Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
     }
 
     public function __sleep()

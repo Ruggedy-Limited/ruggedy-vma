@@ -10,4 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ApiToken extends Base\ApiToken
 {
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="apiTokens", cascade={"persist"}, fetch="EAGER")
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $user;
 }

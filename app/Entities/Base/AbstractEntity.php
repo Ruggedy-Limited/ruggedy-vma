@@ -28,13 +28,10 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable, HasGetId
     /** @var integer */
     protected $id;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime */
     protected $created_at;
-    /**
-     * @var DateTime
-     */
+    
+    /** @var DateTime */
     protected $updated_at;
 
     /**

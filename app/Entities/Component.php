@@ -12,8 +12,9 @@ use stdClass;
  */
 class Component extends Base\Component
 {
-    /** The database column name for the field that hiolds the component names */
+    /** Database column names */
     const COMPONENT_NAME_FIELD = 'name';
+    const COMPONENT_CLASS_NAME = 'class_name';
 
     /**
      * Override the AbstractEntity method, just to provide a default set of attributes to include when coercing to
