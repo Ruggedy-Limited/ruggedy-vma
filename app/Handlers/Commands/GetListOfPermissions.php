@@ -31,19 +31,13 @@ class GetListOfPermissions extends AbstractPermissionHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Fetch the component in order to get the component's Doctrine entity class
-        $this->fetchAndSetComponent($componentName);
-
-        // Fetch the component instance
-        $this->fetchAndSetComponentInstance($id);
-
-        $this->checkPermissions();
+        $this->getService()->initialise($componentName, $id);
 
         // Get all the permissions for this component instance to return
-        $componentInstancePermissions = $this->getComponentPermissionRepository()
+        $componentInstancePermissions = $this->getService()->getComponentPermissionRepository()
             ->findByComponentAndComponentInstanceId(
-                $this->getComponent()->getId(),
-                $this->getComponentInstance()->getId()
+                $this->getService()->getComponent()->getId(),
+                $this->getService()->getComponentInstance()->getId()
             );
 
         if (empty($componentInstancePermissions)) {

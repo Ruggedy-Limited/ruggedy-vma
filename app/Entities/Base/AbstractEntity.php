@@ -2,7 +2,6 @@
 
 namespace App\Entities\Base;
 
-use App\Contracts\HasGetId;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +12,7 @@ use JsonSerializable;
 use stdClass;
 
 
-abstract class AbstractEntity implements Jsonable, JsonSerializable, HasGetId
+abstract class AbstractEntity implements Jsonable, JsonSerializable
 {
     /** Excluded field name constants */
     const INITIALIZER_FIELD = '__initializer__';
@@ -28,13 +27,10 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable, HasGetId
     /** @var integer */
     protected $id;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime */
     protected $created_at;
-    /**
-     * @var DateTime
-     */
+    
+    /** @var DateTime */
     protected $updated_at;
 
     /**
@@ -216,21 +212,5 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable, HasGetId
             self::IS_INITIALIZED,
             self::PASSWORD_FIELD
         ]);
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 }

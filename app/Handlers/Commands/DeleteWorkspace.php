@@ -9,6 +9,7 @@ use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\WorkspaceNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -57,19 +58,19 @@ class DeleteWorkspace extends CommandHandler
             throw new InvalidInputException("The required projectId member is not set on the command object");
         }
 
-        // Check that the project exists
+        // Check that the Workspace exists
         /** @var Workspace $workspace */
         $workspace = $this->getWorkspaceRepository()->find($workspaceId);
         if (empty($workspace) || !empty($workspace->getDeleted())) {
             throw new WorkspaceNotFoundException("A Project with the given project ID was not found");
         }
 
-        // Check that the User has permission to delete the Project
-        if ($requestingUser->getId() !== $workspace->getUser()->getId()) {
-            throw new ActionNotPermittedException("User does not have permission to delete this Project");
+        // Check that the User has permission to delete the Workspace
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_DELETE, $workspace)) {
+            throw new ActionNotPermittedException("User does not have permission to delete this Workspace");
         }
 
-        // If the deletion has been confirmed, then set the deleted flag on the Project and save to the database
+        // If the deletion has been confirmed, then set the deleted flag on the Workspace and save to the database
         if ($command->isConfirm()) {
             $workspace->setDeleted(true);
             $this->getEm()->persist($workspace);

@@ -7,6 +7,7 @@ use App\Entities\User;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Illuminate\Support\Collection;
 use Laravel\Spark\Contracts\Repositories\TokenRepository;
 use Ramsey\Uuid\Uuid;
@@ -21,7 +22,10 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
      */
     public function validToken($token)
     {
-        $queryBuilder = $this->createQueryBuilder('at');
+        $queryBuilder = $this->createQueryBuilder('at')
+            ->addSelect('u')
+            ->leftJoin('at.user', 'u');
+
         $criteria = Criteria::create()->andWhere(
             Criteria::expr()->eq('token', $token)
         )->andWhere(
@@ -31,10 +35,9 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
             )
         )->setMaxResults(1);
 
-        $queryBuilder->addCriteria($criteria);
-
-        $result = $queryBuilder->getQuery()->getResult();
-        return $result[0] ?? null;
+        return $queryBuilder->addCriteria($criteria)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**
