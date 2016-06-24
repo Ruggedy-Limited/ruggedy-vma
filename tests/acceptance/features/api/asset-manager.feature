@@ -243,7 +243,7 @@ Feature: As an administrator or user with the correct access control
     And the "name" property equals "Web Server"
     # Add more properties here when the schema is more fleshed out
 
-  Scenario: Add an asset to one of my Workspaces by importing a Burp scan result, but provide a non-existant Workspace ID
+  Scenario: Add an asset to one of my Workspaces by importing a Burp scan result, but provide a non-existent Workspace ID
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
     And that its "nmap_file" is "test_files/burp.xml"
@@ -423,7 +423,7 @@ Feature: As an administrator or user with the correct access control
     And the "name" property equals "Web Server"
     # Add more properties here when the schema is more fleshed out
 
-  Scenario: Importing a Burp scan result, but provide a non-existant Asset ID
+  Scenario: Importing a Burp scan result, but provide a non-existent Asset ID
     Given that I want to update my "Asset"
     And that its "nmap_file" is "test_files/burp.xml"
     When I request "/api/asset/10"
@@ -436,7 +436,10 @@ Feature: As an administrator or user with the correct access control
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we could not import your scan result. That Asset does not exist."
     # Add more properties here when the schema is more fleshed out
-  
+
+  ##
+  # Edit and Suppress Assets
+  ##
   Scenario: Edit the name of one of my Assets
     Given that I want to update my "Asset"
     And that I want to change it's "name" to "Name Changed Asset"
@@ -451,9 +454,93 @@ Feature: As an administrator or user with the correct access control
     And the type of the "name" property is string
     And the "name" property equals "Name Changed Asset"
 
-  Scenario: I attempt to edit the name of a non-existant Asset
+  Scenario: Edit the name of someone else's Asset where I have write permission
     Given that I want to update my "Asset"
     And that I want to change it's "name" to "Name Changed Asset"
+    When I request "/api/asset/2"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "Name Changed Asset"
+
+  Scenario: Attempt to edit the name of someone else's Asset where I don't have write permission
+    Given that I want to update my "Asset"
+    And that I want to change it's "name" to "Name Changed Asset"
+    When I request "/api/asset/3"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you do not have permission to make changes to that Asset"
+
+  Scenario: I attempt to edit the name of a non-existent Asset
+    Given that I want to update my "Asset"
+    And that I want to change it's "name" to "Name Changed Asset"
+    When I request "/api/asset/100"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that Asset does not exist."
+
+  Scenario: Suppress one of my Assets
+    Given that I want to update my "Asset"
+    And that I want to change it's "suppress" to "true"
+    When I request "/api/asset/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "suppress" property
+    And the type of the "suppress" property is boolean
+    And the "suppress" property equals "true"
+
+  Scenario: Suppress someone else's Asset where I have write permission
+    Given that I want to update my "Asset"
+    And that I want to change it's "suppress" to "true"
+    When I request "/api/asset/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "suppress" property
+    And the type of the "suppress" property is boolean
+    And the "suppress" property equals "true"
+
+  Scenario: Attempt to suppress someone else's Asset where I don't have write permission
+    Given that I want to update my "Asset"
+    And that I want to change it's "suppress" to "true"
+    When I request "/api/asset/3"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you do not have permission to make changes to that Asset"
+
+  Scenario: I attempt to edit the name of a non-existent Asset
+    Given that I want to update my "Asset"
+    And that I want to change it's "suppress" to "true"
     When I request "/api/asset/100"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -548,7 +635,7 @@ Feature: As an administrator or user with the correct access control
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we cannot delete that Asset because you do not have permission to delete it."
 
-  Scenario: Attempt to delete a non-existant Asset
+  Scenario: Attempt to delete a non-existent Asset
     Given that I want to delete a "Asset"
     When I request "/api/asset/20"
     Then the HTTP response code should be 200
@@ -561,8 +648,9 @@ Feature: As an administrator or user with the correct access control
     And the "message" property equals "Sorry, that Asset does not exist."
 
   ##
-  # Surpress Assets and specific events for a specific Asset
-  ##
+  # Suppress specific events for a specific Asset
+  ## TBD
+
 
   ##
   # Get all the Assets from all of my Projects and Workspaces (Master Assets View)
@@ -574,7 +662,13 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | identifier | name | cpe | vendor | macAddress | osVersion | workspaceId | userId |
+    | id | name                      | cpe                                                                 | vendor    | ipAddressV4   | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId |
+    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1           |
+    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | 5.2.3790   | 1           |
+    | 3  | 192.168.0.24              | NULL                                                                | NULL      | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL       | 1           |
+    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | NULL       | 1           |
+    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | 12.10      | 1           |
+    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | 6.0.6001   | 1           |
 
   ##
   # Get all Assets from a specific Project
@@ -586,7 +680,13 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | identifier | name | cpe | vendor | macAddress | osVersion | workspaceId | userId |
+    | id | name                      | cpe                                                                 | vendor    | ipAddressV4   | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId |
+    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1           |
+    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | 5.2.3790   | 1           |
+    | 3  | 192.168.0.24              | NULL                                                                | NULL      | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL       | 1           |
+    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | NULL       | 1           |
+    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | 12.10      | 1           |
+    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | 6.0.6001   | 1           |
 
   Scenario: Retrieve a list of Assets that are part of someone else's Project where I have at least read permission
     Given that I want to get information about my "Assets"
@@ -609,7 +709,7 @@ Feature: As an administrator or user with the correct access control
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we cannot show you those Assets. You do not have permission to list them."
 
-  Scenario: Attempt to retrieve a list of Assets for an non-existant Project
+  Scenario: Attempt to retrieve a list of Assets for an non-existent Project
     Given that I want to get information about my "Assets"
     When I request "/api/assets/project/100"
     Then the HTTP response code should be 200
@@ -624,7 +724,7 @@ Feature: As an administrator or user with the correct access control
   ##
   # Get all Assets from a specific Workspace
   ##
-  Scenario: Retrieve a list of Assets belonging that are part of one of my Workspaces
+  Scenario: Retrieve a list of Assets that are part of one of my Workspaces
     Given that I want to get information about my "Assets"
     When I request "/api/assets/workspace/1"
     Then the HTTP response code should be 200
@@ -654,7 +754,7 @@ Feature: As an administrator or user with the correct access control
     And the type of the "message" property is string
     And the "message" property equals "Sorry, we cannot show you those Assets. You do not have permission to list them."
 
-  Scenario: Attempt to retrieve a list of Assets for an non-existant Workspace
+  Scenario: Attempt to retrieve a list of Assets for an non-existent Workspace
     Given that I want to get information about my "Assets"
     When I request "/api/assets/workspace/100"
     Then the HTTP response code should be 200
