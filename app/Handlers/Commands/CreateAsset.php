@@ -4,9 +4,11 @@ namespace App\Handlers\Commands;
 
 use App\Commands\CreateAsset as CreateAssetCommand;
 use App\Entities\Asset;
+use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\UserRepository;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
@@ -74,6 +76,12 @@ class CreateAsset extends CommandHandler
             throw new WorkspaceNotFoundException("No Workspace with the given ID was found in the database");
         }
         
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
+            throw new ActionNotPermittedException(
+                "The authenticated User does not have permission to create an Asset on the given Workspace"
+            );
+        }
+        
         $user = $this->getUserRepository()->find($userId);
         if (empty($user)) {
             throw new UserNotFoundException("No User with the given user ID was found in the database");
@@ -91,49 +99,6 @@ class CreateAsset extends CommandHandler
         $this->getEm()->flush($asset);
 
         return $asset;
-    }
-
-    /**
-     * Get valid details from the details array provided with the command
-     *
-     * @param array $details
-     * @return array
-     */
-    protected function getValidDetails(array $details): array
-    {
-        return $this->getValidDetailAttributes()->map(function($validatorClass, $detailName) use ($details)
-        {
-            if (empty($details[$detailName])) {
-                return null;
-            }
-
-            if (!$this->validateDetail($validatorClass, $details[$detailName])) {
-                return null;
-            }
-
-            return $details[$detailName];
-        })->toArray();
-    }
-
-    /**
-     * Validate a value given as part of the command details
-     *
-     * @param $validatorClass
-     * @param $detailValue
-     * @return bool
-     */
-    protected function validateDetail($validatorClass, $detailValue)
-    {
-        if (!isset($validatorClass)) {
-            return true;
-        }
-
-        if (!isset($detailValue)) {
-            return false;
-        }
-
-        $validator = App::make($validatorClass);
-        return $validator->validate($detailValue);
     }
 
     /**
