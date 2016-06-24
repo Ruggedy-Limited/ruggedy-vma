@@ -3,9 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\CreateProject as CreateProjectCommand;
-use App\Entities\Base\AbstractEntity;
 use App\Entities\Project;
-use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
@@ -13,7 +11,6 @@ use App\Policies\ComponentPolicy;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 

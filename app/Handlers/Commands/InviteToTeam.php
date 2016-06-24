@@ -4,7 +4,6 @@ namespace App\Handlers\Commands;
 
 use App\Commands\InviteToTeam as InviteToTeamCommand;
 use App\Entities\Team;
-use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidEmailException;
@@ -12,12 +11,9 @@ use App\Exceptions\TeamNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\TeamRepository;
 use App\Team as EloquentTeam;
-use Doctrine\ORM\Proxy\Proxy;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Factory;
 use Laravel\Spark\Contracts\Interactions\Settings\Teams\SendInvitation;
-use LaravelDoctrine\ORM\Facades\EntityManager;
 
 
 class InviteToTeam extends CommandHandler

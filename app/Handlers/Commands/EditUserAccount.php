@@ -3,13 +3,11 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\EditUserAccount as EditUserAccountCommand;
-use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 
