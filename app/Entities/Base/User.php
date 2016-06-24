@@ -71,7 +71,7 @@ class User extends AbstractEntity
     protected $two_factor_reset_code;
 
     /**
-     * @ORM\Column(name="`current_team_id`", type="integer", nullable=true)
+     * @ORM\Column(name="`current_team_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $current_team_id;
 

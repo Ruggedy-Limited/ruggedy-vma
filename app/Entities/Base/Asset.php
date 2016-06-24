@@ -15,7 +15,6 @@ class Asset extends AbstractEntity
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -68,6 +67,16 @@ class Asset extends AbstractEntity
      * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
      */
     protected $user_id;
+
+    /**
+     * @ORM\Column(name="`suppressed`", type="boolean", options={"unsigned":true})
+     */
+    protected $suppressed;
+
+    /**
+     * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
+     */
+    protected $deleted;
 
     /**
      * @ORM\Column(name="`created_at`", type="datetime")
@@ -349,6 +358,52 @@ class Asset extends AbstractEntity
     }
 
     /**
+     * Set the value of suppressed.
+     *
+     * @param boolean $suppressed
+     * @return \App\Entities\Base\Asset
+     */
+    public function setSuppressed($suppressed)
+    {
+        $this->suppressed = $suppressed;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of suppressed.
+     *
+     * @return boolean
+     */
+    public function getSuppressed()
+    {
+        return $this->suppressed;
+    }
+
+    /**
+     * Set the value of deleted.
+     *
+     * @param boolean $deleted
+     * @return \App\Entities\Base\Asset
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of deleted.
+     *
+     * @return boolean
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
      * Set the value of created_at.
      *
      * @param \DateTime $created_at
@@ -442,6 +497,6 @@ class Asset extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'os_version', 'workspace_id', 'user_id', 'created_at', 'updated_at');
+        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'os_version', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
     }
 }
