@@ -15,7 +15,6 @@ use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 
 class GetListOfUsersInTeam extends CommandHandler

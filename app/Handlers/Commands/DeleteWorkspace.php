@@ -3,8 +3,6 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\DeleteWorkspace as DeleteWorkspaceCommand;
-use App\Entities\Base\AbstractEntity;
-use App\Entities\User;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -13,7 +11,6 @@ use App\Policies\ComponentPolicy;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 

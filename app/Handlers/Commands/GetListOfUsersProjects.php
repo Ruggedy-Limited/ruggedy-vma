@@ -10,7 +10,6 @@ use App\Exceptions\UserNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\UserRepository;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 
 class GetListOfUsersProjects extends CommandHandler

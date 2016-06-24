@@ -3,9 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\EditWorkspace as EditWorkspaceCommand;
-use App\Entities\Base\AbstractEntity;
 use App\Entities\Workspace;
-use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\WorkspaceNotFoundException;
@@ -13,7 +11,6 @@ use App\Policies\ComponentPolicy;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 
 class EditWorkspace extends CommandHandler
