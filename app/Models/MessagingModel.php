@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Commands\Command;
+use App\Commands\CreateProject;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteProject;
 use App\Commands\DeleteWorkspace;
@@ -91,6 +92,7 @@ class MessagingModel
             GetUserInformation::class     => static::ERROR_USER_NOT_TEAM_OWNER,
             GetListOfUsersInTeam::class   => static::ERROR_USER_NOT_TEAM_OWNER,
             EditUserAccount::class        => static::ERROR_CANNOT_EDIT_ACCOUNT,
+            CreateProject::class          => static::ERROR_PROJECT_CREATE_PERMISSION,
             DeleteProject::class          => static::ERROR_DELETE_PROJECT_PERMISSION,
             EditProject::class            => static::ERROR_EDIT_PROJECT_PERMISSION,
             GetListOfUsersProjects::class => static::ERROR_LIST_PROJECTS_PERMISSION,
