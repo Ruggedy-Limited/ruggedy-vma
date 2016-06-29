@@ -5,11 +5,16 @@ namespace App\Models;
 use App\Commands\Command;
 use App\Commands\CreateProject;
 use App\Commands\CreateWorkspace;
+use App\Commands\DeleteAsset;
 use App\Commands\DeleteProject;
 use App\Commands\DeleteWorkspace;
+use App\Commands\EditAsset;
 use App\Commands\EditProject;
 use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
+use App\Commands\GetAssetsInProject;
+use App\Commands\GetAssetsInWorkspace;
+use App\Commands\GetAssetsMasterList;
 use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersProjects;
@@ -17,6 +22,7 @@ use App\Commands\GetUserInformation;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
 use App\Exceptions\ActionNotPermittedException;
+use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
@@ -68,6 +74,16 @@ class MessagingModel
     const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_workspace_permission";
     const ERROR_LIST_WORKSPACES_PERMISSION  = "error_list_workspaces_permission";
     
+    /** API Asset Management */
+    const ERROR_COULD_NOT_CREATE_ASSET  = "error_could_not_create_asset";
+    const ERROR_ASSET_CREATE_PERMISSION = "error_asset_create_permission";
+    const ERROR_ASSET_DOES_NOT_EXIST    = "error_asset_does_not_exist";
+    const ERROR_DELETE_ASSET_PERMISSION = "error_delete_asset_permission";
+    const WARNING_DELETING_ASSET        = "warning_deleting_asset";
+    const ERROR_COULD_NOT_DELETE_ASSET  = "error_could_not_delete_asset";
+    const ERROR_EDIT_ASSET_PERMISSION   = "error_asset_permission";
+    const ERROR_LIST_ASSETS_PERMISSION  = "error_list_assets_permission";
+    
     /** API Permission Management */
     const ERROR_AUTH_USER_NOT_OWNER       = 'error_auth_user_not_owner';
     const ERROR_AUTH_USER_NOT_OWNER_LIST  = 'error_auth_user_not_owner_list';
@@ -99,6 +115,11 @@ class MessagingModel
             CreateWorkspace::class        => static::ERROR_WORKSPACE_CREATE_PERMISSION,
             DeleteWorkspace::class        => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class          => static::ERROR_EDIT_WORKSPACE_PERMISSION,
+            EditAsset::class              => static::ERROR_EDIT_ASSET_PERMISSION,
+            DeleteAsset::class            => static::ERROR_DELETE_ASSET_PERMISSION,
+            GetAssetsMasterList::class    => static::ERROR_LIST_ASSETS_PERMISSION,
+            GetAssetsInProject::class     => static::ERROR_LIST_ASSETS_PERMISSION,
+            GetAssetsInWorkspace::class   => static::ERROR_LIST_ASSETS_PERMISSION,
             UpsertPermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
             RevokePermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
             GetListOfPermissions::class   => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
@@ -114,6 +135,7 @@ class MessagingModel
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
             WorkspaceNotFoundException::class  => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
+            AssetNotFoundException::class      => static::ERROR_ASSET_DOES_NOT_EXIST,
             ComponentNotFoundException::class  => static::ERROR_COMPONENT_DOES_NOT_EXIST,
             InvalidPermissionException::class  => static::ERROR_PERMISSION_DOES_NOT_EXIST,
         ]);

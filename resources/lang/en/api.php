@@ -39,7 +39,7 @@ return [
         . " Project.",
 
     MessagingModel::WARNING_DELETING_PROJECT                => "Deleting a project will delete all the data related to"
-        . " that project. This is not reversable. Please confirm.",
+        . " that project. This is not reversible. Please confirm.",
 
     MessagingModel::ERROR_COULD_NOT_DELETE_PROJECT          => "Sorry, we could not delete that Project.",
 
@@ -60,7 +60,7 @@ return [
         . " Workspace.",
 
     MessagingModel::WARNING_DELETING_WORKSPACE              => "Deleting a workspace will delete all the data related"
-        . " to that workspace. This is not reversable. Please confirm.",
+        . " to that workspace. This is not reversible. Please confirm.",
 
     MessagingModel::ERROR_COULD_NOT_DELETE_WORKSPACE        => "Sorry, we could not delete that Workspace.",
 
@@ -76,4 +76,15 @@ return [
         . " Please use only 'r' or 'rw'.",
     MessagingModel::ERROR_AUTH_USER_NOT_OWNER_LIST          => "Sorry, you can only see permissions for things"
         . " that you own.",
+    MessagingModel::ERROR_EDIT_ASSET_PERMISSION             => "Sorry, you don't have permission to make changes to"
+        . " that Asset.",
+    MessagingModel::ERROR_DELETE_ASSET_PERMISSION           => "Sorry, you don't have permission to delete that"
+        . " Asset.",
+    MessagingModel::ERROR_LIST_ASSETS_PERMISSION            => "Sorry, you don't have permission to list those"
+        . " Assets.",
+    MessagingModel::ERROR_ASSET_DOES_NOT_EXIST              => "Sorry, that Asset does not exist.",
+    MessagingModel::WARNING_DELETING_ASSET                  => "Deleting an Asset will delete all the data related"
+        . " to that Asset. This is not reversible. Please confirm.",
+    MessagingModel::ERROR_ASSET_CREATE_PERMISSION           => "Sorry, you don't have permission to create Assets"
+        . " in that Workspace.",
 ];
