@@ -14,12 +14,12 @@ abstract class EditSomething extends Command
     /**
      * EditSomething constructor.
      *
-     * @param int $projectId
+     * @param int $id
      * @param array $requestedChanges
      */
-    public function __construct(int $projectId, array $requestedChanges)
+    public function __construct(int $id, array $requestedChanges)
     {
-        $this->id               = $projectId;
+        $this->id               = $id;
         $this->requestedChanges = $requestedChanges;
     }
 
