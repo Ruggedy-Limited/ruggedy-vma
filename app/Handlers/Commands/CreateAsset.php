@@ -4,6 +4,7 @@ namespace App\Handlers\Commands;
 
 use App\Commands\CreateAsset as CreateAssetCommand;
 use App\Entities\Asset;
+use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
@@ -13,9 +14,6 @@ use App\Repositories\UserRepository;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-
 
 class CreateAsset extends CommandHandler
 {
@@ -27,9 +25,6 @@ class CreateAsset extends CommandHandler
 
     /** @var EntityManager */
     protected $em;
-
-    /** @var Collection */
-    protected $validDetailAttributes;
 
     /**
      * CreateAsset constructor.
@@ -43,10 +38,6 @@ class CreateAsset extends CommandHandler
         $this->workspaceRepository = $workspaceRepository;
         $this->userRepository      = $userRepository;
         $this->em                  = $em;
-
-        $this->validDetailAttributes = new Collection([
-            'cpe', 'vendorName', 'ipV4', 'ipV6', 'hostname', 'macAddress', 'osVersion',
-        ]);
     }
 
     /**
@@ -61,40 +52,37 @@ class CreateAsset extends CommandHandler
      */
     public function handle(CreateAssetCommand $command)
     {
+        // Get the authenticated User
         $requestingUser = $this->authenticate();
         
-        $name        = $command->getName();
-        $workspaceId = $command->getWorkspaceId();
-        $userId      = $command->getUserId();
+        // Check that all the required fields were set on the command
+        $workspaceId = $command->getId();
         $details     = $command->getDetails();
-        if (!isset($name, $workspaceId, $userId, $details)) {
+        if (!isset($workspaceId, $details)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
-        
+
+        // Make sure the given Workspace exists
+        /** @var Workspace $workspace */
         $workspace = $this->getWorkspaceRepository()->find($workspaceId);
         if (empty($workspace)) {
             throw new WorkspaceNotFoundException("No Workspace with the given ID was found in the database");
         }
-        
+
+        // Make sure the authenticated User has permission to add an Asset to this Workspace
         if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to create an Asset on the given Workspace"
             );
         }
-        
-        $user = $this->getUserRepository()->find($userId);
-        if (empty($user)) {
-            throw new UserNotFoundException("No User with the given user ID was found in the database");
-        }
 
-        $details = $this->getValidDetails($details);
-        
+        // Create a new Asset
         $asset = new Asset();
-        $asset->setName($name);
         $asset->setWorkspace($workspace);
-        $asset->setUser($user);
+        $asset->setUser($workspace->getUser());
         $asset->setFromArray($details);
 
+        // Persist the new Asset to the database
         $this->getEm()->persist($asset);
         $this->getEm()->flush($asset);
 
@@ -123,13 +111,5 @@ class CreateAsset extends CommandHandler
     public function getEm()
     {
         return $this->em;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getValidDetailAttributes()
-    {
-        return $this->validDetailAttributes;
     }
 }

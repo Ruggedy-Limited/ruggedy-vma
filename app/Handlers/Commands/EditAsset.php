@@ -11,7 +11,6 @@ use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use Illuminate\Support\Collection;
 
 class EditAsset extends CommandHandler
 {
@@ -29,12 +28,8 @@ class EditAsset extends CommandHandler
      */
     public function __construct(AssetRepository $assetRepository, EntityManager $em)
     {
-        $this->assetRepository = $assetRepository;
-        $this->em              = $em;
-
-        $this->validDetailAttributes = new Collection([
-            'cpe', 'vendorName', 'ipV4', 'ipV6', 'hostname', 'macAddress', 'osVersion',
-        ]);
+        $this->assetRepository  = $assetRepository;
+        $this->em               = $em;
     }
 
     /**
@@ -74,14 +69,8 @@ class EditAsset extends CommandHandler
             );
         }
 
-        // Validate the provided changes
-        $validChanges = $this->getValidDetails($changes);
-        if (empty($validChanges)) {
-            throw new InvalidInputException("No valid Asset properties found in request");
-        }
-
         // Save the changes
-        $asset->setFromArray($validChanges);
+        $asset->setFromArray($changes);
         $this->getEm()->persist($asset);
         $this->getEm()->flush($asset);
 
