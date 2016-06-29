@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Auth\RuggedyTokenGuard;
+use App\Entities\Asset;
 use App\Entities\Project;
 use App\Entities\Team;
 use App\Entities\User;
@@ -30,7 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         Project::class      => ComponentPolicy::class,
         ProjectProxy::class => ComponentPolicy::class,
         Workspace::class    => ComponentPolicy::class,
-
+        Asset::class        => ComponentPolicy::class,
     ];
 
     /**
