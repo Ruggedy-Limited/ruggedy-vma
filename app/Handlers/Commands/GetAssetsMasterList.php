@@ -38,7 +38,7 @@ class GetAssetsMasterList extends CommandHandler
         $requestingUser = $this->authenticate();
 
         // No command parameters are needed as we are just fetching all the assets owned by the authenticated User
-        return $this->getAssetRepository()->findAllOwnedBy($requestingUser);
+        return $requestingUser->getAssets()->toArray();
     }
 
     /**
