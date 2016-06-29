@@ -121,6 +121,7 @@ class RestContext extends FeatureContext implements Context
         if (empty($uri)) {
             throw new Exception("Empty URI in 'I request :uri'");
         }
+        
         $baseUrl = env('APP_URL');
         if (empty($baseUrl)) {
             throw new InvalidConfigurationException("Invalid base APP_BASE_URL");
