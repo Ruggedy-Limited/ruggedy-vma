@@ -63,4 +63,19 @@ class PermissionController extends AbstractController
         $command = new GetListOfPermissions($componentInstanceId, $componentName);
         return $this->sendCommandToBusHelper($command);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getValidationRules(): array
+    {
+        return [
+            'userId'     => 'bail|filled|integer|min:1',
+            'permission' => [
+                'bail',
+                'filled',
+                'regex:^(r|rw)$'
+            ],
+        ];
+    }
 }

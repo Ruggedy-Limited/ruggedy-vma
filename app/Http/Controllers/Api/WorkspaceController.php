@@ -75,4 +75,14 @@ class WorkspaceController extends AbstractController
         $command  = new GetListOfUsersWorkspaces(intval($userId));
         return $this->sendCommandToBusHelper($command);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getValidationRules(): array
+    {
+        return [
+            'name'       => 'bail|filled|alpha_num',
+        ];
+    }
 }

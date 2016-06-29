@@ -99,4 +99,17 @@ class UserController extends AbstractController
         $command = new EditUserAccount($userId, $this->getRequest()->json()->all());
         return $this->sendCommandToBusHelper($command);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getValidationRules(): array
+    {
+        return [
+            'name'                 => 'bail|filled|alpha',
+            'email'                => 'bail|filled|email',
+            'photo_url'            => 'bail|filled|string',
+            'uses_two_factor_auth' => 'bail|filled|boolean',
+        ];
+    }
 }
