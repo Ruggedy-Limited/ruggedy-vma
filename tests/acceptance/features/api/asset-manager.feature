@@ -749,8 +749,8 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-      | id | name         | workspaceId |
-      | 7  | 192.168.1.24 | 2           |
+      | id | name         | workspace_id |
+      | 7  | 192.168.1.24 | 2            |
 
   Scenario: Attempt to retrieve a list of Assets that are part of someone else's Workspace where I don't have permission
     Given that I want to get information about my "Assets"
@@ -762,7 +762,7 @@ Feature: As an administrator or user with the correct access control
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, we cannot show you those Assets. You do not have permission to list them."
+    And the "message" property equals "Sorry, you don't have permission to list those Assets."
 
   Scenario: Attempt to retrieve a list of Assets for an non-existent Workspace
     Given that I want to get information about my "Assets"
