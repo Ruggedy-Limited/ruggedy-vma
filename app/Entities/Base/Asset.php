@@ -15,6 +15,7 @@ class Asset extends AbstractEntity
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -52,6 +53,11 @@ class Asset extends AbstractEntity
      * @ORM\Column(name="`mac_address`", type="string", length=25, nullable=true)
      */
     protected $mac_address;
+
+    /**
+     * @ORM\Column(name="`mac_vendor`", type="string", length=100, nullable=true)
+     */
+    protected $mac_vendor;
 
     /**
      * @ORM\Column(name="`os_version`", type="string", length=20, nullable=true)
@@ -289,6 +295,29 @@ class Asset extends AbstractEntity
     }
 
     /**
+     * Set the value of mac_vendor.
+     *
+     * @param string $mac_vendor
+     * @return \App\Entities\Base\Asset
+     */
+    public function setMacVendor($mac_vendor)
+    {
+        $this->mac_vendor = $mac_vendor;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of mac_vendor.
+     *
+     * @return string
+     */
+    public function getMacVendor()
+    {
+        return $this->mac_vendor;
+    }
+
+    /**
      * Set the value of os_version.
      *
      * @param string $os_version
@@ -497,6 +526,6 @@ class Asset extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'os_version', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
     }
 }
