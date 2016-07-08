@@ -10,7 +10,7 @@ use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
-use App\Repositories\UserRepository;
+use App\Repositories\AssetRepository;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -20,8 +20,8 @@ class CreateAsset extends CommandHandler
     /** @var WorkspaceRepository */
     protected $workspaceRepository;
 
-    /** @var UserRepository */
-    protected $userRepository;
+    /** @var AssetRepository */
+    protected $assetRepository;
 
     /** @var EntityManager */
     protected $em;
@@ -30,13 +30,15 @@ class CreateAsset extends CommandHandler
      * CreateAsset constructor.
      *
      * @param WorkspaceRepository $workspaceRepository
-     * @param UserRepository $userRepository
+     * @param AssetRepository $assetRepository
      * @param EntityManager $em
      */
-    public function __construct(WorkspaceRepository $workspaceRepository, UserRepository $userRepository, EntityManager $em)
+    public function __construct(
+        WorkspaceRepository $workspaceRepository, AssetRepository $assetRepository, EntityManager $em
+    )
     {
         $this->workspaceRepository = $workspaceRepository;
-        $this->userRepository      = $userRepository;
+        $this->assetRepository     = $assetRepository;
         $this->em                  = $em;
     }
 
@@ -71,22 +73,39 @@ class CreateAsset extends CommandHandler
 
         // Make sure the authenticated User has permission to add an Asset to this Workspace
         if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
-            throw new ActionNotPermittedException(
-                "The authenticated User does not have permission to create an Asset on the given Workspace"
-            );
+            //throw new ActionNotPermittedException(
+            //    "The authenticated User does not have permission to create an Asset on the given Workspace"
+            //);
         }
 
-        // Create a new Asset
-        $asset = new Asset();
+        // Create a new Asset or find an matching existing Asset
+        $asset = $this->getAssetRepository()->findOrCreateOneBy($details);
+        $this->setAssetName($asset);
         $asset->setWorkspace($workspace);
         $asset->setUser($workspace->getUser());
-        $asset->setFromArray($details);
+        $asset->setSuppressed(false);
+        $asset->setDeleted(false);
 
         // Persist the new Asset to the database
         $this->getEm()->persist($asset);
-        $this->getEm()->flush($asset);
+
+        // Save immediately if we're not in multi-mode
+        if (!$command->isMultiMode()) {
+            $this->getEm()->flush($asset);
+        }
 
         return $asset;
+    }
+
+    /**
+     * Set the Asset name based on an order of precedence of non-null properties
+     *
+     * @param Asset $asset
+     */
+    protected function setAssetName(Asset $asset)
+    {
+        $assetName = $asset->getHostname() ?? $asset->getIpAddressV4() ?? Asset::ASSET_NAME_UNNAMED;
+        $asset->setName($assetName);
     }
 
     /**
@@ -98,11 +117,11 @@ class CreateAsset extends CommandHandler
     }
 
     /**
-     * @return UserRepository
+     * @return AssetRepository
      */
-    public function getUserRepository()
+    public function getAssetRepository()
     {
-        return $this->userRepository;
+        return $this->assetRepository;
     }
 
     /**

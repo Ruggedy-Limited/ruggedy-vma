@@ -3,6 +3,7 @@
 namespace App\Entities\Base;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\Asset
@@ -65,6 +66,11 @@ class Asset extends AbstractEntity
     protected $os_version;
 
     /**
+     * @ORM\Column(name="`netbios`", type="string", length=16, nullable=true)
+     */
+    protected $netbios;
+
+    /**
      * @ORM\Column(name="`workspace_id`", type="integer", options={"unsigned":true})
      */
     protected $workspace_id;
@@ -95,6 +101,12 @@ class Asset extends AbstractEntity
     protected $updated_at;
 
     /**
+     * @ORM\OneToMany(targetEntity="File", mappedBy="asset", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
+     */
+    protected $files;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="assets", cascade={"persist"})
      * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -108,6 +120,7 @@ class Asset extends AbstractEntity
 
     public function __construct()
     {
+        $this->files = new ArrayCollection();
     }
 
     /**
@@ -341,6 +354,29 @@ class Asset extends AbstractEntity
     }
 
     /**
+     * Set the value of netbios.
+     *
+     * @param string $netbios
+     * @return \App\Entities\Base\Asset
+     */
+    public function setNetbios($netbios)
+    {
+        $this->netbios = $netbios;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of netbios.
+     *
+     * @return string
+     */
+    public function getNetbios()
+    {
+        return $this->netbios;
+    }
+
+    /**
      * Set the value of workspace_id.
      *
      * @param integer $workspace_id
@@ -479,6 +515,42 @@ class Asset extends AbstractEntity
     }
 
     /**
+     * Add File entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\File $file
+     * @return \App\Entities\Base\Asset
+     */
+    public function addFile(File $file)
+    {
+        $this->files[] = $file;
+
+        return $this;
+    }
+
+    /**
+     * Remove File entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\File $file
+     * @return \App\Entities\Base\Asset
+     */
+    public function removeFile(File $file)
+    {
+        $this->files->removeElement($file);
+
+        return $this;
+    }
+
+    /**
+     * Get File entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
      * Set Workspace entity (many to one).
      *
      * @param \App\Entities\Base\Workspace $workspace
@@ -526,6 +598,6 @@ class Asset extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'netbios', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
     }
 }

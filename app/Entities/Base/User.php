@@ -191,6 +191,12 @@ class User extends AbstractEntity
     protected $componentPermissionRelatedByGrantedBies;
 
     /**
+     * @ORM\OneToMany(targetEntity="File", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $files;
+
+    /**
      * @ORM\OneToMany(targetEntity="Invitation", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -251,6 +257,7 @@ class User extends AbstractEntity
         $this->assets = new ArrayCollection();
         $this->componentPermissionRelatedByUserIds = new ArrayCollection();
         $this->componentPermissionRelatedByGrantedBies = new ArrayCollection();
+        $this->files = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->invoices = new ArrayCollection();
         $this->notificationRelatedByUserIds = new ArrayCollection();
@@ -1106,6 +1113,42 @@ class User extends AbstractEntity
     public function getComponentPermissionRelatedByGrantedBies()
     {
         return $this->componentPermissionRelatedByGrantedBies;
+    }
+
+    /**
+     * Add File entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\File $file
+     * @return \App\Entities\Base\User
+     */
+    public function addFile(File $file)
+    {
+        $this->files[] = $file;
+
+        return $this;
+    }
+
+    /**
+     * Remove File entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\File $file
+     * @return \App\Entities\Base\User
+     */
+    public function removeFile(File $file)
+    {
+        $this->files->removeElement($file);
+
+        return $this;
+    }
+
+    /**
+     * Get File entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    const ARTISAN_API_TOKEN = 'OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN';
     /**
      * The Artisan commands provided by your application.
      *
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Schema\GenerateEntities::class,
         Commands\RepositoryMakeCommand::class,
+        Commands\Parsers\Xml\ParseNmapCommand::class,
     ];
 
     /**
@@ -25,7 +27,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('parse:xml:nmap')->everyMinute();
     }
 }

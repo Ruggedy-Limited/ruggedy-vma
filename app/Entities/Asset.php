@@ -2,8 +2,6 @@
 
 namespace App\Entities;
 
-use App\Contracts\HasGetId;
-use App\Contracts\HasOwnerUserEntity;
 use App\Contracts\SystemComponent;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -44,7 +42,7 @@ class Asset extends Base\Asset implements SystemComponent
      *
      * @return array
      */
-    public static function getValidOsVendors(): array
+    public static function getValidOsVendors()
     {
         return [
             self::OS_VENDOR_LINUX,

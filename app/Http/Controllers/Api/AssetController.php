@@ -7,6 +7,7 @@ use App\Commands\EditAsset;
 use App\Commands\GetAssetsInProject;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
+use App\Commands\UploadScanOutput;
 use App\Entities\Asset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -17,6 +18,25 @@ use Illuminate\Contracts\Routing\ResponseFactory;
  */
 class AssetController extends AbstractController
 {
+    /**
+     * Upload a scan file for processing
+     *
+     * @POST("/asset/{workspaceId}", as="asset.import", where={"workspaceId":"[0-9]+"})
+     *
+     * @param $workspaceId
+     * @return ResponseFactory|JsonResponse
+     */
+    public function uploadScanOutput($workspaceId)
+    {
+        $command = new UploadScanOutput(
+            intval($workspaceId),
+            $this->getRequest()->json()->all(),
+            $this->getRequest()->file('file')
+        );
+
+        return $this->sendCommandToBusHelper($command);
+    }
+
     /**
      * Edit the details of an existing Asset
      *
