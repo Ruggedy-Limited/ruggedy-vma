@@ -39,7 +39,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                     'xmlAttribute'  => 'vendor',
                     'validation'    => [
                         'filled',
-                        'regex:(Linux|Mac|Windows)',
+                        'regex:/(Linux|Mac|Windows)/',
                     ]
                 ]),
             ]),
@@ -48,7 +48,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                     'xmlAttribute'  => 'name',
                     'validation'    => [
                         'filled',
-                        'regex:(Linux|Mac|Windows)',
+                        'regex:/(Linux|Mac|Windows)/',
                     ]
                 ]),
             ]),

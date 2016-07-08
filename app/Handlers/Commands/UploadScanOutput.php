@@ -108,6 +108,7 @@ class UploadScanOutput extends CommandHandler
         $fileEntity = new File();
         $fileEntity->setPath($storagePath . DIRECTORY_SEPARATOR . $file->getClientOriginalName());
         $fileEntity->setFormat($fileType);
+        $fileEntity->setSize($file->getClientSize());
         $fileEntity->setUser($requestingUser);
         $fileEntity->setWorkspace($workspace);
         $fileEntity->setDeleted(false);

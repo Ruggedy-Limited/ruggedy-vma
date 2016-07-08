@@ -169,6 +169,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function parseNode(Collection $mappingAttributes, string $setter)
     {
         $parser = $this->getParser();
+        $getter = 'g' . substr($setter, 1);
         if (!method_exists($this->getModel(), $setter) || !($mappingAttributes instanceof Collection)) {
             return true;
         }
@@ -265,7 +266,9 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             [$attribute => $validationRules]
         );
 
-        return !$validation->failed();
+        $isValid = $validation->passes();
+
+        return $isValid;
     }
 
     /**
@@ -322,34 +325,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function getParseableFiles(): Collection
     {
         return $this->getFileRepository()->findUnprocessed();
-        
-        /*$filePath = $this->getStoragePath();
-        $directories = new Collection($this->getFileSystem()->directories($filePath));
-        if (empty($directories) || $directories->isEmpty()) {
-            return new Collection();
-        }
-
-        $filesByWorkspace = new Collection();
-        $directories->each(function($directory, $offset) use ($filesByWorkspace) {
-            if (!$this->getFileSystem()->exists($directory)) {
-                return true;
-            }
-
-            $files = $this->getFileSystem()->files($directory);
-            if (empty($files)) {
-                return true;
-            }
-
-            $files          = new Collection($files);
-            $directoryParts = explode(DIRECTORY_SEPARATOR, $directory);
-            $workspaceId    = array_pop($directoryParts);
-
-            $filesByWorkspace->put($workspaceId, $files);
-
-            return true;
-        });
-
-        return $filesByWorkspace;*/
     }
 
     /**

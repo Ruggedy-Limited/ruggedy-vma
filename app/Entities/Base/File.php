@@ -30,6 +30,11 @@ class File extends AbstractEntity
     protected $format;
 
     /**
+     * @ORM\Column(name="`size`", type="integer", options={"unsigned":true})
+     */
+    protected $size;
+
+    /**
      * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
      */
     protected $user_id;
@@ -153,6 +158,29 @@ class File extends AbstractEntity
     public function getFormat()
     {
         return $this->format;
+    }
+
+    /**
+     * Set the value of size.
+     *
+     * @param integer $size
+     * @return \App\Entities\Base\File
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of size.
+     *
+     * @return integer
+     */
+    public function getSize()
+    {
+        return $this->size;
     }
 
     /**
@@ -387,6 +415,6 @@ class File extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'path', 'format', 'user_id', 'workspace_id', 'asset_id', 'processed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_id', 'asset_id', 'processed', 'deleted', 'created_at', 'updated_at');
     }
 }
