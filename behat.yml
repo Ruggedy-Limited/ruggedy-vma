@@ -3,6 +3,7 @@ default:
     Laracasts\Behat\ServiceContainer\BehatExtension: ~
     Behat\MinkExtension\ServiceContainer\MinkExtension:
       default_session: laravel
+      files_path: %paths.base%/tests/acceptance/files
       laravel: ~
   suites:
     api:

@@ -9,10 +9,11 @@ use Illuminate\Http\Response;
 use App\Exceptions\InvalidConfigurationException;
 use App\Exceptions\InvalidResponseException;
 use App\Exceptions\HttpException;
-use Illuminate\Support\Collection;
+use Illuminate\Http\UploadedFile;
 use stdClass;
 use Exception;
 use PHPUnit_Framework_Assert;
+use Tests\Mocks\MockUploadedFile;
 
 
 class RestContext extends FeatureContext implements Context
@@ -102,6 +103,11 @@ class RestContext extends FeatureContext implements Context
      */
     public function thatTheItsIs($propertyName, $propertyValue)
     {
+        if ($propertyName === 'file') {
+            $this->getRestObject()->hasFile = true;
+            $propertyValue = $this->getMinkParameter('files_path') . DIRECTORY_SEPARATOR . $propertyValue;
+        }
+
         $propertyValue = $this->convertBoolHelper($propertyValue);
         $propertyValue = $this->convertIntHelper($propertyValue);
         $this->getRestObject()->$propertyName = $propertyValue;
@@ -136,6 +142,21 @@ class RestContext extends FeatureContext implements Context
                 break;
             case self::HTTP_POST:
             case self::HTTP_PUT:
+                // The request contains a file to be uploaded
+                if (!empty($this->getRestObject()->hasFile)) {
+                    $content   = null;
+
+                    $filePath  = $this->getRestObject()->file;
+                    $filename  = basename($filePath);
+                    $fileSize  = filesize($filePath);
+                    $mimeType  = mime_content_type($filePath);
+
+                    $file      = new MockUploadedFile($filePath, $filename, $mimeType, $fileSize, null, true);
+                    $file->openFile();
+                    break;
+                }
+
+                // No file, normal request with body
                 $content = json_encode($this->getRestObject());
                 break;
             default:
@@ -143,7 +164,19 @@ class RestContext extends FeatureContext implements Context
                 break;
         }
 
-        $request = Request::create($fullUrl, strtoupper($this->getRestObjectMethod()), [], [], [], [], $content);
+        // Set the content_type of the request when there are files to attach
+        $server = [];
+        if (!empty($file) && $file instanceof UploadedFile) {
+            $server = ['CONTENT_TYPE' => 'multipart/form-data'];
+        }
+
+        $request = Request::create($fullUrl, strtoupper($this->getRestObjectMethod()), [], [], [], $server, $content);
+
+        // Attach files when relevant
+        if (!empty($file) && $file instanceof UploadedFile) {
+            $request->files->add(['file' => $file]);
+        }
+
         $response = app()->handle($request);
 
         if (empty($response)) {

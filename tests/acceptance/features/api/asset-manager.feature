@@ -90,28 +90,69 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing an nmap scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/nmap.txt"
+    And that its "file" is "nmap-adv-multiple-node-dns.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    And the response has a "ip_address" property
-    And the type of the "ip_address" property is string
-    And the "ip_address" property equals "66.29.210.204"
-    And the type of the "open_ports" property is array
-    And the "open_ports" array property has a "80" value
-    And the "open_ports" array property has a "443" value
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "processed" property
+    And the type of the "processed" property is boolean
+    And the "processed" property equals "false"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is boolean
+    And the "deleted" property equals "false"
+    And the response has a "user_id" property
+    And the type of the "user_id" property is integer
+    And the "user_id" property equals "1"
+    And the response has a "workspace_id" property
+    And the type of the "workspace_id" property is integer
+    And the "workspace_id" property equals "1"
+
+  Scenario: Add an asset to someone else's Workspaces where I have write access by importing an nmap scan result
+    Given that I want to make a new "Asset"
+    And that its "name" is "Web Server"
+    And that its "file" is "nmap-adv-multiple-node-dns.xml"
+    When I request "/api/asset/4"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "processed" property
+    And the type of the "processed" property is boolean
+    And the "processed" property equals "false"
+    And the response has a "deleted" property
+    And the type of the "deleted" property is boolean
+    And the "deleted" property equals "false"
+    And the response has a "user_id" property
+    And the type of the "user_id" property is integer
+    And the "user_id" property equals "1"
+    And the response has a "workspace_id" property
+    And the type of the "workspace_id" property is integer
+    And the "workspace_id" property equals "4"
 
   Scenario: Add an asset to one of my Workspaces by importing an Nessus scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/nesus.xml"
+    And that its "file" is "test_files/nesus.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -132,7 +173,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a Burp scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/burp.xml"
+    And that its "file" is "test_files/burp.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -147,7 +188,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a ZAP Proxy scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/burp.xml"
+    And that its "file" is "test_files/burp.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -162,7 +203,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a Nexpose scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/nexpose.xml"
+    And that its "file" is "test_files/nexpose.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -177,7 +218,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a OpenVAS scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/openvas.xml"
+    And that its "file" is "test_files/openvas.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -192,7 +233,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a W3AF scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/w3af.xml"
+    And that its "file" is "test_files/w3af.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -207,7 +248,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a Arachne scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/arachne.xml"
+    And that its "file" is "test_files/arachne.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -222,7 +263,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a NetSparker scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/netsparker.xml"
+    And that its "file" is "test_files/netsparker.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -237,7 +278,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a Nikto scan result
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/nikto.xml"
+    And that its "file" is "test_files/nikto.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -252,7 +293,7 @@ Feature: As an administrator or user with the correct access control
   Scenario: Add an asset to one of my Workspaces by importing a Burp scan result, but provide a non-existent Workspace ID
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "nmap_file" is "test_files/burp.xml"
+    And that its "file" is "test_files/burp.xml"
     When I request "/api/asset/10"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -269,7 +310,7 @@ Feature: As an administrator or user with the correct access control
   ##
   Scenario: Import an nmap scan result for an existing asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/nmap.txt"
+    And that its "file" is "test_files/nmap.txt"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -290,7 +331,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Import a Nessus scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/nesus.xml"
+    And that its "file" is "test_files/nesus.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -311,7 +352,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Import a Burp scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/burp.xml"
+    And that its "file" is "test_files/burp.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -326,7 +367,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Import a ZAP Proxy scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/burp.xml"
+    And that its "file" is "test_files/burp.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -341,7 +382,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Import a Nexpose scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/nexpose.xml"
+    And that its "file" is "test_files/nexpose.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -356,7 +397,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Import a OpenVAS scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/openvas.xml"
+    And that its "file" is "test_files/openvas.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -371,7 +412,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Importing a W3AF scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/w3af.xml"
+    And that its "file" is "test_files/w3af.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -386,7 +427,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Importing a Arachne scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/arachne.xml"
+    And that its "file" is "test_files/arachne.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -401,7 +442,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Importing a NetSparker scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/netsparker.xml"
+    And that its "file" is "test_files/netsparker.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -416,7 +457,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Importing a Nikto scan result for an existing Asset
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/nikto.xml"
+    And that its "file" is "test_files/nikto.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
@@ -431,7 +472,7 @@ Feature: As an administrator or user with the correct access control
 
   Scenario: Importing a Burp scan result, but provide a non-existent Asset ID
     Given that I want to update my "Asset"
-    And that its "nmap_file" is "test_files/burp.xml"
+    And that its "file" is "test_files/burp.xml"
     When I request "/api/asset/10"
     Then the HTTP response code should be 200
     And the response is JSON
