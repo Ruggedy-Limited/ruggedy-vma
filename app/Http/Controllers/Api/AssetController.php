@@ -9,8 +9,10 @@ use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\UploadScanOutput;
 use App\Entities\Asset;
+use App\Models\MessagingModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\UploadedFile;
 
 /**
  * @Controller(prefix="api")
@@ -28,10 +30,15 @@ class AssetController extends AbstractController
      */
     public function uploadScanOutput($workspaceId)
     {
+        $file = $this->getRequest()->file('file');
+        if (!isset($file) || !($file instanceof UploadedFile)) {
+            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+        }
+
         $command = new UploadScanOutput(
             intval($workspaceId),
             $this->getRequest()->json()->all(),
-            $this->getRequest()->file('file')
+            $file
         );
 
         return $this->sendCommandToBusHelper($command);

@@ -73,18 +73,21 @@ class CreateAsset extends CommandHandler
 
         // Make sure the authenticated User has permission to add an Asset to this Workspace
         if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
-            //throw new ActionNotPermittedException(
-            //    "The authenticated User does not have permission to create an Asset on the given Workspace"
-            //);
+            throw new ActionNotPermittedException(
+                "The authenticated User does not have permission to create an Asset on the given Workspace"
+            );
         }
 
         // Create a new Asset or find an matching existing Asset
         $asset = $this->getAssetRepository()->findOrCreateOneBy($details);
+        // If this is a deleted or suppressed Asset then don't persist any changes
+        if ($asset->getDeleted() || $asset->getSuppressed()) {
+            return $asset;
+        }
+
         $this->setAssetName($asset);
         $asset->setWorkspace($workspace);
         $asset->setUser($workspace->getUser());
-        $asset->setSuppressed(false);
-        $asset->setDeleted(false);
 
         // Persist the new Asset to the database
         $this->getEm()->persist($asset);

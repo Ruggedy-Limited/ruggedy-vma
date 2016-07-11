@@ -190,6 +190,11 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
                 $memberName .= '_id';
             }
 
+            if ($memberName === 'path') {
+                $memberValue = basename($memberValue);
+                $memberName  = 'filename';
+            }
+
             // Exclude members that aren't set
             if (!isset($memberValue)) {
                 return;

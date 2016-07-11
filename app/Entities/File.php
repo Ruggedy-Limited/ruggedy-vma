@@ -22,7 +22,12 @@ class File extends Base\File
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $user;
-    
+
+    /**
+     * Get a Collection of valid file types
+     *
+     * @return Collection
+     */
     public static function getValidFileTypes()
     {
         return new Collection([
@@ -31,7 +36,13 @@ class File extends Base\File
             static::FILE_TYPE_JSON,
         ]);
     }
-    
+
+    /**
+     * Check if the given file type is valid
+     *
+     * @param string $fileType
+     * @return bool
+     */
     public static function isValidFileType(string $fileType)
     {
         return static::getValidFileTypes()->contains($fileType);

@@ -15,6 +15,9 @@ use XMLReader;
 
 class NmapXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
 {
+    const XML_ATTRIBUTE_ACCURACY = 'accuracy';
+    const XML_NODE_NAME_CPE      = 'cpe';
+    
     /**
      * NmapXmlParserService constructor.
      *
@@ -39,7 +42,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                     'xmlAttribute'  => 'vendor',
                     'validation'    => [
                         'filled',
-                        'regex:/(Linux|Mac|Windows)/',
+                        'regex:/(Linux|Apple|Microsoft)/',
                     ]
                 ]),
             ]),
@@ -79,8 +82,18 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
             'hostname' => new Collection([
                 'setHostname' => new Collection([
                     'xmlAttribute' => 'name',
-                    'validation'   => 'filled|url'
+                    'validation'   => [
+                        'filled',
+                        'regex:' . NmapModel::VALIDATION_REGEX_HOSTNAME
+                    ]
                 ]),
+            ]),
+            self::XML_NODE_NAME_CPE => new Collection([
+                'xmlAttribute' => false,
+                'validation'   => [
+                    'filled',
+                    'regex:' . Asset::REGEX_CPE
+                ],
             ]),
         ]);
 
@@ -89,11 +102,130 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     }
 
     /**
+     * Get the value of the accuracy attribute for the current XML node. Returns null if the node doesn't exist
+     *
+     * @return string|null
+     */
+    protected function getXmlNodeAccuracyAttributeValue()
+    {
+        return $this->getParser()->getAttribute(self::XML_ATTRIBUTE_ACCURACY);
+    }
+
+    /**
+     * Check if the current node has an accuracy attribute
+     *
+     * @return bool
+     */
+    protected function nodeHasAccuracyAttribute(): bool
+    {
+        // Look for an accuracy attribute and validate it
+        $accuracy = $this->getXmlNodeAccuracyAttributeValue();
+        return isset($accuracy);
+    }
+
+    /**
+     * @inheritdoc
+     * Override the base class method to check for an accuracy attribute and to check if the accuracy is greater than
+     * the accuracy for the current node value
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    protected function isMoreAccurate()
+    {
+        $accuracy = $this->getXmlNodeAccuracyAttributeValue();
+
+        $accuracyIsValid = $accuracy !== true && parent::isValidXmlValueOrAttribute(
+            self::XML_ATTRIBUTE_ACCURACY, 'filled|integer|between:0,100', $accuracy
+        );
+
+        // Get the name of the current node to use as an index for the accuracy value
+        $nodeName = $this->getParser()->name;
+
+        // If accuracy is invalid or less than the current accuracy for this attribute, return null so that nothing
+        // nothing further is done on this node
+        if (!$accuracyIsValid || $accuracy <= $this->getModel()->getCurrentAccuracyFor($nodeName)) {
+            return false;
+        }
+
+        // Set the accuracy to the value of the accuracy attribute for this node and return the attribute value so that
+        // it is added to the model
+        $this->getModel()->setCurrentAccuracyFor($nodeName, intval($accuracy));
+        return true;
+    }
+
+    /**
+     * Attempt to extract the CPE for the most accurate osmatch
+     */
+    protected function extractCpe()
+    {
+        if (!$nodeName = $this->getParser()->name !== 'osclass') {
+            // only check osclass nodes
+            return false;
+        }
+
+        $domNode = $this->getParser()->expand();
+        /** @var \DOMNode $childNode */
+        foreach ($domNode->childNodes as $childNode) {
+            if (!$childNode->nodeName === self::XML_NODE_NAME_CPE || empty($childNode->nodeValue)) {
+                continue;
+            }
+
+            $validationRules = $this->getFileToSchemaMapping()
+                ->get(self::XML_NODE_NAME_CPE)
+                ->get(self::MAP_ATTRIBUTE_VALIDATION);
+
+            // Make sure we have a valid CPE
+            if (!parent::isValidXmlValueOrAttribute(
+                self::NODE_TEXT_VALUE_DEFAULT, $validationRules, $childNode->nodeValue
+            )) {
+                continue;
+            }
+
+            $this->getModel()->setCpe($childNode->nodeValue);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     * Override the parent method to add a check for the accuracy attribute
+     *
+     * @param string $attribute
+     * @param $validationRules
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isValidXmlValueOrAttribute(string $attribute, $validationRules, $value): bool
+    {
+        $isValid = parent::isValidXmlValueOrAttribute($attribute, $validationRules, $value);
+        if (empty($isValid)) {
+            return false;
+        }
+
+        if (!$this->nodeHasAccuracyAttribute()) {
+            return true;
+        }
+
+        // Attempt to extract the CPE for osclass nodes that have the highest accuracy
+        $this->extractCpe();
+
+        return $this->isMoreAccurate();
+    }
+
+    /**
      * @inheritdoc
      */
     protected function resetModel()
     {
         $this->model = new NmapModel();
+    }
+
+    /**
+     * @return NmapModel
+     */
+    public function getModel()
+    {
+        return $this->model;
     }
 
     /**

@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Asset extends Base\Asset implements SystemComponent
 {
     /** Regular expressions used for validating the relevant Asset data fields */
-    const REGEX_CPE         = '/cpe:(?\d)(?\.\d):[aho](?::(?:[a-zA-Z0-9!"#$%&\'()*+,\\\-_.\/;<=>?@\[\]^`{|}~]|\\:)+){10}$/';
+    const REGEX_CPE         = '~(cpe:(\d)?(\.\d)?(/[aho])(([:]{1,3})([\pL\pN\pS_])+)*)~i';
     const REGEX_MAC_ADDRESS = '/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/';
 
     /** Valid OS Vendor values */

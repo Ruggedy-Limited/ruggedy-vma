@@ -27,7 +27,10 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     const MAP_ATTRIBUTE_RELATED_VALIDATION = 'related';
 
     /** Attribute fallback value for validating & extracting the inner text value of a node */
-    const NODE_TEXT_VALUE_DEFAULT          = 'nodeTextValue';
+    const NODE_TEXT_VALUE_DEFAULT = 'nodeTextValue';
+
+    /** Match any XML tag */
+    const REGEX_ANY_XML_TAG = '%((<.+(/)?>)|((<.+>)(.*)?(</.+>)?))%mi';
 
     /** @var XMLReader */
     protected $parser;
@@ -150,6 +153,10 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
             // Parse the node based on the mappings
             $fields->each(function($mappingAttributes, $setter) {
+                if (empty($setter) || !($mappingAttributes instanceof Collection)) {
+                    return true;
+                }
+                
                 return $this->parseNode($mappingAttributes, $setter);
             });
         }
@@ -181,7 +188,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // make sure we are checking the right node
         if ($validationRules instanceof Collection) {
             // Separate the related attributes from the main attribute
-            $mainRule          = $validationRules->get(self::MAP_ATTRIBUTE_MAIN_VALIDATION);
+            $mainRule = $validationRules->get(self::MAP_ATTRIBUTE_MAIN_VALIDATION);
             if (empty($mainRule)) {
                 throw new ParserMappingException("No main attribute found in Collection");
             }
@@ -202,7 +209,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             /** @var Collection $failingRelatedAttributes */
             $failingRelatedAttributes = $relatedAttributes->reject(function ($validationRules, $attribute) {
                 $attributeValue = $this->getParser()->getAttribute($attribute);
-                return $this->validateXmlValue($attribute, $validationRules, $attributeValue);
+                return $this->isValidXmlValueOrAttribute($attribute, $validationRules, $attributeValue);
             });
 
             // If there are any related attributes that failed validation, we stop here and continue on to the next node
@@ -212,14 +219,20 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
         
         // No attributes specified, so look for a value on the XML node
-        if ($attribute === self::NODE_TEXT_VALUE_DEFAULT && $parser->hasValue) {
+        if ($attribute === self::NODE_TEXT_VALUE_DEFAULT && !empty($parser->readInnerXml())) {
+            $nodeInnerXml = $parser->readInnerXml();
+            // The node contains tags
+            if (preg_match(self::REGEX_ANY_XML_TAG, $nodeInnerXml)) {
+                return true;
+            }
+
             // Validate the XML node's text value
-            if (!$this->validateXmlValue($attribute, $validationRules, $parser->value)) {
+            if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $nodeInnerXml)) {
                 return true;
             }
 
             // Set the value on the model
-            $this->getModel()->$setter($parser->value);
+            $this->getModel()->$setter($nodeInnerXml);
             return true;
         }
 
@@ -230,17 +243,28 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Get the attribute value
-        $attributeValue = $parser->getAttribute($attribute);
+        $attributeValue = $this->getXmlNodeAttributeValue($attribute);
         if (!isset($attributeValue)) {
             return true;
         }
 
-        if (!$this->validateXmlValue($attribute, $validationRules, $attributeValue)) {
+        if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $attributeValue)) {
             return true;
         }
 
         $this->getModel()->$setter($attributeValue);
         return true;
+    }
+
+    /**
+     * Get the value of an XML attribute from the current node
+     * 
+     * @param string $attribute
+     * @return string
+     */
+    protected function getXmlNodeAttributeValue(string $attribute)
+    {
+        return $this->getParser()->getAttribute($attribute);
     }
 
     /**
@@ -251,7 +275,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * @param mixed $value
      * @return bool
      */
-    protected function validateXmlValue(string $attribute, $validationRules, $value)
+    protected function isValidXmlValueOrAttribute(string $attribute, $validationRules, $value): bool
     {
         if (!isset($validationRules, $value)) {
             return false;

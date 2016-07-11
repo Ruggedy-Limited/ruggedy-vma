@@ -29,9 +29,11 @@ class AssetRepository extends EntityRepository
         $asset = $this->findOneBy($searchCriteria);
         if (empty($asset)) {
             $asset = new Asset();
-            $asset->setFromArray($criteria);
+            $asset->setSuppressed(false);
+            $asset->setDeleted(false);
         }
 
+        $asset->setFromArray($criteria);
         return $asset;
     }
 }

@@ -69,7 +69,7 @@ class UploadScanOutput extends CommandHandler
                 "The authenticated User does not have permission to create new Assets on the given Workspace"
             );
         }
-
+        
         if (!$file->isFile() || !$file->isValid() || !$file->isReadable()) {
             throw new FileException("The uploaded scan output file is not valid");
         }
