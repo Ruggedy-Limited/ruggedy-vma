@@ -14,8 +14,10 @@ use App\Team as EloquentTeam;
 use App\User as EloquentUser;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Translation\Translator;
 use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
 use League\Tactician\CommandBus;
@@ -26,6 +28,9 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
 {
     /** Namespace for the translator */
     const TRANSLATOR_NAMESPACE = 'api';
+
+    const HTTP_METHOD_POST = 'POST';
+    const HTTP_METHOD_PUT  = 'PUT';
 
     /** @var  JsonLogService */
     protected $logger;
@@ -44,6 +49,13 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     public function __construct(Request $request, Translator $translator, JsonLogService $logger, CommandBus $bus)
     {
         parent::__construct($request, $translator);
+
+        // Validate the request
+        if (!empty($this->getValidationRules())
+            && $this->getMethodsRequiringValidation()->contains($request->getMethod())) {
+
+            $this->validate($this->getRequest(), $this->getValidationRules());
+        }
 
         $this->setLoggerContext($logger);
 
@@ -146,6 +158,14 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     }
 
     /**
+     * Get the validation rules to be applied to requests received by this controller. Can return an empty array for no
+     * validation to be done on the requests
+     *
+     * @return array
+     */
+    protected abstract function getValidationRules(): array;
+
+    /**
      * @return JsonLogService
      */
     public function getLogger()
@@ -175,5 +195,16 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     public function setBus($bus)
     {
         $this->bus = $bus;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMethodsRequiringValidation()
+    {
+        return new Collection([
+            self::HTTP_METHOD_POST,
+            self::HTTP_METHOD_PUT,
+        ]);
     }
 }

@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Schema\GenerateEntities::class,
         Commands\RepositoryMakeCommand::class,
+        Commands\Parsers\Xml\ParseNmapCommand::class,
     ];
 
     /**
@@ -25,7 +26,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('parse:xml:nmap')->everyMinute();
     }
 }

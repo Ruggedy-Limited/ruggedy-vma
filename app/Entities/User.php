@@ -69,6 +69,16 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     }
 
     /**
+     * Aliasing the parent method
+     *
+     * @return Team
+     */
+    public function getTeam()
+    {
+        return parent::getTeam();
+    }
+
+    /**
      * Returns itself when authorising changes to this User account
      * 
      * @return $this

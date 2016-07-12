@@ -76,4 +76,14 @@ class ProjectController extends AbstractController
         $command  = new GetListOfUsersProjects(intval($userId));
         return $this->sendCommandToBusHelper($command);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getValidationRules(): array
+    {
+        return [
+            'name' => 'bail|filled|alpha_num',
+        ];
+    }
 }

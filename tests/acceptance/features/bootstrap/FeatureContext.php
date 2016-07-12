@@ -37,6 +37,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'workspaces',
         'components',
         'component_permissions',
+        'assets',
+        'files'
     ];
 
     /**
@@ -201,7 +203,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     protected function convertIntHelper($value)
     {
-        if (preg_match("/^[1-9][\d]*$/", $value)) {
+        if (preg_match("/^[1-9][\d]*$/", $value) && !is_bool($value)) {
             return intval($value);
         }
 

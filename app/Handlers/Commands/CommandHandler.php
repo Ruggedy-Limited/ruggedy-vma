@@ -6,7 +6,6 @@ use App\Entities\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
-
 /**
  * Abstract base class for command handlers
  */
