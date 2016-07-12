@@ -50,8 +50,10 @@ class UploadScanOutput extends CommandHandler
      */
     public function handle(UploadScanOutputCommand $command)
     {
+        // Get the authenticated User
         $requestingUser = $this->authenticate();
 
+        // Check that all the required members are set on the command
         $workspaceId = $command->getId();
         $file        = $command->getFile();
 
@@ -59,21 +61,25 @@ class UploadScanOutput extends CommandHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
+        // Check that the given Workspace exists
         $workspace = $this->getWorkspaceRepository()->find($workspaceId);
         if (empty($workspace)) {
             throw new WorkspaceNotFoundException("There was no existing Workspace with the given ID");
         }
 
+        // Check the authenticated User's permission
         if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to create new Assets on the given Workspace"
             );
         }
-        
+
+        // Check that the file is a valid UploadedFile
         if (!$file->isFile() || !$file->isValid() || !$file->isReadable()) {
             throw new FileException("The uploaded scan output file is not valid");
         }
 
+        // Get the file type by MIME type or extension
         $fileType = $file->extension();
         $mimeType = $file->getClientMimeType();
         if (!empty($mimeType)) {
@@ -88,6 +94,7 @@ class UploadScanOutput extends CommandHandler
             $fileType = $mimeExtension;
         }
 
+        // Check that it is a valid/accepted file type
         if (!File::isValidFileType($fileType)) {
             throw new FileException("File of unsupported type '$fileType' given");
         }
@@ -95,6 +102,7 @@ class UploadScanOutput extends CommandHandler
         //TODO: Determine scan type based on file format
         $scanType = 'nmap';
 
+        // Move the file to the relevant storage path
         $storagePath = $this->getScanFileStorageBasePath() . $fileType . DIRECTORY_SEPARATOR
             . $scanType . DIRECTORY_SEPARATOR
             . $workspaceId;
@@ -104,7 +112,8 @@ class UploadScanOutput extends CommandHandler
         }
 
         $file->move($storagePath, $file->getClientOriginalName());
-        
+
+        // Create a new File entity, persist it to the DB and return it
         $fileEntity = new File();
         $fileEntity->setPath($storagePath . DIRECTORY_SEPARATOR . $file->getClientOriginalName());
         $fileEntity->setFormat($fileType);

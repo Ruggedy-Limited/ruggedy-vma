@@ -41,14 +41,4 @@ class UserRepository extends EntityRepository
 
         return $this->findOneBy($credentials);
     }
-
-    /**
-     * Get the Admin user. Used to execute cron jobs
-     *
-     * @return null|object
-     */
-    public function findAdminUser()
-    {
-        return $this->find(1);
-    }
 }

@@ -12,5 +12,5 @@ interface HasComponentPermissions
      *
      * @return Collection
      */
-    public function getPermissions();
+    public function getPermissions(): Collection;
 }

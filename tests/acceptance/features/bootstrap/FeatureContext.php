@@ -38,6 +38,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'components',
         'component_permissions',
         'assets',
+        'files'
     ];
 
     /**

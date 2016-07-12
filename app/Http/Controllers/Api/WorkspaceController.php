@@ -82,7 +82,7 @@ class WorkspaceController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            'name'       => 'bail|filled|alpha_num',
+            'name' => 'bail|filled|alpha_num',
         ];
     }
 }

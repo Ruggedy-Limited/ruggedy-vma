@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetAssetsInWorkspace as GetAssetsInWorkspaceCommand;
+use App\Entities\Asset;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -71,7 +72,15 @@ class GetAssetsInWorkspace extends CommandHandler
             );
         }
 
-        return $workspace->getAssets()->toArray();
+        return $workspace->getAssets()->map(function($asset) {
+            // Exclude deleted Assets
+            /** @var Asset $asset */
+            if ($asset->getDeleted()) {
+                return false;
+            }
+
+            return $asset;
+        })->toArray();
     }
 
     /**

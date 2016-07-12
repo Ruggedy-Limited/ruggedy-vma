@@ -5,6 +5,7 @@ namespace App\Console\Commands\Parsers\Xml;
 use App\Auth\RuggedyTokenGuard;
 use App\Commands\CreateAsset;
 use App\Console\Kernel;
+use App\Entities\Asset;
 use App\Entities\File;
 use App\Entities\User;
 use App\Models\NmapModel;
@@ -73,7 +74,7 @@ class ParseNmapCommand extends Command
      */
     public function handle()
     {
-        $filesByWorkspace = $this->getService()->getParseableFiles();
+        $filesByWorkspace = $this->getService()->getUnprocessedFiles();
         if ($filesByWorkspace->isEmpty()) {
             $this->info("No files to process at the moment.");
             return true;
@@ -82,28 +83,6 @@ class ParseNmapCommand extends Command
         $filesByWorkspace->each(function($file, $offset) {
             /** @var File $file */
             return $this->processFile($file);
-        });
-
-        return true;
-    }
-
-    /**
-     * Process all the NMAP files related to a Workspace
-     *
-     * @param Collection $files
-     * @param int $workspaceId
-     * @return bool
-     */
-    protected function processWorkspaceFiles(Collection $files, int $workspaceId)
-    {
-        if (!isset($files, $workspaceId) || $files->isEmpty()) {
-            return true;
-        }
-
-        $this->info("Processing files for Workspace: $workspaceId");
-
-        $files->each(function($file, $offset) use ($workspaceId) {
-
         });
 
         return true;
@@ -143,34 +122,52 @@ class ParseNmapCommand extends Command
         }
 
         $nmapModels->each(function($model, $offset) use ($workspaceId, $file, $assets) {
+            // Instantiate a CreateAsset command and attempt to execute the command
             /** @var NmapModel $model */
             $assetDetails = $model->exportForAsset()->toArray();
-
             $command = new CreateAsset($workspaceId, $assetDetails);
 
             try {
                 $asset = $this->getBus()->handle($command);
-                $assets->push($asset);
             } catch (Exception $e) {
                 $this->error("Error: {$e->getMessage()} when processing file: $file");
             }
+
+            // Make sure we got an Asset and not something else that would indicate a failure
+            if (empty($asset) || !($asset instanceof Asset)) {
+                return true;
+            }
+
+            // Add the asset to the collection
+            $assets->push($asset);
         });
 
+        // Move the file to the processed location
+        $this->getService()->moveFileToProcessed($file);
+
+        // No Assets successfully created :(
+        if ($assets->isEmpty()) {
+            $this->error("Did not successfully create any Assets from file: {$file->getPath()}");
+            return true;
+        }
+
+        // More Assets were found in the file that were created, i.e. some attempts to create Assets failed :/
         if ($assets->count() !== $nmapModels->count()) {
             $failed = $nmapModels->count() - $assets->count();
-            $this->error(
-                "Failed to process $failed of {$nmapModels->count()} Assets found in file: {$file->getPath()}"
+            $this->warn(
+                "Failed to create $failed of {$nmapModels->count()} Assets found in file: {$file->getPath()}"
             );
             
             return true;
         }
 
-        $this->getService()->moveFileToProcessed($file);
-        
+        // All Assets that were found were successfully created :)
         $this->info(
             "Successfully created/updated {$assets->count()} of {$nmapModels->count()} Assets found in file:"
             . " {$file->getPath()}"
         );
+
+        // Reset the collection of Models to an empty Collection in preparation from processing the next file.
         $this->getService()->resetModels();
 
         return true;

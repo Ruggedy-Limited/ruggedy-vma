@@ -122,7 +122,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return new Collection;
         }
 
-        // Return a populated model
+        // Return a Collection of populated models
         return $this->getModels();
     }
 
@@ -132,9 +132,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function parseXml()
     {
         while ($this->getParser()->read()) {
-            // End tag for the base tag, add the current model to the models Collection and reset the model
+            // If we match the "end tag" for the base tag, add the current model
+            // to the models Collection and reset the model
             if ($this->getParser()->nodeType === XMLReader::END_ELEMENT
                 && $this->getParser()->name === $this->getBaseTagName()) {
+
                 $this->models->push($this->getModel());
                 $this->resetModel();
                 continue;
@@ -145,19 +147,36 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 continue;
             }
 
-            // Get the mappings
+            // Get the mappings for this tag
             $fields = $this->getFileToSchemaMapping()->get($this->getParser()->name);
-            if (empty($fields) || !($fields instanceof Collection)) {
+
+            // If there are no mappings for any reason, continue to the next node
+            if (empty($fields) || !($fields instanceof Collection) || $fields->isEmpty()) {
                 continue;
             }
 
             // Parse the node based on the mappings
             $fields->each(function($mappingAttributes, $setter) {
+                // Defensiveness in case of bad mappings
                 if (empty($setter) || !($mappingAttributes instanceof Collection)) {
+                    $this->getLogger()->log(Logger::WARNING, "Empty setter method or bad mappings", [
+                        'setterMethod'      => $setter ?? null,
+                        'mappingAttributes' => $mappingAttributes ?? null,
+                    ]);
+
                     return true;
                 }
-                
-                return $this->parseNode($mappingAttributes, $setter);
+
+                try {
+                    $this->parseNode($mappingAttributes, $setter);
+                } catch (Exception $e) {
+                    $this->getLogger()->log(Logger::ERROR, "Unable to parse XML node", [
+                        'setterMethod'      => $setter ?? null,
+                        'mappingAttributes' => $mappingAttributes,
+                    ]);
+                }
+
+                return true;
             });
         }
     }
@@ -176,13 +195,12 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function parseNode(Collection $mappingAttributes, string $setter)
     {
         $parser = $this->getParser();
-        $getter = 'g' . substr($setter, 1);
         if (!method_exists($this->getModel(), $setter) || !($mappingAttributes instanceof Collection)) {
             return true;
         }
 
-        $attribute         = $mappingAttributes->get(self::MAP_ATTRIBUTE_XML_ATTRIBUTE, self::NODE_TEXT_VALUE_DEFAULT);
-        $validationRules   = $mappingAttributes->get(self::MAP_ATTRIBUTE_VALIDATION);
+        $attribute       = $mappingAttributes->get(self::MAP_ATTRIBUTE_XML_ATTRIBUTE, self::NODE_TEXT_VALUE_DEFAULT);
+        $validationRules = $mappingAttributes->get(self::MAP_ATTRIBUTE_VALIDATION);
 
         // If validation rules is a Collection then there are related attributes we need to validate on this node to
         // make sure we are checking the right node
@@ -193,6 +211,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 throw new ParserMappingException("No main attribute found in Collection");
             }
 
+            // Defensiveness: Make sure we have an instance of a Collection beyond this point
             $relatedAttributes = $validationRules->get(self::MAP_ATTRIBUTE_RELATED_VALIDATION);
             if (!($relatedAttributes instanceof Collection) && is_array($relatedAttributes)) {
                 $relatedAttributes = new Collection($relatedAttributes);
@@ -221,8 +240,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // No attributes specified, so look for a value on the XML node
         if ($attribute === self::NODE_TEXT_VALUE_DEFAULT && !empty($parser->readInnerXml())) {
             $nodeInnerXml = $parser->readInnerXml();
-            // The node contains tags
+            // The node contains tags and isn't a text node so we can't process it
             if (preg_match(self::REGEX_ANY_XML_TAG, $nodeInnerXml)) {
+                $this->getLogger()->log(Logger::NOTICE, "Expected a text node, but got a node with nested XML tags", [
+                    'tagName'       => $this->getParser()->name ?? null,
+                    'innerXml'      => $nodeInnerXml ?? null,
+                    'attributeName' => $attribute ?? null,
+                ]);
+
                 return true;
             }
 
@@ -231,7 +256,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 return true;
             }
 
-            // Set the value on the model
+            // Set the value on the model and continue to the next iteration
             $this->getModel()->$setter($nodeInnerXml);
             return true;
         }
@@ -239,6 +264,10 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // If the XML node does not have attributes at this point, skip the node because we only look for
         // attributes after this point
         if (!$parser->hasAttributes) {
+            $this->getLogger()->log(Logger::NOTICE, "Expected a node with attributes, got node without attributes", [
+                'tagName'       => $this->getParser()->name ?? null,
+                'attributeName' => $attribute ?? null,
+            ]);
             return true;
         }
 
@@ -249,10 +278,19 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $attributeValue)) {
+            $this->getLogger()->log(Logger::DEBUG, "XML node attribute failed validation", [
+                'tagName'         => $this->getParser()->name ?? null,
+                'attributeName'   => $attribute ?? null,
+                'validationRules' => $validationRules,
+                'attributeValue'  => $attributeValue ?? null,
+            ]);
+
             return true;
         }
 
+        // Set the value on the model and continue to the next iteration
         $this->getModel()->$setter($attributeValue);
+
         return true;
     }
 
@@ -277,22 +315,23 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function isValidXmlValueOrAttribute(string $attribute, $validationRules, $value): bool
     {
+        // No validation rules or value
         if (!isset($validationRules, $value)) {
             return false;
         }
 
+        // Check if we are validating an IP address
         if ($validationRules === FILTER_FLAG_IPV4 || $validationRules === FILTER_FLAG_IPV6) {
             return !empty(filter_var($value, FILTER_VALIDATE_IP, $validationRules));
         }
 
+        // Perform the validation
         $validation = $this->getValidatorFactory()->make(
             [$attribute => $value],
             [$attribute => $validationRules]
         );
 
-        $isValid = $validation->passes();
-
-        return $isValid;
+        return $validation->passes();
     }
 
     /**
@@ -303,18 +342,22 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     public function moveFileToProcessed(File $file)
     {
+        // Empty or non-existent file
         if (empty($file) || !$this->getFileSystem()->exists($file->getPath())) {
             return false;
         }
 
+        // Get the path where processed files should be moved to
         $processedFilePath = str_replace('scans/', 'scans/processed/', $file->getPath());
         $processedPath     = $this->getFileSystem()->dirname($processedFilePath);
 
+        // Check if the directory exists and if not, create it
         $dirExists = true;
         if (!$this->getFileSystem()->exists($processedPath)) {
             $dirExists = $this->getFileSystem()->makeDirectory($processedPath, 0744, true);
         }
 
+        // Directory creation probably failed?
         if (!$dirExists) {
             $this->getLogger()->log(Logger::ERROR, "Failed to create directory for processed file", [
                 'file'      => $file->getPath(),
@@ -323,7 +366,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             ]);
             return false;
         }
-        
+
+        // Attempt to move a file to it's processed directory location
         if (!$this->getFileSystem()->move($file->getPath(), $processedFilePath)) {
             $this->getLogger()->log(Logger::ERROR, "Could not move processed file", [
                 'file'      => $file->getPath(),
@@ -333,7 +377,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return false;
         }
 
-        // Mark the file as processed in the database
+        // Mark the file as processed and persist to the DB
         $file->setProcessed(true);
         $this->getEm()->persist($file);
         $this->getEm()->flush($file);
@@ -346,7 +390,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      *
      * @return Collection
      */
-    public function getParseableFiles(): Collection
+    public function getUnprocessedFiles(): Collection
     {
         return $this->getFileRepository()->findUnprocessed();
     }

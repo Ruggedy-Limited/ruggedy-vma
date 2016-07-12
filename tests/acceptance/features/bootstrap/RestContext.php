@@ -144,14 +144,16 @@ class RestContext extends FeatureContext implements Context
             case self::HTTP_PUT:
                 // The request contains a file to be uploaded
                 if (!empty($this->getRestObject()->hasFile)) {
-                    $content   = null;
+                    $content = null;
 
+                    // Extract the relevant information from the file
                     $filePath  = $this->getRestObject()->file;
                     $filename  = basename($filePath);
                     $fileSize  = filesize($filePath);
                     $mimeType  = mime_content_type($filePath);
 
-                    $file      = new MockUploadedFile($filePath, $filename, $mimeType, $fileSize, null, true);
+                    // Create an instance of an UploadedFile with all the file's details and open it
+                    $file = new MockUploadedFile($filePath, $filename, $mimeType, $fileSize, null, true);
                     $file->openFile();
                     break;
                 }

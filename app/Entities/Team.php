@@ -66,7 +66,7 @@ class Team extends Base\Team implements SystemComponent, HasComponentPermissions
      *
      * @return Collection
      */
-    public function getPermissions()
+    public function getPermissions(): Collection
     {
         return parent::getComponentPermissions();
     }

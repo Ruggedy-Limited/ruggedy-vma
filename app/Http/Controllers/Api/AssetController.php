@@ -32,7 +32,7 @@ class AssetController extends AbstractController
     {
         $file = $this->getRequest()->file('file');
         if (!isset($file) || !($file instanceof UploadedFile)) {
-            return $this->generateErrorResponse(MessagingModel::ERROR_INVALID_INPUT);
+            $file = new UploadedFile('/dev/null', 'null');
         }
 
         $command = new UploadScanOutput(

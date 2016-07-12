@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetAssetsMasterList as GetAssetsMasterListCommand;
+use App\Entities\Asset;
 use App\Repositories\AssetRepository;
 use Doctrine\ORM\EntityManager;
 
@@ -37,8 +38,21 @@ class GetAssetsMasterList extends CommandHandler
     {
         $requestingUser = $this->authenticate();
 
-        // No command parameters are needed as we are just fetching all the assets owned by the authenticated User
-        return $requestingUser->getAssets()->toArray();
+        if ($requestingUser->getAssets()->isEmpty()) {
+            return [];
+        }
+
+        // No command parameters are needed as we are just
+        // fetching all the assets owned by the authenticated User
+        return $requestingUser->getAssets()->map(function ($asset) {
+            // Exclude deleted Assets
+            /** @var Asset $asset */
+             if ($asset->getDeleted()) {
+                 return false;
+             }
+
+            return $asset;
+        })->toArray();
     }
 
     /**

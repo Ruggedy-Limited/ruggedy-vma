@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetAssetsInProject as GetAssetsInProjectCommand;
+use App\Entities\Asset;
 use App\Entities\Project;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
@@ -81,6 +82,12 @@ class GetAssetsInProject extends CommandHandler
 
             // Iterate over the Workspace Assets and add each one to the Asset Collection
             $workspaceAssets->forAll(function($offset, $asset) use ($assets) {
+                // Exclude Assets flagged as deleted
+                /** @var Asset $asset */
+                if ($asset->getDeleted()) {
+                    return true;
+                }
+
                 $assets->push($asset);
                 return true;
             });

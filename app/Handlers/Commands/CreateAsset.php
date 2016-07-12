@@ -60,6 +60,7 @@ class CreateAsset extends CommandHandler
         // Check that all the required fields were set on the command
         $workspaceId = $command->getId();
         $details     = $command->getDetails();
+        
         if (!isset($workspaceId, $details)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
@@ -78,9 +79,10 @@ class CreateAsset extends CommandHandler
             );
         }
 
-        // Create a new Asset or find an matching existing Asset
+        // Create a new Asset or find a matching existing Asset
         $asset = $this->getAssetRepository()->findOrCreateOneBy($details);
-        // If this is a deleted or suppressed Asset then don't persist any changes
+
+        // If this is a deleted or suppressed Asset then don't persist any changes but return the Asset as is
         if ($asset->getDeleted() || $asset->getSuppressed()) {
             return $asset;
         }
@@ -107,7 +109,8 @@ class CreateAsset extends CommandHandler
      */
     protected function setAssetName(Asset $asset)
     {
-        $assetName = $asset->getHostname() ?? $asset->getIpAddressV4() ?? Asset::ASSET_NAME_UNNAMED;
+        $assetName = $asset->getName() ?? $asset->getHostname() ?? $asset->getIpAddressV4()
+            ?? Asset::ASSET_NAME_UNNAMED;
         $asset->setName($assetName);
     }
 

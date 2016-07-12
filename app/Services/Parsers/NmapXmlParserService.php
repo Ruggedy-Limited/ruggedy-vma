@@ -42,7 +42,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                     'xmlAttribute'  => 'vendor',
                     'validation'    => [
                         'filled',
-                        'regex:/(Linux|Apple|Microsoft)/',
+                        'regex:' . Asset::getValidVendorsRegex(),
                     ]
                 ]),
             ]),
@@ -51,7 +51,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                     'xmlAttribute'  => 'name',
                     'validation'    => [
                         'filled',
-                        'regex:/(Linux|Mac|Windows)/',
+                        'regex:' . Asset::REGEX_OS_VERSION,
                     ]
                 ]),
             ]),
@@ -84,7 +84,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                     'xmlAttribute' => 'name',
                     'validation'   => [
                         'filled',
-                        'regex:' . NmapModel::VALIDATION_REGEX_HOSTNAME
+                        'regex:' . Asset::REGEX_HOSTNAME
                     ]
                 ]),
             ]),
@@ -97,7 +97,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
             ]),
         ]);
 
-        // Instantiate a model to collect the relevant information from the model
+        // Instantiate a model
         $this->model = new NmapModel();
     }
 
@@ -112,7 +112,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     }
 
     /**
-     * Check if the current node has an accuracy attribute
+     * Check if the current node's accuracy attribute is set
      *
      * @return bool
      */
@@ -125,8 +125,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
     /**
      * @inheritdoc
-     * Override the base class method to check for an accuracy attribute and to check if the accuracy is greater than
-     * the accuracy for the current node value
+     * Check if the accuracy of this node is greater than the accuracy for the current model value related to this node
      *
      * @param string $attribute
      * @return bool
@@ -148,9 +147,13 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
             return false;
         }
 
-        // Set the accuracy to the value of the accuracy attribute for this node and return the attribute value so that
-        // it is added to the model
+        // Attempt to extract the CPE for osclass nodes that have the highest accuracy
+        $this->extractCpe();
+
+        // Set the accuracy to the value of the accuracy attribute for this node
+        // and return true so that it is added to the model
         $this->getModel()->setCurrentAccuracyFor($nodeName, intval($accuracy));
+
         return true;
     }
 
@@ -159,14 +162,16 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function extractCpe()
     {
+        // only check osclass nodes
         if (!$nodeName = $this->getParser()->name !== 'osclass') {
-            // only check osclass nodes
             return false;
         }
 
+        // Expand the XML node into a DOMNode so that we can extract the text value
         $domNode = $this->getParser()->expand();
         /** @var \DOMNode $childNode */
         foreach ($domNode->childNodes as $childNode) {
+            // Only attempt extract from nodes named 'cpe' that have a text value
             if (!$childNode->nodeName === self::XML_NODE_NAME_CPE || empty($childNode->nodeValue)) {
                 continue;
             }
@@ -182,6 +187,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                 continue;
             }
 
+            // Set the CPE on the model
             $this->getModel()->setCpe($childNode->nodeValue);
         }
     }
@@ -197,18 +203,19 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function isValidXmlValueOrAttribute(string $attribute, $validationRules, $value): bool
     {
+        // Check that the parent class's validation method passes
         $isValid = parent::isValidXmlValueOrAttribute($attribute, $validationRules, $value);
         if (empty($isValid)) {
             return false;
         }
 
+        // Check for an accuracy attribute and if there isn't one return true because the validation passed above
         if (!$this->nodeHasAccuracyAttribute()) {
             return true;
         }
 
-        // Attempt to extract the CPE for osclass nodes that have the highest accuracy
-        $this->extractCpe();
-
+        // The node attribute or text value only passes validation if this node's accuracy is higher than the accuracy
+        // of the node where the model's current value was found
         return $this->isMoreAccurate();
     }
 
