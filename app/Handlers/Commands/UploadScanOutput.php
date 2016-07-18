@@ -9,8 +9,10 @@ use App\Exceptions\InvalidInputException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\WorkspaceRepository;
+use App\Services\ScanIdentificationService;
 use Doctrine\ORM\EntityManager;
 use Exception;
+use ProxyManager\Exception\FileNotWritableException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -24,6 +26,9 @@ class UploadScanOutput extends CommandHandler
     /** @var Filesystem */
     protected $fileSystem;
 
+    /** @var ScanIdentificationService */
+    protected $service;
+
     /** @var EntityManager */
     protected $em;
 
@@ -33,10 +38,14 @@ class UploadScanOutput extends CommandHandler
      * @param WorkspaceRepository $workspaceRepository
      * @param Filesystem $fileSystem
      */
-    public function __construct(WorkspaceRepository $workspaceRepository, Filesystem $fileSystem, EntityManager $em)
+    public function __construct(
+        WorkspaceRepository $workspaceRepository, Filesystem $fileSystem, EntityManager $em,
+        ScanIdentificationService $service
+    )
     {
         $this->workspaceRepository = $workspaceRepository;
         $this->fileSystem          = $fileSystem;
+        $this->service             = $service;
         $this->em                  = $em;
     }
 
@@ -74,49 +83,18 @@ class UploadScanOutput extends CommandHandler
             );
         }
 
-        // Check that the file is a valid UploadedFile
-        if (!$file->isFile() || !$file->isValid() || !$file->isReadable()) {
-            throw new FileException("The uploaded scan output file is not valid");
+        if (!$this->getService()->initialise($file)) {
+            throw new FileException("Could not match the file to any supported scanner output");
         }
 
-        // Get the file type by MIME type or extension
-        $fileType = $file->extension();
-        $mimeType = $file->getClientMimeType();
-        if (!empty($mimeType)) {
-            $mimeParts = explode("/", $mimeType);
+        if (!$this->getService()->storeUploadedFile($workspaceId)) {
+            throw new FileNotWritableException("Could not store uploaded file on server");
         }
-
-        if (!empty($mimeParts) && is_array($mimeParts)) {
-            $mimeExtension = array_pop($mimeParts);
-        }
-
-        if (!empty($mimeExtension) && $mimeExtension != $fileType) {
-            $fileType = $mimeExtension;
-        }
-
-        // Check that it is a valid/accepted file type
-        if (!File::isValidFileType($fileType)) {
-            throw new FileException("File of unsupported type '$fileType' given");
-        }
-
-        //TODO: Determine scan type based on file format
-        $scanType = 'nmap';
-
-        // Move the file to the relevant storage path
-        $storagePath = $this->getScanFileStorageBasePath() . $fileType . DIRECTORY_SEPARATOR
-            . $scanType . DIRECTORY_SEPARATOR
-            . $workspaceId;
-
-        if (!$this->getFileSystem()->exists($storagePath)) {
-            $this->getFileSystem()->mkdir($storagePath);
-        }
-
-        $file->move($storagePath, $file->getClientOriginalName());
 
         // Create a new File entity, persist it to the DB and return it
         $fileEntity = new File();
-        $fileEntity->setPath($storagePath . DIRECTORY_SEPARATOR . $file->getClientOriginalName());
-        $fileEntity->setFormat($fileType);
+        $fileEntity->setPath($this->getService()->getProvisionalStoragePath($workspaceId));
+        $fileEntity->setFormat($this->getService()->getFormat());
         $fileEntity->setSize($file->getClientSize());
         $fileEntity->setUser($requestingUser);
         $fileEntity->setWorkspace($workspace);
@@ -153,6 +131,14 @@ class UploadScanOutput extends CommandHandler
     public function getFileSystem()
     {
         return $this->fileSystem;
+    }
+
+    /**
+     * @return ScanIdentificationService
+     */
+    public function getService(): ScanIdentificationService
+    {
+        return $this->service;
     }
 
     /**
