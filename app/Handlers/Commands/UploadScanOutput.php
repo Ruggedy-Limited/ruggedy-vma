@@ -23,9 +23,6 @@ class UploadScanOutput extends CommandHandler
     /** @var WorkspaceRepository */
     protected $workspaceRepository;
 
-    /** @var Filesystem */
-    protected $fileSystem;
-
     /** @var ScanIdentificationService */
     protected $service;
 
@@ -36,15 +33,15 @@ class UploadScanOutput extends CommandHandler
      * UploadScanOutput constructor.
      *
      * @param WorkspaceRepository $workspaceRepository
-     * @param Filesystem $fileSystem
+     * @param EntityManager $em
+     * @param ScanIdentificationService $service
+     * @internal param Filesystem $fileSystem
      */
     public function __construct(
-        WorkspaceRepository $workspaceRepository, Filesystem $fileSystem, EntityManager $em,
-        ScanIdentificationService $service
+        WorkspaceRepository $workspaceRepository, EntityManager $em, ScanIdentificationService $service
     )
     {
         $this->workspaceRepository = $workspaceRepository;
-        $this->fileSystem          = $fileSystem;
         $this->service             = $service;
         $this->em                  = $em;
     }
@@ -93,7 +90,9 @@ class UploadScanOutput extends CommandHandler
 
         // Create a new File entity, persist it to the DB and return it
         $fileEntity = new File();
-        $fileEntity->setPath($this->getService()->getProvisionalStoragePath($workspaceId));
+        $fileEntity->setPath(
+            $this->getService()->getProvisionalStoragePath($workspaceId) . $file->getClientOriginalName()
+        );
         $fileEntity->setFormat($this->getService()->getFormat());
         $fileEntity->setSize($file->getClientSize());
         $fileEntity->setUser($requestingUser);
@@ -123,14 +122,6 @@ class UploadScanOutput extends CommandHandler
     public function getWorkspaceRepository()
     {
         return $this->workspaceRepository;
-    }
-
-    /**
-     * @return Filesystem
-     */
-    public function getFileSystem()
-    {
-        return $this->fileSystem;
     }
 
     /**
