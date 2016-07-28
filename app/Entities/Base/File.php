@@ -3,12 +3,13 @@
 namespace App\Entities\Base;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\File
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="files_asset_fk_idx", columns={"`asset_id`"})})
+ * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="files_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="files_scanner_app_fk_idx", columns={"`scanner_app_id`"})})
  */
 class File extends AbstractEntity
 {
@@ -50,6 +51,11 @@ class File extends AbstractEntity
     protected $asset_id;
 
     /**
+     * @ORM\Column(name="`scanner_app_id`", type="integer", options={"unsigned":true})
+     */
+    protected $scanner_app_id;
+
+    /**
      * @ORM\Column(name="`processed`", type="smallint", options={"unsigned":true})
      */
     protected $processed;
@@ -70,6 +76,18 @@ class File extends AbstractEntity
     protected $updated_at;
 
     /**
+     * @ORM\OneToMany(targetEntity="SystemInformation", mappedBy="file", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
+     */
+    protected $systemInformations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -87,8 +105,16 @@ class File extends AbstractEntity
      */
     protected $asset;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="ScannerApp", inversedBy="files", cascade={"persist"})
+     * @ORM\JoinColumn(name="`scanner_app_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $scannerApp;
+
     public function __construct()
     {
+        $this->systemInformations = new ArrayCollection();
+        $this->vulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -253,6 +279,29 @@ class File extends AbstractEntity
     }
 
     /**
+     * Set the value of scanner_app_id.
+     *
+     * @param integer $scanner_app_id
+     * @return \App\Entities\Base\File
+     */
+    public function setScannerAppId($scanner_app_id)
+    {
+        $this->scanner_app_id = $scanner_app_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of scanner_app_id.
+     *
+     * @return integer
+     */
+    public function getScannerAppId()
+    {
+        return $this->scanner_app_id;
+    }
+
+    /**
      * Set the value of processed.
      *
      * @param integer $processed
@@ -345,6 +394,78 @@ class File extends AbstractEntity
     }
 
     /**
+     * Add SystemInformation entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @return \App\Entities\Base\File
+     */
+    public function addSystemInformation(SystemInformation $systemInformation)
+    {
+        $this->systemInformations[] = $systemInformation;
+
+        return $this;
+    }
+
+    /**
+     * Remove SystemInformation entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @return \App\Entities\Base\File
+     */
+    public function removeSystemInformation(SystemInformation $systemInformation)
+    {
+        $this->systemInformations->removeElement($systemInformation);
+
+        return $this;
+    }
+
+    /**
+     * Get SystemInformation entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSystemInformations()
+    {
+        return $this->systemInformations;
+    }
+
+    /**
+     * Add Vulnerability entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\File
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities[] = $vulnerability;
+
+        return $this;
+    }
+
+    /**
+     * Remove Vulnerability entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\File
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
+    }
+
+    /**
+     * Get Vulnerability entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
+    }
+
+    /**
      * Set User entity (many to one).
      *
      * @param \App\Entities\Base\User $user
@@ -413,8 +534,31 @@ class File extends AbstractEntity
         return $this->asset;
     }
 
+    /**
+     * Set ScannerApp entity (many to one).
+     *
+     * @param \App\Entities\Base\ScannerApp $scannerApp
+     * @return \App\Entities\Base\File
+     */
+    public function setScannerApp(ScannerApp $scannerApp = null)
+    {
+        $this->scannerApp = $scannerApp;
+
+        return $this;
+    }
+
+    /**
+     * Get ScannerApp entity (many to one).
+     *
+     * @return \App\Entities\Base\ScannerApp
+     */
+    public function getScannerApp()
+    {
+        return $this->scannerApp;
+    }
+
     public function __sleep()
     {
-        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_id', 'asset_id', 'processed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_id', 'asset_id', 'scanner_app_id', 'processed', 'deleted', 'created_at', 'updated_at');
     }
 }

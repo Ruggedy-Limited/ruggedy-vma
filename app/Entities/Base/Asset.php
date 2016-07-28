@@ -107,6 +107,18 @@ class Asset extends AbstractEntity
     protected $files;
 
     /**
+     * @ORM\OneToMany(targetEntity="SystemInformation", mappedBy="asset", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
+     */
+    protected $systemInformations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="asset", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="assets", cascade={"persist"})
      * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -121,6 +133,8 @@ class Asset extends AbstractEntity
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->systemInformations = new ArrayCollection();
+        $this->vulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -548,6 +562,78 @@ class Asset extends AbstractEntity
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * Add SystemInformation entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @return \App\Entities\Base\Asset
+     */
+    public function addSystemInformation(SystemInformation $systemInformation)
+    {
+        $this->systemInformations[] = $systemInformation;
+
+        return $this;
+    }
+
+    /**
+     * Remove SystemInformation entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @return \App\Entities\Base\Asset
+     */
+    public function removeSystemInformation(SystemInformation $systemInformation)
+    {
+        $this->systemInformations->removeElement($systemInformation);
+
+        return $this;
+    }
+
+    /**
+     * Get SystemInformation entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSystemInformations()
+    {
+        return $this->systemInformations;
+    }
+
+    /**
+     * Add Vulnerability entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\Asset
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities[] = $vulnerability;
+
+        return $this;
+    }
+
+    /**
+     * Remove Vulnerability entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\Asset
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
+    }
+
+    /**
+     * Get Vulnerability entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
     }
 
     /**
