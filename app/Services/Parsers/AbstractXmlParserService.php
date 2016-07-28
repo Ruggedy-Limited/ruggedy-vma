@@ -378,6 +378,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Mark the file as processed and persist to the DB
+        // TODO: Move the out into a command
         $file->setProcessed(true);
         $this->getEm()->persist($file);
         $this->getEm()->flush($file);

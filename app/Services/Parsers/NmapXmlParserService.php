@@ -37,60 +37,60 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
         // Create the mappings to use when parsing the NMAP XML output
         $this->fileToSchemaMapping = new Collection([
-            'osclass'        => new Collection([
+            'osclass'               => new Collection([
                 'setOsVendor' => new Collection([
-                    'xmlAttribute'  => 'vendor',
-                    'validation'    => [
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'vendor',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::getValidVendorsRegex(),
                     ]
                 ]),
             ]),
-            'osmatch'        => new Collection([
+            'osmatch'               => new Collection([
                 'setOsVersion' => new Collection([
-                    'xmlAttribute'  => 'name',
-                    'validation'    => [
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'name',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::REGEX_OS_VERSION,
                     ]
                 ]),
             ]),
-            'address' => new Collection([
-                'setIpV4' => new Collection([
-                    'xmlAttribute' => 'addr',
-                    'validation'   => FILTER_FLAG_IPV4,
+            'address'               => new Collection([
+                'setIpV4'       => new Collection([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'addr',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV4,
                 ]),
-                'setIpV6' => new Collection([
-                    'xmlAttribute' => 'addr',
-                    'validation'   => FILTER_FLAG_IPV6,
+                'setIpV6'       => new Collection([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'addr',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV6,
                 ]),
                 'setMacAddress' => new Collection([
-                    'xmlAttribute' => 'addr',
-                    'validation'   => [
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'addr',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::REGEX_MAC_ADDRESS,
                     ]
                 ]),
-                'setMacVendor' => new Collection([
-                    'xmlAttribute'  => 'vendor',
-                    'validation'    => new Collection([
-                        'main'    => ['vendor'   => 'filled'],
+                'setMacVendor'  => new Collection([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'vendor',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => new Collection([
+                        'main'    => ['vendor' => 'filled'],
                         'related' => new Collection(['addrtype' => 'filled|in:mac']),
                     ]),
                 ]),
             ]),
-            'hostname' => new Collection([
+            'hostname'              => new Collection([
                 'setHostname' => new Collection([
-                    'xmlAttribute' => 'name',
-                    'validation'   => [
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'name',
+                    parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::REGEX_HOSTNAME
                     ]
                 ]),
             ]),
             self::XML_NODE_NAME_CPE => new Collection([
-                'xmlAttribute' => false,
-                'validation'   => [
+                parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => false,
+                parent::MAP_ATTRIBUTE_VALIDATION    => [
                     'filled',
                     'regex:' . Asset::REGEX_CPE
                 ],
