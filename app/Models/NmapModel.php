@@ -7,11 +7,8 @@ use App\Entities\Asset;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-class NmapModel implements CollectsScanOutput
+class NmapModel extends AbstractXmlModel implements CollectsScanOutput
 {
-    /** @var string */
-    protected $hostname;
-
     /** @var string */
     protected $osVendor;
 
@@ -20,12 +17,6 @@ class NmapModel implements CollectsScanOutput
 
     /** @var string */
     protected $cpe;
-
-    /** @var string */
-    protected $ipV4;
-
-    /** @var string */
-    protected $ipV6;
 
     /** @var string */
     protected $macAddress;
@@ -52,22 +43,16 @@ class NmapModel implements CollectsScanOutput
     {
         $this->ports      = new Collection();
         $this->accuracies = new Collection();
-    }
-
-    /**
-     * @return string
-     */
-    public function getHostname()
-    {
-        return $this->hostname;
-    }
-
-    /**
-     * @param string $hostname
-     */
-    public function setHostname($hostname)
-    {
-        $this->hostname = $hostname;
+        $this->exportForAssetMap = new Collection([
+            'hostname'      => 'getHostname',
+            'cpe'           => 'getCpe',
+            'vendor'        => 'getOsVendor',
+            'os_version'    => 'getOsVersion',
+            'ip_address_v4' => 'getIpV4',
+            'ip_address_v6' => 'getIpV6',
+            'mac_address'   => 'getMacAddress',
+            'mac_vendor'    => 'getMacVendor',
+        ]);
     }
 
     /**
@@ -118,38 +103,6 @@ class NmapModel implements CollectsScanOutput
     public function setCpe($cpe)
     {
         $this->cpe = $cpe;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIpV4()
-    {
-        return $this->ipV4;
-    }
-
-    /**
-     * @param string $ipV4
-     */
-    public function setIpV4($ipV4)
-    {
-        $this->ipV4 = $ipV4;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIpV6()
-    {
-        return $this->ipV6;
-    }
-
-    /**
-     * @param string $ipV6
-     */
-    public function setIpV6($ipV6)
-    {
-        $this->ipV6 = $ipV6;
     }
 
     /**
@@ -295,24 +248,5 @@ class NmapModel implements CollectsScanOutput
     public function setCurrentAccuracyFor(string $field, int $accuracy)
     {
         $this->accuracies->put($field, $accuracy);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @return Collection
-     */
-    public function exportForAsset(): Collection
-    {
-        return new Collection([
-            'hostname'      => $this->getHostname(),
-            'cpe'           => $this->getCpe(),
-            'vendor'        => $this->getOsVendor(),
-            'os_version'    => $this->getOsVersion(),
-            'ip_address_v4' => $this->getIpV4(),
-            'ip_address_v6' => $this->getIpV6(),
-            'mac_address'   => $this->getMacAddress(),
-            'mac_vendor'    => $this->getMacVendor(),
-        ]);
     }
 }
