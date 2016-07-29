@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Parsers\Xml;
 
+use App\Commands\CommitCurrentUnitOfWork;
 use App\Commands\CreateAsset;
 use App\Commands\CreateSomething;
 use App\Commands\CreateVulnerability;
@@ -19,7 +20,7 @@ use App\Exceptions\InvalidInputException;
 use App\Repositories\FileRepository;
 use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\XmlParserFactoryService;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMException;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Collection;
@@ -41,10 +42,7 @@ class ParseUnprocessedXmlCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Parse NMAP XML output. It will parse all files in storage/scans/xml/nmap';
-
-    /** @var EntityManager */
-    protected $em;
+    protected $description = 'Parse XML scan output. It will parse all uploaded and unprocessed files';
     
     /** @var FileRepository */
     protected $repository;
@@ -57,12 +55,10 @@ class ParseUnprocessedXmlCommand extends Command
      *
      * @param FileRepository $fileRepository
      * @param CommandBus $bus
-     * @param EntityManager $em
      */
-    public function __construct(FileRepository $fileRepository, CommandBus $bus, EntityManager $em)
+    public function __construct(FileRepository $fileRepository, CommandBus $bus)
     {
         parent::__construct();
-        $this->em         = $em;
         $this->repository = $fileRepository;
         $this->bus        = $bus;
     }
@@ -84,6 +80,13 @@ class ParseUnprocessedXmlCommand extends Command
             /** @var File $file */
             return $this->processFile($file);
         });
+
+        $command = new CommitCurrentUnitOfWork();
+        try {
+            $this->getBus()->handle($command);
+        } catch (ORMException $e) {
+            $this->error("Failed to persist entities imported from the given files!");
+        }
 
         return true;
     }
@@ -132,7 +135,7 @@ class ParseUnprocessedXmlCommand extends Command
 
         // Iterate over each model, extract and persist the relevant entities
         $xmlParserModels->each(function($model, $offset) use ($workspaceId, $file, $counters) {
-            $this->processXmlParserModel($model, $workspaceId, $counters);
+            $this->processXmlParserModel($model, $workspaceId, $counters, $file);
             return true;
         });
 
@@ -186,7 +189,9 @@ class ParseUnprocessedXmlCommand extends Command
      * @param Collection $counters
      * @return bool
      */
-    protected function processXmlParserModel(CollectsScanOutput $model, int $workspaceId, Collection $counters): bool
+    protected function processXmlParserModel(
+        CollectsScanOutput $model, int $workspaceId, Collection $counters, File $file
+    ): bool
     {
         // Instantiate a CreateAsset command and attempt to execute the command
         /** @var CollectsScanOutput $model */
@@ -209,14 +214,16 @@ class ParseUnprocessedXmlCommand extends Command
         $counters->put(Asset::class, $currentAssetCount + 1);
 
         $systemInformation = $this->sendCommandToBus(
-            CreateSystemInformation::class, $asset->getId(), $systemInformationDetails
+            CreateSystemInformation::class, $asset->getId(), $systemInformationDetails, $file
         );
         if (!empty($systemInformation)) {
             $currentSystemInformationCount = $counters->get(SystemInformation::class, 0);
             $counters->put(SystemInformation::class, $currentSystemInformationCount + 1);
         }
 
-        $vulnerability = $this->sendCommandToBus(CreateVulnerability::class, $asset->getId(), $vulnerabilityDetails);
+        $vulnerability = $this->sendCommandToBus(
+            CreateVulnerability::class, $asset->getId(), $vulnerabilityDetails, $file
+        );
         if (empty($vulnerability) || !($vulnerability instanceof Vulnerability)) {
             return true;
         }
@@ -225,6 +232,7 @@ class ParseUnprocessedXmlCommand extends Command
         $vulnerabilityReference = $this->sendCommandToBus(
             CreateVulnerabilityReference::class, $vulnerability->getId(), $vulnerabilityRefDetails
         );
+
         if (!empty($vulnerabilityReference)) {
             $currentVulnerabilityReferenceCount = $counters->get(VulnerabilityReferenceCode::class, 0);
             $counters->put(SystemInformation::class, $currentVulnerabilityReferenceCount + 1);
@@ -239,36 +247,30 @@ class ParseUnprocessedXmlCommand extends Command
      * @param string $commandClass
      * @param int $id
      * @param Collection $details
+     * @param File $file
      * @return SystemComponent|false
-     * @throws InvalidInputException
      */
-    public function sendCommandToBus(string $commandClass, int $id, Collection $details)
+    public function sendCommandToBus(string $commandClass, int $id, Collection $details, File $file = null)
     {
-        if (!class_exists($commandClass) || !($commandClass instanceof CreateSomething)) {
+        if (!class_exists($commandClass)) {
             $this->error("Could not find command class: $commandClass.");
             return false;
         }
 
         if (!isset($id) || $details->isEmpty()) {
-            $this->error("A required parameter is not set.");
+            $this->error("A required parameter to be used in the command '$commandClass' is not set.");
             return false;
         }
+
+        $details->put('file', $file);
 
         try {
-            $command = new $commandClass($id, $details->toArray(), true);
+            $command = new $commandClass($id, $details->toArray());
             return $this->getBus()->handle($command);
         } catch (Exception $e) {
-            $this->error("Error: {$e->getMessage()} when parsing file.");
+            $this->error("Error: {$e->getMessage()} when handling command: $commandClass.");
             return false;
         }
-    }
-
-    /**
-     * @return EntityManager
-     */
-    public function getEm()
-    {
-        return $this->em;
     }
 
     /**

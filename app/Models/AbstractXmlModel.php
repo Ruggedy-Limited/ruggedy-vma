@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\CollectsScanOutput;
+use App\Entities\Asset;
 use Illuminate\Support\Collection;
 
 abstract class AbstractXmlModel implements CollectsScanOutput
@@ -47,7 +48,7 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getHostname(): string
+    public function getHostname()
     {
         return $this->hostname;
     }
@@ -57,13 +58,17 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      */
     public function setHostname(string $hostname)
     {
+        // Strip the scheme and the basic auth if it's there so we only store the actual hostname in the Asset entry
+        $hostname = preg_replace('~^' . Asset::REGEX_PROTOCOL . Asset::REGEX_BASIC_AUTH . '?~', '', $hostname);
+        // Strip the port number too
+        $hostname = preg_replace('~' . Asset::REGEX_PORT_NUMBER . '~', '', $hostname);
         $this->hostname = $hostname;
     }
 
     /**
      * @return string
      */
-    public function getIpV4(): string
+    public function getIpV4()
     {
         return $this->ipV4;
     }
@@ -79,7 +84,7 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getIpV6(): string
+    public function getIpV6()
     {
         return $this->ipV6;
     }
@@ -153,13 +158,17 @@ abstract class AbstractXmlModel implements CollectsScanOutput
             return $mappings;
         }
 
-        // Map the model values using the mapping of entity properties to model getters
+        // Map the model values using the mapping of entity properties to model getters and then filter out
+        // any null/unset keys
         return $mappings->map(function ($getter, $assetField) {
             if (!method_exists($this, $getter)) {
                 return null;
             }
 
-            return $this->$getter;
+            return $this->$getter();
+
+        })->filter(function ($value, $key) {
+            return isset($value);
         });
     }
 }

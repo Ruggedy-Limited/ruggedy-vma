@@ -88,10 +88,11 @@ class UploadScanOutput extends CommandHandler
             );
         }
 
-        $scanner =  $this->getService()->initialise($file);
-        if (!$scanner) {
+        if (!$this->getService()->initialise($file)) {
             throw new FileException("Could not match the file to any supported scanner output");
         }
+
+        $scanner = $this->getService()->getScanner();
 
         $scannerApp = $this->getScannerAppRepository()->findByName($scanner);
         if (empty($scannerApp)) {

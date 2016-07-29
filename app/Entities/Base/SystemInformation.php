@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\SystemInformation
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`system_information`", indexes={@ORM\Index(name="system_information_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="system_information_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`system_informations`", indexes={@ORM\Index(name="system_information_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="system_information_file_fk_idx", columns={"`file_id`"})})
  */
 class SystemInformation extends AbstractEntity
 {

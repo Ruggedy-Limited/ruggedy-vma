@@ -41,11 +41,6 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                     parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV4,
                 ]),
 
-                'setIpV6'     => new Collection([
-                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'ip',
-                    parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV6,
-                ]),
-
                 'setHostname' => new Collection([
                     parent::MAP_ATTRIBUTE_VALIDATION => [
                         'filled',
@@ -56,7 +51,7 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
 
             'name'            => new Collection([
                 'setVulnerabilityName' => new Collection([
-                    parent::MAP_ATTRIBUTE_VALIDATION => 'filled|alphanum',
+                    parent::MAP_ATTRIBUTE_VALIDATION => 'filled',
                 ]),
             ]),
 
@@ -127,7 +122,7 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
 
             'location' => new Collection([
                 'setHttpUri' => new Collection([
-                    parent::MAP_ATTRIBUTE_VALIDATION => 'filled|url',
+                    parent::MAP_ATTRIBUTE_VALIDATION => 'filled',
                 ]),
             ]),
 

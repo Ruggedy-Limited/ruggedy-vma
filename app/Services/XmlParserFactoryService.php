@@ -6,11 +6,11 @@ use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\Parsers\BurpXmlParserService;
 use App\Services\Parsers\NmapXmlParserService;
 use Doctrine\ORM\EntityManager;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\Factory;
 use App\Repositories\FileRepository;
-use Symfony\Component\Filesystem\Filesystem;
 use XMLReader;
 
 class XmlParserFactoryService

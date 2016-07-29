@@ -89,7 +89,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getVulnerabilityName(): string
+    public function getVulnerabilityName()
     {
         return $this->vulnerabilityName;
     }
@@ -105,7 +105,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getSeverity(): string
+    public function getSeverity()
     {
         return $this->severity;
     }
@@ -121,7 +121,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getIssueBackground(): string
+    public function getIssueBackground()
     {
         return $this->issueBackground;
     }
@@ -137,7 +137,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getIssueDetail(): string
+    public function getIssueDetail()
     {
         return $this->issueDetail;
     }
@@ -153,7 +153,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         if (empty($this->issueBackground) && empty($this->issueDetail)) {
             return null;
@@ -176,7 +176,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getRemediationBackground(): string
+    public function getRemediationBackground()
     {
         return $this->remediationBackground;
     }
@@ -192,7 +192,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getRemediationDetail(): string
+    public function getRemediationDetail()
     {
         return $this->remediationDetail;
     }
@@ -208,7 +208,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getSolution(): string
+    public function getSolution()
     {
         if (empty($this->remediationBackground) && empty($this->remediationDetail)) {
             return null;
@@ -229,7 +229,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getInteractionType(): string
+    public function getInteractionType()
     {
         return $this->interactionType;
     }
@@ -245,7 +245,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getOriginIp(): string
+    public function getOriginIp()
     {
         return $this->originIp;
     }
@@ -261,7 +261,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getTime(): string
+    public function getTime()
     {
         return $this->time;
     }
@@ -277,7 +277,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getLookupType(): string
+    public function getLookupType()
     {
         return $this->lookupType;
     }
@@ -293,7 +293,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getLookupHost(): string
+    public function getLookupHost()
     {
         return $this->lookupHost;
     }
@@ -309,7 +309,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getGenericOutput(): string
+    public function getGenericOutput()
     {
         $genericOutput = '';
         $genericOutput .= isset($this->interactionType) ? "Interaction type: {$this->interactionType}" . PHP_EOL : '';
@@ -324,7 +324,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getHttpMethod(): string
+    public function getHttpMethod()
     {
         return $this->httpMethod;
     }
@@ -340,7 +340,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getHttpUri(): string
+    public function getHttpUri()
     {
         return $this->httpUri;
     }
@@ -356,7 +356,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getHttpRequest(): string
+    public function getHttpRequest()
     {
         return $this->httpRequest;
     }
@@ -372,7 +372,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return string
      */
-    public function getHttpResponse(): string
+    public function getHttpResponse()
     {
         return $this->httpResponse;
     }
@@ -390,13 +390,17 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
      */
     public function getVulnerabilityReferenceType()
     {
+        if (empty($this->onlineReferences)) {
+            return null;
+        }
+
         return VulnerabilityReferenceCode::REF_TYPE_ONLINE_OTHER;
     }
 
     /**
      * @return string
      */
-    public function getOnlineReferences(): string
+    public function getOnlineReferences()
     {
         return $this->onlineReferences;
     }
@@ -407,27 +411,5 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     public function setOnlineReferences(string $onlineReferences)
     {
         $this->onlineReferences = $onlineReferences;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getExportForVulnerabilityMap(): Collection
-    {
-        return $this->exportForVulnerabilityMap;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function exportForVulnerability(): Collection
-    {
-        return $this->getExportForVulnerabilityMap()->map(function ($getter, $assetField) {
-            if (!method_exists($this, $getter)) {
-                return null;
-            }
-
-            return $this->$getter;
-        });
     }
 }

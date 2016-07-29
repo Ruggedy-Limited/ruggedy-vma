@@ -239,7 +239,20 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         
         // No attributes specified, so look for a value on the XML node
         if ($attribute === self::NODE_TEXT_VALUE_DEFAULT && !empty($parser->readInnerXml())) {
-            $nodeInnerXml = $parser->readInnerXml();
+            $parser->read();
+            // If we have not hit a TEXT or CDATA node here, something isn't right, exist this iteration
+            if ($parser->nodeType !== XMLReader::TEXT && $parser->nodeType !== XMLReader::CDATA) {
+                $this->getLogger()->log(
+                    Logger::NOTICE, "Expected a text or cdata node, but got a {$parser->nodeType} node",
+                    [
+                        'tagName'       => $this->getParser()->name ?? null,
+                        'innerXml'      => $nodeInnerXml ?? null,
+                        'attributeName' => $attribute ?? null,
+                    ]
+                );
+                return true;
+            }
+            /*$nodeInnerXml = $parser->readInnerXml();
             // The node contains tags and isn't a text node so we can't process it
             if (preg_match(self::REGEX_ANY_XML_TAG, $nodeInnerXml)) {
                 $this->getLogger()->log(Logger::NOTICE, "Expected a text node, but got a node with nested XML tags", [
@@ -249,15 +262,17 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 ]);
 
                 return true;
-            }
+            }*/
+
+            $value = $parser->value;
 
             // Validate the XML node's text value
-            if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $nodeInnerXml)) {
+            if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $parser->value)) {
                 return true;
             }
 
             // Set the value on the model and continue to the next iteration
-            $this->getModel()->$setter($nodeInnerXml);
+            $this->getModel()->$setter($parser->value);
             return true;
         }
 
