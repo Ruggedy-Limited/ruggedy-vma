@@ -19,7 +19,7 @@ class Asset extends Base\Asset implements SystemComponent
     const REGEX_MAC_ADDRESS = '/^([0-9A-Fa-f]{2}[:-]{1}){5}([0-9A-Fa-f]{2})$/';
     const REGEX_OS_VERSION  = '/(Linux|Mac|Windows)/';
 
-    const REGEX_PROTOCOL    = '(aaa|aaas|about|acap|acct|acr|adiumxtra|afp|afs|aim|apt|attachment|aw|barion'
+    const REGEX_PROTOCOL    = '(((aaa|aaas|about|acap|acct|acr|adiumxtra|afp|afs|aim|apt|attachment|aw|barion'
         . '|beshare|bitcoin|blob|bolo|callto|cap|chrome|chrome-extension|cid|coap|coaps|com-eventbrite-attendee|content'
         . '|crid|cvs|data|dav|dict|dlna-playcontainer|dlna-playsingle|dns|dntp|dtn|dvb|ed2k|example|facetime|fax|feed'
         . '|feedready|file|filesystem|finger|fish|ftp|geo|gg|git|gizmoproject|go|gopher|gtalk|h323|ham|hcp|http|https'
@@ -46,7 +46,7 @@ class Asset extends Base\Asset implements SystemComponent
      *
      * It was necessary to create this derived version to allow for hostnames with no scheme/protocol, e.g. http://
      */
-    const REGEX_HOSTNAME    = '~^((' . self::REGEX_PROTOCOL . '?' # protocol
+    const REGEX_HOSTNAME    = '~^' . self::REGEX_PROTOCOL . '?' # protocol
         . self::REGEX_BASIC_AUTH . '?' # basic auth
         . '([\pL\pN\pS-\.])+(\.?([\pL]|xn\-\-[\pL\pN-]+)+\.?)' # a domain name
         . self::REGEX_PORT_NUMBER . '?' # a port (optional)
