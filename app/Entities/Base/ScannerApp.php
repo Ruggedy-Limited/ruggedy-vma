@@ -13,6 +13,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class ScannerApp extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'scanner_apps';
+
+    /** Column name constants */
+    const NAME        = 'name';
+    const DESCRIPTION = 'description';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

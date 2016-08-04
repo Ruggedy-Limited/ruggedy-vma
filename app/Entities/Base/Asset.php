@@ -13,6 +13,27 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Asset extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'assets';
+
+    /** Column name constants */
+    const NAME          = 'name';
+    const CPE           = 'cpe';
+    const VENDOR        = 'vendor';
+    const IP_ADDRESS_V4 = 'ip_address_v4';
+    const IP_ADDRESS_V6 = 'ip_address_v6';
+    const HOSTNAME      = 'hostname';
+    const MAC_ADDRESS   = 'mac_address';
+    const MAC_VENDOR    = 'mac_vendor';
+    const OS_VERSION    = 'os_version';
+    const NETBIOS       = 'netbios';
+    const UPTIME        = 'uptime';
+    const LAST_BOOT     = 'last_boot';
+    const WORKSPACE_ID  = 'workspace_id';
+    const USER_ID       = 'user_id';
+    const SUPPRESSED    = 'suppressed';
+    const DELETED       = 'deleted';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

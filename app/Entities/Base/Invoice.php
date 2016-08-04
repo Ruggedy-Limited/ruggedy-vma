@@ -12,6 +12,21 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Invoice extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'invoices';
+
+    /** Column name constants */
+    const USER_ID         = 'user_id';
+    const TEAM_ID         = 'team_id';
+    const PROVIDER_ID     = 'provider_id';
+    const TOTAL           = 'total';
+    const TAX             = 'tax';
+    const CARD_COUNTRY    = 'card_country';
+    const BILLING_STATE   = 'billing_state';
+    const BILLING_ZIP     = 'billing_zip';
+    const BILLING_COUNTRY = 'billing_country';
+    const VAT_ID          = 'vat_id';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

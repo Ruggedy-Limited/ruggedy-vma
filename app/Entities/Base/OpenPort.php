@@ -12,6 +12,20 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class OpenPort extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'open_ports';
+
+    /** Column name constants */
+    const NUMBER               = 'number';
+    const PROTOCOL             = 'protocol';
+    const SERVICE_NAME         = 'service_name';
+    const SERVICE_PRODUCT      = 'service_product';
+    const SERVICE_EXTRA_INFO   = 'service_extra_info';
+    const SERVICE_FINGER_PRINT = 'service_finger_print';
+    const SERVICE_BANNER       = 'service_banner';
+    const ASSET_ID             = 'asset_id';
+    const FILE_ID              = 'file_id';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

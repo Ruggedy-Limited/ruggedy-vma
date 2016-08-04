@@ -12,6 +12,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Notification extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'notifications';
+
+    /** Column name constants */
+    const USER_ID     = 'user_id';
+    const CREATED_BY  = 'created_by';
+    const ICON        = 'icon';
+    const BODY        = 'body';
+    const ACTION_TEXT = 'action_text';
+    const ACTION_URL  = 'action_url';
+    const READ        = 'read';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="string", length=255)

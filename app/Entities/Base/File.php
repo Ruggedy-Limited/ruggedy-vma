@@ -13,6 +13,20 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class File extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'files';
+
+    /** Column name constants */
+    const PATH           = 'path';
+    const FORMAT         = 'format';
+    const SIZE           = 'size';
+    const USER_ID        = 'user_id';
+    const WORKSPACE_ID   = 'workspace_id';
+    const ASSET_ID       = 'asset_id';
+    const SCANNER_APP_ID = 'scanner_app_id';
+    const PROCESSED      = 'processed';
+    const DELETED        = 'deleted';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

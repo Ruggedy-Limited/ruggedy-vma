@@ -24,6 +24,11 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     const IS_DELETED  = 1;
     const NOT_DELETED = 0;
 
+    /** Column name constants for database columns that are common to most tables */
+    const ID         = 'id';
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
+
     /** @var integer */
     protected $id;
 

@@ -13,6 +13,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Component extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'components';
+
+    /** Column name constants */
+    const NAME       = 'name';
+    const CLASS_NAME = 'class_name';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

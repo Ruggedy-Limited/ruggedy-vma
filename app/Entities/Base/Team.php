@@ -13,6 +13,28 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Team extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'teams';
+
+    /** Column name constants */
+    const OWNER_ID                  = 'owner_id';
+    const NAME                      = 'name';
+    const PHOTO_URL                 = 'photo_url';
+    const STRIPE_ID                 = 'stripe_id';
+    const CURRENT_BILLING_PLAN      = 'current_billing_plan';
+    const CARD_BRAND                = 'card_brand';
+    const CARD_LAST_FOUR            = 'card_last_four';
+    const CARD_COUNTRY              = 'card_country';
+    const BILLING_ADDRESS           = 'billing_address';
+    const BILLING_ADDRESS_LINE_2    = 'billing_address_line_2';
+    const BILLING_CITY              = 'billing_city';
+    const BILLING_STATE             = 'billing_state';
+    const BILLING_ZIP               = 'billing_zip';
+    const BILLING_COUNTRY           = 'billing_country';
+    const VAT_ID                    = 'vat_id';
+    const EXTRA_BILLING_INFORMATION = 'extra_billing_information';
+    const TRIAL_ENDS_AT             = 'trial_ends_at';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

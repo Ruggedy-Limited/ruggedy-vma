@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Schema;
 
 use App\Entities\Base\AbstractEntity;
+use Doctrine\ORM\EntityManager;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -39,12 +40,17 @@ class GenerateEntities extends Command
     /** @var string The command to execute the mysql-workbench-schema-export */
     protected $exporterBin   = 'vendor/bin/mysql-workbench-schema-export';
 
+    /** @var EntityManager */
+    protected $em;
+
     /**
      * Create a new command instance.
+     * @param EntityManager $em
      */
-    public function __construct()
+    public function __construct(EntityManager $em)
     {
         parent::__construct();
+        $this->em = $em;
     }
 
     /**
@@ -102,63 +108,77 @@ class GenerateEntities extends Command
      */
     protected function generateColumnAndTableNameClassConstants()
     {
+        // Get the doctrine generator config
         $configContents = file_get_contents(base_path($this->config));
         if (empty($configContents)) {
             return false;
         }
 
+        // Decode the JSON config
         $decodedOptions = json_decode($configContents);
         if (empty($decodedOptions) || !($decodedOptions instanceof stdClass) || empty($decodedOptions->dir)) {
             return false;
         }
 
+        // Make sure we have a valid base directory for entities
         if (!is_dir(base_path($decodedOptions->dir))) {
             return false;
         }
 
+        // Make sure we have the namespace information we need for entities
         if (empty($decodedOptions->params->bundleNamespace) || empty($decodedOptions->params->entityNamespace)) {
             return false;
         }
 
+        // Fully qualified namespace for entities and absolute base path
         $entityFqns = $decodedOptions->params->bundleNamespace . "\\" . $decodedOptions->params->entityNamespace . "\\";
+        $basePath = base_path($decodedOptions->dir);
 
-        foreach (scandir(base_path($decodedOptions->dir)) as $entityFile) {
-            if (!file_exists($entityFile) || !is_file($entityFile)) {
+        // Iterate over all the base entity files
+        foreach (scandir($basePath) as $entityFile) {
+            $fullPath = $basePath . DIRECTORY_SEPARATOR . $entityFile;
+            if (!file_exists($fullPath) || !is_file($fullPath)) {
                 continue;
             }
 
+            // Get the entity name from the filename
             $entityName  = str_replace(".php", "", basename($entityFile));
             if (empty($entityName) || $entityName === 'AbstractEntity') {
                 continue;
             }
 
+            // Get the entity class and make sure it exists
             $entityClass = $entityFqns . $entityName;
-
             if (!class_exists($entityClass)) {
                 continue;
             }
 
+            // Get the column names from the entity class using the Doctrine EntityManager
             /** @var AbstractEntity $entity */
-            $entity = new $entityClass();
-            $constants = $this->generateClassConstantsFromProperties($entity->toArray());
+            $columnNames = $this->em->getClassMetadata($entityClass)->getColumnNames();
+
+            // Generate a Collection of class constants for table column names
+            $constants = $this->generateClassConstantsFromProperties($columnNames);
             if ($constants->isEmpty()) {
                 continue;
             }
 
-            $fileContents = file_get_contents($entityFile);
+            // Get the contents of the entity class file
+            $fileContents = file_get_contents($fullPath);
             if (empty($fileContents)) {
                 continue;
             }
 
+            // Generate the table name constant and concatenate with the column name constants to create one code block
             $tableNameConstant = $this->getTableNameConstantDeclaration($fileContents);
-
             $constantsDeclaration = $tableNameConstant . "    /** Column name constants */" . PHP_EOL
                 . $constants->reduce(function($carry, $constant) {
                 return $carry .= $constant;
             });
 
+            // Add the constants to the file contents
             $newFileContents = preg_replace(
-                "/^class [A-Za-z0-9_\-]+( extends [A-Za-z0-9_\-\\]+)?(\n|\r\n)\{(\n|\r\n)/mi",
+                "/^class [A-Za-z0-9_\-]+( extends [A-Za-z0-9_\\\-]+)?(\n|\r\n)\{(\n|\r\n)/mi",
                 "$0" . $constantsDeclaration . PHP_EOL,
                 $fileContents
             );
@@ -167,15 +187,20 @@ class GenerateEntities extends Command
                 continue;
             }
 
-            $result = file_put_contents($entityFile, $newFileContents);
+            // For some reason this annotation gets generated incorrectly when regenerating entities, fix it
+            $fixedFileContents = str_replace(" * @ORM\\Entity()", " * @ORM\\MappedSuperclass", $newFileContents);
+
+            // Update the file
+            $result = file_put_contents($fullPath, $fixedFileContents);
             if (empty($result)) {
-                $this->error("Failed to import column and table name class constants for file: $entityFile");
+                $this->error("Failed to import column and table name class constants for file: $fullPath");
                 continue;
             }
 
-            $this->info("Successfully imported column and table name class constants for file: $entityFile");
-
+            $this->info("Successfully imported column and table name class constants for file: $fullPath");
         }
+
+        return true;
     }
 
     /**
@@ -190,13 +215,21 @@ class GenerateEntities extends Command
             return new Collection([]);
         }
 
+        // Convert the array of properties into a Collection and get the length of the longest column name
         $properties = new Collection($properties);
         $maxNameLength = $properties->reduce(function ($carry, $propertyName) {
             $nameLength = strlen($propertyName);
             return $nameLength > $carry ? $nameLength : $carry;
         });
 
-        $constants = $properties->map(function ($value, $propertyName) use ($maxNameLength) {
+        // Generate the constants after filtering out created_at and updated_at which are common to all entities
+        // that we have created and for which constants are defined in the AbstractEntity class
+        $constants = $properties->filter(function ($propertyName, $offset) {
+            return !in_array(
+                $propertyName,
+                [AbstractEntity::ID, AbstractEntity::CREATED_AT, AbstractEntity::UPDATED_AT]
+            );
+        })->map(function ($propertyName, $offset) use ($maxNameLength) {
             $nameLengthDiff = $maxNameLength - strlen($propertyName);
             $spacing = '';
             if (!empty($nameLengthDiff)) {
@@ -217,11 +250,13 @@ class GenerateEntities extends Command
      */
     protected function getTableNameConstantDeclaration(string $fileContents): string
     {
-        preg_match("/Table\(name=\"`([A-Za-z0-9\-_]+)`", $fileContents, $matches);
+        // Match the table name in the Doctrine annotation above the class declaration
+        preg_match("/Table\(name=\"`([A-Za-z0-9\-_]+)`/", $fileContents, $matches);
         if (empty($matches)) {
             return '';
         }
 
+        // Extract the table name from the matches
         list($wholeMatch, $tableName) = $matches;
         if (empty($tableName)) {
             return '';

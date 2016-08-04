@@ -12,6 +12,17 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ComponentPermission extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'component_permissions';
+
+    /** Column name constants */
+    const COMPONENT_ID = 'component_id';
+    const INSTANCE_ID  = 'instance_id';
+    const PERMISSION   = 'permission';
+    const USER_ID      = 'user_id';
+    const TEAM_ID      = 'team_id';
+    const GRANTED_BY   = 'granted_by';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

@@ -13,6 +13,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Project extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'projects';
+
+    /** Column name constants */
+    const NAME       = 'name';
+    const USER_ID    = 'user_id';
+    const DELETED    = 'deleted';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
