@@ -71,6 +71,16 @@ class Asset extends AbstractEntity
     protected $netbios;
 
     /**
+     * @ORM\Column(name="`uptime`", type="string", length=30, nullable=true)
+     */
+    protected $uptime;
+
+    /**
+     * @ORM\Column(name="`last_boot`", type="datetime", nullable=true)
+     */
+    protected $last_boot;
+
+    /**
      * @ORM\Column(name="`workspace_id`", type="integer", options={"unsigned":true})
      */
     protected $workspace_id;
@@ -107,10 +117,10 @@ class Asset extends AbstractEntity
     protected $files;
 
     /**
-     * @ORM\OneToMany(targetEntity="SystemInformation", mappedBy="asset", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="OpenPort", mappedBy="asset", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
      */
-    protected $systemInformations;
+    protected $openPorts;
 
     /**
      * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="asset", cascade={"persist"})
@@ -133,7 +143,7 @@ class Asset extends AbstractEntity
     public function __construct()
     {
         $this->files = new ArrayCollection();
-        $this->systemInformations = new ArrayCollection();
+        $this->openPorts = new ArrayCollection();
         $this->vulnerabilities = new ArrayCollection();
     }
 
@@ -391,6 +401,52 @@ class Asset extends AbstractEntity
     }
 
     /**
+     * Set the value of uptime.
+     *
+     * @param string $uptime
+     * @return \App\Entities\Base\Asset
+     */
+    public function setUptime($uptime)
+    {
+        $this->uptime = $uptime;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of uptime.
+     *
+     * @return string
+     */
+    public function getUptime()
+    {
+        return $this->uptime;
+    }
+
+    /**
+     * Set the value of last_boot.
+     *
+     * @param \DateTime $last_boot
+     * @return \App\Entities\Base\Asset
+     */
+    public function setLastBoot($last_boot)
+    {
+        $this->last_boot = $last_boot;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of last_boot.
+     *
+     * @return \DateTime
+     */
+    public function getLastBoot()
+    {
+        return $this->last_boot;
+    }
+
+    /**
      * Set the value of workspace_id.
      *
      * @param integer $workspace_id
@@ -565,39 +621,39 @@ class Asset extends AbstractEntity
     }
 
     /**
-     * Add SystemInformation entity to collection (one to many).
+     * Add OpenPort entity to collection (one to many).
      *
-     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @param \App\Entities\Base\OpenPort $openPort
      * @return \App\Entities\Base\Asset
      */
-    public function addSystemInformation(SystemInformation $systemInformation)
+    public function addOpenPort(OpenPort $openPort)
     {
-        $this->systemInformations[] = $systemInformation;
+        $this->openPorts[] = $openPort;
 
         return $this;
     }
 
     /**
-     * Remove SystemInformation entity from collection (one to many).
+     * Remove OpenPort entity from collection (one to many).
      *
-     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @param \App\Entities\Base\OpenPort $openPort
      * @return \App\Entities\Base\Asset
      */
-    public function removeSystemInformation(SystemInformation $systemInformation)
+    public function removeOpenPort(OpenPort $openPort)
     {
-        $this->systemInformations->removeElement($systemInformation);
+        $this->openPorts->removeElement($openPort);
 
         return $this;
     }
 
     /**
-     * Get SystemInformation entity collection (one to many).
+     * Get OpenPort entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getSystemInformations()
+    public function getOpenPorts()
     {
-        return $this->systemInformations;
+        return $this->openPorts;
     }
 
     /**
@@ -684,6 +740,6 @@ class Asset extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'netbios', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'netbios', 'uptime', 'last_boot', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
     }
 }

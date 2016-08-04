@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Contracts\CollectsPortInformation;
 use App\Contracts\CollectsScanOutput;
 use App\Entities\Asset;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-class NmapModel extends AbstractXmlModel implements CollectsScanOutput
+class NmapModel extends AbstractXmlModel implements CollectsScanOutput, CollectsPortInformation
 {
     /** @var string */
     protected $osVendor;
@@ -25,9 +26,9 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
     protected $macVendor;
 
     /** @var Collection */
-    protected $ports;
+    protected $openPorts;
 
-    /** @var Carbon */
+    /** @var int */
     protected $uptime;
 
     /** @var Carbon */
@@ -36,13 +37,22 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
     /** @var Collection */
     protected $accuracies;
 
+    /** @var Collection */
+    protected $methodsRequiringAPortId;
+
     /**
      * NmapModel constructor.
      */
     public function __construct()
     {
-        $this->ports      = new Collection();
-        $this->accuracies = new Collection();
+        // Call the parent constructor
+        parent::__construct();
+
+        // Intialise openPorts and accuracies Collection objects
+        $this->openPorts         = new Collection();
+        $this->accuracies        = new Collection();
+
+        // Override the default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
             'hostname'      => 'getHostname',
             'cpe'           => 'getCpe',
@@ -52,6 +62,17 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
             'ip_address_v6' => 'getIpV6',
             'mac_address'   => 'getMacAddress',
             'mac_vendor'    => 'getMacVendor',
+            'uptime'        => 'getUptime',
+            'last_boot'     => 'getLastBoot',
+        ]);
+
+        // Set the list of methods that require a PortId as an extra parameter
+        $this->methodsRequiringAPortId = new Collection([
+            'setPortProtocol',
+            'setPortServiceName',
+            'setPortServiceProduct',
+            'setPortExtraInfo',
+            'setPortFingerPrint',
         ]);
     }
 
@@ -140,48 +161,149 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
     /**
      * @return Collection
      */
-    public function getPorts()
+    public function getOpenPorts()
     {
-        return $this->ports;
+        return $this->openPorts;
     }
 
     /**
-     * @param Collection $ports
+     * @param Collection $openPorts
      */
-    public function setPorts($ports)
+    public function setOpenPorts($openPorts)
     {
-        $this->ports = $ports;
+        $this->openPorts = $openPorts;
     }
 
     /**
      * Add an open port
      *
      * @param PortModel $port
+     * @param int $portId
+     * @return Collection
      */
-    public function addPort(PortModel $port)
+    public function addPort(PortModel $port, int $portId): Collection
     {
-        $this->ports->push($port);
+        // Make sure we have a valid port ID
+        if (!isset($portId)) {
+            return $this->openPorts;
+        }
+
+        // Add the model to the openPorts Collection, using the portId as the offset
+        return $this->openPorts->put($portId, $port);
     }
 
     /**
      * Remove an open port
      *
-     * @param PortModel $port
+     * @param int $portId
      * @return bool
+     * @internal param PortModel $port
      */
-    public function removePort(PortModel $port)
+    public function removePort(int $portId)
     {
-        $index = $this->ports->search($port, true);
-        if (empty($index)) {
-            return false;
-        }
-
-        $this->ports->pull($index);
-        return true;
+        $this->openPorts->offsetUnset($portId);
     }
 
     /**
-     * @return Carbon
+     * Create a new PortModel for the given portId if one does not yet exist
+     *
+     * @param int $portId
+     * @return PortModel
+     */
+    public function setPortId(int $portId): PortModel
+    {
+        // Check if there is already an Open Port at the given portId offset in the Collection
+        if (!empty($this->getOpenPorts()->get($portId))) {
+            return $this->getOpenPorts()->get($portId);
+        }
+
+        // Create a new PortModel, set the ID and add to the Collection of ports on this Model
+        $portModel = new PortModel();
+        $portModel->setPortId($portId);
+        $this->addPort($portModel, $portId);
+
+        return $portModel;
+    }
+
+    /**
+     * Set the protocol for the given port ID
+     *
+     * @param int $portId
+     * @param string $portProtocol
+     */
+    public function setPortProtocol(int $portId, string $portProtocol)
+    {
+        $portModel = $this->setPortId($portId);
+        $portModel->setProtocol($portProtocol);
+    }
+
+    /**
+     * Set the service name for the given port ID
+     *
+     * @param int $portId
+     * @param string $portServiceName
+     * @internal param string $portProtocol
+     */
+    public function setPortServiceName(int $portId, string $portServiceName)
+    {
+        $portModel = $this->setPortId($portId);
+        $portModel->setServiceName($portServiceName);
+    }
+
+    /**
+     * Set the service product for the given port ID
+     *
+     * @param int $portId
+     * @param string $portServiceProduct
+     * @internal param string $portProtocol
+     */
+    public function setPortServiceProduct(int $portId, string $portServiceProduct)
+    {
+        $portModel = $this->setPortId($portId);
+        $portModel->setServiceProduct($portServiceProduct);
+    }
+
+    /**
+     * Set the extra information for the given port ID
+     *
+     * @param int $portId
+     * @param string $portExtraInfo
+     * @internal param string $portProtocol
+     */
+    public function setPortExtraInfo(int $portId, string $portExtraInfo)
+    {
+        $portModel = $this->setPortId($portId);
+        $portModel->setServiceExtraInformation($portExtraInfo);
+    }
+
+    /**
+     * Set the finger print for the given port ID
+     *
+     * @param int $portId
+     * @param string $portFingerPrint
+     * @internal param string $portProtocol
+     */
+    public function setPortFingerPrint(int $portId, string $portFingerPrint)
+    {
+        $portModel = $this->setPortId($portId);
+        $portModel->setServiceFingerPrint($portFingerPrint);
+    }
+
+    /**
+     * Set the service banner for the given port ID
+     *
+     * @param int $portId
+     * @param string $portServiceBanner
+     * @internal param string $portProtocol
+     */
+    public function setPortServiceBanner(int $portId, string $portServiceBanner)
+    {
+        $portModel = $this->setPortId($portId);
+        $portModel->setServiceBanner($portServiceBanner);
+    }
+
+    /**
+     * @return int
      */
     public function getUptime()
     {
@@ -189,7 +311,7 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
     }
 
     /**
-     * @param Carbon $uptime
+     * @param int $uptime
      */
     public function setUptime($uptime)
     {
@@ -209,7 +331,12 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
      */
     public function setLastBoot($lastBoot)
     {
-        $this->lastBoot = $lastBoot;
+        if ($lastBoot instanceof Carbon) {
+            $this->lastBoot = $lastBoot;
+            return;
+        }
+
+        $this->lastBoot = new Carbon($lastBoot);
     }
 
     /**
@@ -248,5 +375,33 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput
     public function setCurrentAccuracyFor(string $field, int $accuracy)
     {
         $this->accuracies->put($field, $accuracy);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return Collection
+     */
+    public function getMethodsRequiringAPortId(): Collection
+    {
+        return $this->methodsRequiringAPortId;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return Collection
+     */
+    function exportForOpenPort(): Collection
+    {
+        return $this->openPorts->map(function ($openPort, $portId) {
+            if (empty($openPort) || !($openPort instanceof PortModel)) {
+                return null;
+            }
+
+            return $openPort->exportForOpenPort();
+        })->filter(function ($openPort, $offset) {
+            return isset($openPort);
+        });
     }
 }

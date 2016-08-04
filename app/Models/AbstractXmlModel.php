@@ -27,22 +27,24 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     protected $exportForVulnerabilityRefsMap;
 
     /** @var Collection */
-    protected $exportForSystemInformationMap;
+    protected $exportForOpenPortMap;
 
     /**
      * AbstractXmlModel constructor.
      */
     public function __construct()
     {
+        // Default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
             'hostname'      => 'getHostname',
             'ip_address_v4' => 'getIpV4',
             'ip_address_v6' => 'getIpV6',
         ]);
 
+        // Initialise the other possible Model to Entity mappings
         $this->exportForVulnerabilityMap     = new Collection();
         $this->exportForVulnerabilityRefsMap = new Collection();
-        $this->exportForSystemInformationMap = new Collection();
+        $this->exportForOpenPortMap          = new Collection();
     }
 
     /**
@@ -59,7 +61,8 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     public function setHostname(string $hostname)
     {
         // Strip the scheme and the basic auth if it's there so we only store the actual hostname in the Asset entry
-        $hostname = preg_replace('~^' . Asset::REGEX_PROTOCOL . Asset::REGEX_BASIC_AUTH . '?~', '', $hostname);
+        $hostname = preg_replace('~^' . Asset::REGEX_PROTOCOL . '?' . Asset::REGEX_BASIC_AUTH . '?~', '', $hostname);
+
         // Strip the port number too
         $hostname = preg_replace('~' . Asset::REGEX_PORT_NUMBER . '~', '', $hostname);
         $this->hostname = $hostname;
@@ -140,9 +143,9 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      *
      * @return Collection
      */
-    function exportForSystemInformation(): Collection
+    function exportForOpenPort(): Collection
     {
-        return $this->mapModelValuesForExport($this->exportForSystemInformationMap);
+        return $this->mapModelValuesForExport($this->exportForOpenPortMap);
     }
 
     /**
@@ -161,13 +164,16 @@ abstract class AbstractXmlModel implements CollectsScanOutput
         // Map the model values using the mapping of entity properties to model getters and then filter out
         // any null/unset keys
         return $mappings->map(function ($getter, $assetField) {
+            // Make sure the given getter method exists
             if (!method_exists($this, $getter)) {
                 return null;
             }
 
+            // Call the getter method
             return $this->$getter();
 
         })->filter(function ($value, $key) {
+            // Filter out unset items from the Collection
             return isset($value);
         });
     }

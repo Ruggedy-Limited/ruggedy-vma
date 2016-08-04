@@ -5,12 +5,12 @@ namespace App\Entities\Base;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * App\Entities\Base\SystemInformation
+ * App\Entities\Base\OpenPort
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`system_informations`", indexes={@ORM\Index(name="system_information_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="system_information_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="system_information_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="system_information_file_fk_idx", columns={"`file_id`"})})
  */
-class SystemInformation extends AbstractEntity
+class OpenPort extends AbstractEntity
 {
     /**
      * @ORM\Id
@@ -20,39 +20,39 @@ class SystemInformation extends AbstractEntity
     protected $id;
 
     /**
-     * @ORM\Column(name="`open_port`", type="integer", nullable=true, options={"unsigned":true})
+     * @ORM\Column(name="`number`", type="integer", nullable=true, options={"unsigned":true})
      */
-    protected $open_port;
+    protected $number;
 
     /**
-     * @ORM\Column(name="`port_protocol`", type="string", length=45, nullable=true)
+     * @ORM\Column(name="`protocol`", type="string", length=45, nullable=true)
      */
-    protected $port_protocol;
+    protected $protocol;
 
     /**
-     * @ORM\Column(name="`port_service`", type="string", length=45, nullable=true)
+     * @ORM\Column(name="`service_name`", type="string", length=45, nullable=true)
      */
-    protected $port_service;
+    protected $service_name;
 
     /**
-     * @ORM\Column(name="`port_srv_information`", type="text", nullable=true)
+     * @ORM\Column(name="`service_product`", type="string", length=150, nullable=true)
      */
-    protected $port_srv_information;
+    protected $service_product;
 
     /**
-     * @ORM\Column(name="`port_srv_banner`", type="string", length=150, nullable=true)
+     * @ORM\Column(name="`service_extra_info`", type="string", length=255, nullable=true)
      */
-    protected $port_srv_banner;
+    protected $service_extra_info;
 
     /**
-     * @ORM\Column(name="`uptime`", type="string", length=30, nullable=true)
+     * @ORM\Column(name="`service_finger_print`", type="string", length=255, nullable=true)
      */
-    protected $uptime;
+    protected $service_finger_print;
 
     /**
-     * @ORM\Column(name="`last_boot`", type="datetime", nullable=true)
+     * @ORM\Column(name="`service_banner`", type="string", length=150, nullable=true)
      */
-    protected $last_boot;
+    protected $service_banner;
 
     /**
      * @ORM\Column(name="`asset_id`", type="integer", options={"unsigned":true})
@@ -75,13 +75,13 @@ class SystemInformation extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Asset", inversedBy="systemInformations", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Asset", inversedBy="openPorts", cascade={"persist"})
      * @ORM\JoinColumn(name="`asset_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $asset;
 
     /**
-     * @ORM\ManyToOne(targetEntity="File", inversedBy="systemInformations", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="File", inversedBy="openPorts", cascade={"persist"})
      * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $file;
@@ -94,7 +94,7 @@ class SystemInformation extends AbstractEntity
      * Set the value of id.
      *
      * @param integer $id
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setId($id)
     {
@@ -114,171 +114,171 @@ class SystemInformation extends AbstractEntity
     }
 
     /**
-     * Set the value of open_port.
+     * Set the value of number.
      *
-     * @param integer $open_port
-     * @return \App\Entities\Base\SystemInformation
+     * @param integer $number
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setOpenPort($open_port)
+    public function setNumber($number)
     {
-        $this->open_port = $open_port;
+        $this->number = $number;
 
         return $this;
     }
 
     /**
-     * Get the value of open_port.
+     * Get the value of number.
      *
      * @return integer
      */
-    public function getOpenPort()
+    public function getNumber()
     {
-        return $this->open_port;
+        return $this->number;
     }
 
     /**
-     * Set the value of port_protocol.
+     * Set the value of protocol.
      *
-     * @param string $port_protocol
-     * @return \App\Entities\Base\SystemInformation
+     * @param string $protocol
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setPortProtocol($port_protocol)
+    public function setProtocol($protocol)
     {
-        $this->port_protocol = $port_protocol;
+        $this->protocol = $protocol;
 
         return $this;
     }
 
     /**
-     * Get the value of port_protocol.
+     * Get the value of protocol.
      *
      * @return string
      */
-    public function getPortProtocol()
+    public function getProtocol()
     {
-        return $this->port_protocol;
+        return $this->protocol;
     }
 
     /**
-     * Set the value of port_service.
+     * Set the value of service_name.
      *
-     * @param string $port_service
-     * @return \App\Entities\Base\SystemInformation
+     * @param string $service_name
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setPortService($port_service)
+    public function setServiceName($service_name)
     {
-        $this->port_service = $port_service;
+        $this->service_name = $service_name;
 
         return $this;
     }
 
     /**
-     * Get the value of port_service.
+     * Get the value of service_name.
      *
      * @return string
      */
-    public function getPortService()
+    public function getServiceName()
     {
-        return $this->port_service;
+        return $this->service_name;
     }
 
     /**
-     * Set the value of port_srv_information.
+     * Set the value of service_product.
      *
-     * @param string $port_srv_information
-     * @return \App\Entities\Base\SystemInformation
+     * @param string $service_product
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setPortSrvInformation($port_srv_information)
+    public function setServiceProduct($service_product)
     {
-        $this->port_srv_information = $port_srv_information;
+        $this->service_product = $service_product;
 
         return $this;
     }
 
     /**
-     * Get the value of port_srv_information.
+     * Get the value of service_product.
      *
      * @return string
      */
-    public function getPortSrvInformation()
+    public function getServiceProduct()
     {
-        return $this->port_srv_information;
+        return $this->service_product;
     }
 
     /**
-     * Set the value of port_srv_banner.
+     * Set the value of service_extra_info.
      *
-     * @param string $port_srv_banner
-     * @return \App\Entities\Base\SystemInformation
+     * @param string $service_extra_info
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setPortSrvBanner($port_srv_banner)
+    public function setServiceExtraInfo($service_extra_info)
     {
-        $this->port_srv_banner = $port_srv_banner;
+        $this->service_extra_info = $service_extra_info;
 
         return $this;
     }
 
     /**
-     * Get the value of port_srv_banner.
+     * Get the value of service_extra_info.
      *
      * @return string
      */
-    public function getPortSrvBanner()
+    public function getServiceExtraInfo()
     {
-        return $this->port_srv_banner;
+        return $this->service_extra_info;
     }
 
     /**
-     * Set the value of uptime.
+     * Set the value of service_finger_print.
      *
-     * @param string $uptime
-     * @return \App\Entities\Base\SystemInformation
+     * @param string $service_finger_print
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setUptime($uptime)
+    public function setServiceFingerPrint($service_finger_print)
     {
-        $this->uptime = $uptime;
+        $this->service_finger_print = $service_finger_print;
 
         return $this;
     }
 
     /**
-     * Get the value of uptime.
+     * Get the value of service_finger_print.
      *
      * @return string
      */
-    public function getUptime()
+    public function getServiceFingerPrint()
     {
-        return $this->uptime;
+        return $this->service_finger_print;
     }
 
     /**
-     * Set the value of last_boot.
+     * Set the value of service_banner.
      *
-     * @param \DateTime $last_boot
-     * @return \App\Entities\Base\SystemInformation
+     * @param string $service_banner
+     * @return \App\Entities\Base\OpenPort
      */
-    public function setLastBoot($last_boot)
+    public function setServiceBanner($service_banner)
     {
-        $this->last_boot = $last_boot;
+        $this->service_banner = $service_banner;
 
         return $this;
     }
 
     /**
-     * Get the value of last_boot.
+     * Get the value of service_banner.
      *
-     * @return \DateTime
+     * @return string
      */
-    public function getLastBoot()
+    public function getServiceBanner()
     {
-        return $this->last_boot;
+        return $this->service_banner;
     }
 
     /**
      * Set the value of asset_id.
      *
      * @param integer $asset_id
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setAssetId($asset_id)
     {
@@ -301,7 +301,7 @@ class SystemInformation extends AbstractEntity
      * Set the value of file_id.
      *
      * @param integer $file_id
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setFileId($file_id)
     {
@@ -324,7 +324,7 @@ class SystemInformation extends AbstractEntity
      * Set the value of created_at.
      *
      * @param \DateTime $created_at
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setCreatedAt($created_at)
     {
@@ -347,7 +347,7 @@ class SystemInformation extends AbstractEntity
      * Set the value of updated_at.
      *
      * @param \DateTime $updated_at
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setUpdatedAt($updated_at)
     {
@@ -370,7 +370,7 @@ class SystemInformation extends AbstractEntity
      * Set Asset entity (many to one).
      *
      * @param \App\Entities\Base\Asset $asset
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setAsset(Asset $asset = null)
     {
@@ -393,7 +393,7 @@ class SystemInformation extends AbstractEntity
      * Set File entity (many to one).
      *
      * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\SystemInformation
+     * @return \App\Entities\Base\OpenPort
      */
     public function setFile(File $file = null)
     {
@@ -414,6 +414,6 @@ class SystemInformation extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'open_port', 'port_protocol', 'port_service', 'port_srv_information', 'port_srv_banner', 'uptime', 'last_boot', 'asset_id', 'file_id', 'created_at', 'updated_at');
+        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'asset_id', 'file_id', 'created_at', 'updated_at');
     }
 }

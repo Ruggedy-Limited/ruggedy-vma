@@ -18,7 +18,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 CREATE TABLE IF NOT EXISTS `vulnerabilities` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
   `name` VARCHAR(255) NOT NULL COMMENT '',
-  `severity` ENUM('Critical', 'High', 'Medium', 'Low', 'None') NOT NULL DEFAULT 'None' COMMENT '',
+  `severity` ENUM('Critical', 'High', 'Medium', 'Low', 'Information', 'None') NOT NULL DEFAULT 'None' COMMENT '',
   `exploit_available` TINYINT(1) UNSIGNED NULL DEFAULT NULL COMMENT '',
   `impact` VARCHAR(255) NULL DEFAULT NULL COMMENT '',
   `cvss_score` DOUBLE(2,2) NULL DEFAULT NULL COMMENT '',
@@ -69,21 +69,21 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
-CREATE TABLE IF NOT EXISTS `system_information` (
+CREATE TABLE IF NOT EXISTS `open_ports` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
-  `open_port` INT(6) UNSIGNED NULL DEFAULT NULL COMMENT '',
-  `port_protocol` VARCHAR(45) NULL DEFAULT NULL COMMENT '',
-  `port_service` VARCHAR(45) NULL DEFAULT NULL COMMENT '',
-  `port_srv_information` TEXT NULL DEFAULT NULL COMMENT '',
-  `port_srv_banner` VARCHAR(150) NULL DEFAULT NULL COMMENT '',
-  `uptime` VARCHAR(30) NULL DEFAULT NULL COMMENT '',
-  `last_boot` DATETIME NULL DEFAULT NULL COMMENT '',
+  `number` INT(6) UNSIGNED NULL DEFAULT NULL COMMENT '',
+  `protocol` VARCHAR(45) NULL DEFAULT NULL COMMENT '',
+  `service_name` VARCHAR(45) NULL DEFAULT NULL COMMENT '',
+  `service_product` VARCHAR(150) NULL DEFAULT NULL COMMENT '',
+  `service_extra_info` VARCHAR(255) NULL DEFAULT NULL COMMENT '',
+  `service_finger_print` VARCHAR(255) NULL DEFAULT NULL COMMENT '',
+  `service_banner` VARCHAR(150) NULL DEFAULT NULL COMMENT '',
   `asset_id` INT(10) UNSIGNED NOT NULL COMMENT '',
   `created_at` DATETIME NOT NULL COMMENT '',
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '',
   PRIMARY KEY (`id`)  COMMENT '',
-  INDEX `system_information_asset_fk_idx` (`asset_id` ASC)  COMMENT '',
-  CONSTRAINT `system_information_asset_fk`
+  INDEX `open_ports_asset_fk_idx` (`asset_id` ASC)  COMMENT '',
+  CONSTRAINT `open_ports_asset_fk`
     FOREIGN KEY (`asset_id`)
     REFERENCES `assets` (`id`)
     ON DELETE NO ACTION

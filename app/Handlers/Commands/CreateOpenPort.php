@@ -2,9 +2,9 @@
 
 namespace App\Handlers\Commands;
 
-use App\Commands\CreateSystemInformation as CreateSystemInformationCommand;
+use App\Commands\CreateOpenPort as CreateOpenPortCommand;
 use App\Entities\Asset;
-use App\Entities\SystemInformation;
+use App\Entities\OpenPort;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\InvalidInputException;
@@ -16,7 +16,7 @@ use App\Repositories\AssetRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
-class CreateSystemInformation extends CommandHandler
+class CreateOpenPort extends CommandHandler
 {
     /** @var AssetRepository */
     protected $assetRepository;
@@ -37,16 +37,16 @@ class CreateSystemInformation extends CommandHandler
     }
 
     /**
-     * Process the CreateAsset command.
+     * Process the CreateOpenPort command.
      *
-     * @param CreateSystemInformationCommand $command
-     * @return SystemInformation
+     * @param CreateOpenPortCommand $command
+     * @return OpenPort
      * @throws InvalidInputException
      * @throws UserNotFoundException
      * @throws WorkspaceNotFoundException
      * @throws Exception
      */
-    public function handle(CreateSystemInformationCommand $command)
+    public function handle(CreateOpenPortCommand $command)
     {
         // Get the authenticated User
         $requestingUser = $this->authenticate();
@@ -78,19 +78,19 @@ class CreateSystemInformation extends CommandHandler
             );
         }
 
-        $systemInformation = new SystemInformation();
-        $systemInformation->setFromArray($details);
-        $systemInformation->setAsset($asset);
+        $openPort = new OpenPort();
+        $openPort->setFromArray($details);
+        $openPort->setAsset($asset);
 
         // Persist the new Asset to the database
-        $this->getEm()->persist($systemInformation);
+        $this->getEm()->persist($openPort);
 
         // Save immediately if we're not in multi-mode
         if (!$command->isMultiMode()) {
-            $this->getEm()->flush($systemInformation);
+            $this->getEm()->flush($openPort);
         }
 
-        return $systemInformation;
+        return $openPort;
     }
 
     /**

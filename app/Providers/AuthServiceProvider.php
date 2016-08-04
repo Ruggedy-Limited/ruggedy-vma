@@ -6,7 +6,7 @@ use App\Auth\RuggedyTokenGuard;
 use App\Entities\Asset;
 use App\Entities\Project;
 use App\Entities\ScannerApp;
-use App\Entities\SystemInformation;
+use App\Entities\OpenPort;
 use App\Entities\Team;
 use App\Entities\User;
 use App\Entities\Vulnerability;
@@ -40,7 +40,7 @@ class AuthServiceProvider extends ServiceProvider
         Asset::class                      => ComponentPolicy::class,
         Vulnerability::class              => ComponentPolicy::class,
         VulnerabilityReferenceCode::class => ComponentPolicy::class,
-        SystemInformation::class          => ComponentPolicy::class,
+        OpenPort::class                   => ComponentPolicy::class,
         ScannerApp::class                 => ComponentPolicy::class,
     ];
 

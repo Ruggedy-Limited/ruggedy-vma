@@ -6,15 +6,15 @@ use App\Contracts\SystemComponent;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * App\Entities\SystemInformation
+ * App\Entities\OpenPort
  *
- * @ORM\Entity(repositoryClass="App\Repositories\SystemInformationRepository")
+ * @ORM\Entity(repositoryClass="App\Repositories\OpenPortRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class SystemInformation extends Base\SystemInformation implements SystemComponent
+class OpenPort extends Base\OpenPort implements SystemComponent
 {
     /**
-     * @ORM\ManyToOne(targetEntity="File", inversedBy="systemInformations", cascade={"persist"}, fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="File", inversedBy="openPorts", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $file;

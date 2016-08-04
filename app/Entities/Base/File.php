@@ -76,10 +76,10 @@ class File extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="SystemInformation", mappedBy="file", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="OpenPort", mappedBy="file", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
      */
-    protected $systemInformations;
+    protected $openPorts;
 
     /**
      * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"})
@@ -113,7 +113,7 @@ class File extends AbstractEntity
 
     public function __construct()
     {
-        $this->systemInformations = new ArrayCollection();
+        $this->openPorts = new ArrayCollection();
         $this->vulnerabilities = new ArrayCollection();
     }
 
@@ -394,39 +394,39 @@ class File extends AbstractEntity
     }
 
     /**
-     * Add SystemInformation entity to collection (one to many).
+     * Add OpenPort entity to collection (one to many).
      *
-     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @param \App\Entities\Base\OpenPort $openPort
      * @return \App\Entities\Base\File
      */
-    public function addSystemInformation(SystemInformation $systemInformation)
+    public function addOpenPort(OpenPort $openPort)
     {
-        $this->systemInformations[] = $systemInformation;
+        $this->openPorts[] = $openPort;
 
         return $this;
     }
 
     /**
-     * Remove SystemInformation entity from collection (one to many).
+     * Remove OpenPort entity from collection (one to many).
      *
-     * @param \App\Entities\Base\SystemInformation $systemInformation
+     * @param \App\Entities\Base\OpenPort $openPort
      * @return \App\Entities\Base\File
      */
-    public function removeSystemInformation(SystemInformation $systemInformation)
+    public function removeOpenPort(OpenPort $openPort)
     {
-        $this->systemInformations->removeElement($systemInformation);
+        $this->openPorts->removeElement($openPort);
 
         return $this;
     }
 
     /**
-     * Get SystemInformation entity collection (one to many).
+     * Get OpenPort entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getSystemInformations()
+    public function getOpenPorts()
     {
-        return $this->systemInformations;
+        return $this->openPorts;
     }
 
     /**
