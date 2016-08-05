@@ -23,6 +23,7 @@ class ApiToken extends AbstractEntity
     const TRANSIENT    = 'transient';
     const LAST_USED_AT = 'last_used_at';
     const EXPIRES_AT   = 'expires_at';
+    const USER         = 'user';
 
     /**
      * @ORM\Id

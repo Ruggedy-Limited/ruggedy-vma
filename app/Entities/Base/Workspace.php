@@ -21,6 +21,10 @@ class Workspace extends AbstractEntity
     const USER_ID    = 'user_id';
     const PROJECT_ID = 'project_id';
     const DELETED    = 'deleted';
+    const ASSETS     = 'assets';
+    const FILES      = 'files';
+    const USER       = 'user';
+    const PROJECT    = 'project';
 
     /**
      * @ORM\Id

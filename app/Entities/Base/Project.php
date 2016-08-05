@@ -20,6 +20,8 @@ class Project extends AbstractEntity
     const NAME       = 'name';
     const USER_ID    = 'user_id';
     const DELETED    = 'deleted';
+    const WORKSPACES = 'workspaces';
+    const USER       = 'user';
 
     /**
      * @ORM\Id

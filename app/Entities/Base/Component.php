@@ -17,8 +17,9 @@ class Component extends AbstractEntity
     const TABLE_NAME = 'components';
 
     /** Column name constants */
-    const NAME       = 'name';
-    const CLASS_NAME = 'class_name';
+    const NAME                 = 'name';
+    const CLASS_NAME           = 'class_name';
+    const COMPONENTPERMISSIONS = 'componentPermissions';
 
     /**
      * @ORM\Id

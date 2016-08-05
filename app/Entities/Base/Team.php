@@ -34,6 +34,12 @@ class Team extends AbstractEntity
     const VAT_ID                    = 'vat_id';
     const EXTRA_BILLING_INFORMATION = 'extra_billing_information';
     const TRIAL_ENDS_AT             = 'trial_ends_at';
+    const COMPONENTPERMISSIONS      = 'componentPermissions';
+    const INVITATIONS               = 'invitations';
+    const INVOICES                  = 'invoices';
+    const TEAMSUBSCRIPTIONS         = 'teamSubscriptions';
+    const USERS                     = 'users';
+    const USER                      = 'user';
 
     /**
      * @ORM\Id

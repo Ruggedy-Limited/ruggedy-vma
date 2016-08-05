@@ -19,6 +19,7 @@ class ScannerApp extends AbstractEntity
     /** Column name constants */
     const NAME        = 'name';
     const DESCRIPTION = 'description';
+    const FILES       = 'files';
 
     /**
      * @ORM\Id

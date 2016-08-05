@@ -155,7 +155,8 @@ class GenerateEntities extends Command
 
             // Get the column names from the entity class using the Doctrine EntityManager
             /** @var AbstractEntity $entity */
-            $columnNames = $this->em->getClassMetadata($entityClass)->getColumnNames();
+            $entity      = new $entityClass();
+            $columnNames = array_keys($entity->toArray());
 
             // Generate a Collection of class constants for table column names
             $constants = $this->generateClassConstantsFromProperties($columnNames);
@@ -170,7 +171,7 @@ class GenerateEntities extends Command
             }
 
             // Generate the table name constant and concatenate with the column name constants to create one code block
-            $tableNameConstant = $this->getTableNameConstantDeclaration($fileContents);
+            $tableNameConstant = $this->getTableNameConstantDeclaration($entityClass);
             $constantsDeclaration = $tableNameConstant . "    /** Column name constants */" . PHP_EOL
                 . $constants->reduce(function($carry, $constant) {
                 return $carry .= $constant;
@@ -245,19 +246,13 @@ class GenerateEntities extends Command
     /**
      * Generate a TABLE_NAME class constant for a Doctrine entity class
      *
-     * @param string $fileContents
+     * @param string $entityClass
      * @return string
      */
-    protected function getTableNameConstantDeclaration(string $fileContents): string
+    protected function getTableNameConstantDeclaration(string $entityClass): string
     {
         // Match the table name in the Doctrine annotation above the class declaration
-        preg_match("/Table\(name=\"`([A-Za-z0-9\-_]+)`/", $fileContents, $matches);
-        if (empty($matches)) {
-            return '';
-        }
-
-        // Extract the table name from the matches
-        list($wholeMatch, $tableName) = $matches;
+        $tableName = $this->em->getClassMetadata($entityClass)->getTableName();
         if (empty($tableName)) {
             return '';
         }

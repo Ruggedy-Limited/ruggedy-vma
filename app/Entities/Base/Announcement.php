@@ -20,6 +20,7 @@ class Announcement extends AbstractEntity
     const BODY        = 'body';
     const ACTION_TEXT = 'action_text';
     const ACTION_URL  = 'action_url';
+    const USER        = 'user';
 
     /**
      * @ORM\Id

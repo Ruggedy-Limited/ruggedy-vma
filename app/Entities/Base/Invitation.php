@@ -20,6 +20,8 @@ class Invitation extends AbstractEntity
     const USER_ID    = 'user_id';
     const EMAIL      = 'email';
     const TOKEN      = 'token';
+    const TEAM       = 'team';
+    const USER       = 'user';
 
     /**
      * @ORM\Id

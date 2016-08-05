@@ -26,6 +26,8 @@ class Invoice extends AbstractEntity
     const BILLING_ZIP     = 'billing_zip';
     const BILLING_COUNTRY = 'billing_country';
     const VAT_ID          = 'vat_id';
+    const USER            = 'user';
+    const TEAM            = 'team';
 
     /**
      * @ORM\Id

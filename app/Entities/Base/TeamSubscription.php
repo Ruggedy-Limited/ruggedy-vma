@@ -23,6 +23,7 @@ class TeamSubscription extends AbstractEntity
     const QUANTITY      = 'quantity';
     const TRIAL_ENDS_AT = 'trial_ends_at';
     const ENDS_AT       = 'ends_at';
+    const TEAM          = 'team';
 
     /**
      * @ORM\Id

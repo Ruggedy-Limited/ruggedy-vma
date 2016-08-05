@@ -25,6 +25,8 @@ class OpenPort extends AbstractEntity
     const SERVICE_BANNER       = 'service_banner';
     const ASSET_ID             = 'asset_id';
     const FILE_ID              = 'file_id';
+    const ASSET                = 'asset';
+    const FILE                 = 'file';
 
     /**
      * @ORM\Id
