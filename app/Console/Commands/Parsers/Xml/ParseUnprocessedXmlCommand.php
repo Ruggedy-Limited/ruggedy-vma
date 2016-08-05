@@ -28,6 +28,8 @@ use Exception;
 
 class ParseUnprocessedXmlCommand extends Command
 {
+    const FAILED_FOR_COUNTERS = 'failed';
+
     /**
      * The name and signature of the console command.
      *
@@ -121,10 +123,10 @@ class ParseUnprocessedXmlCommand extends Command
 
         // Intialise some counters
         $counters = new Collection([
-            Asset::class                      => 0,
-            Vulnerability::class              => 0,
-            VulnerabilityReferenceCode::class => 0,
-            OpenPort::class                   => 0,
+            Asset::class                      => new Collection(),
+            Vulnerability::class              => new Collection(),
+            VulnerabilityReferenceCode::class => new Collection(),
+            OpenPort::class                   => new Collection(),
         ]);
 
         // Get the Workspace ID from the file entity
@@ -151,38 +153,31 @@ class ParseUnprocessedXmlCommand extends Command
         $service->moveFileToProcessed($file);
 
         // No Assets successfully created :( reset the service models and return
-        if ($counters->get(Asset::class, 0) === 0) {
+        if ($counters->get(Asset::class)->count() === 0) {
             $this->error("Did not successfully create any Assets from file: {$file->getPath()}");
             $service->resetModels();
             return true;
         }
 
-        // More Assets were found in the file that were created, i.e. some attempts to create Assets failed :/
-        if ($counters->get(Asset::class, 0) !== $xmlParserModels->count()) {
-            $failed = $xmlParserModels->count() - $counters->get(Asset::class, 0);
-            $this->warn(
-                "Failed to create $failed of {$xmlParserModels->count()} Assets found in file: {$file->getPath()}"
-            );
-        }
+        $this->info("File: {$file->getPath()}");
 
-        // Compile a final message to show on the command line
-        $message = "Successfully created/updated {$counters->get(Asset::class)} Assets";
-        if ($counters->get(OpenPort::class, 0) !== 0) {
-            $message .= ", {$counters->get(OpenPort::class)} Open Ports";
-        }
+        $counters->each(function ($counter, $class) {
+            $classParts = explode("\\", $class);
+            $entityName = array_pop($classParts);
+            $lastChar = substr($entityName, -1);
+            $entityPluralisation = $entityName . "s";
+            if ($lastChar === 'y') {
+                $entityPluralisation = rtrim($entityName, "y") . "ies";
+            }
 
-        if ($counters->get(Vulnerability::class, 0) !== 0) {
-            $message .= ", {$counters->get(Vulnerability::class)} Vulnerabilities";
-        }
+            if ($counter->count() > 0) {
+                $this->info("Successfully created/updated {$counter->count()} $entityPluralisation");
+            }
 
-        if ($counters->get(VulnerabilityReferenceCode::class, 0) !== 0) {
-            $message .= ", {$counters->get(VulnerabilityReferenceCode::class)} Vulnerability Reference Codes";
-        }
+            return true;
+        });
 
-        $message .= " found in file: {$file->getPath()}";
-
-        // All Assets that were found were successfully created :)
-        $this->info($message);
+        $this->info(PHP_EOL);
 
         // Reset the collection of Models to an empty Collection in preparation from processing the next file.
         $service->resetModels();
@@ -222,8 +217,7 @@ class ParseUnprocessedXmlCommand extends Command
         }
 
         // Add the asset to the collection
-        $currentAssetCount = $counters->get(Asset::class, 0);
-        $counters->put(Asset::class, $currentAssetCount + 1);
+        $counters->get(Asset::class)->put($asset->getId(), true);
 
         // Iterate over all Open Port entries that were found in the file
         $openPortDetails->each(function ($openPortDetails, $offset) use ($file, $asset, $counters) {
@@ -232,11 +226,13 @@ class ParseUnprocessedXmlCommand extends Command
                 CreateOpenPort::class, $asset->getId(), $openPortDetails, $file, true
             );
 
-            // If we got an OpenPort entity from the command increment the counter
-            if (!empty($openPort)) {
-                $currentOpenPortCount = $counters->get(OpenPort::class, 0);
-                $counters->put(OpenPort::class, $currentOpenPortCount + 1);
+            // If we did not get an OpenPort entity from the command increment the failed counter
+            if (empty($openPort)) {
+                return true;
             }
+
+            // If we got an OpenPort entity from the command increment the counter
+            $counters->get(OpenPort::class)->put($openPort->getId(), true);
         });
 
         // Call the CreateVulnerability command
@@ -251,20 +247,22 @@ class ParseUnprocessedXmlCommand extends Command
         }
 
         // Increment the Vulnerability count
-        $currentVulnerabilityCount = $counters->get(Vulnerability::class, 0);
-        $counters->put(Vulnerability::class, $currentVulnerabilityCount + 1);
+        $counters->get(Vulnerability::class)->put($vulnerability->getId(), true);
 
         // If there is associated vulnerability reference data in the model, save a new vulnerability reference
         $vulnerabilityReference = $this->sendCommandToBus(
             CreateVulnerabilityReference::class, $vulnerability->getId(), $vulnerabilityRefDetails
         );
 
+        // Increment the VulnerabilityReferenceCode failed counter if we did not get a VulnerabilityReferenceCode
+        // entity from the CreateVulnerabilityReference command
+        if (empty($vulnerabilityReference)) {
+            return true;
+        }
+
         // Increment the VulnerabilityReferenceCode counter if we got a VulnerabilityReferenceCode entity from the
         // CreateVulnerabilityReference command
-        if (!empty($vulnerabilityReference)) {
-            $currentVulnerabilityReferenceCount = $counters->get(VulnerabilityReferenceCode::class, 0);
-            $counters->put(VulnerabilityReferenceCode::class, $currentVulnerabilityReferenceCount + 1);
-        }
+        $counters->get(VulnerabilityReferenceCode::class)->put($vulnerabilityReference->getId(), true);
 
         return true;
     }
@@ -291,12 +289,13 @@ class ParseUnprocessedXmlCommand extends Command
 
         // Make sure we got the necessary foreign key and details for the command
         if (!isset($id) || $details->isEmpty()) {
-            $this->warn("A required parameter to be used in the command '$commandClass' is not set.");
             return false;
         }
 
-        // Add the file to the details (this will not be used in some cases)
-        $details->put('file', $file);
+        // Add the file to the details where applicable
+        if (!empty($file)) {
+            $details->put('file', $file);
+        }
 
         // Try to execute the command and catch any exceptions
         try {

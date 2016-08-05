@@ -38,7 +38,11 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'components',
         'component_permissions',
         'assets',
-        'files'
+        'files',
+        'scanner_apps',
+        'vulnerabilities',
+        'vulnerability_reference_codes',
+        'open_ports'
     ];
 
     /**

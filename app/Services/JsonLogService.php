@@ -7,19 +7,23 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Exception;
 
-
 class JsonLogService
 {
     /** @var  Logger */
     protected $logger;
+
     /** @var  string */
     protected $callingClass;
+
     /** @var  string */
     protected $callingMethod;
+
     /** @var  string */
     protected $description;
+
     /** @var  string */
     protected $logFilename;
+
     /** @var  string */
     protected $loggerName;
 

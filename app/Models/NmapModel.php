@@ -54,16 +54,16 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput, Collects
 
         // Override the default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
-            'hostname'      => 'getHostname',
-            'cpe'           => 'getCpe',
-            'vendor'        => 'getOsVendor',
-            'os_version'    => 'getOsVersion',
-            'ip_address_v4' => 'getIpV4',
-            'ip_address_v6' => 'getIpV6',
-            'mac_address'   => 'getMacAddress',
-            'mac_vendor'    => 'getMacVendor',
-            'uptime'        => 'getUptime',
-            'last_boot'     => 'getLastBoot',
+            Asset::HOSTNAME      => 'getHostname',
+            Asset::CPE           => 'getCpe',
+            Asset::VENDOR        => 'getOsVendor',
+            Asset::OS_VERSION    => 'getOsVersion',
+            Asset::IP_ADDRESS_V4 => 'getIpV4',
+            Asset::IP_ADDRESS_V6 => 'getIpV6',
+            Asset::MAC_ADDRESS   => 'getMacAddress',
+            Asset::MAC_VENDOR    => 'getMacVendor',
+            Asset::UPTIME        => 'getUptime',
+            Asset::LAST_BOOT     => 'getLastBoot',
         ]);
 
         // Set the list of methods that require a PortId as an extra parameter

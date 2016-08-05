@@ -101,11 +101,12 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
             self::XML_NODE_NAME_CPE => new Collection([
-                parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => false,
-                parent::MAP_ATTRIBUTE_VALIDATION    => [
-                    'filled',
-                    'regex:' . Asset::REGEX_CPE
-                ],
+                'setCpe' => new Collection([
+                    parent::MAP_ATTRIBUTE_VALIDATION    => [
+                        'filled',
+                        'regex:' . Asset::REGEX_CPE
+                    ],
+                ]),
             ]),
             self::XML_NODE_NAME_PORT                  => new Collection([
                 'setPortId'       => new Collection([

@@ -73,6 +73,18 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
 
+            'remediationBackground' => new Collection([
+                'setRemediationBackground' => new Collection([
+                    parent::MAP_ATTRIBUTE_VALIDATION => 'filled',
+                ]),
+            ]),
+
+            'remediationDetail'     => new Collection([
+                'setRemediationDetail' => new Collection([
+                    parent::MAP_ATTRIBUTE_VALIDATION => 'filled',
+                ]),
+            ]),
+
             'interactionType' => new Collection([
                 'setInteractionType' => new Collection([
                     parent::MAP_ATTRIBUTE_VALIDATION => 'filled',

@@ -36,9 +36,9 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     {
         // Default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
-            'hostname'      => 'getHostname',
-            'ip_address_v4' => 'getIpV4',
-            'ip_address_v6' => 'getIpV6',
+            Asset::HOSTNAME      => 'getHostname',
+            Asset::IP_ADDRESS_V4 => 'getIpV4',
+            Asset::IP_ADDRESS_V6 => 'getIpV6',
         ]);
 
         // Initialise the other possible Model to Entity mappings

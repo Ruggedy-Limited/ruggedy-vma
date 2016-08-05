@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Entities\ComponentPermission;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Support\Collection;
 
@@ -21,8 +22,8 @@ class ComponentPermissionRepository extends EntityRepository
         }
 
         $resultSet = $this->findBy([
-            'component_id' => $componentId,
-            'instance_id'  => $componentInstanceId,
+            ComponentPermission::COMPONENT_ID => $componentId,
+            ComponentPermission::INSTANCE_ID  => $componentInstanceId,
         ]);
 
         if (empty($resultSet)) {
@@ -47,9 +48,9 @@ class ComponentPermissionRepository extends EntityRepository
         }
 
         return $this->findOneBy([
-            'component_id' => $componentId,
-            'instance_id'  => $componentInstanceId,
-            'user_id'      => $userId,
+            ComponentPermission::COMPONENT_ID => $componentId,
+            ComponentPermission::INSTANCE_ID  => $componentInstanceId,
+            ComponentPermission::USER_ID      => $userId,
         ]);
     }
 }

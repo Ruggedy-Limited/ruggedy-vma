@@ -13,6 +13,7 @@ use App\Exceptions\UserNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
+use App\Repositories\OpenPortRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
@@ -21,6 +22,9 @@ class CreateOpenPort extends CommandHandler
     /** @var AssetRepository */
     protected $assetRepository;
 
+    /** @var OpenPortRepository */
+    protected $openPortRepository;
+
     /** @var EntityManager */
     protected $em;
 
@@ -28,11 +32,13 @@ class CreateOpenPort extends CommandHandler
      * CreateAsset constructor.
      *
      * @param AssetRepository $assetRepository
+     * @param OpenPortRepository $openPortRepository
      * @param EntityManager $em
      */
-    public function __construct(AssetRepository $assetRepository, EntityManager $em)
+    public function __construct(AssetRepository $assetRepository, OpenPortRepository $openPortRepository, EntityManager $em)
     {
         $this->assetRepository     = $assetRepository;
+        $this->openPortRepository  = $openPortRepository;
         $this->em                  = $em;
     }
 
@@ -78,6 +84,13 @@ class CreateOpenPort extends CommandHandler
             );
         }
 
+        // See if a record of this open port already exists for this Asset and if so, exit early
+        $details[OpenPort::ASSET_ID] = $assetId;
+        $openPort = $this->getOpenPortRepository()->findOneBy($details);
+        if (!empty($openPort) && $openPort instanceof OpenPort) {
+            return $openPort;
+        }
+
         $openPort = new OpenPort();
         $openPort->setFromArray($details);
         $openPort->setAsset($asset);
@@ -99,6 +112,14 @@ class CreateOpenPort extends CommandHandler
     public function getAssetRepository()
     {
         return $this->assetRepository;
+    }
+
+    /**
+     * @return OpenPortRepository
+     */
+    public function getOpenPortRepository(): OpenPortRepository
+    {
+        return $this->openPortRepository;
     }
 
     /**

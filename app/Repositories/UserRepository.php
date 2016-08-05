@@ -13,7 +13,7 @@ class UserRepository extends EntityRepository
      *
      * @param $identifier
      * @param $token
-     * @return null|User
+     * @return null|User|object
      */
     public function findByIdAndRememberMeToken($identifier, $token)
     {
@@ -22,8 +22,8 @@ class UserRepository extends EntityRepository
         }
 
         return $this->findOneBy([
-            'id'             => $identifier,
-            'remember_token' => $token,
+            User::ID             => $identifier,
+            User::REMEMBER_TOKEN => $token,
         ]);
     }
 

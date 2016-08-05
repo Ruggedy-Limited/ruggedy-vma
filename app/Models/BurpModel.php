@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\CollectsScanOutput;
+use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
 use Illuminate\Support\Collection;
 
@@ -68,21 +69,21 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
 
         // Map the vulnerability data to the Vulnerability entity properties
         $this->exportForVulnerabilityMap = new Collection([
-            'name'           => 'getVulnerabilityName',
-            'severity'       => 'getSeverity',
-            'description'    => 'getDescription',
-            'solution'       => 'getSolution',
-            'generic_output' => 'getGenericOutput',
-            'http_method'    => 'getHttpMethod',
-            'http_uri'       => 'getHttpUri',
-            'http_request'   => 'getHttpRequest',
-            'httpResponse'   => 'getHttpResponse',
+            Vulnerability::NAME              => 'getVulnerabilityName',
+            Vulnerability::SEVERITY          => 'getSeverity',
+            Vulnerability::DESCRIPTION       => 'getDescription',
+            Vulnerability::SOLUTION          => 'getSolution',
+            Vulnerability::GENERIC_OUTPUT    => 'getGenericOutput',
+            Vulnerability::HTTP_METHOD       => 'getHttpMethod',
+            Vulnerability::HTTP_URI          => 'getHttpUri',
+            Vulnerability::HTTP_RAW_REQUEST  => 'getHttpRequest',
+            Vulnerability::HTTP_RAW_RESPONSE => 'getHttpResponse',
         ]);
 
         // Map the vulnerability reference data to the VulnerabilityReferenceCode entity properties
         $this->exportForVulnerabilityRefsMap = new Collection([
-            'reference_type' => 'getVulnerabilityReferenceType',
-            'value'          => 'getOnlineReferences',
+            VulnerabilityReferenceCode::REFERENCE_TYPE => 'getVulnerabilityReferenceType',
+            VulnerabilityReferenceCode::VALUE          => 'getOnlineReferences',
         ]);
     }
 
@@ -216,11 +217,13 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
 
         $solution = '';
         if (!empty($this->remediationBackground)) {
-            $solution .= $this->remediationBackground . PHP_EOL;
+            $solution .= '<h3>Background</h3>' . PHP_EOL
+                . $this->remediationBackground . PHP_EOL;
         }
 
         if (!empty($this->remediationDetail)) {
-            $solution .= $this->remediationDetail . PHP_EOL;
+            $solution .= '<h3>Detail</h3>' . PHP_EOL
+                . $this->remediationDetail . PHP_EOL;
         }
 
         return $solution;
@@ -366,7 +369,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
      */
     public function setHttpRequest(string $httpRequest)
     {
-        $this->httpRequest = $httpRequest;
+        $this->httpRequest = $this->checkForBase64Encoding($httpRequest);
     }
 
     /**
@@ -382,7 +385,7 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
      */
     public function setHttpResponse(string $httpResponse)
     {
-        $this->httpResponse = $httpResponse;
+        $this->httpResponse = $this->checkForBase64Encoding($httpResponse);
     }
 
     /**
@@ -411,5 +414,20 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     public function setOnlineReferences(string $onlineReferences)
     {
         $this->onlineReferences = $onlineReferences;
+    }
+
+    /**
+     * Check for base64 encoding and if found return the decoded string
+     *
+     * @param string $data
+     * @return string
+     */
+    protected function checkForBase64Encoding(string $data): string
+    {
+        if (!empty($data) && !empty(base64_decode($data, true))) {
+            return base64_decode($data, true);
+        }
+
+        return $data;
     }
 }

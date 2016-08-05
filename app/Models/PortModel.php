@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Entities\OpenPort;
 use Illuminate\Support\Collection;
 
 class PortModel
@@ -147,13 +148,13 @@ class PortModel
     public function exportForOpenPort()
     {
         return new Collection([
-            'number'               => $this->getPortId(),
-            'protocol'             => strtoupper($this->getProtocol()),
-            'service_name'         => strtoupper($this->getServiceName()),
-            'service_product'      => $this->getServiceProduct(),
-            'service_extra_info'   => $this->getServiceExtraInformation(),
-            'service_finger_print' => $this->getServiceFingerPrint(),
-            'service_banner'       => $this->getServiceBanner(),
+            OpenPort::NUMBER               => $this->getPortId(),
+            OpenPort::PROTOCOL             => strtoupper($this->getProtocol()),
+            OpenPort::SERVICE_NAME         => strtoupper($this->getServiceName()),
+            OpenPort::SERVICE_PRODUCT      => $this->getServiceProduct(),
+            OpenPort::SERVICE_EXTRA_INFO   => $this->getServiceExtraInformation(),
+            OpenPort::SERVICE_FINGER_PRINT => $this->getServiceFingerPrint(),
+            OpenPort::SERVICE_BANNER       => $this->getServiceBanner(),
         ]);
     }
 }

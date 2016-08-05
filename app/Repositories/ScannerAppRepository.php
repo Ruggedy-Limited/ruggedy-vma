@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Entities\ScannerApp;
 use Doctrine\ORM\EntityRepository;
 
 class ScannerAppRepository extends EntityRepository
@@ -14,6 +15,6 @@ class ScannerAppRepository extends EntityRepository
      */
     public function findByName(string $name)
     {
-        return $this->findOneBy(['name' => $name]);
+        return $this->findOneBy([ScannerApp::NAME => $name]);
     }
 }
