@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\OpenPort
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="system_information_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="system_information_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="open_ports_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="open_ports_file_fk_idx", columns={"`file_id`"})})
  */
 class OpenPort extends AbstractEntity
 {

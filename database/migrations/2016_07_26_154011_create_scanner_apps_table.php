@@ -19,9 +19,9 @@ ALTER TABLE `vulnerabilities`
 ADD COLUMN `file_id` INT(10) UNSIGNED NOT NULL COMMENT '' AFTER `asset_id`,
 ADD INDEX `vulnerabilities_file_fk_idx` (`file_id` ASC)  COMMENT '';
 
-ALTER TABLE `system_information` 
+ALTER TABLE `open_ports` 
 ADD COLUMN `file_id` INT(10) UNSIGNED NOT NULL COMMENT '' AFTER `asset_id`,
-ADD INDEX `system_information_file_fk_idx` (`file_id` ASC)  COMMENT '';
+ADD INDEX `open_ports_file_fk_idx` (`file_id` ASC)  COMMENT '';
 
 CREATE TABLE IF NOT EXISTS `scanner_apps` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
@@ -48,8 +48,8 @@ ADD CONSTRAINT `vulnerabilities_file_fk`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-ALTER TABLE `system_information` 
-ADD CONSTRAINT `system_information_file_fk`
+ALTER TABLE `open_ports` 
+ADD CONSTRAINT `open_ports_file_fk`
   FOREIGN KEY (`file_id`)
   REFERENCES `files` (`id`)
   ON DELETE NO ACTION
