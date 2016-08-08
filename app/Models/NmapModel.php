@@ -54,7 +54,7 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput, Collects
 
         // Override the default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
-            Asset::HOSTNAME      => 'getHostname',
+            Asset::HOSTNAME      => 'getSanitisedHostname',
             Asset::CPE           => 'getCpe',
             Asset::VENDOR        => 'getOsVendor',
             Asset::OS_VERSION    => 'getOsVersion',
@@ -392,14 +392,14 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput, Collects
      *
      * @return Collection
      */
-    function exportForOpenPort(): Collection
+    function exportOpenPorts(): Collection
     {
         return $this->openPorts->map(function ($openPort, $portId) {
             if (empty($openPort) || !($openPort instanceof PortModel)) {
                 return null;
             }
 
-            return $openPort->exportForOpenPort();
+            return $openPort->export();
         })->filter(function ($openPort, $offset) {
             return isset($openPort);
         });

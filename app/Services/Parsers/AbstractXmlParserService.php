@@ -171,6 +171,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                     $this->parseNode($mappingAttributes, $setter);
                 } catch (Exception $e) {
                     $this->getLogger()->log(Logger::ERROR, "Unable to parse XML node", [
+                        'exception'         => $e->getMessage(),
+                        'trace'             => $e->getTraceAsString(),
                         'setterMethod'      => $setter ?? null,
                         'mappingAttributes' => $mappingAttributes,
                     ]);

@@ -52,8 +52,6 @@ class AssetRepository extends EntityRepository
             return null;
         }
 
-        $sql = $queryBuilder->getQuery()->getSQL();
-
         // Attempt to retrieve the Asset from the DB or create a new Asset entity if no matching Asset is found
         $asset = $queryBuilder->getQuery()->getOneOrNullResult() ?? $this->createNewAssetEntity();
 
@@ -118,7 +116,7 @@ class AssetRepository extends EntityRepository
         $arguments = array_values($arguments);
 
         $queryBuilder->andWhere(
-        // Filter Assets by Workspace first
+            // Filter Assets by Workspace first
             $queryBuilder->expr()->eq('a.' . Asset::WORKSPACE_ID, $workspaceId),
             // Only Assets that don't have a hostname
             $queryBuilder->expr()->isNull('a.' . Asset::HOSTNAME),

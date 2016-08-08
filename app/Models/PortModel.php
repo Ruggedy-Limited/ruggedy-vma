@@ -145,7 +145,7 @@ class PortModel
      *
      * @return Collection
      */
-    public function exportForOpenPort()
+    public function export()
     {
         return new Collection([
             OpenPort::NUMBER               => $this->getPortId(),

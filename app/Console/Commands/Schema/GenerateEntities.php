@@ -17,6 +17,11 @@ use Symfony\Component\Process\Process;
  */
 class GenerateEntities extends Command
 {
+    const CONSTANT_DECLARATION     = "    const %s%s = '%s';";
+    const TABLE_CONSTANT_COMMENT   = "    /** Table name constant */";
+    const TABLE_NAME_CONSTANT_NAME = 'TABLE_NAME';
+    const COLUMN_CONSTANT_COMMENT  = "    /** Column name constants */";
+
     /**
      * The name and signature of the console command.
      *
@@ -121,7 +126,8 @@ class GenerateEntities extends Command
         }
 
         // Make sure we have a valid base directory for entities
-        if (!is_dir(base_path($decodedOptions->dir))) {
+        $basePath = base_path($decodedOptions->dir);
+        if (!is_dir($basePath)) {
             return false;
         }
 
@@ -131,11 +137,16 @@ class GenerateEntities extends Command
         }
 
         // Fully qualified namespace for entities and absolute base path
-        $entityFqns = $decodedOptions->params->bundleNamespace . "\\" . $decodedOptions->params->entityNamespace . "\\";
-        $basePath = base_path($decodedOptions->dir);
+        $entityFqns  = $decodedOptions->params->bundleNamespace . "\\" . $decodedOptions->params->entityNamespace . "\\";
+        $entityFiles = scandir($basePath);
+
+        // Make sure there are files in the directory
+        if (empty($entityFiles)) {
+            return false;
+        }
 
         // Iterate over all the base entity files
-        foreach (scandir($basePath) as $entityFile) {
+        foreach ($entityFiles as $entityFile) {
             $fullPath = $basePath . DIRECTORY_SEPARATOR . $entityFile;
             if (!file_exists($fullPath) || !is_file($fullPath)) {
                 continue;
@@ -172,7 +183,7 @@ class GenerateEntities extends Command
 
             // Generate the table name constant and concatenate with the column name constants to create one code block
             $tableNameConstant = $this->getTableNameConstantDeclaration($entityClass);
-            $constantsDeclaration = $tableNameConstant . "    /** Column name constants */" . PHP_EOL
+            $constantsDeclaration = $tableNameConstant . self::COLUMN_CONSTANT_COMMENT . PHP_EOL
                 . $constants->reduce(function($carry, $constant) {
                 return $carry .= $constant;
             });
@@ -237,7 +248,7 @@ class GenerateEntities extends Command
                 $spacing = str_repeat(" ", $nameLengthDiff);
             }
 
-            return "    const " . strtoupper($propertyName) . $spacing . " = '$propertyName';" . PHP_EOL;
+            return sprintf(self::CONSTANT_DECLARATION, strtoupper($propertyName), $spacing, $propertyName) . PHP_EOL;
         });
 
         return $constants;
@@ -257,6 +268,7 @@ class GenerateEntities extends Command
             return '';
         }
 
-        return "    /** Table name constant */" . PHP_EOL . "    const TABLE_NAME = '$tableName';" . PHP_EOL . PHP_EOL;
+        return self::TABLE_CONSTANT_COMMENT . PHP_EOL
+            . sprintf(self::CONSTANT_DECLARATION, self::TABLE_NAME_CONSTANT_NAME, '', $tableName) . PHP_EOL . PHP_EOL;
     }
 }

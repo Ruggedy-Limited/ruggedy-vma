@@ -111,9 +111,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
             self::XML_NODE_NAME_PORT                  => new Collection([
                 'setPortId'       => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => self::XML_ATTRIBUTE_PORTID,
-                    parent::MAP_ATTRIBUTE_VALIDATION    => [
-                        'filled|int',
-                    ]
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|int',
                 ]),
                 'setPortProtocol' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'protocol',

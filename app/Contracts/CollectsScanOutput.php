@@ -32,5 +32,5 @@ interface CollectsScanOutput
      *
      * @return Collection
      */
-    function exportForOpenPort(): Collection;
+    function exportOpenPorts(): Collection;
 }

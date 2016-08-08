@@ -36,7 +36,7 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     {
         // Default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
-            Asset::HOSTNAME      => 'getHostname',
+            Asset::HOSTNAME      => 'getSanitisedHostname',
             Asset::IP_ADDRESS_V4 => 'getIpV4',
             Asset::IP_ADDRESS_V6 => 'getIpV6',
         ]);
@@ -56,15 +56,31 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     }
 
     /**
+     * Get a sanitised hostname for Asset entries
+     *
+     * @return string
+     */
+    public function getSanitisedHostname()
+    {
+        if (empty($this->hostname)) {
+            return $this->hostname;
+        }
+
+        // Strip the scheme and the basic auth if it's there so we only store the actual hostname in the Asset entry
+        $hostname = preg_replace(
+            '~^' . Asset::REGEX_PROTOCOL . '?' . Asset::REGEX_BASIC_AUTH . '?~', '', $this->hostname
+        );
+        // Strip the port number too
+        $hostname = preg_replace('~' . Asset::REGEX_PORT_NUMBER . '~', '', $hostname);
+
+        return $hostname;
+    }
+
+    /**
      * @param string $hostname
      */
     public function setHostname(string $hostname)
     {
-        // Strip the scheme and the basic auth if it's there so we only store the actual hostname in the Asset entry
-        $hostname = preg_replace('~^' . Asset::REGEX_PROTOCOL . '?' . Asset::REGEX_BASIC_AUTH . '?~', '', $hostname);
-
-        // Strip the port number too
-        $hostname = preg_replace('~' . Asset::REGEX_PORT_NUMBER . '~', '', $hostname);
         $this->hostname = $hostname;
     }
 
@@ -143,7 +159,7 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      *
      * @return Collection
      */
-    function exportForOpenPort(): Collection
+    function exportOpenPorts(): Collection
     {
         return $this->mapModelValuesForExport($this->exportForOpenPortMap);
     }

@@ -65,19 +65,19 @@ class CreateOpenPort extends CommandHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Make sure the given Workspace exists
+        // Make sure the given Asset exists
         /** @var Asset $asset */
         $asset = $this->getAssetRepository()->find($assetId);
         if (empty($asset) || $asset->getDeleted()) {
             throw new AssetNotFoundException("No Asset with the given ID was found in the database");
         }
 
-        // If this is a suppressed Asset then don't persist any changes but return the Asset as is
+        // If this is a suppressed Asset then don't persist any changes but throw a SuppressedAssetException
         if ($asset->getSuppressed()) {
             throw new SuppressedAssetException("The given System Information is related to a suppressed Asset");
         }
 
-        // Make sure the authenticated User has permission to add an Asset to this Workspace
+        // Make sure the authenticated User has permission to add/update information related to the given Asset
         if ($requestingUser->cannot(ComponentPolicy::ACTION_UPDATE, $asset)) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to add System Information to the given Asset"
@@ -95,7 +95,7 @@ class CreateOpenPort extends CommandHandler
         $openPort->setFromArray($details);
         $openPort->setAsset($asset);
 
-        // Persist the new Asset to the database
+        // Persist the new OpenPort to the database
         $this->getEm()->persist($openPort);
 
         // Save immediately if we're not in multi-mode
