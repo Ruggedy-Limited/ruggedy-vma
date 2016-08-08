@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Contracts\SystemComponent;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Collection;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Collection;
  * @ORM\Entity(repositoryClass="App\Repositories\FileRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class File extends Base\File
+class File extends Base\File implements SystemComponent
 {
     const FILE_TYPE_XML  = 'xml';
     const FILE_TYPE_CSV  = 'csv';
@@ -46,5 +47,15 @@ class File extends Base\File
     public static function isValidFileType(string $fileType)
     {
         return static::getValidFileTypes()->contains($fileType);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return Base\Asset
+     */
+    function getParent()
+    {
+        return $this->getAsset();
     }
 }

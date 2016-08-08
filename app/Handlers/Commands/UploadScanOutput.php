@@ -6,8 +6,10 @@ use App\Commands\UploadScanOutput as UploadScanOutputCommand;
 use App\Entities\File;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
+use App\Exceptions\ScannerAppNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
+use App\Repositories\ScannerAppRepository;
 use App\Repositories\WorkspaceRepository;
 use App\Services\ScanIdentificationService;
 use Doctrine\ORM\EntityManager;
@@ -23,6 +25,9 @@ class UploadScanOutput extends CommandHandler
     /** @var WorkspaceRepository */
     protected $workspaceRepository;
 
+    /** @var ScannerAppRepository */
+    protected $scannerAppRepository;
+
     /** @var ScanIdentificationService */
     protected $service;
 
@@ -33,17 +38,20 @@ class UploadScanOutput extends CommandHandler
      * UploadScanOutput constructor.
      *
      * @param WorkspaceRepository $workspaceRepository
+     * @param ScannerAppRepository $scannerAppRepository
      * @param EntityManager $em
      * @param ScanIdentificationService $service
      * @internal param Filesystem $fileSystem
      */
     public function __construct(
-        WorkspaceRepository $workspaceRepository, EntityManager $em, ScanIdentificationService $service
+        WorkspaceRepository $workspaceRepository, ScannerAppRepository $scannerAppRepository,
+        EntityManager $em, ScanIdentificationService $service
     )
     {
-        $this->workspaceRepository = $workspaceRepository;
-        $this->service             = $service;
-        $this->em                  = $em;
+        $this->workspaceRepository  = $workspaceRepository;
+        $this->scannerAppRepository = $scannerAppRepository;
+        $this->service              = $service;
+        $this->em                   = $em;
     }
 
     /**
@@ -84,6 +92,13 @@ class UploadScanOutput extends CommandHandler
             throw new FileException("Could not match the file to any supported scanner output");
         }
 
+        $scanner = $this->getService()->getScanner();
+
+        $scannerApp = $this->getScannerAppRepository()->findByName($scanner);
+        if (empty($scannerApp)) {
+            throw new ScannerAppNotFoundException("No scanner app with the given name was found");
+        }
+
         if (!$this->getService()->storeUploadedFile($workspaceId)) {
             throw new FileNotWritableException("Could not store uploaded file on server");
         }
@@ -97,6 +112,7 @@ class UploadScanOutput extends CommandHandler
         $fileEntity->setSize($file->getClientSize());
         $fileEntity->setUser($requestingUser);
         $fileEntity->setWorkspace($workspace);
+        $fileEntity->setScannerApp($scannerApp);
         $fileEntity->setDeleted(false);
         $fileEntity->setProcessed(false);
 
@@ -122,6 +138,14 @@ class UploadScanOutput extends CommandHandler
     public function getWorkspaceRepository()
     {
         return $this->workspaceRepository;
+    }
+
+    /**
+     * @return ScannerAppRepository
+     */
+    public function getScannerAppRepository(): ScannerAppRepository
+    {
+        return $this->scannerAppRepository;
     }
 
     /**

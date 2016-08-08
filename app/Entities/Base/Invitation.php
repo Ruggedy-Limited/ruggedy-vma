@@ -12,6 +12,17 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Invitation extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'invitations';
+
+    /** Column name constants */
+    const TEAM_ID    = 'team_id';
+    const USER_ID    = 'user_id';
+    const EMAIL      = 'email';
+    const TOKEN      = 'token';
+    const TEAM       = 'team';
+    const USER       = 'user';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="string", length=255)

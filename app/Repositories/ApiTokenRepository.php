@@ -7,7 +7,6 @@ use App\Entities\User;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Illuminate\Support\Collection;
 use Laravel\Spark\Contracts\Repositories\TokenRepository;
 use Ramsey\Uuid\Uuid;
@@ -24,14 +23,14 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
     {
         $queryBuilder = $this->createQueryBuilder('at')
             ->addSelect('u')
-            ->leftJoin('at.user', 'u');
+            ->leftJoin('at.' . ApiToken::USER, 'u');
 
         $criteria = Criteria::create()->andWhere(
-            Criteria::expr()->eq('token', $token)
+            Criteria::expr()->eq(ApiToken::TOKEN, $token)
         )->andWhere(
             Criteria::expr()->orX(
-                Criteria::expr()->isNull('expires_at'),
-                Criteria::expr()->gte('expires_at', Carbon::now())
+                Criteria::expr()->isNull(ApiToken::EXPIRES_AT),
+                Criteria::expr()->gte(ApiToken::EXPIRES_AT, Carbon::now())
             )
         )->setMaxResults(1);
 
@@ -52,13 +51,13 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
         
         $newToken = new ApiToken();
         $newToken->setFromArray([
-            'id'         => Uuid::uuid4(),
-            'user'       => $user,
-            'name'       => $name,
-            'token'      => str_random(60),
-            'metaData'   => $data,
-            'transient'  => false,
-            'expiresAt'  => null,
+            ApiToken::ID         => Uuid::uuid4(),
+            ApiToken::USER       => $user,
+            ApiToken::NAME       => $name,
+            ApiToken::TOKEN      => str_random(60),
+            ApiToken::METADATA   => $data,
+            ApiToken::TRANSIENT  => false,
+            ApiToken::EXPIRES_AT => null,
         ]);
 
         $this->getEntityManager()->persist($newToken);
@@ -95,8 +94,8 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
         $metadata['abilities'] = $abilities;
 
         $token->forceFill([
-            'name' => $name,
-            'metadata' => $metadata,
+            ApiToken::NAME     => $name,
+            ApiToken::METADATA => $metadata,
         ])->save();
     }
 

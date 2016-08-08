@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Contracts\SystemComponent;
-use App\Entities\Base\AbstractEntity;
 use App\Entities\Component;
 use App\Entities\ComponentPermission;
 use App\Entities\User;
@@ -19,7 +18,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-
 
 class PermissionService
 {
@@ -41,7 +39,7 @@ class PermissionService
     /** @var Component */
     protected $component;
 
-    /** @var AbstractEntity */
+    /** @var SystemComponent */
     protected $componentInstance;
 
     /** @var Collection */

@@ -79,6 +79,8 @@ class CreateAsset extends CommandHandler
             );
         }
 
+        // Set the Workspace ID
+        $details[Asset::WORKSPACE_ID] = $workspaceId;
         // Create a new Asset or find a matching existing Asset
         $asset = $this->getAssetRepository()->findOrCreateOneBy($details);
 
@@ -93,11 +95,7 @@ class CreateAsset extends CommandHandler
 
         // Persist the new Asset to the database
         $this->getEm()->persist($asset);
-
-        // Save immediately if we're not in multi-mode
-        if (!$command->isMultiMode()) {
-            $this->getEm()->flush($asset);
-        }
+        $this->getEm()->flush($asset);
 
         return $asset;
     }

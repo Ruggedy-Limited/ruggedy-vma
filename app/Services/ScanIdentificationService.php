@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entities\File;
+use App\Entities\ScannerApp;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -10,7 +11,10 @@ use Illuminate\Http\UploadedFile;
 
 class ScanIdentificationService
 {
-    const XML_NMAP_REGEX = '%^<nmaprun.*<host.*<address.*\/>.*<ports>.*</ports>.*</host>.*</nmaprun>$%ms';
+    const XML_NMAP_REGEX = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
+    const XML_BURP_REGEX = '%<!ATTLIST issues burpVersion.*>%';
+
+    const MAX_FILE_BYTES_TO_READ = 256000;
 
     /** @var UploadedFile */
     protected $file;
@@ -100,7 +104,12 @@ class ScanIdentificationService
         // Iterate over the regex and return the key (scanner) of the first regex that matches the file contents
         $scanner = $patternsByFormat->first(function ($regex, $scanner) {
             $fileSize = $this->getFile()->getClientSize();
-            return preg_match($regex, $this->getFile()->openFile()->fread($fileSize));
+            if ($fileSize > self::MAX_FILE_BYTES_TO_READ) {
+                $fileSize = self::MAX_FILE_BYTES_TO_READ;
+            }
+
+            $contents = $this->getFile()->openFile()->fread($fileSize);
+            return preg_match($regex, $contents);
         }, false);
 
         // Set the scanner on the service
@@ -118,7 +127,8 @@ class ScanIdentificationService
     {
         // Define the XML-based scanner output patterns
         $xmlScannerPatterns = new Collection([
-            self::XML_NMAP_REGEX => 'nmap',
+            self::XML_NMAP_REGEX => ScannerApp::SCANNER_NMAP,
+            self::XML_BURP_REGEX => ScannerApp::SCANNER_BURP,
         ]);
 
         // Define the CSV-based scanner output patterns

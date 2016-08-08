@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Schema\GenerateEntities::class,
         Commands\RepositoryMakeCommand::class,
-        Commands\Parsers\Xml\ParseNmapCommand::class,
+        Commands\Parsers\Xml\ParseUnprocessedXmlCommand::class,
     ];
 
     /**

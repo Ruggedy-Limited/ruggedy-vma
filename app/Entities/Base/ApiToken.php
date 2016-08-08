@@ -12,6 +12,19 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ApiToken extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'api_tokens';
+
+    /** Column name constants */
+    const USER_ID      = 'user_id';
+    const NAME         = 'name';
+    const TOKEN        = 'token';
+    const METADATA     = 'metadata';
+    const TRANSIENT    = 'transient';
+    const LAST_USED_AT = 'last_used_at';
+    const EXPIRES_AT   = 'expires_at';
+    const USER         = 'user';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="string", length=255)
