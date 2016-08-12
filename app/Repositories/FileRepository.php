@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Entities\File;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Support\Collection;
 
@@ -15,10 +16,10 @@ class FileRepository extends EntityRepository
     public function findUnprocessed(): Collection
     {
         $result = $this->findBy([
-            'deleted'   => false,
-            'processed' => false,
+            File::DELETED   => false,
+            File::PROCESSED => false,
         ], [
-            'workspace_id' => 'ASC',
+            File::WORKSPACE_ID => 'ASC',
         ]);
 
         if (empty($result)) {

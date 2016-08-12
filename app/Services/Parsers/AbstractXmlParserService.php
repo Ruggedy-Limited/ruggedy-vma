@@ -171,6 +171,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                     $this->parseNode($mappingAttributes, $setter);
                 } catch (Exception $e) {
                     $this->getLogger()->log(Logger::ERROR, "Unable to parse XML node", [
+                        'exception'         => $e->getMessage(),
+                        'trace'             => $e->getTraceAsString(),
                         'setterMethod'      => $setter ?? null,
                         'mappingAttributes' => $mappingAttributes,
                     ]);
@@ -238,26 +240,29 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
         
         // No attributes specified, so look for a value on the XML node
-        if ($attribute === self::NODE_TEXT_VALUE_DEFAULT && !empty($parser->readInnerXml())) {
-            $nodeInnerXml = $parser->readInnerXml();
-            // The node contains tags and isn't a text node so we can't process it
-            if (preg_match(self::REGEX_ANY_XML_TAG, $nodeInnerXml)) {
-                $this->getLogger()->log(Logger::NOTICE, "Expected a text node, but got a node with nested XML tags", [
-                    'tagName'       => $this->getParser()->name ?? null,
-                    'innerXml'      => $nodeInnerXml ?? null,
-                    'attributeName' => $attribute ?? null,
-                ]);
+        if ($attribute === self::NODE_TEXT_VALUE_DEFAULT) {
+            $parser->read();
+            // If we have not hit a TEXT or CDATA node here, something isn't right, exist this iteration
+            if ($parser->nodeType !== XMLReader::TEXT && $parser->nodeType !== XMLReader::CDATA) {
+                $this->getLogger()->log(
+                    Logger::NOTICE, "Expected a text or cdata node, but got a {$parser->nodeType} node",
+                    [
+                        'tagName'       => $this->getParser()->name ?? null,
+                        'innerXml'      => $nodeInnerXml ?? null,
+                        'attributeName' => $attribute ?? null,
+                    ]
+                );
 
                 return true;
             }
 
             // Validate the XML node's text value
-            if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $nodeInnerXml)) {
+            if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $parser->value)) {
                 return true;
             }
 
             // Set the value on the model and continue to the next iteration
-            $this->getModel()->$setter($nodeInnerXml);
+            $this->getModel()->$setter($parser->value);
             return true;
         }
 
@@ -289,9 +294,20 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Set the value on the model and continue to the next iteration
-        $this->getModel()->$setter($attributeValue);
+        $this->setValueOnModel($attributeValue, $setter);
 
         return true;
+    }
+
+    /**
+     * Set the value of an attribute on the model
+     *
+     * @param mixed $attributeValue
+     * @param int|string $setter
+     */
+    protected function setValueOnModel($attributeValue, string $setter)
+    {
+        $this->getModel()->$setter($attributeValue);
     }
 
     /**
@@ -378,6 +394,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Mark the file as processed and persist to the DB
+        // TODO: Move the out into a command
         $file->setProcessed(true);
         $this->getEm()->persist($file);
         $this->getEm()->flush($file);

@@ -13,6 +13,19 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Workspace extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'workspaces';
+
+    /** Column name constants */
+    const NAME       = 'name';
+    const USER_ID    = 'user_id';
+    const PROJECT_ID = 'project_id';
+    const DELETED    = 'deleted';
+    const ASSETS     = 'assets';
+    const FILES      = 'files';
+    const USER       = 'user';
+    const PROJECT    = 'project';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

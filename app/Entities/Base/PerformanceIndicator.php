@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PerformanceIndicator extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'performance_indicators';
+
+    /** Column name constants */
+    const MONTHLY_RECURRING_REVENUE = 'monthly_recurring_revenue';
+    const YEARLY_RECURRING_REVENUE  = 'yearly_recurring_revenue';
+    const DAILY_VOLUME              = 'daily_volume';
+    const NEW_USERS                 = 'new_users';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})

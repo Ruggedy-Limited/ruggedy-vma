@@ -12,7 +12,7 @@ class ComponentRepository extends EntityRepository
      * Get the record by the Component name
      *
      * @param string $componentName
-     * @return array|null
+     * @return object|null
      */
     public function findOneByComponentName(string $componentName)
     {
@@ -20,6 +20,6 @@ class ComponentRepository extends EntityRepository
             return null;
         }
         
-        return $this->findOneBy([Component::COMPONENT_NAME_FIELD => $componentName]);
+        return $this->findOneBy([Component::NAME => $componentName]);
     }
 }

@@ -12,6 +12,16 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Announcement extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'announcements';
+
+    /** Column name constants */
+    const USER_ID     = 'user_id';
+    const BODY        = 'body';
+    const ACTION_TEXT = 'action_text';
+    const ACTION_URL  = 'action_url';
+    const USER        = 'user';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="string", length=255)

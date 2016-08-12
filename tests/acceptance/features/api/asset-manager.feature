@@ -67,6 +67,10 @@ Feature: As an administrator or user with the correct access control
     | 6  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 7  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 8  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    And the following existing ScannerApps:
+    | id | name | description                | created_at          | updated_at          |
+    | 1  | nmap | NMAP Port Scanner Utility  | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
+    | 2  | burp | Burp Vulnerability Scanner | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
     And the following existing ComponentPermissions:
     | id | component_id | instance_id | permission | user_id | team_id | granted_by | created_at          | updated_at          |
     | 1  | 1            | 1           | rw         | 5       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |

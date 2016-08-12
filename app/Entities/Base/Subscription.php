@@ -12,6 +12,19 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Subscription extends AbstractEntity
 {
+    /** Table name constant */
+    const TABLE_NAME = 'subscriptions';
+
+    /** Column name constants */
+    const USER_ID       = 'user_id';
+    const NAME          = 'name';
+    const STRIPE_ID     = 'stripe_id';
+    const STRIPE_PLAN   = 'stripe_plan';
+    const QUANTITY      = 'quantity';
+    const TRIAL_ENDS_AT = 'trial_ends_at';
+    const ENDS_AT       = 'ends_at';
+    const USER          = 'user';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
