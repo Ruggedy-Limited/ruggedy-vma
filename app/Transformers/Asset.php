@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\Assetet;
+use App\Entities\Asset;
 use League\Fractal\TransformerAbstract;
 ​
 class AssetTransformer extends TransformerAbstract

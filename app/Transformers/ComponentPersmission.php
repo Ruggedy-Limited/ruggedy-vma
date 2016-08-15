@@ -13,7 +13,7 @@ class ComponentPermissionTransformer extends TransformerAbstract
      * @param ComponentPermission $component_permission
      * @return array
      */
-    public function transform(ComponenetPermission $component_permission)
+    public function transform(ComponenetPermission $componentPermission)
     {
         return [
             'id'                   => $component_permission->getId(),

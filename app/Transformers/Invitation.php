@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\Invitaion;
+use App\Entities\Invitation;
 use League\Fractal\TransformerAbstract;
 
 class InvitationTransformer extends TransformerAbstract

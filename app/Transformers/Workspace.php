@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\workspace;
+use App\Entities\Workspace;
 use League\Fractal\TransformerAbstract;
 
 class WorkspaceTransformer extends TransformerAbstract
