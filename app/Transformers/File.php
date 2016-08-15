@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\File;
 use League\Fractal\TransformerAbstract;
 ​
 class FileTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class FileTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $file->getUsesTwoFactorAuth(),
             'createdDate'          => $file->getCreatedAt(),
             'modifiedDate'         => $file->getUpdatedAt(),
-        ]
+        ];
     }
 }

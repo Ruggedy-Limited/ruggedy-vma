@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\PerformanceIndicator;
 use League\Fractal\TransformerAbstract;
 
 class PerformanceIndicatorTransformer extends TransformerAbstract
@@ -13,7 +13,7 @@ class PerformanceIndicatorTransformer extends TransformerAbstract
      * @param PerformanceIndicator $performance_indicator
      * @return array
      */
-    public function transform(PerformanceIndicator $performance_indicator)
+    public function transform(PerformanceIndicator $performanceIndicator)
     {
         return [
             'id'                   => $performance_indicator->getId(),
@@ -23,6 +23,6 @@ class PerformanceIndicatorTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $performance_indicator->getUsesTwoFactorAuth(),
             'createdDate'          => $performance_indicator->getCreatedAt(),
             'modifiedDate'         => $performance_indicator->getUpdatedAt(),
-        ]
+        ];
     }
 }

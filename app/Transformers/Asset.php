@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Assetet;
 use League\Fractal\TransformerAbstract;
 ​
 class AssetTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class AssetTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $asset->getUsesTwoFactorAuth(),
             'createdDate'          => $asset->getCreatedAt(),
             'modifiedDate'         => $asset->getUpdatedAt(),
-        ]
+        ];
     }
 }

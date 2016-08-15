@@ -2,10 +2,10 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\ComponentPermission;
 use League\Fractal\TransformerAbstract;
 ​
-class ComponentPersmissionTransformer extends TransformerAbstract
+class ComponentPermissionTransformer extends TransformerAbstract
 {
      /**
      * Transform a ComponentPermission entity for the API
@@ -23,6 +23,6 @@ class ComponentPersmissionTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $component_permission->getUsesTwoFactorAuth(),
             'createdDate'          => $component_permission->getCreatedAt(),
             'modifiedDate'         => $component_permission->getUpdatedAt(),
-        ]
+        ];
     }
 }

@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Announcement;
 use League\Fractal\TransformerAbstract;
 ​
 
@@ -24,6 +24,6 @@ class AnnouncementTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $announcement->getUsesTwoFactorAuth(),
             'createdDate'          => $announcement->getCreatedAt(),
             'modifiedDate'         => $announcement->getUpdatedAt(),
-        ]
+        ];
     }
 }

@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Project;
 use League\Fractal\TransformerAbstract;
 
 class ProjectTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class ProjectTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $project->getUsesTwoFactorAuth(),
             'createdDate'          => $project->getCreatedAt(),
             'modifiedDate'         => $project->getUpdatedAt(),
-        ]
+        ];
     }
 }

@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Team;
 use League\Fractal\TransformerAbstract;
 
 class TeamTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class TeamTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $team->getUsesTwoFactorAuth(),
             'createdDate'          => $team->getCreatedAt(),
             'modifiedDate'         => $team->getUpdatedAt(),
-        ]
+        ];
     }
 }

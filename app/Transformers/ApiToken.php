@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\ApiToken;
 use League\Fractal\TransformerAbstract;
 ​
 class ApiTokenTransformer extends TransformerAbstract
@@ -13,7 +13,7 @@ class ApiTokenTransformer extends TransformerAbstract
      * @param ApiToken $api_token
      * @return array
      */
-    public function transform(ApiToken $api_token)
+    public function transform(ApiToken $apiToken)
     {
         return [
             'id'                   => $api_token->getId(),
@@ -23,6 +23,6 @@ class ApiTokenTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $api_token->getUsesTwoFactorAuth(),
             'createdDate'          => $api_token->getCreatedAt(),
             'modifiedDate'         => $api_token->getUpdatedAt(),
-        ]
+        ];
     }
 }

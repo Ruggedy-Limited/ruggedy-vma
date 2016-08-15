@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Notification;
 use League\Fractal\TransformerAbstract;
 
 class NotificationTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class NotificationTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $notification->getUsesTwoFactorAuth(),
             'createdDate'          => $notification->getCreatedAt(),
             'modifiedDate'         => $notification->getUpdatedAt(),
-        ]
+        ];
     }
 }

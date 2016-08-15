@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\workspace;
 use League\Fractal\TransformerAbstract;
 
 class WorkspaceTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class WorkspaceTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $workspace->getUsesTwoFactorAuth(),
             'createdDate'          => $workspace->getCreatedAt(),
             'modifiedDate'         => $workspace->getUpdatedAt(),
-        ]
+        ];
     }
 }

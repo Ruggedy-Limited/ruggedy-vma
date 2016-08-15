@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Subscription;
 use League\Fractal\TransformerAbstract;
 
 class SubscriptionTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class SubscriptionTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $subscription->getUsesTwoFactorAuth(),
             'createdDate'          => $subscription->getCreatedAt(),
             'modifiedDate'         => $subscription->getUpdatedAt(),
-        ]
+        ];
     }
 }

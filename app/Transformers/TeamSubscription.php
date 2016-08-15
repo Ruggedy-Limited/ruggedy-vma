@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\TeamSubscription;
 use League\Fractal\TransformerAbstract;
 
 class TeamSubscriptionTransformer extends TransformerAbstract
@@ -13,7 +13,7 @@ class TeamSubscriptionTransformer extends TransformerAbstract
      * @param TeamSubscription $team_subscription
      * @return array
      */
-    public function transform(TeamSubscription $team_subscription)
+    public function transform(TeamSubscription $teamSubscription)
     {
         return [
             'id'                   => $team_subscription->getId(),
@@ -23,6 +23,6 @@ class TeamSubscriptionTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $team_subscription->getUsesTwoFactorAuth(),
             'createdDate'          => $team_subscription->getCreatedAt(),
             'modifiedDate'         => $team_subscription->getUpdatedAt(),
-        ]
+        ];
     }
 }

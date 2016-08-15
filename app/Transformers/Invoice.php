@@ -2,7 +2,7 @@
 ​
 namespace App\Transformers;
 ​
-use App\Entities\User;
+use App\Entities\Invoice;
 use League\Fractal\TransformerAbstract;
 
 class InvoiceTransformer extends TransformerAbstract
@@ -23,6 +23,6 @@ class InvoiceTransformer extends TransformerAbstract
             'twoFactorAuthEnabled' => $invoice->getUsesTwoFactorAuth(),
             'createdDate'          => $invoice->getCreatedAt(),
             'modifiedDate'         => $invoice->getUpdatedAt(),
-        ]
+        ];
     }
 }
