@@ -151,7 +151,11 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      */
     function exportForVulnerabilityReference(): Collection
     {
-        return $this->mapModelValuesForExport($this->exportForVulnerabilityRefsMap);
+        $vulnerabilityRefs = $this->mapModelValuesForExport($this->exportForVulnerabilityRefsMap);
+
+        // Convert to a numerically indexed Collection so that whether we have a single or multiple entity details
+        // exported, we get a Collection formatted in the same way
+        return new Collection($vulnerabilityRefs);
     }
 
     /**
@@ -161,7 +165,11 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      */
     function exportOpenPorts(): Collection
     {
-        return $this->mapModelValuesForExport($this->exportForOpenPortMap);
+        $openPorts = $this->mapModelValuesForExport($this->exportForOpenPortMap);
+
+        // Convert to a numerically indexed Collection so that whether we have a single or multiple entity details
+        // exported, we get a Collection formatted in the same way
+        return new Collection($openPorts);
     }
 
     /**
