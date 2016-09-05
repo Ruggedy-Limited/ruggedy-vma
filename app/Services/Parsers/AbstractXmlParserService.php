@@ -53,6 +53,18 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     /** @var Collection */
     protected $fileToSchemaMapping;
 
+    /** @var Collection */
+    protected $nodePreprocessingMap;
+
+    /** @var Collection */
+    protected $nodePostProcessingMap;
+
+    /** @var Collection */
+    protected $attributePreProcessingMap;
+
+    /** @var Collection */
+    protected $attributePostProcessingMap;
+
     /** @var CollectsScanOutput */
     protected $model;
 
@@ -83,8 +95,12 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $this->setLoggerContext($logger);
         $this->logger = $logger;
 
-        $this->fileToSchemaMapping = new Collection();
-        $this->models              = new Collection();
+        $this->fileToSchemaMapping        = new Collection();
+        $this->nodePreprocessingMap       = new Collection();
+        $this->nodePostProcessingMap      = new Collection();
+        $this->attributePreProcessingMap  = new Collection();
+        $this->attributePostProcessingMap = new Collection();
+        $this->models                     = new Collection();
     }
 
     /**
@@ -168,7 +184,9 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 }
 
                 try {
+                    $this->doNodePreprocessing();
                     $this->parseNode($mappingAttributes, $setter);
+                    $this->doNodePostprocessing();
                 } catch (Exception $e) {
                     $this->getLogger()->log(Logger::ERROR, "Unable to parse XML node", [
                         'exception'         => $e->getMessage(),
@@ -262,7 +280,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             }
 
             // Set the value on the model and continue to the next iteration
-            $this->getModel()->$setter($parser->value);
+            $this->setValueOnModel($parser->value, $setter);
             return true;
         }
 
@@ -276,12 +294,15 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return true;
         }
 
+        $this->doAttributePreProcessing();
+
         // Get the attribute value
         $attributeValue = $this->getXmlNodeAttributeValue($attribute);
         if (!isset($attributeValue)) {
             return true;
         }
 
+        // Validate the attribute value
         if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $attributeValue)) {
             $this->getLogger()->log(Logger::DEBUG, "XML node attribute failed validation", [
                 'tagName'         => $this->getParser()->name ?? null,
@@ -295,6 +316,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
         // Set the value on the model and continue to the next iteration
         $this->setValueOnModel($attributeValue, $setter);
+
+        $this->doAttributePostProcessing();
 
         return true;
     }
@@ -410,6 +433,57 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function getUnprocessedFiles(): Collection
     {
         return $this->getFileRepository()->findUnprocessed();
+    }
+
+    /**
+     * Execute the node pre-processing hooks
+     */
+    protected function doNodePreprocessing()
+    {
+        $this->callPreOrPostProcessingMethod($this->nodePreprocessingMap);
+    }
+
+    /**
+     * Execute the node post-processing hooks
+     */
+    protected function doNodePostprocessing()
+    {
+        $this->callPreOrPostProcessingMethod($this->nodePostProcessingMap);
+    }
+
+    /**
+     * Execute the attribute pre-processing hooks
+     */
+    protected function doAttributePreProcessing()
+    {
+        $this->callPreOrPostProcessingMethod($this->attributePreProcessingMap);
+    }
+
+    /**
+     * Execute the attribute post-processing hooks
+     */
+    protected function doAttributePostProcessing()
+    {
+        $this->callPreOrPostProcessingMethod($this->attributePostProcessingMap);
+    }
+
+    /**
+     * Call the pre or post-processing method for this node or attribute
+     *
+     * @param Collection $processingMap
+     */
+    protected function callPreOrPostProcessingMethod(Collection $processingMap)
+    {
+        if ($processingMap->isEmpty()) {
+            return;
+        }
+
+        $processingMethod = $processingMap->get($this->getParser()->name);
+        if (empty($processingMethod) || !method_exists($this, $processingMethod)) {
+            return;
+        }
+
+        $this->$processingMethod();
     }
 
     /**
