@@ -26,9 +26,6 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
     /** @var int */
     protected $currentPortNumber;
-
-    /** @var Collection */
-    protected $methodsRequiringAPortId;
     
     /**
      * NmapXmlParserService constructor.
@@ -86,8 +83,8 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                 'setMacVendor'  => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'vendor',
                     parent::MAP_ATTRIBUTE_VALIDATION    => new Collection([
-                        'main'    => ['vendor' => 'filled'],
-                        'related' => new Collection(['addrtype' => 'filled|in:mac']),
+                        parent::MAP_ATTRIBUTE_MAIN_VALIDATION    => ['vendor' => 'filled'],
+                        parent::MAP_ATTRIBUTE_RELATED_VALIDATION => new Collection(['addrtype' => 'filled|in:mac']),
                     ]),
                 ]),
             ]),
