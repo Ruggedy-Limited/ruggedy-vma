@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\CollectsPortInformation;
 use App\Contracts\CollectsScanOutput;
+use App\Entities\Asset;
 use App\Entities\Vulnerability;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -17,6 +18,9 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     protected $osVersion;
 
     /** @var string */
+    protected $osProduct;
+
+    /** @var string */
     protected $cpe;
 
     /** @var string */
@@ -24,6 +28,12 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
 
     /** @var Collection */
     protected $openPorts;
+
+    /** @var Collection */
+    protected $softwareInformation;
+
+    /** @var SoftwareInformationModel */
+    protected $tempSoftwareInformation;
 
     /** @var string */
     protected $vulnerabilityName;
@@ -73,8 +83,9 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
         parent::__construct();
 
         // Intialise openPorts and accuracies Collection objects
-        $this->openPorts         = new Collection();
-        $this->accuracies        = new Collection();
+        $this->openPorts           = new Collection();
+        $this->softwareInformation = new Collection();
+        $this->accuracies          = new Collection();
 
         $this->exportForVulnerabilityMap = new Collection([
             Vulnerability::ID_FROM_SCANNER             => $this->getVulnerabilityId(),
@@ -131,6 +142,22 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     /**
      * @return string
      */
+    public function getOsProduct()
+    {
+        return $this->osProduct;
+    }
+
+    /**
+     * @param string $osProduct
+     */
+    public function setOsProduct(string $osProduct)
+    {
+        $this->osProduct = $osProduct;
+    }
+
+    /**
+     * @return string
+     */
     public function getOsVersion()
     {
         return $this->osVersion;
@@ -173,7 +200,36 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
      */
     public function setMacAddress(string $macAddress)
     {
+        $macAddress = $this->sanitiseMacAddress($macAddress);
         $this->macAddress = $macAddress;
+    }
+
+    /**
+     * Sanitise the mac addresses found in the Nexpose scan by adding colons after every second character
+     *
+     * @param string $macAddress
+     * @return string|null
+     */
+    protected function sanitiseMacAddress(string $macAddress)
+    {
+        if (empty($macAddress) || preg_match(Asset::REGEX_MAC_ADDRESS, $macAddress)) {
+            return $macAddress;
+        }
+
+        $sanitisedMacAddress = '';
+        for ($charCount = 0; $charCount < strlen($macAddress); $charCount++) {
+            if ($charCount !== 0 && $charCount % 2 === 0) {
+                $sanitisedMacAddress .= ':';
+            }
+
+            $sanitisedMacAddress .= $macAddress{$charCount};
+        }
+
+        if (!preg_match(Asset::REGEX_MAC_ADDRESS, $sanitisedMacAddress)) {
+            return null;
+        }
+
+        return $sanitisedMacAddress;
     }
 
     /**
@@ -214,8 +270,6 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
      * Remove an open port
      *
      * @param int $portId
-     * @return bool
-     * @internal param PortModel $port
      */
     public function removePort(int $portId)
     {
@@ -318,6 +372,91 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     {
         $portModel = $this->setPortId($portId);
         $portModel->setServiceBanner($portServiceBanner);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSoftwareInformation(): Collection
+    {
+        return $this->softwareInformation;
+    }
+
+    /**
+     * @param Collection $softwareInformation
+     */
+    public function setSoftwareInformation(Collection $softwareInformation)
+    {
+        $this->softwareInformation = $softwareInformation;
+    }
+
+    /**
+     * @return SoftwareInformationModel|mixed
+     */
+    public function addSoftwareInformationFromTemp()
+    {
+        $hash = $this->tempSoftwareInformation->getHash();
+        if (!empty($this->getSoftwareInformation()->get($hash))) {
+            return $this->getSoftwareInformation()->get($hash);
+        }
+
+        $this->getSoftwareInformation()->put($hash, $this->tempSoftwareInformation);
+        return $this->tempSoftwareInformation;
+    }
+
+    /**
+     * @param SoftwareInformationModel $softwareInformation
+     */
+    public function removeSoftwareInformation(SoftwareInformationModel $softwareInformation)
+    {
+        $hash = $softwareInformation->getHash();
+        $this->getSoftwareInformation()->offsetUnset($hash);
+    }
+
+    /**
+     * @param string $softwareName
+     * @return SoftwareInformationModel
+     */
+    public function setSoftwareName(string $softwareName)
+    {
+        $this->tempSoftwareInformation->setName($softwareName);
+        return $this->tempSoftwareInformation;
+    }
+
+    /**
+     * @param string $softwareVersion
+     * @return SoftwareInformationModel
+     */
+    public function setSoftwareVersion(string $softwareVersion)
+    {
+        $this->tempSoftwareInformation->setVersion($softwareVersion);
+        return $this->tempSoftwareInformation;
+    }
+
+    /**
+     * @param string $softwareVendor
+     * @return SoftwareInformationModel
+     */
+    public function setSoftwareVendor(string $softwareVendor)
+    {
+        $this->tempSoftwareInformation->setVendor($softwareVendor);
+        return $this->tempSoftwareInformation;
+    }
+
+    /**
+     * @return SoftwareInformationModel
+     */
+    public function getTempSoftwareInformation()
+    {
+        return $this->tempSoftwareInformation;
+    }
+
+    /**
+     * @param SoftwareInformationModel $tempSoftwareInformation
+     */
+    public function setTempSoftwareInformation(SoftwareInformationModel $tempSoftwareInformation)
+    {
+        $this->tempSoftwareInformation = $tempSoftwareInformation;
     }
 
     /**
