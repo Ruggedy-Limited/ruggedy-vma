@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use App\Contracts\SystemComponent;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Collection;
 
@@ -68,6 +69,25 @@ class Asset extends Base\Asset implements SystemComponent
     protected $user;
 
     /**
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation")
+     * @ORM\JoinTable(
+     *     name="asset_software_information",
+     *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="software_information_id", referencedColumnName="id")}
+     * )
+     */
+    protected $relatedSoftwareInformation;
+
+    /**
+     * Asset constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->relatedSoftwareInformation = new ArrayCollection();
+    }
+
+    /**
      * Get the parent Entity of this Entity
      *
      * @return Base\Workspace
@@ -75,6 +95,36 @@ class Asset extends Base\Asset implements SystemComponent
     public function getParent()
     {
         return $this->getWorkspace();
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRelatedSoftwareInformation()
+    {
+        return $this->relatedSoftwareInformation;
+    }
+
+    /**
+     * @param SoftwareInformation $softwareInformation
+     * @return $this
+     */
+    public function addSoftwareInformation(SoftwareInformation $softwareInformation)
+    {
+        $this->relatedSoftwareInformation[] = $softwareInformation;
+
+        return $this;
+    }
+
+    /**
+     * @param SoftwareInformation $softwareInformation
+     * @return $this
+     */
+    public function removeSoftwareInformation(SoftwareInformation $softwareInformation)
+    {
+        $this->relatedSoftwareInformation->removeElement($softwareInformation);
+
+        return $this;
     }
 
     /**

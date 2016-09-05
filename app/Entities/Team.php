@@ -26,10 +26,11 @@ class Team extends Base\Team implements SystemComponent, HasComponentPermissions
 
     /**
      * @ORM\ManyToMany(targetEntity="User")
-     * @ORM\JoinTable(name="team_users",
-     *      joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
-     *      )
+     * @ORM\JoinTable(
+     *     name="team_users",
+     *     joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
+     * )
      */
     protected $users;
 
