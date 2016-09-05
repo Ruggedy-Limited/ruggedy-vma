@@ -87,6 +87,7 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
         $this->softwareInformation = new Collection();
         $this->accuracies          = new Collection();
 
+        // Set Asset export mappings for additional asset-related data
         $this->exportForAssetMap->put(Asset::MAC_ADDRESS, 'getMacAddress');
         $this->exportForAssetMap->put(Asset::VENDOR, 'getOsVendor');
         $this->exportForAssetMap->put(Asset::OS_VERSION, 'getOsVersion');
@@ -224,6 +225,7 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
             return $macAddress;
         }
 
+        // Insert colons after every 2 characters
         $sanitisedMacAddress = '';
         for ($charCount = 0; $charCount < strlen($macAddress); $charCount++) {
             if ($charCount !== 0 && $charCount % 2 === 0) {
@@ -233,6 +235,7 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
             $sanitisedMacAddress .= $macAddress{$charCount};
         }
 
+        // Validate the sanitised MAC address against the regex
         if (!preg_match(Asset::REGEX_MAC_ADDRESS, $sanitisedMacAddress)) {
             return null;
         }

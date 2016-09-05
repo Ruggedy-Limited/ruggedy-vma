@@ -126,10 +126,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      */
     protected function getXmlNodeAttributeValue(string $attribute)
     {
-        if ($attribute == self::SOFTWARE_FINGERPRINTS) {
-            return $this->getSoftwareInformationFingerprint();
-        }
-
         $value = parent::getXmlNodeAttributeValue($attribute);
         if ($attribute == self::XML_ATTRIBUTE_PORT) {
             $value = intval($value);
@@ -154,53 +150,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
         }
 
         parent::setValueOnModel($attributeValue, $setter);
-    }
-
-    /**
-     * Get a Collection of software information from the <software><fingerprint></fingerprint></software> nodes
-     *
-     * @return Collection
-     */
-    protected function getSoftwareInformationFingerprint(): Collection
-    {
-        // At this point the parser should be on the <software></software> node and we need to get into the
-        // and we need to get into the <fingerprint></fingerprint> nodes
-        $this->getParser()->read();
-
-        $softwareInformation = new Collection();
-
-        while ($this->getParser()->name === self::XML_NODE_FINGERPRINT) {
-            $model = new SoftwareInformationModel();
-
-            // Make sure we have absolute certainty about the software before adding it
-            $certainty = parent::getXmlNodeAttributeValue(self::XML_ATTRIBUTE_CERTAINTY);
-            if ($certainty != 1) {
-                $this->getParser()->read();
-                continue;
-            }
-
-            // Get the product name, version and vendor from the current node's attributes
-            $productName    = parent::getXmlNodeAttributeValue(self::XML_ATTRIBUTE_PRODUCT);
-            $productVersion = parent::getXmlNodeAttributeValue(self::XML_ATTRIBUTE_VERSION);
-            $productVendor  = parent::getXmlNodeAttributeValue(self::XML_ATTRIBUTE_VENDOR);
-
-            // Set the product name, version and vendor on the SoftwareInformationModel
-            $model->setName($productName);
-            $model->setVersion($productVersion);
-            $model->setVendor($productVendor);
-
-            // Generate a unique hash for this software version and add the model to the Collection
-            // using the hash as an index, if a model does not already exist at that index
-            $hash = $model->getHash();
-            if (!empty($softwareInformation->get($hash))) {
-                continue;
-            }
-
-            $softwareInformation->put($hash, $model);
-            $this->getParser()->read();
-        }
-
-        return $softwareInformation;
     }
 
     /**
