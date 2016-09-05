@@ -13,7 +13,7 @@ class ScanIdentificationService
 {
     const XML_NMAP_REGEX = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
     const XML_BURP_REGEX = '%<!ATTLIST issues burpVersion.*>%';
-    const XML_NEXPOSE_REGEX = '%^<NexposeReport.*>$%i';
+    const XML_NEXPOSE_REGEX = '%^<NexposeReport.*>$%im';
 
     const MAX_FILE_BYTES_TO_READ = 256000;
 

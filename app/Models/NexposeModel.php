@@ -87,6 +87,10 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
         $this->softwareInformation = new Collection();
         $this->accuracies          = new Collection();
 
+        $this->exportForAssetMap->put(Asset::MAC_ADDRESS, 'getMacAddress');
+        $this->exportForAssetMap->put(Asset::VENDOR, 'getOsVendor');
+        $this->exportForAssetMap->put(Asset::OS_VERSION, 'getOsVersion');
+
         $this->exportForVulnerabilityMap = new Collection([
             Vulnerability::ID_FROM_SCANNER             => $this->getVulnerabilityId(),
             Vulnerability::NAME                        => $this->getVulnerabilityName(),
@@ -160,7 +164,11 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
      */
     public function getOsVersion()
     {
-        return $this->osVersion;
+        if (!empty($this->osVersion)) {
+            return $this->osVersion;
+        }
+
+        return $this->osProduct;
     }
 
     /**

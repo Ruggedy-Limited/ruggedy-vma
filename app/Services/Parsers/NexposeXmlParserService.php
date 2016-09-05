@@ -59,10 +59,10 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV4,
                 ]),
                 'setMacAddress' => new Collection([
-                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'address',
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'hardware-address',
                     parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
-                        'regex:[A-Z0-9]{12}'
+                        "regex:%[A-Z0-9]{12}%"
                     ],
                 ]),
             ]),
@@ -87,9 +87,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'product',
                     parent::MAP_ATTRIBUTE_VALIDATION    => new Collection([
                         parent::MAP_ATTRIBUTE_MAIN_VALIDATION => 'filled',
-                        parent::MAP_ATTRIBUTE_RELATED_VALIDATION => new Collection([
-                            self::XML_ATTRIBUTE_VERSION => 'filled',
-                        ]),
                     ]),
                 ]),
             ]),
