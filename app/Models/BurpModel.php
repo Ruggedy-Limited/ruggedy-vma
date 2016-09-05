@@ -116,6 +116,23 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
      */
     public function setSeverity(string $severity)
     {
+        // Convert severity to a decimal based on our custom severity scoring
+        switch ($severity) {
+            default:
+            case 'Information':
+                $severity = 0.00;
+                break;
+            case 'Low':
+                $severity = 2.00;
+                break;
+            case 'Medium':
+                $severity = 5.50;
+                break;
+            case 'High':
+                $severity = 8.50;
+                break;
+        }
+
         $this->severity = $severity;
     }
 

@@ -11,6 +11,7 @@ use App\Contracts\CollectsScanOutput;
 use App\Contracts\CustomLogging;
 use App\Contracts\SystemComponent;
 use App\Entities\Asset;
+use App\Entities\Base\AbstractEntity;
 use App\Entities\File;
 use App\Entities\OpenPort;
 use App\Entities\User;
@@ -229,7 +230,11 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
         // Add the asset ID to the collection
         $counters->get(Asset::class)->put($asset->getId(), true);
 
-        // Iterate over all Open Port entries that were found in the file
+        $this->prepareDetailsForCommandAndSend(
+            OpenPort::class, CreateOpenPort::class, $openPortDetails, $asset, $counters, $file
+        );
+
+        /* Iterate over all Open Port entries that were found in the file
         $openPortDetails->each(function ($openPortDetails, $offset) use ($file, $asset, $counters) {
             // Call the CreateOpenPort command for each Open Port found in the XML
             $openPort = $this->sendCommandToBus(
@@ -244,7 +249,7 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
             // If we got an OpenPort entity from the command increment the counter
             $counters->get(OpenPort::class)->put($openPort->getId(), true);
             return true;
-        });
+        });*/
 
         // Call the CreateVulnerability command
         $vulnerability = $this->sendCommandToBus(
@@ -260,7 +265,12 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
         // Increment the Vulnerability count
         $counters->get(Vulnerability::class)->put($vulnerability->getId(), true);
 
-        // If there is associated vulnerability reference data in the model, save a new vulnerability reference
+        $this->prepareDetailsForCommandAndSend(
+            VulnerabilityReferenceCode::class, CreateVulnerabilityReference::class, $vulnerabilityRefDetails,
+            $vulnerability, $counters
+        );
+
+        /* If there is associated vulnerability reference data in the model, save a new vulnerability reference
         $vulnerabilityReference = $this->sendCommandToBus(
             CreateVulnerabilityReference::class, $vulnerability->getId(), $vulnerabilityRefDetails
         );
@@ -273,9 +283,67 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
 
         // Increment the VulnerabilityReferenceCode counter if we got a VulnerabilityReferenceCode entity from the
         // CreateVulnerabilityReference command
-        $counters->get(VulnerabilityReferenceCode::class)->put($vulnerabilityReference->getId(), true);
+        $counters->get(VulnerabilityReferenceCode::class)->put($vulnerabilityReference->getId(), true);*/
 
         return true;
+    }
+
+    /**
+     * Prepare the Collection of models and pass to the command bus
+     *
+     * @param string $entityClass
+     * @param string $commandClass
+     * @param Collection $details
+     * @param SystemComponent $relatedEntity
+     * @param Collection $counters
+     * @param File|null $file
+     * @param bool $multiMode
+     * @return bool|SystemComponent
+     */
+    protected function prepareDetailsForCommandAndSend(
+        string $entityClass, string $commandClass, Collection $details, SystemComponent $relatedEntity,
+        Collection $counters, File $file = null, $multiMode = false
+    )
+    {
+        if (empty($entityClass) || empty($commandClass) || empty($relatedEntity)) {
+            $this->getLogger()->log(Logger::ERROR, "One or more required parameters are empty", [
+                'requiredParameters' => ['entityClass', 'commandClass', 'relatedEntity', 'details'],
+                'entityClass'        => $entityClass ?? null,
+                'commandClass'       => $commandClass ?? null,
+                'relatedEntity'      => $relatedEntity instanceof AbstractEntity ? $relatedEntity->toArray() : null,
+                'details'            => $details->toArray(),
+            ]);
+
+            return false;
+        }
+
+        if ($details->isEmpty()) {
+            $this->getLogger()->log(Logger::NOTICE, "No details received to send with command", [
+                'entityClass'  => $entityClass ?? null,
+                'commandClass' => $commandClass ?? null,
+            ]);
+
+            return false;
+        }
+
+        $lastEntity = $details->reduce(function($carry, $detailsForEntity) use (
+            $commandClass, $entityClass, $relatedEntity, $file, $relatedEntity, $counters, $multiMode
+        ) {
+            $entityResult = $this->sendCommandToBus(
+                $commandClass, $relatedEntity->getId(), $detailsForEntity, $file, $multiMode
+            );
+
+            if (empty($entityResult) || !($entityResult instanceof SystemComponent)) {
+                return null;
+            }
+
+            // If we got an instance of a SystemComponent contract from the command increment the counter
+            $counters->get($entityClass)->put($entityResult->getId(), true);
+
+            return $entityResult;
+        });
+
+        return $lastEntity;
     }
 
     /**

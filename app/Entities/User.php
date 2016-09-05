@@ -71,7 +71,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     /**
      * Aliasing the parent method
      *
-     * @return Team
+     * @return Base\Team
      */
     public function getTeam()
     {
@@ -91,7 +91,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     /**
      * Get the parent Entity of this Entity
      *
-     * @return Base\User
+     * @return Team
      */
     public function getParent()
     {

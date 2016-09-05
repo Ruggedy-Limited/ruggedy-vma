@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ScannerApp extends Base\ScannerApp
 {
-    const SCANNER_NMAP = 'nmap';
-    const SCANNER_BURP = 'burp';
+    const SCANNER_NMAP    = 'nmap';
+    const SCANNER_BURP    = 'burp';
+    const SCANNER_NEXPOSE = 'nexpose';
 }
