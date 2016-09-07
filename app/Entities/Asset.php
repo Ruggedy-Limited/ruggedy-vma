@@ -69,7 +69,7 @@ class Asset extends Base\Asset implements SystemComponent
     protected $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="asset_software_information",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id")},

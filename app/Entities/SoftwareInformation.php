@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="App\Repositories\SoftwareInformationRepository")
  * @ORM\HasLifecycleCallbacks
+ * @ORM\Table(name="`software_information`")
  */
 class SoftwareInformation extends Base\SoftwareInformation
 {
