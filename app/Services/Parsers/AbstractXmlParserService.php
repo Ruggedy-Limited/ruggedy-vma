@@ -171,6 +171,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 continue;
             }
 
+            $this->doNodePreprocessing();
+
             // Parse the node based on the mappings
             $fields->each(function($mappingAttributes, $setter) {
                 // Defensiveness in case of bad mappings
@@ -184,9 +186,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 }
 
                 try {
-                    $this->doNodePreprocessing();
                     $this->parseNode($mappingAttributes, $setter);
-                    $this->doNodePostprocessing();
                 } catch (Exception $e) {
                     $this->getLogger()->log(Logger::ERROR, "Unable to parse XML node", [
                         'exception'         => $e->getMessage(),
@@ -198,6 +198,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
                 return true;
             });
+
+            $this->doNodePostprocessing();
         }
     }
 

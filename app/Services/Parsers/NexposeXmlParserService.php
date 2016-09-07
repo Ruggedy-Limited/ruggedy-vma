@@ -92,7 +92,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             ]),
             'fingerprint' => new Collection([
                 'setSoftwareName' => new Collection([
-                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'name',
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'product',
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled'
                 ]),
                 'setSoftwareVersion'  => new Collection([
