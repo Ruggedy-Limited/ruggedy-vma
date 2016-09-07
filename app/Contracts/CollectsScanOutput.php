@@ -11,26 +11,33 @@ interface CollectsScanOutput
      * 
      * @return Collection
      */
-    function exportForAsset(): Collection;
+    public function exportForAsset(): Collection;
 
     /**
      * Get the Vulnerability related data as a Collection
      *
      * @return Collection
      */
-    function exportForVulnerability(): Collection;
+    public function exportForVulnerability(): Collection;
 
     /**
      * Get the Vulnerability Reference related data as a Collection
      *
      * @return Collection
      */
-    function exportForVulnerabilityReference(): Collection;
+    public function exportForVulnerabilityReference(): Collection;
 
     /**
      * Get the System Information related data as a Collection
      *
      * @return Collection
      */
-    function exportOpenPorts(): Collection;
+    public function exportOpenPorts(): Collection;
+
+    /**
+     * Get the Software Information data as a Collection
+     *
+     * @return Collection
+     */
+    public function exportSoftwareInformation(): Collection;
 }
