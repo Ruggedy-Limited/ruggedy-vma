@@ -4,6 +4,7 @@ namespace App\Console\Commands\Parsers\Xml;
 
 use App\Commands\CommitCurrentUnitOfWork;
 use App\Commands\CreateAsset;
+use App\Commands\CreateSoftwareInformation;
 use App\Commands\CreateVulnerability;
 use App\Commands\CreateVulnerabilityReference;
 use App\Commands\CreateOpenPort;
@@ -14,6 +15,7 @@ use App\Entities\Asset;
 use App\Entities\Base\AbstractEntity;
 use App\Entities\File;
 use App\Entities\OpenPort;
+use App\Entities\SoftwareInformation;
 use App\Entities\User;
 use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
@@ -217,6 +219,7 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
         $vulnerabilityDetails    = $model->exportForVulnerability();
         $vulnerabilityRefDetails = $model->exportForVulnerabilityReference();
         $openPortDetails         = $model->exportOpenPorts();
+        $softwareInformation     = $model->exportSoftwareInformation();
 
         // Save/update the Asset
         $asset = $this->sendCommandToBus(CreateAsset::class, $workspaceId, $assetDetails);
@@ -230,6 +233,7 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
         // Add the asset ID to the collection
         $counters->get(Asset::class)->put($asset->getId(), true);
 
+        // Save the open ports for this Asset
         $this->prepareDetailsForCommandAndSend(
             OpenPort::class, CreateOpenPort::class, $openPortDetails, $asset, $counters, $file
         );
@@ -250,6 +254,11 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
             $counters->get(OpenPort::class)->put($openPort->getId(), true);
             return true;
         });*/
+
+        // Save the software information for this Asset
+        $this->prepareDetailsForCommandAndSend(
+            SoftwareInformation::class, CreateSoftwareInformation::class, $softwareInformation, $asset, $counters
+        );
 
         // Call the CreateVulnerability command
         $vulnerability = $this->sendCommandToBus(
@@ -395,12 +404,15 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
             return $this->getBus()->handle($command);
         } catch (Exception $e) {
             $this->getLogger()->log(Logger::ERROR, "Exception occurred when executing command", [
-                'commandClass'  => $commandClass ?? null,
-                'id'            => $id ?? null,
-                'entityDetails' => $details->toJson(),
-                'multimode'     => $multiMode,
-                'filePath'      => isset($file) ? $file->getPath() : null,
+                'commandClass'     => $commandClass ?? null,
+                'id'               => $id ?? null,
+                'entityDetails'    => $details->toJson(),
+                'multimode'        => $multiMode,
+                'filePath'         => isset($file) ? $file->getPath() : null,
+                'exceptionMessage' => $e->getMessage(),
+                'exceptionTrace'   => $e->getTraceAsString(),
             ]);
+
             $this->error("Error: {$e->getMessage()} when handling command: $commandClass.");
 
             return false;
