@@ -27,7 +27,7 @@ DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `asset_software_information` (
-  `id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
   `asset_id` INT(10) UNSIGNED NOT NULL COMMENT '',
   `software_information_id` INT(10) UNSIGNED NOT NULL COMMENT '',
   PRIMARY KEY (`id`)  COMMENT '',
