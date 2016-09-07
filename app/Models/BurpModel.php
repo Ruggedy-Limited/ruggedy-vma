@@ -57,9 +57,6 @@ class BurpModel extends AbstractXmlModel implements CollectsScanOutput
     /** @var string */
     protected $onlineReferences;
 
-    /** @var Collection */
-    protected $exportForVulnerabilityMap;
-
     /**
      * BurpModel constructor.
      */

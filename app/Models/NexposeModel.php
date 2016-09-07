@@ -26,15 +26,6 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     /** @var string */
     protected $macAddress;
 
-    /** @var Collection */
-    protected $openPorts;
-
-    /** @var Collection */
-    protected $softwareInformation;
-
-    /** @var SoftwareInformationModel */
-    protected $tempSoftwareInformation;
-
     /** @var string */
     protected $vulnerabilityName;
 
@@ -70,9 +61,6 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
 
     /** @var Collection */
     protected $accuracies;
-
-    /** @var Collection */
-    protected $methodsRequiringAPortId;
 
     /**
      * NexposeModel constructor.
@@ -116,16 +104,6 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
             'setPortExtraInfo',
             'setPortFingerPrint',
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @return Collection
-     */
-    public function getMethodsRequiringAPortId(): Collection
-    {
-        return new Collection([]);
     }
 
     /**
@@ -241,233 +219,6 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
         }
 
         return $sanitisedMacAddress;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getOpenPorts()
-    {
-        return $this->openPorts;
-    }
-
-    /**
-     * @param Collection $openPorts
-     */
-    public function setOpenPorts(Collection $openPorts)
-    {
-        $this->openPorts = $openPorts;
-    }
-
-    /**
-     * Add an open port
-     *
-     * @param PortModel $port
-     * @param int $portId
-     * @return Collection
-     */
-    public function addPort(PortModel $port, int $portId): Collection
-    {
-        // Make sure we have a valid port ID
-        if (!isset($portId)) {
-            return $this->openPorts;
-        }
-
-        // Add the model to the openPorts Collection, using the portId as the offset
-        return $this->openPorts->put($portId, $port);
-    }
-
-    /**
-     * Remove an open port
-     *
-     * @param int $portId
-     */
-    public function removePort(int $portId)
-    {
-        $this->openPorts->offsetUnset($portId);
-    }
-
-    /**
-     * Create a new PortModel for the given portId if one does not yet exist
-     *
-     * @param int $portId
-     * @return PortModel
-     */
-    public function setPortId(int $portId): PortModel
-    {
-        // Check if there is already an Open Port at the given portId offset in the Collection
-        if (!empty($this->getOpenPorts()->get($portId))) {
-            return $this->getOpenPorts()->get($portId);
-        }
-
-        // Create a new PortModel, set the ID and add to the Collection of ports on this Model
-        $portModel = new PortModel();
-        $portModel->setPortId($portId);
-        $this->addPort($portModel, $portId);
-
-        return $portModel;
-    }
-
-    /**
-     * Set the protocol for the given port ID
-     *
-     * @param int $portId
-     * @param string $portProtocol
-     */
-    public function setPortProtocol(int $portId, string $portProtocol)
-    {
-        $portModel = $this->setPortId($portId);
-        $portModel->setProtocol($portProtocol);
-    }
-
-    /**
-     * Set the service name for the given port ID
-     *
-     * @param int $portId
-     * @param string $portServiceName
-     * @internal param string $portProtocol
-     */
-    public function setPortServiceName(int $portId, string $portServiceName)
-    {
-        $portModel = $this->setPortId($portId);
-        $portModel->setServiceName($portServiceName);
-    }
-
-    /**
-     * Set the service product for the given port ID
-     *
-     * @param int $portId
-     * @param string $portServiceProduct
-     * @internal param string $portProtocol
-     */
-    public function setPortServiceProduct(int $portId, string $portServiceProduct)
-    {
-        $portModel = $this->setPortId($portId);
-        $portModel->setServiceProduct($portServiceProduct);
-    }
-
-    /**
-     * Set the extra information for the given port ID
-     *
-     * @param int $portId
-     * @param string $portExtraInfo
-     * @internal param string $portProtocol
-     */
-    public function setPortExtraInfo(int $portId, string $portExtraInfo)
-    {
-        $portModel = $this->setPortId($portId);
-        $portModel->setServiceExtraInformation($portExtraInfo);
-    }
-
-    /**
-     * Set the finger print for the given port ID
-     *
-     * @param int $portId
-     * @param string $portFingerPrint
-     * @internal param string $portProtocol
-     */
-    public function setPortFingerPrint(int $portId, string $portFingerPrint)
-    {
-        $portModel = $this->setPortId($portId);
-        $portModel->setServiceFingerPrint($portFingerPrint);
-    }
-
-    /**
-     * Set the service banner for the given port ID
-     *
-     * @param int $portId
-     * @param string $portServiceBanner
-     * @internal param string $portProtocol
-     */
-    public function setPortServiceBanner(int $portId, string $portServiceBanner)
-    {
-        $portModel = $this->setPortId($portId);
-        $portModel->setServiceBanner($portServiceBanner);
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getSoftwareInformation(): Collection
-    {
-        return $this->softwareInformation;
-    }
-
-    /**
-     * @param Collection $softwareInformation
-     */
-    public function setSoftwareInformation(Collection $softwareInformation)
-    {
-        $this->softwareInformation = $softwareInformation;
-    }
-
-    /**
-     * @return SoftwareInformationModel|mixed
-     */
-    public function addSoftwareInformationFromTemp()
-    {
-        $hash = $this->tempSoftwareInformation->getHash();
-        if (!empty($this->getSoftwareInformation()->get($hash))) {
-            return $this->getSoftwareInformation()->get($hash);
-        }
-
-        $this->getSoftwareInformation()->put($hash, $this->tempSoftwareInformation);
-        return $this->tempSoftwareInformation;
-    }
-
-    /**
-     * @param SoftwareInformationModel $softwareInformation
-     */
-    public function removeSoftwareInformation(SoftwareInformationModel $softwareInformation)
-    {
-        $hash = $softwareInformation->getHash();
-        $this->getSoftwareInformation()->offsetUnset($hash);
-    }
-
-    /**
-     * @param string $softwareName
-     * @return SoftwareInformationModel
-     */
-    public function setSoftwareName(string $softwareName)
-    {
-        $this->tempSoftwareInformation->setName($softwareName);
-        return $this->tempSoftwareInformation;
-    }
-
-    /**
-     * @param string $softwareVersion
-     * @return SoftwareInformationModel
-     */
-    public function setSoftwareVersion(string $softwareVersion)
-    {
-        $this->tempSoftwareInformation->setVersion($softwareVersion);
-        return $this->tempSoftwareInformation;
-    }
-
-    /**
-     * @param string $softwareVendor
-     * @return SoftwareInformationModel
-     */
-    public function setSoftwareVendor(string $softwareVendor)
-    {
-        $this->tempSoftwareInformation->setVendor($softwareVendor);
-        return $this->tempSoftwareInformation;
-    }
-
-    /**
-     * @return SoftwareInformationModel
-     */
-    public function getTempSoftwareInformation()
-    {
-        return $this->tempSoftwareInformation;
-    }
-
-    /**
-     * @param SoftwareInformationModel $tempSoftwareInformation
-     */
-    public function setTempSoftwareInformation(SoftwareInformationModel $tempSoftwareInformation)
-    {
-        $this->tempSoftwareInformation = $tempSoftwareInformation;
     }
 
     /**
@@ -676,23 +427,5 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     public function setAccuracies(Collection $accuracies)
     {
         $this->accuracies = $accuracies;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @return Collection
-     */
-    function exportOpenPorts(): Collection
-    {
-        return $this->openPorts->map(function ($openPort, $portId) {
-            if (empty($openPort) || !($openPort instanceof PortModel)) {
-                return null;
-            }
-
-            return $openPort->export();
-        })->filter(function ($openPort, $offset) {
-            return isset($openPort);
-        });
     }
 }

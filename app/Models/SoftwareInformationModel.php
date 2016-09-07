@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Entities\SoftwareInformation;
+use Illuminate\Support\Collection;
+
 class SoftwareInformationModel
 {
     /** @var string */
@@ -78,5 +81,20 @@ class SoftwareInformationModel
         }
 
         return md5($this->name . ":" . $this->version . ":" . $this->vendor);
+    }
+
+    /**
+     * Export the software information as an array to be used to populate
+     * an instance of a SoftwareInformation Doctrine entity
+     *
+     * @return Collection
+     */
+    public function export(): Collection
+    {
+        return new Collection([
+            SoftwareInformation::NAME    => $this->getName(),
+            SoftwareInformation::VENDOR  => $this->getVendor(),
+            SoftwareInformation::VERSION => $this->getVersion(),
+        ]);
     }
 }
