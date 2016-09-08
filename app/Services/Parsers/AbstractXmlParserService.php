@@ -117,29 +117,29 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Check that the file exists
-        if (!$this->getFileSystem()->exists($file->getPath())) {
+        if (!$this->fileSystem->exists($file->getPath())) {
             throw new FileNotFoundException("The given file was not found in the default location");
         }
 
         // Attempt to parse the XML and catch any exceptions
-        $parser = $this->getParser();
+        $parser = $this->parser;
         try {
             $parser->open($file->getPath());
             $this->parseXml();
         } catch (Exception $e) {
-            $this->getLogger()->log(Logger::ERROR, "Failed to parse XML file.", [
+            $this->logger->log(Logger::ERROR, "Failed to parse XML file.", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
                 'workspace' => $file->getWorkspaceId(),
                 'exception' => $e->getMessage(),
-                'trace'     => $this->getLogger()->getTraceAsArrayOfLines($e),
+                'trace'     => $this->logger->getTraceAsArrayOfLines($e),
             ]);
 
             return new Collection;
         }
 
         // Return a Collection of populated models
-        return $this->getModels();
+        return $this->models;
     }
 
     /**
@@ -147,24 +147,24 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function parseXml()
     {
-        while ($this->getParser()->read()) {
+        while ($this->parser->read()) {
             // If we match the "end tag" for the base tag, add the current model
             // to the models Collection and reset the model
-            if ($this->getParser()->nodeType === XMLReader::END_ELEMENT
-                && $this->getParser()->name === $this->getBaseTagName()) {
+            if ($this->parser->nodeType === XMLReader::END_ELEMENT
+                && $this->parser->name === $this->getBaseTagName()) {
 
-                $this->models->push($this->getModel());
+                $this->models->push($this->model);
                 $this->resetModel();
                 continue;
             }
 
             // Any other end tag
-            if ($this->getParser()->nodeType === XMLReader::END_ELEMENT) {
+            if ($this->parser->nodeType === XMLReader::END_ELEMENT) {
                 continue;
             }
 
             // Get the mappings for this tag
-            $fields = $this->getFileToSchemaMapping()->get($this->getParser()->name);
+            $fields = $this->fileToSchemaMapping->get($this->parser->name);
 
             // If there are no mappings for any reason, continue to the next node
             if (empty($fields) || !($fields instanceof Collection) || $fields->isEmpty()) {
@@ -177,7 +177,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $fields->each(function($mappingAttributes, $setter) {
                 // Defensiveness in case of bad mappings
                 if (empty($setter) || !($mappingAttributes instanceof Collection)) {
-                    $this->getLogger()->log(Logger::WARNING, "Empty setter method or bad mappings", [
+                    $this->logger->log(Logger::WARNING, "Empty setter method or bad mappings", [
                         'setterMethod'      => $setter ?? null,
                         'mappingAttributes' => $mappingAttributes ?? null,
                     ]);
@@ -188,7 +188,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 try {
                     $this->parseNode($mappingAttributes, $setter);
                 } catch (Exception $e) {
-                    $this->getLogger()->log(Logger::ERROR, "Unable to parse XML node", [
+                    $this->logger->log(Logger::ERROR, "Unable to parse XML node", [
                         'exception'         => $e->getMessage(),
                         'trace'             => $e->getTraceAsString(),
                         'setterMethod'      => $setter ?? null,
@@ -216,8 +216,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function parseNode(Collection $mappingAttributes, string $setter)
     {
-        $parser = $this->getParser();
-        if (!method_exists($this->getModel(), $setter) || !($mappingAttributes instanceof Collection)) {
+        $parser = $this->parser;
+        if (!method_exists($this->model, $setter) || !($mappingAttributes instanceof Collection)) {
             return true;
         }
 
@@ -249,7 +249,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             // failed validation
             /** @var Collection $failingRelatedAttributes */
             $failingRelatedAttributes = $relatedAttributes->reject(function ($validationRules, $attribute) {
-                $attributeValue = $this->getParser()->getAttribute($attribute);
+                $attributeValue = $this->parser->getAttribute($attribute);
                 return $this->isValidXmlValueOrAttribute($attribute, $validationRules, $attributeValue);
             });
 
@@ -264,10 +264,10 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $parser->read();
             // If we have not hit a TEXT or CDATA node here, something isn't right, exist this iteration
             if ($parser->nodeType !== XMLReader::TEXT && $parser->nodeType !== XMLReader::CDATA) {
-                $this->getLogger()->log(
+                $this->logger->log(
                     Logger::NOTICE, "Expected a text or cdata node, but got a {$parser->nodeType} node",
                     [
-                        'tagName'       => $this->getParser()->name ?? null,
+                        'tagName'       => $this->parser->name ?? null,
                         'innerXml'      => $nodeInnerXml ?? null,
                         'attributeName' => $attribute ?? null,
                     ]
@@ -289,8 +289,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // If the XML node does not have attributes at this point, skip the node because we only look for
         // attributes after this point
         if (!$parser->hasAttributes) {
-            $this->getLogger()->log(Logger::NOTICE, "Expected a node with attributes, got node without attributes", [
-                'tagName'       => $this->getParser()->name ?? null,
+            $this->logger->log(Logger::NOTICE, "Expected a node with attributes, got node without attributes", [
+                'tagName'       => $this->parser->name ?? null,
                 'attributeName' => $attribute ?? null,
             ]);
             return true;
@@ -306,8 +306,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
         // Validate the attribute value
         if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $attributeValue)) {
-            $this->getLogger()->log(Logger::DEBUG, "XML node attribute failed validation", [
-                'tagName'         => $this->getParser()->name ?? null,
+            $this->logger->log(Logger::DEBUG, "XML node attribute failed validation", [
+                'tagName'         => $this->parser->name ?? null,
                 'attributeName'   => $attribute ?? null,
                 'validationRules' => $validationRules,
                 'attributeValue'  => $attributeValue ?? null,
@@ -332,7 +332,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function setValueOnModel($attributeValue, string $setter)
     {
-        $this->getModel()->$setter($attributeValue);
+        $this->model->$setter($attributeValue);
     }
 
     /**
@@ -343,7 +343,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function getXmlNodeAttributeValue(string $attribute)
     {
-        return $this->getParser()->getAttribute($attribute);
+        return $this->parser->getAttribute($attribute);
     }
 
     /**
@@ -367,7 +367,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Perform the validation
-        $validation = $this->getValidatorFactory()->make(
+        $validation = $this->validatorFactory->make(
             [$attribute => $value],
             [$attribute => $validationRules]
         );
@@ -384,23 +384,23 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function moveFileToProcessed(File $file)
     {
         // Empty or non-existent file
-        if (empty($file) || !$this->getFileSystem()->exists($file->getPath())) {
+        if (empty($file) || !$this->fileSystem->exists($file->getPath())) {
             return false;
         }
 
         // Get the path where processed files should be moved to
         $processedFilePath = str_replace('scans/', 'scans/processed/', $file->getPath());
-        $processedPath     = $this->getFileSystem()->dirname($processedFilePath);
+        $processedPath     = $this->fileSystem->dirname($processedFilePath);
 
         // Check if the directory exists and if not, create it
         $dirExists = true;
-        if (!$this->getFileSystem()->exists($processedPath)) {
-            $dirExists = $this->getFileSystem()->makeDirectory($processedPath, 0744, true);
+        if (!$this->fileSystem->exists($processedPath)) {
+            $dirExists = $this->fileSystem->makeDirectory($processedPath, 0744, true);
         }
 
         // Directory creation probably failed?
         if (!$dirExists) {
-            $this->getLogger()->log(Logger::ERROR, "Failed to create directory for processed file", [
+            $this->logger->log(Logger::ERROR, "Failed to create directory for processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
                 'workspace' => $file->getWorkspaceId(),
@@ -409,8 +409,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Attempt to move a file to it's processed directory location
-        if (!$this->getFileSystem()->move($file->getPath(), $processedFilePath)) {
-            $this->getLogger()->log(Logger::ERROR, "Could not move processed file", [
+        if (!$this->fileSystem->move($file->getPath(), $processedFilePath)) {
+            $this->logger->log(Logger::ERROR, "Could not move processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
                 'workspace' => $file->getWorkspaceId(),
@@ -421,8 +421,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Mark the file as processed and persist to the DB
         // TODO: Move the out into a command
         $file->setProcessed(true);
-        $this->getEm()->persist($file);
-        $this->getEm()->flush($file);
+        $this->em->persist($file);
+        $this->em->flush($file);
 
         return true;
     }
@@ -434,7 +434,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     public function getUnprocessedFiles(): Collection
     {
-        return $this->getFileRepository()->findUnprocessed();
+        return $this->fileRepository->findUnprocessed();
     }
 
     /**
@@ -480,7 +480,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
-        $processingMethod = $processingMap->get($this->getParser()->name);
+        $processingMethod = $processingMap->get($this->parser->name);
         if (empty($processingMethod) || !method_exists($this, $processingMethod)) {
             return;
         }
