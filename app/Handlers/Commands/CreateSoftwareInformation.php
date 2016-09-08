@@ -69,15 +69,15 @@ class CreateSoftwareInformation extends CommandHandler
             throw new AssetNotFoundException("No Asset with the given ID was found in the database");
         }
 
-        // Make sure the authenticated User has permission to add/edit information related to the given Vulnerability
+        // Make sure the authenticated User has permission to add/edit information related to the given Asset
         if ($requestingUser->cannot(ComponentPolicy::ACTION_UPDATE, $asset)) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to"
-                . " add a Vulnerability Reference to the given Vulnerability"
+                . " add Software Information to the given Asset"
             );
         }
 
-        // Check if this Software Information already exists for this Vulnerability and if so, exit early
+        // Check if this Software Information already exists for this Asset and if so, exit early
         $softwareInformation = $this->getSoftwareInformationRepository()->findOneBy($details);
         if (!empty($softwareInformation) && $softwareInformation instanceof SoftwareInformation) {
             return $softwareInformation;
