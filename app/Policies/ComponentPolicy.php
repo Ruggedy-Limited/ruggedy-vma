@@ -54,7 +54,7 @@ class ComponentPolicy
         }
 
         $teamHasPermissions = $user->getTeam()->getPermissions()->exists(
-            function ($permission) use ($component, $requiredPermission) {
+            function ($offset, $permission) use ($component, $requiredPermission) {
                 return $this->iterateComponentHierarchy($component, $permission, $requiredPermission);
             }
         );
