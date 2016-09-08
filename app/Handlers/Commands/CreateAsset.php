@@ -67,7 +67,7 @@ class CreateAsset extends CommandHandler
 
         // Make sure the given Workspace exists
         /** @var Workspace $workspace */
-        $workspace = $this->getWorkspaceRepository()->find($workspaceId);
+        $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace)) {
             throw new WorkspaceNotFoundException("No Workspace with the given ID was found in the database");
         }
@@ -82,7 +82,7 @@ class CreateAsset extends CommandHandler
         // Set the Workspace ID
         $details[Asset::WORKSPACE_ID] = $workspaceId;
         // Create a new Asset or find a matching existing Asset
-        $asset = $this->getAssetRepository()->findOrCreateOneBy($details);
+        $asset = $this->assetRepository->findOrCreateOneBy($details);
 
         // If this is a deleted or suppressed Asset then don't persist any changes but return the Asset as is
         if ($asset->getDeleted() || $asset->getSuppressed()) {
@@ -94,8 +94,8 @@ class CreateAsset extends CommandHandler
         $asset->setUser($workspace->getUser());
 
         // Persist the new Asset to the database
-        $this->getEm()->persist($asset);
-        $this->getEm()->flush($asset);
+        $this->em->persist($asset);
+        $this->em->flush($asset);
 
         return $asset;
     }

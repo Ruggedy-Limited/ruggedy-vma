@@ -57,7 +57,7 @@ class EditProject extends CommandHandler
 
         // Make sure the Project exists
         /** @var Project $project */
-        $project = $this->getProjectRepository()->find($projectId);
+        $project = $this->projectRepository->find($projectId);
         if (empty($project) || !empty($project->getDeleted())) {
             throw new ProjectNotFoundException("The Project was not found or has been deleted");
         }
@@ -69,8 +69,8 @@ class EditProject extends CommandHandler
 
         // Set the changes on the Project entity and save it
         $project->setFromArray($requestedChanges);
-        $this->getEm()->persist($project);
-        $this->getEm()->flush($project);
+        $this->em->persist($project);
+        $this->em->flush($project);
 
         return $project;
     }

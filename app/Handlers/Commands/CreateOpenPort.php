@@ -67,7 +67,7 @@ class CreateOpenPort extends CommandHandler
 
         // Make sure the given Asset exists
         /** @var Asset $asset */
-        $asset = $this->getAssetRepository()->find($assetId);
+        $asset = $this->assetRepository->find($assetId);
         if (empty($asset) || $asset->getDeleted()) {
             throw new AssetNotFoundException("No Asset with the given ID was found in the database");
         }
@@ -86,7 +86,7 @@ class CreateOpenPort extends CommandHandler
 
         // See if a record of this open port already exists for this Asset and if so, exit early
         $details[OpenPort::ASSET_ID] = $assetId;
-        $openPort = $this->getOpenPortRepository()->findOneBy($details);
+        $openPort = $this->openPortRepository->findOneBy($details);
         if (!empty($openPort) && $openPort instanceof OpenPort) {
             return $openPort;
         }
@@ -96,11 +96,11 @@ class CreateOpenPort extends CommandHandler
         $openPort->setAsset($asset);
 
         // Persist the new OpenPort to the database
-        $this->getEm()->persist($openPort);
+        $this->em->persist($openPort);
 
         // Save immediately if we're not in multi-mode
         if (!$command->isMultiMode()) {
-            $this->getEm()->flush($openPort);
+            $this->em->flush($openPort);
         }
 
         return $openPort;

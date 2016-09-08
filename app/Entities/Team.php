@@ -90,6 +90,6 @@ class Team extends Base\Team implements SystemComponent, HasComponentPermissions
      */
     public function personIsInTeam(User $user)
     {
-        return $this->getUsers()->contains($user);
+        return $this->users->contains($user);
     }
 }

@@ -56,6 +56,6 @@ class File extends Base\File implements SystemComponent
      */
     function getParent()
     {
-        return $this->getAsset();
+        return $this->asset;
     }
 }

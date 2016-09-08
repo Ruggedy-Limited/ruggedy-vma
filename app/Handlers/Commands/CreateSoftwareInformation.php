@@ -64,7 +64,7 @@ class CreateSoftwareInformation extends CommandHandler
 
         // Make sure the given Vulnerability exists
         /** @var Asset $asset */
-        $asset = $this->getAssetRepository()->find($assetId);
+        $asset = $this->assetRepository->find($assetId);
         if (empty($asset)) {
             throw new AssetNotFoundException("No Asset with the given ID was found in the database");
         }
@@ -78,7 +78,7 @@ class CreateSoftwareInformation extends CommandHandler
         }
 
         // Check if this Software Information already exists for this Asset and if so, exit early
-        $softwareInformation = $this->getSoftwareInformationRepository()->findOneBy($details);
+        $softwareInformation = $this->softwareInformationRepository->findOneBy($details);
         if (!empty($softwareInformation) && $softwareInformation instanceof SoftwareInformation) {
             return $softwareInformation;
         }
@@ -89,11 +89,11 @@ class CreateSoftwareInformation extends CommandHandler
         $asset->addSoftwareInformation($softwareInformation);
 
         // Persist the new Asset to the database
-        $this->getEm()->persist($asset);
+        $this->em->persist($asset);
 
         // Save immediately if we're not in multi-mode
         if (!$command->isMultiMode()) {
-            $this->getEm()->flush($asset);
+            $this->em->flush($asset);
         }
 
         return $softwareInformation;

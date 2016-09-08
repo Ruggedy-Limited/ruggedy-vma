@@ -11,5 +11,5 @@ interface CollectsPortInformation
      *
      * @return Collection
      */
-    function getMethodsRequiringAPortId(): Collection;
+    public function getMethodsRequiringAPortId(): Collection;
 }

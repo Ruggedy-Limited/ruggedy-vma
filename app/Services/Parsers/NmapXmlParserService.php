@@ -162,7 +162,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function getXmlNodeAccuracyAttributeValue()
     {
-        return $this->getParser()->getAttribute(self::XML_ATTRIBUTE_ACCURACY);
+        return $this->parser->getAttribute(self::XML_ATTRIBUTE_ACCURACY);
     }
 
     /**
@@ -193,11 +193,11 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
         );
 
         // Get the name of the current node to use as an index for the accuracy value
-        $nodeName = $this->getParser()->name;
+        $nodeName = $this->parser->name;
 
         // If accuracy is invalid or less than the current accuracy for this attribute, return null so that nothing
         // nothing further is done on this node
-        if (!$accuracyIsValid || $accuracy <= $this->getModel()->getCurrentAccuracyFor($nodeName)) {
+        if (!$accuracyIsValid || $accuracy <= $this->model->getCurrentAccuracyFor($nodeName)) {
             return false;
         }
 
@@ -206,7 +206,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
         // Set the accuracy to the value of the accuracy attribute for this node
         // and return true so that it is added to the model
-        $this->getModel()->setCurrentAccuracyFor($nodeName, intval($accuracy));
+        $this->model->setCurrentAccuracyFor($nodeName, intval($accuracy));
 
         return true;
     }
@@ -217,12 +217,12 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     protected function extractCpe()
     {
         // only check osclass nodes
-        if (!$nodeName = $this->getParser()->name !== 'osclass') {
+        if (!$nodeName = $this->parser->name !== 'osclass') {
             return false;
         }
 
         // Expand the XML node into a DOMNode so that we can extract the text value
-        $domNode = $this->getParser()->expand();
+        $domNode = $this->parser->expand();
         /** @var \DOMNode $childNode */
         foreach ($domNode->childNodes as $childNode) {
             // Only attempt extract from nodes named 'cpe' that have a text value
@@ -230,7 +230,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                 continue;
             }
 
-            $validationRules = $this->getFileToSchemaMapping()
+            $validationRules = $this->fileToSchemaMapping
                 ->get(self::XML_NODE_NAME_CPE)
                 ->get(self::MAP_ATTRIBUTE_VALIDATION);
 
@@ -242,7 +242,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
             }
 
             // Set the CPE on the model
-            $this->getModel()->setCpe($childNode->nodeValue);
+            $this->model->setCpe($childNode->nodeValue);
         }
 
         return true;
@@ -275,8 +275,8 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function setValueOnModel($attributeValue, string $setter)
     {
-        if ($this->getModel()->getMethodsRequiringAPortId()->contains($setter)) {
-            $this->getModel()->$setter($this->getCurrentPortNumber(), $attributeValue);
+        if ($this->model->getMethodsRequiringAPortId()->contains($setter)) {
+            $this->model->$setter($this->currentPortNumber, $attributeValue);
             return;
         }
 
@@ -319,9 +319,9 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function removePortAndMoveOnToNext()
     {
-        $this->getModel()->removePort($this->getCurrentPortNumber());
-        while ($this->getParser()->name !== self::XML_NODE_NAME_PORT && $this->getParser()->name !== self::XML_NODE_NAME_OS) {
-            $this->getParser()->next();
+        $this->model->removePort($this->currentPortNumber);
+        while ($this->parser->name !== self::XML_NODE_NAME_PORT && $this->parser->name !== self::XML_NODE_NAME_OS) {
+            $this->parser->next();
         }
     }
 

@@ -58,7 +58,7 @@ class CreateProject extends CommandHandler
         // Assign the Project Owner
         $projectOwner = $requestingUser;
         if ($requestingUser->getId() !== $userId) {
-            $projectOwner = $this->getUserRepository()->find($userId);
+            $projectOwner = $this->userRepository->find($userId);
         }
 
         // Exit if the Project owner does not exist in the database
@@ -84,8 +84,8 @@ class CreateProject extends CommandHandler
         $requestingUser->addProject($project);
 
         // Persist the Project in the Database
-        $this->getEm()->persist($project);
-        $this->getEm()->flush($project);
+        $this->em->persist($project);
+        $this->em->flush($project);
 
         return $project->toStdClass([
             'id', 'name', 'user_id'

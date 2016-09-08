@@ -94,7 +94,7 @@ class Asset extends Base\Asset implements SystemComponent
      */
     public function getParent()
     {
-        return $this->getWorkspace();
+        return $this->workspace;
     }
 
     /**

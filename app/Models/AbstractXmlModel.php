@@ -184,8 +184,8 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     public function setPortId(int $portId): PortModel
     {
         // Check if there is already an Open Port at the given portId offset in the Collection
-        if (!empty($this->getOpenPorts()->get($portId))) {
-            return $this->getOpenPorts()->get($portId);
+        if (!empty($this->openPorts->get($portId))) {
+            return $this->openPorts->get($portId);
         }
 
         // Create a new PortModel, set the ID and add to the Collection of ports on this Model

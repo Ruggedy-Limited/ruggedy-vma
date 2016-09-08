@@ -26,6 +26,6 @@ class Workspace extends Base\Workspace implements SystemComponent
      */
     public function getParent()
     {
-        return $this->getProject();
+        return $this->project;
     }
 }

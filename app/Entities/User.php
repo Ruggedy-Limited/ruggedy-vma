@@ -36,7 +36,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      */
     public function ownsTeam(Team $team)
     {
-        return $this->getTeams()->contains($team);
+        return $this->teams->contains($team);
     }
 
     /**
@@ -95,7 +95,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      */
     public function getParent()
     {
-        return $this->getTeam();
+        return $this->team;
     }
 
     /**
@@ -113,7 +113,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      */
     public function getAuthIdentifier()
     {
-        return $this->getId();
+        return $this->id;
     }
 
     /**
@@ -122,7 +122,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      */
     public function getAuthPassword()
     {
-        return $this->getPassword();
+        return $this->password;
     }
 
     /**

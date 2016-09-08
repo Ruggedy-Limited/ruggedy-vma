@@ -24,7 +24,7 @@ class OpenPort extends Base\OpenPort implements SystemComponent
      */
     function getUser()
     {
-        return $this->getFile()->getUser();
+        return $this->file->getUser();
     }
 
     /**
@@ -32,6 +32,6 @@ class OpenPort extends Base\OpenPort implements SystemComponent
      */
     function getParent()
     {
-        return $this->getAsset();
+        return $this->asset;
     }
 }

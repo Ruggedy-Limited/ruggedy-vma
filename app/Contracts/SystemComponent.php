@@ -16,19 +16,19 @@ interface SystemComponent
      *
      * @return int
      */
-    function getId();
+    public function getId();
 
     /**
      * Get the owning User entity
      *
      * @return User
      */
-    function getUser();
+    public function getUser();
 
     /**
      * Get the parent Entity of this one
      *
      * @return SystemComponent|null
      */
-    function getParent();
+    public function getParent();
 }

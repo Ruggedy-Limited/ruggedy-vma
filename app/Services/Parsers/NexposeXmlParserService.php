@@ -144,8 +144,8 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      */
     protected function setValueOnModel($attributeValue, string $setter)
     {
-        if ($this->getModel()->getMethodsRequiringAPortId()->contains($setter)) {
-            $this->getModel()->$setter($this->getCurrentPortNumber(), $attributeValue);
+        if ($this->model->getMethodsRequiringAPortId()->contains($setter)) {
+            $this->model->$setter($this->currentPortNumber, $attributeValue);
             return;
         }
 
@@ -173,7 +173,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      */
     protected function resetSoftwareInformationModel()
     {
-        $this->getModel()->setTempSoftwareInformation(new SoftwareInformationModel());
+        $this->model->setTempSoftwareInformation(new SoftwareInformationModel());
     }
 
     /**
@@ -181,17 +181,17 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      */
     protected function addSoftwareInformationModelToCollection()
     {
-        if (empty($this->getModel()->getTempSoftwareInformation())
-            || !($this->getModel()->getTempSoftwareInformation() instanceof SoftwareInformationModel)) {
+        if (empty($this->model->getTempSoftwareInformation())
+            || !($this->model->getTempSoftwareInformation() instanceof SoftwareInformationModel)) {
             return;
         }
 
-        $hash = $this->getModel()->getTempSoftwareInformation()->getHash();
+        $hash = $this->model->getTempSoftwareInformation()->getHash();
         if (empty($hash)) {
             return;
         }
 
-        $this->getModel()->addSoftwareInformationFromTemp();
+        $this->model->addSoftwareInformationFromTemp();
     }
 
     /**

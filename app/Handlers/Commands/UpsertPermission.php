@@ -40,10 +40,10 @@ class UpsertPermission extends AbstractPermissionHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        $this->getService()->initialise($componentName, $id, $userId);
+        $this->service->initialise($componentName, $id, $userId);
 
         // Validate the permissions
-        if (!$this->getService()->getValidPermissions()->contains($permission)) {
+        if (!$this->service->getValidPermissions()->contains($permission)) {
             throw new InvalidPermissionException("The given value for 'permission' is not a valid permission option");
         }
 
@@ -51,16 +51,11 @@ class UpsertPermission extends AbstractPermissionHandler
         $permissionEntity = $this->findOrCreatePermissionEntity($id, $permission);
         
         // Save the new permission to the database
-        $this->getEm()->persist($permissionEntity);
-        $this->getEm()->flush($permissionEntity);
+        $this->em->persist($permissionEntity);
+        $this->em->flush($permissionEntity);
         
         // Get all the permissions for this component instance to return
-        $componentInstancePermissions = $this->getService()
-            ->getComponentPermissionRepository()
-            ->findByComponentAndComponentInstanceId(
-                $this->getService()->getComponent()->getId(),
-                $this->getService()->getComponentInstance()->getId()
-            );
+        $componentInstancePermissions = $this->service->getPermissionsByComponentAndComponentInstanceId();
 
         // Create a collection containing the created permission and a Collection
         // of all the permissions related to the component instance

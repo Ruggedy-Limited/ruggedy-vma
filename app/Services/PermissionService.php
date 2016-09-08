@@ -110,7 +110,7 @@ class PermissionService
 
         // Get the component in order to get the component's Doctrine entity class
         /** @var Component $component */
-        $component = $this->getComponentRepository()->findOneByComponentName($componentName);
+        $component = $this->componentRepository->findOneByComponentName($componentName);
         if (empty($component)) {
             throw new ComponentNotFoundException("The given component name is not valid");
         }
@@ -128,7 +128,7 @@ class PermissionService
      */
     protected function fetchAndSetComponentInstance(int $id)
     {
-        $component = $this->getComponent();
+        $component = $this->component;
         if (empty($component) || !($component instanceof Component)) {
             throw new InvalidInputException("One or more required members were not set on the command handler");
         }
@@ -136,7 +136,7 @@ class PermissionService
         // Get an EntityRepository for the component instance
         $entityClass      = $component->getClassName();
         $entityNamespace  = env('APP_MODEL_NAMESPACE');
-        $entityRepository = $this->getEm()->getRepository($entityNamespace . "\\" . $entityClass);
+        $entityRepository = $this->em->getRepository($entityNamespace . "\\" . $entityClass);
         if (empty($entityRepository) || !($entityRepository instanceof EntityRepository)) {
             throw new InvalidComponentEntityException("Could not create an EntityRepository"
                 . " from the entity class name");
@@ -173,7 +173,7 @@ class PermissionService
         $user = Auth::user();
 
         /** @var User $componentOwner */
-        $componentOwner = $this->getComponentInstance()->getUser();
+        $componentOwner = $this->componentInstance->getUser();
         if (empty($user) || $user->getId() !== $componentOwner->getId()) {
             throw new ActionNotPermittedException("The authenticated User is not the owner and cannot set permissions");
         }
@@ -191,12 +191,25 @@ class PermissionService
     {
         // Get the User that the permissions are being created for
         /** @var User $user */
-        $user = $this->getUserRepository()->find($userId);
+        $user = $this->userRepository->find($userId);
         if (empty($user)) {
             throw new UserNotFoundException("A User with that ID does not exist");
         }
 
         $this->setUser($user);
+    }
+
+    /**
+     * Get permission for a particular component
+     *
+     * @return Collection
+     */
+    public function getPermissionsByComponentAndComponentInstanceId()
+    {
+        return $this->componentPermissionRepository->findByComponentAndComponentInstanceId(
+            $this->component->getId(),
+            $this->componentInstance->getId()
+        );
     }
 
     /**

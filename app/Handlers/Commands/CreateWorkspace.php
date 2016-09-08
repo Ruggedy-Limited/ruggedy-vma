@@ -59,7 +59,7 @@ class CreateWorkspace extends CommandHandler
 
         // Check that the parent Project exists
         /** @var Project $project */
-        $project = $this->getProjectRepository()->find($projectId);
+        $project = $this->projectRepository->find($projectId);
         if (empty($project) || $project->getDeleted() === AbstractEntity::IS_DELETED) {
             throw new ProjectNotFoundException("The Project was not found or has been deleted");
         }
@@ -76,8 +76,8 @@ class CreateWorkspace extends CommandHandler
         $workspace->setProject($project);
         $workspace->setDeleted(false);
         
-        $this->getEm()->persist($workspace);
-        $this->getEm()->flush($workspace);
+        $this->em->persist($workspace);
+        $this->em->flush($workspace);
         
         return $workspace;
     }

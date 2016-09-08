@@ -6,6 +6,7 @@ use App\Commands\GetAssetsMasterList as GetAssetsMasterListCommand;
 use App\Entities\Asset;
 use App\Repositories\AssetRepository;
 use Doctrine\ORM\EntityManager;
+use Exception;
 
 class GetAssetsMasterList extends CommandHandler
 {
@@ -31,8 +32,8 @@ class GetAssetsMasterList extends CommandHandler
      * Handle the GetAssetsMasterList command
      *
      * @param GetAssetsMasterListCommand $command
-     * @return \Illuminate\Support\Collection
-     * @throws \Exception
+     * @return array
+     * @throws Exception
      */
     public function handle(GetAssetsMasterListCommand $command)
     {
@@ -44,14 +45,10 @@ class GetAssetsMasterList extends CommandHandler
 
         // No command parameters are needed as we are just
         // fetching all the assets owned by the authenticated User
-        return $requestingUser->getAssets()->map(function ($asset) {
-            // Exclude deleted Assets
+        return $requestingUser->getAssets()->filter(function ($asset) {
             /** @var Asset $asset */
-             if ($asset->getDeleted()) {
-                 return false;
-             }
-
-            return $asset;
+            // Exclude deleted Assets
+             return $asset->getDeleted() !== true && $asset->getSuppressed() !== true;
         })->toArray();
     }
 
