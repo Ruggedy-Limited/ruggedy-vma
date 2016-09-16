@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entities\ScannerApp;
+use App\Repositories\AssetRepository;
 use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\Parsers\BurpXmlParserService;
 use App\Services\Parsers\NexposeXmlParserService;
@@ -25,6 +26,9 @@ class XmlParserFactoryService
 
     /** @var Factory */
     protected static $validatorFactory;
+
+    /** @var AssetRepository */
+    protected static $assetRepository;
 
     /** @var FileRepository */
     protected static $fileRepository;
@@ -72,7 +76,7 @@ class XmlParserFactoryService
 
         // Create a new instance of the required service
         $service = new $serviceClassname(
-            static::$parser, static::$fileSystem, static::$validatorFactory,
+            static::$parser, static::$fileSystem, static::$validatorFactory, static::$assetRepository,
             static::$fileRepository, static::$em, static::$logger
         );
 
@@ -91,6 +95,7 @@ class XmlParserFactoryService
         static::$parser           = App::make(XMLReader::class);
         static::$fileSystem       = App::make(Filesystem::class);
         static::$validatorFactory = App::make(Factory::class);
+        static::$assetRepository  = App::make(AssetRepository::class);
         static::$fileRepository   = App::make(FileRepository::class);
         static::$em               = App::make(EntityManager::class);
         static::$logger           = App::make(JsonLogService::class);

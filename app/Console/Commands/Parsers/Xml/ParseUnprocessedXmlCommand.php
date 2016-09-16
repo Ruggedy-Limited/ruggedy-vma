@@ -239,23 +239,6 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
             OpenPort::class, CreateOpenPort::class, $openPortDetails, $asset, $counters, $file
         );
 
-        /* Iterate over all Open Port entries that were found in the file
-        $openPortDetails->each(function ($openPortDetails, $offset) use ($file, $asset, $counters) {
-            // Call the CreateOpenPort command for each Open Port found in the XML
-            $openPort = $this->sendCommandToBus(
-                CreateOpenPort::class, $asset->getId(), $openPortDetails, $file, true
-            );
-
-            // If we did not get an OpenPort entity from the command increment the failed counter
-            if (empty($openPort) || !($openPort instanceof OpenPort)) {
-                return true;
-            }
-
-            // If we got an OpenPort entity from the command increment the counter
-            $counters->get(OpenPort::class)->put($openPort->getId(), true);
-            return true;
-        });*/
-
         // Save the software information for this Asset
         $this->prepareDetailsForCommandAndSend(
             SoftwareInformation::class, CreateSoftwareInformation::class, $softwareInformation, $asset, $counters
