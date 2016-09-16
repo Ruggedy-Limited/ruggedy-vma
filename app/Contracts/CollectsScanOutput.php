@@ -21,6 +21,13 @@ interface CollectsScanOutput
     public function exportForVulnerability(): Collection;
 
     /**
+     * Export multiple Vulnerabilities as Collection
+     *
+     * @return Collection
+     */
+    public function exportForVulnerabilities(): Collection;
+
+    /**
      * Get the Vulnerability Reference related data as a Collection
      *
      * @return Collection
