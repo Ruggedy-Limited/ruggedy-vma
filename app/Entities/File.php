@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use App\Contracts\SystemComponent;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Collection;
 
@@ -23,6 +24,49 @@ class File extends Base\File implements SystemComponent
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $user;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files")
+     * @ORM\JoinTable(name="files_assets")
+     */
+    protected $assets;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files")
+     * @ORM\JoinTable(name="files_vulnerabilities")
+     */
+    protected $vulnerabilities;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="VulnerabilityReferenceCode", inversedBy="files")
+     * @ORM\JoinTable(name="files_vulnerability_reference_codes")
+     */
+    protected $vulnerabilityReferenceCodes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files")
+     * @ORM\JoinTable(name="files_open_ports")
+     */
+    protected $openPorts;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files")
+     * @ORM\JoinTable(name="files_software_information")
+     */
+    protected $softwareInformation;
+
+    /**
+     * File constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->assets                      = new ArrayCollection();
+        $this->vulnerabilities             = new ArrayCollection();
+        $this->vulnerabilityReferenceCodes = new ArrayCollection();
+        $this->openPorts                   = new ArrayCollection();
+        $this->softwareInformation         = new ArrayCollection();
+    }
 
     /**
      * Get a Collection of valid file types
@@ -51,11 +95,100 @@ class File extends Base\File implements SystemComponent
 
     /**
      * @inheritdoc
-     *
-     * @return Base\Asset
+     * @return Base\User
      */
-    function getParent()
+    public function getParent()
     {
-        return $this->asset;
+        return $this->getUser();
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    public function addAsset(Asset $asset)
+    {
+        $asset->addFile($this); // synchronously updating inverse side
+        $this->assets[] = $asset;
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    public function removeAsset(Asset $asset)
+    {
+        $asset->removeFile($this); // synchronously updating inverse side
+        $this->assets->removeElement($asset);
+    }
+
+    /**
+     * @param Vulnerability $vulnerability
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $vulnerability->addFile($this); // synchronously updating inverse side
+        $this->vulnerabilities[] = $vulnerability;
+    }
+
+    /**
+     * @param Vulnerability $vulnerability
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $vulnerability->removeFile($this); // synchronously updating inverse side
+        $this->vulnerabilities->removeElement($vulnerability);
+    }
+
+    /**
+     * @param VulnerabilityReferenceCode $vulnerabilityReferenceCode
+     */
+    public function addVulnerabilityReferenceCode(VulnerabilityReferenceCode $vulnerabilityReferenceCode)
+    {
+        $vulnerabilityReferenceCode->addFile($this); // synchronously updating inverse side
+        $this->vulnerabilityReferenceCodes[] = $vulnerabilityReferenceCode;
+    }
+
+    /**
+     * @param VulnerabilityReferenceCode $vulnerabilityReferenceCode
+     */
+    public function removeVulnerabilityReferenceCode(VulnerabilityReferenceCode $vulnerabilityReferenceCode)
+    {
+        $vulnerabilityReferenceCode->removeFile($this); // synchronously updating inverse side
+        $this->vulnerabilityReferenceCodes->removeElement($vulnerabilityReferenceCode);
+    }
+
+    /**
+     * @param OpenPort $openPort
+     */
+    public function addOpenPort(OpenPort $openPort)
+    {
+        $openPort->addFile($this); // synchronously updating inverse side
+        $this->openPorts[] = $openPort;
+    }
+
+    /**
+     * @param OpenPort $openPort
+     */
+    public function removeOpenPort(OpenPort $openPort)
+    {
+        $openPort->removeFile($this); // synchronously updating inverse side
+        $this->openPorts->removeElement($openPort);
+    }
+
+    /**
+     * @param SoftwareInformation $softwareInformation
+     */
+    public function addSoftwareInformation(SoftwareInformation $softwareInformation)
+    {
+        $softwareInformation->addFile($this); // synchronously updating inverse side
+        $this->softwareInformation[] = $softwareInformation;
+    }
+
+    /**
+     * @param SoftwareInformation $softwareInformation
+     */
+    public function removeSoftwareInformation(SoftwareInformation $softwareInformation)
+    {
+        $softwareInformation->removeFile($this);
+        $this->softwareInformation->removeElement($softwareInformation);
     }
 }

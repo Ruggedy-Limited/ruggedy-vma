@@ -2,7 +2,8 @@
 
 namespace App\Entities;
 
-use App\Contracts\SystemComponent;
+use App\Contracts\HasIdColumn;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,27 +12,49 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repositories\OpenPortRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class OpenPort extends Base\OpenPort implements SystemComponent
+class OpenPort extends Base\OpenPort implements HasIdColumn
 {
     /**
-     * @ORM\ManyToOne(targetEntity="File", inversedBy="openPorts", cascade={"persist"}, fetch="EAGER")
-     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="open_ports")
      */
-    protected $file;
+    protected $files;
+
+    /**
+     * OpenPort constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->files = new ArrayCollection();
+    }
 
     /**
      * @return Base\User
      */
     function getUser()
     {
-        return $this->file->getUser();
+        return $this->getFile()->getUser();
     }
 
     /**
-     * @return Base\Asset
+     * @param File $file
+     * @return $this
      */
-    function getParent()
+    public function addFile(File $file)
     {
-        return $this->asset;
+        $this->files[] = $file;
+
+        return $this;
+    }
+
+    /**
+     * @param File $file
+     * @return $this
+     */
+    public function removeFile(File $file)
+    {
+        $this->files->removeElement($file);
+
+        return $this;
     }
 }

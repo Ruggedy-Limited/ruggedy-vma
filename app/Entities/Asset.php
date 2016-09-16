@@ -2,6 +2,8 @@
 
 namespace App\Entities;
 
+use App\Contracts\HasIdColumn;
+use App\Contracts\RelatesToFiles;
 use App\Contracts\SystemComponent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,12 +15,12 @@ use Illuminate\Support\Collection;
  * @ORM\Entity(repositoryClass="App\Repositories\AssetRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Asset extends Base\Asset implements SystemComponent
+class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesToFiles
 {
     /** Regular expressions used for validating the relevant Asset data fields */
     const REGEX_CPE         = '~(cpe:(\d)?(\.\d)?(/[aho])(([:]{1,3})([\pL\pN\pS_])+)*)~i';
     const REGEX_MAC_ADDRESS = '/^([0-9A-Fa-f]{2}[:-]{1}){5}([0-9A-Fa-f]{2})$/';
-    const REGEX_OS_VERSION  = '/(Linux|Mac|Windows)/';
+    const REGEX_OS_VERSION  = '/(Linux|Mac|Microsoft)/i';
 
     const REGEX_PROTOCOL    = '(((aaa|aaas|about|acap|acct|acr|adiumxtra|afp|afs|aim|apt|attachment|aw|barion'
         . '|beshare|bitcoin|blob|bolo|callto|cap|chrome|chrome-extension|cid|coap|coaps|com-eventbrite-attendee|content'
@@ -38,7 +40,7 @@ class Asset extends Base\Asset implements SystemComponent
         . '|webcal|ws|wss|wtai|wyciwyg|xcon|xcon-userid|xfire|xmlrpc\.beep|xmlrpc.beeps|xmpp|xri|ymsgr'
         . '|z39\.50|z39\.50r|z39\.50s))://)';
 
-    const REGEX_BASIC_AUTH  = '(([\pL\pN-]+:)?([\pL\pN-]+)@)';
+    const REGEX_BASIC_AUTH  = '(([\pL\pN\-]+:)?([\pL\pN\-]+)@)';
     const REGEX_PORT_NUMBER = '(:[0-9]+)';
 
     /**
@@ -49,9 +51,11 @@ class Asset extends Base\Asset implements SystemComponent
      */
     const REGEX_HOSTNAME    = '~^' . self::REGEX_PROTOCOL . '?' # protocol
         . self::REGEX_BASIC_AUTH . '?' # basic auth
-        . '([\pL\pN\pS-\.])+(\.?([\pL]|xn\-\-[\pL\pN-]+)+\.?)' # a domain name
+        . '([\pL\pN\pS\-\.])+(\.([\pL]|xn\-\-[\pL\pN\-]+)+\.?)' # a domain name
         . self::REGEX_PORT_NUMBER . '?' # a port (optional)
         . '(/?|/\S+|\?\S*|\#\S*)$~ixu'; # a /, nothing, a / with something, a query or a fragment
+
+    const REGEX_NETBIOS_NAME = "%^[^\\/:\*\?\"<>\|]+$%";
 
     /** Valid OS Vendor values */
     const OS_VENDOR_LINUX     = 'Linux';
@@ -79,12 +83,18 @@ class Asset extends Base\Asset implements SystemComponent
     protected $relatedSoftwareInformation;
 
     /**
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="assets")
+     */
+    protected $files;
+
+    /**
      * Asset constructor.
      */
     public function __construct()
     {
         parent::__construct();
         $this->relatedSoftwareInformation = new ArrayCollection();
+        $this->files                      = new ArrayCollection();
     }
 
     /**
@@ -128,6 +138,28 @@ class Asset extends Base\Asset implements SystemComponent
     }
 
     /**
+     * @param File $file
+     * @return $this
+     */
+    public function addFile(File $file)
+    {
+        $this->files[] = $file;
+
+        return $this;
+    }
+
+    /**
+     * @param File $file
+     * @return $this
+     */
+    public function removeFile(File $file)
+    {
+        $this->files->removeElement($file);
+
+        return $this;
+    }
+
+    /**
      * Get an array of valid OS vendors
      *
      * @return Collection
@@ -160,5 +192,15 @@ class Asset extends Base\Asset implements SystemComponent
     public static function getValidVendorsRegex(): string
     {
         return "/(" . static::getValidOsVendors()->implode("|") . ")/";
+    }
+
+    /**
+     * Get a SHA1 hash of the unique key of hostname, IPv4 address and netbios address
+     *
+     * @return string
+     */
+    public function getUniqueAssetHash()
+    {
+        return sha1($this->getHostname() . $this->getIpAddressV4() . $this->getNetbios());
     }
 }

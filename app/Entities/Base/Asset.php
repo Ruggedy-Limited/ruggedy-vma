@@ -137,12 +137,6 @@ class Asset extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="File", mappedBy="asset", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
-     */
-    protected $files;
-
-    /**
      * @ORM\OneToMany(targetEntity="OpenPort", mappedBy="asset", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
      */
@@ -168,7 +162,6 @@ class Asset extends AbstractEntity
 
     public function __construct()
     {
-        $this->files = new ArrayCollection();
         $this->openPorts = new ArrayCollection();
         $this->vulnerabilities = new ArrayCollection();
     }
@@ -608,42 +601,6 @@ class Asset extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
-    }
-
-    /**
-     * Add File entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\Asset
-     */
-    public function addFile(File $file)
-    {
-        $this->files[] = $file;
-
-        return $this;
-    }
-
-    /**
-     * Remove File entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\Asset
-     */
-    public function removeFile(File $file)
-    {
-        $this->files->removeElement($file);
-
-        return $this;
-    }
-
-    /**
-     * Get File entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getFiles()
-    {
-        return $this->files;
     }
 
     /**

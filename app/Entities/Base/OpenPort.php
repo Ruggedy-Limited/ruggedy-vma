@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\OpenPort
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="open_ports_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="open_ports_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="open_ports_asset_fk_idx", columns={"`asset_id`"})})
  */
 class OpenPort extends AbstractEntity
 {
@@ -76,11 +76,6 @@ class OpenPort extends AbstractEntity
     protected $asset_id;
 
     /**
-     * @ORM\Column(name="`file_id`", type="integer", options={"unsigned":true})
-     */
-    protected $file_id;
-
-    /**
      * @ORM\Column(name="`created_at`", type="datetime")
      */
     protected $created_at;
@@ -95,12 +90,6 @@ class OpenPort extends AbstractEntity
      * @ORM\JoinColumn(name="`asset_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $asset;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="File", inversedBy="openPorts", cascade={"persist"})
-     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
-     */
-    protected $file;
 
     public function __construct()
     {
@@ -314,29 +303,6 @@ class OpenPort extends AbstractEntity
     }
 
     /**
-     * Set the value of file_id.
-     *
-     * @param integer $file_id
-     * @return \App\Entities\Base\OpenPort
-     */
-    public function setFileId($file_id)
-    {
-        $this->file_id = $file_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of file_id.
-     *
-     * @return integer
-     */
-    public function getFileId()
-    {
-        return $this->file_id;
-    }
-
-    /**
      * Set the value of created_at.
      *
      * @param \DateTime $created_at
@@ -405,31 +371,8 @@ class OpenPort extends AbstractEntity
         return $this->asset;
     }
 
-    /**
-     * Set File entity (many to one).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\OpenPort
-     */
-    public function setFile(File $file = null)
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    /**
-     * Get File entity (many to one).
-     *
-     * @return \App\Entities\Base\File
-     */
-    public function getFile()
-    {
-        return $this->file;
-    }
-
     public function __sleep()
     {
-        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'asset_id', 'file_id', 'created_at', 'updated_at');
+        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'asset_id', 'created_at', 'updated_at');
     }
 }

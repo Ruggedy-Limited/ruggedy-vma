@@ -84,6 +84,16 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     }
 
     /**
+     * Alias for the toArray function when using an Entity as a model during parsing
+     *
+     * @return array
+     */
+    public function export()
+    {
+        return $this->toArray();
+    }
+
+    /**
      * Set the values of the entity by passing in an array
      *
      * @param array $params
