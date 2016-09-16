@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Contracts\CollectsScanOutput;
 use App\Entities\Asset;
+use App\Entities\Vulnerability;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 abstract class AbstractXmlModel implements CollectsScanOutput
@@ -26,8 +28,17 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     /** @var Collection */
     protected $softwareInformation;
 
+    /** @var Collection */
+    protected $vulnerabilities;
+
+    /** @var Vulnerability */
+    protected $tempVulnerability;
+
     /** @var SoftwareInformationModel */
     protected $tempSoftwareInformation;
+
+    /** @var Collection */
+    protected $accuracies;
 
     /** @var Collection */
     protected $exportForAssetMap;
@@ -54,12 +65,12 @@ abstract class AbstractXmlModel implements CollectsScanOutput
         $this->openPorts               = new Collection();
         $this->methodsRequiringAPortId = new Collection();
         $this->softwareInformation     = new Collection();
+        $this->vulnerabilities         = new Collection();
+        $this->accuracies              = new Collection();
 
         // Initialise the other possible Model to Entity mappings
         $this->exportForVulnerabilityMap       = new Collection();
         $this->exportForVulnerabilityRefsMap   = new Collection();
-        $this->exportForOpenPortMap            = new Collection();
-        $this->exportForSoftwareInformationMap = new Collection();
     }
 
     /**
@@ -371,6 +382,195 @@ abstract class AbstractXmlModel implements CollectsScanOutput
     /**
      * @return Collection
      */
+    public function getVulnerabilities(): Collection
+    {
+        return $this->vulnerabilities;
+    }
+
+    /**
+     * @param Collection $vulnerabilities
+     */
+    public function setVulnerabilities(Collection $vulnerabilities)
+    {
+        $this->vulnerabilities = $vulnerabilities;
+    }
+
+    /**
+     * Add the temporary Vulnerability entity to the Collection for Vulnerabilities for this model
+     *
+     * @return Vulnerability
+     */
+    public function addVulnerabilityFromTemp(): Vulnerability
+    {
+        $id = $this->tempVulnerability->getIdFromScanner();
+        if (!empty($this->vulnerabilities->get($id))) {
+            return $this->vulnerabilities->get($id);
+        }
+
+        $this->vulnerabilities->put($id, $this->tempVulnerability);
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * Remove a Vulnerability from the Collection of Vulnerability
+     *
+     * @param Vulnerability $vulnerability
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities->offsetUnset($vulnerability->getIdFromScanner());
+    }
+
+    /**
+     * @param string $vulnerabilityName
+     * @return Vulnerability
+     */
+    public function setVulnerabilityName(string $vulnerabilityName)
+    {
+        $this->tempVulnerability->setName($vulnerabilityName);
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $vulnerabilityId
+     * @return Vulnerability
+     */
+    public function setVulnerabilityId(string $vulnerabilityId)
+    {
+        $this->tempVulnerability->setIdFromScanner($vulnerabilityId);
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $exploit
+     * @return Vulnerability
+     */
+    public function setExploit(string $exploit)
+    {
+        $this->tempVulnerability->setExploitDescription($exploit);
+        $this->tempVulnerability->setExploitAvailable(true);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $malware
+     * @return Vulnerability
+     */
+    public function setMalware(string $malware)
+    {
+        $this->tempVulnerability->setMalwareDescription($malware);
+        $this->tempVulnerability->setMalwareAvailable(true);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $severity
+     * @return Vulnerability
+     */
+    public function setSeverity(string $severity)
+    {
+        $this->tempVulnerability->setSeverity($severity);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param float $cvssScore
+     * @return Vulnerability
+     */
+    public function setCvssScore(float $cvssScore)
+    {
+        $this->tempVulnerability->setCvssScore($cvssScore);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $description
+     * @return Vulnerability
+     */
+    public function setVulnerabilityDescription(string $description)
+    {
+        $this->tempVulnerability->setDescription($description);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $solution
+     * @return Vulnerability
+     */
+    public function setSolution(string $solution)
+    {
+        $this->tempVulnerability->setSolution($solution);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string $genericOutput
+     * @return Vulnerability
+     */
+    public function setGenericOutput(string $genericOutput)
+    {
+        $this->tempVulnerability->setGenericOutput($genericOutput);
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string|Carbon $publishedDate
+     * @return Vulnerability
+     */
+    public function setPublishedDate($publishedDate)
+    {
+        if ($publishedDate instanceof Carbon) {
+            $this->tempVulnerability->setPublishedDateFromScanner($publishedDate);
+            return $this->tempVulnerability;
+        }
+
+        $this->tempVulnerability->setPublishedDateFromScanner(new Carbon($publishedDate));
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param string|Carbon $lastModifiedDate
+     * @return Vulnerability
+     */
+    public function setLastModifiedDate($lastModifiedDate)
+    {
+        if ($lastModifiedDate instanceof Carbon) {
+            $this->tempVulnerability->setModifiedDateFromScanner($lastModifiedDate);
+            return $this->tempVulnerability;
+        }
+
+        $this->tempVulnerability->setModifiedDateFromScanner(new Carbon($lastModifiedDate));
+
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @return Vulnerability
+     */
+    public function getTempVulnerability(): Vulnerability
+    {
+        return $this->tempVulnerability;
+    }
+
+    /**
+     * @param Vulnerability $tempVulnerability
+     */
+    public function setTempVulnerability(Vulnerability $tempVulnerability)
+    {
+        $this->tempVulnerability = $tempVulnerability;
+    }
+
+    /**
+     * @return Collection
+     */
     public function getExportForAssetMap(): Collection
     {
         return $this->exportForAssetMap;
@@ -401,6 +601,16 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      *
      * @return Collection
      */
+    public function exportForVulnerabilities(): Collection
+    {
+        return $this->exportModelCollection($this->vulnerabilities, Vulnerability::class);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return Collection
+     */
     public function exportForVulnerabilityReference(): Collection
     {
         $vulnerabilityRefs = $this->mapModelValuesForExport($this->exportForVulnerabilityRefsMap);
@@ -417,12 +627,7 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      */
     public function exportOpenPorts(): Collection
     {
-        return $this->openPorts->filter(function ($openPort) {
-            return !empty($openPort) && $openPort instanceof PortModel;
-        })->map(function ($openPort) {
-            /** @var $openPort PortModel */
-            return $openPort->export();
-        });
+        return $this->exportModelCollection($this->openPorts, PortModel::class);
     }
 
     /**
@@ -432,11 +637,22 @@ abstract class AbstractXmlModel implements CollectsScanOutput
      */
     public function exportSoftwareInformation(): Collection
     {
-        return $this->softwareInformation->filter(function($software) {
-            return !empty($software) && $software instanceof SoftwareInformationModel;
-        })->map(function ($software) {
-            /** @var $software SoftwareInformationModel */
-            return $software->export();
+        return $this->exportModelCollection($this->softwareInformation, SoftwareInformationModel::class);
+    }
+
+    /**
+     * Export a model Collection
+     *
+     * @param Collection $modelCollection
+     * @param string $modelClass
+     * @return Collection
+     */
+    protected function exportModelCollection(Collection $modelCollection, string $modelClass): Collection
+    {
+        return $modelCollection->filter(function($model) use ($modelClass) {
+            return !empty($model) && $model instanceof $modelClass;
+        })->map(function ($model) {
+            return $model->export();
         });
     }
 
@@ -453,20 +669,14 @@ abstract class AbstractXmlModel implements CollectsScanOutput
             return $mappings;
         }
 
-        // Map the model values using the mapping of entity properties to model getters and then filter out
-        // any null/unset keys
-        return $mappings->map(function ($getter) {
+        // Filter out any invalid mappings and then map the model values using the
+        // mapping of entity properties to model getters
+        return $mappings->filter(function ($getter) {
             // Make sure the given getter method exists
-            if (!method_exists($this, $getter)) {
-                return null;
-            }
-
+            return !empty($getter) && method_exists($this, $getter);
+        })->map(function ($getter) {
             // Call the getter method
             return $this->$getter();
-
-        })->filter(function ($value) {
-            // Filter out unset items from the Collection
-            return isset($value);
         });
     }
 }

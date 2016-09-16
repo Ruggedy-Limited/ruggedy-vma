@@ -5,14 +5,26 @@ namespace App\Models;
 use App\Contracts\CollectsPortInformation;
 use App\Contracts\CollectsScanOutput;
 use App\Entities\Asset;
-use App\Entities\Vulnerability;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, CollectsPortInformation
 {
-    /** @var string */
+    /**
+     * "Microsoft" ends up in here for Microsoft servers, but the Linux distro, e.g. "Ubuntu" and not "Linux" gets
+     * captured here for Linux servers and "Linux" gets captured in $this->osFamily, so we have to capture both
+     *
+     * @var string
+     */
     protected $osVendor;
+
+    /**
+     * "Linux" ends up in here for Linux servers, but "Windows" and not "Microsoft" gets captured here for Microsoft
+     * servers and the Linux distro, e.g. "Ubuntu" and not "Linux gets capture in $this->osVendor, so we have to capture
+     * both
+     *
+     * @var string
+     */
+    protected $osFamily;
 
     /** @var string */
     protected $osVersion;
@@ -27,40 +39,7 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     protected $macAddress;
 
     /** @var string */
-    protected $vulnerabilityName;
-
-    /** @var string */
-    protected $vulnerabilityId;
-
-    /** @var string */
-    protected $exploit;
-
-    /** @var string */
-    protected $malware;
-
-    /** @var string */
-    protected $severity;
-
-    /** @var float */
-    protected $cvssScore;
-
-    /** @var string */
-    protected $description;
-
-    /** @var string */
-    protected $solution;
-
-    /** @var string */
-    protected $testInformation;
-
-    /** @var Carbon */
-    protected $publishedDate;
-
-    /** @var Carbon */
-    protected $lastModifiedDate;
-
-    /** @var Collection */
-    protected $accuracies;
+    protected $netbiosName;
 
     /**
      * NexposeModel constructor.
@@ -70,31 +49,11 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
         // Call the parent constructor
         parent::__construct();
 
-        // Intialise openPorts and accuracies Collection objects
-        $this->openPorts           = new Collection();
-        $this->softwareInformation = new Collection();
-        $this->accuracies          = new Collection();
-
         // Set Asset export mappings for additional asset-related data
         $this->exportForAssetMap->put(Asset::MAC_ADDRESS, 'getMacAddress');
         $this->exportForAssetMap->put(Asset::VENDOR, 'getOsVendor');
         $this->exportForAssetMap->put(Asset::OS_VERSION, 'getOsVersion');
-
-        $this->exportForVulnerabilityMap = new Collection([
-            Vulnerability::ID_FROM_SCANNER             => $this->getVulnerabilityId(),
-            Vulnerability::NAME                        => $this->getVulnerabilityName(),
-            Vulnerability::EXPLOIT_AVAILABLE           => $this->isExploitAvailable(),
-            Vulnerability::EXPLOIT_DESCRIPTION         => $this->getExploit(),
-            Vulnerability::MALWARE_AVAILABLE           => $this->isMalwareAvailable(),
-            Vulnerability::MALWARE_DESCRIPTION         => $this->getMalware(),
-            Vulnerability::SEVERITY                    => $this->getSeverity(),
-            Vulnerability::CVSS_SCORE                  => $this->getCvssScore(),
-            Vulnerability::DESCRIPTION                 => $this->getDescription(),
-            Vulnerability::SOLUTION                    => $this->getSolution(),
-            Vulnerability::GENERIC_OUTPUT              => $this->getTestInformation(),
-            Vulnerability::PUBLISHED_DATE_FROM_SCANNER => $this->getPublishedDate(),
-            Vulnerability::MODIFIED_DATE_FROM_SCANNER  => $this->getLastModifiedDate(),
-        ]);
+        $this->exportForAssetMap->put(Asset::NETBIOS, 'getNetbiosName');
 
         // Set the list of methods that require a PortId as an extra parameter
         $this->methodsRequiringAPortId = new Collection([
@@ -107,11 +66,13 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     }
 
     /**
-     * @return string
+     * Returns a null coalesce of $this->osVendor and $this->osFamily or null
+     *
+     * @return string|null
      */
     public function getOsVendor()
     {
-        return $this->osVendor;
+        return $this->osVendor ?? $this->osFamily ?? null;
     }
 
     /**
@@ -120,6 +81,22 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     public function setOsVendor(string $osVendor)
     {
         $this->osVendor = $osVendor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOsFamily()
+    {
+        return $this->osFamily;
+    }
+
+    /**
+     * @param string $osFamily
+     */
+    public function setOsFamily(string $osFamily)
+    {
+        $this->osFamily = $osFamily;
     }
 
     /**
@@ -222,193 +199,17 @@ class NexposeModel extends AbstractXmlModel implements CollectsScanOutput, Colle
     /**
      * @return string
      */
-    public function getVulnerabilityName()
+    public function getNetbiosName()
     {
-        return $this->vulnerabilityName;
+        return $this->netbiosName;
     }
 
     /**
-     * @param string $vulnerabilityName
+     * @param string $netbiosName
      */
-    public function setVulnerabilityName(string $vulnerabilityName)
+    public function setNetbiosName(string $netbiosName)
     {
-        $this->vulnerabilityName = $vulnerabilityName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVulnerabilityId()
-    {
-        return $this->vulnerabilityId;
-    }
-
-    /**
-     * @param string $vulnerabilityId
-     */
-    public function setVulnerabilityId(string $vulnerabilityId)
-    {
-        $this->vulnerabilityId = $vulnerabilityId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExploit()
-    {
-        return $this->exploit;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExploitAvailable()
-    {
-        return !empty($this->exploit);
-    }
-
-    /**
-     * @param string $exploit
-     */
-    public function setExploit(string $exploit)
-    {
-        $this->exploit = $exploit;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMalware()
-    {
-        return $this->malware;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMalwareAvailable()
-    {
-        return !empty($this->malware);
-    }
-
-    /**
-     * @param string $malware
-     */
-    public function setMalware(string $malware)
-    {
-        $this->malware = $malware;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSeverity()
-    {
-        return $this->severity;
-    }
-
-    /**
-     * @param string $severity
-     */
-    public function setSeverity(string $severity)
-    {
-        $this->severity = $severity;
-    }
-
-    /**
-     * @return float
-     */
-    public function getCvssScore()
-    {
-        return $this->cvssScore;
-    }
-
-    /**
-     * @param float $cvssScore
-     */
-    public function setCvssScore(float $cvssScore)
-    {
-        $this->cvssScore = $cvssScore;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSolution()
-    {
-        return $this->solution;
-    }
-
-    /**
-     * @param string $solution
-     */
-    public function setSolution(string $solution)
-    {
-        $this->solution = $solution;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTestInformation()
-    {
-        return $this->testInformation;
-    }
-
-    /**
-     * @param string $testInformation
-     */
-    public function setTestInformation(string $testInformation)
-    {
-        $this->testInformation = $testInformation;
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getPublishedDate()
-    {
-        return $this->publishedDate;
-    }
-
-    /**
-     * @param Carbon $publishedDate
-     */
-    public function setPublishedDate(Carbon $publishedDate)
-    {
-        $this->publishedDate = $publishedDate;
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getLastModifiedDate()
-    {
-        return $this->lastModifiedDate;
-    }
-
-    /**
-     * @param Carbon $lastModifiedDate
-     */
-    public function setLastModifiedDate(Carbon $lastModifiedDate)
-    {
-        $this->lastModifiedDate = $lastModifiedDate;
+        $this->netbiosName = $netbiosName;
     }
 
     /**

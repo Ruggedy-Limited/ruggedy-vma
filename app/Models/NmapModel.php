@@ -31,9 +31,6 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput, Collects
     /** @var Carbon */
     protected $lastBoot;
 
-    /** @var Collection */
-    protected $accuracies;
-
     /**
      * NmapModel constructor.
      */
@@ -41,10 +38,6 @@ class NmapModel extends AbstractXmlModel implements CollectsScanOutput, Collects
     {
         // Call the parent constructor
         parent::__construct();
-
-        // Intialise openPorts and accuracies Collection objects
-        $this->openPorts  = new Collection();
-        $this->accuracies = new Collection();
 
         // Override the default Model to Entity mappings for Asset data
         $this->exportForAssetMap = new Collection([
