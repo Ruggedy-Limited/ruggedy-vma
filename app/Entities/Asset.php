@@ -60,7 +60,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     /** Valid OS Vendor values */
     const OS_VENDOR_LINUX     = 'Linux';
     const OS_VENDOR_APPLE     = 'Apple';
-    const OS_VENDOR_MICROSOFT = 'Microsoft';
+    const OS_VENDOR_MICROSOFT = 'Windows';
     const OS_VENDOR_UNKNOWN   = 'Unknown';
 
     /** String value to use when the Asset name cannot be automatically assigned */
@@ -95,6 +95,53 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         parent::__construct();
         $this->relatedSoftwareInformation = new ArrayCollection();
         $this->files                      = new ArrayCollection();
+    }
+
+    /**
+     * @param string $ip_address_v4
+     * @return Base\Asset
+     */
+    public function setIpAddressV4($ip_address_v4)
+    {
+        parent::setIpAddressV4($ip_address_v4);
+        return $this->conditionallySetName();
+    }
+
+    /**
+     * @param string $hostname
+     * @return Base\Asset
+     */
+    public function setHostname($hostname)
+    {
+        parent::setHostname($hostname);
+        return $this->conditionallySetName();
+    }
+
+    /**
+     * If the name is not already set and one of hostname or IPv4 address is set, then assign a name
+     *
+     * @return Base\Asset
+     */
+    protected function conditionallySetName()
+    {
+        if (!empty($this->getName())) {
+            return $this;
+        }
+
+        return $this->setName($this->getHostname() ?? $this->getIpAddressV4());
+    }
+
+    /**
+     * Override the parent method to include a sanitising of this field
+     *
+     * @param string $mac_address
+     * @return Base\Asset
+     */
+    public function setMacAddress($mac_address)
+    {
+        return parent::setMacAddress(
+            $this->sanitiseMacAddress($mac_address)
+        );
     }
 
     /**
@@ -202,5 +249,33 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     public function getUniqueAssetHash()
     {
         return sha1($this->getHostname() . $this->getIpAddressV4() . $this->getNetbios());
+    }
+
+    /**
+     * Sanitise the mac addresses found in the Nexpose scan by adding colons after every second character
+     *
+     * @param string $macAddress
+     * @return string|null
+     */
+    protected function sanitiseMacAddress(string $macAddress)
+    {
+        if (empty($macAddress) || preg_match(Asset::REGEX_MAC_ADDRESS, $macAddress)) {
+            return $macAddress;
+        }
+
+        // Split the string into an array where each elements contains two characters and create a Collection
+        $macAddressChars = new Collection(
+            str_split($macAddress, 2)
+        );
+
+        // Implode the Collection with a colon as glue
+        $sanitisedMacAddress = $macAddressChars->implode(":");
+
+        // Validate the sanitised MAC address against the regex
+        if (!preg_match(Asset::REGEX_MAC_ADDRESS, $sanitisedMacAddress)) {
+            return null;
+        }
+
+        return $sanitisedMacAddress;
     }
 }

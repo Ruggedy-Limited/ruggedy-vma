@@ -97,25 +97,23 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
      * Set the values of the entity by passing in an array
      *
      * @param array $params
-     * @return bool
+     * @return $this
      */
     public function setFromArray(array $params)
     {
         if (empty($params)) {
-            return false;
+            return $this;
         }
 
         $members = new Collection($params);
-        $members->each(function($memberValue, $memberName)
-        {
-            if (!property_exists($this, $memberName)) {
-                return;
-            }
-
+        $members->filter(function ($memberValue, $memberName){
+            return property_exists($this, $memberName);
+        })->each(function ($memberValue, $memberName) {
             $this->$memberName = $memberValue;
+            return true;
         });
 
-        return true;
+        return $this;
     }
 
     /**
