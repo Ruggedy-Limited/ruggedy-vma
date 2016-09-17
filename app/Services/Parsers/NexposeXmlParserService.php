@@ -101,7 +101,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     parent::MAP_ATTRIBUTE_VALIDATION    => collect([
                         parent::MAP_ATTRIBUTE_MAIN_VALIDATION => [
                             'filled',
-                            'regex:' . Asset::REGEX_OS_VERSION,
+                            'regex:' . Asset::getValidVendorsRegex(),
                         ],
                         parent::MAP_ATTRIBUTE_RELATED_VALIDATION => collect([
                             self::XML_ATTRIBUTE_CERTAINTY => 'filled|in:1.00',
