@@ -73,12 +73,8 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="asset_software_information",
-     *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="software_information_id", referencedColumnName="id")}
-     * )
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets")
+     * @ORM\JoinTable(name="asset_software_information")
      */
     protected $relatedSoftwareInformation;
 
@@ -155,6 +151,17 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     }
 
     /**
+     * Convenience method for setting the parent relation
+     *
+     * @param Base\Workspace $workspace
+     * @return Base\Asset
+     */
+    public function setParent(Base\Workspace $workspace)
+    {
+        return parent::setWorkspace($workspace);
+    }
+
+    /**
      * @return ArrayCollection
      */
     public function getRelatedSoftwareInformation()
@@ -182,6 +189,30 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         $this->relatedSoftwareInformation->removeElement($softwareInformation);
 
         return $this;
+    }
+
+    /**
+     * Override the parent method to make the change to the inverse Vulnerability relation
+     *
+     * @param Base\Vulnerability $vulnerability
+     * @return Base\Asset
+     */
+    public function addVulnerability(Base\Vulnerability $vulnerability)
+    {
+        $vulnerability->setAsset($this);
+        return parent::addVulnerability($vulnerability);
+    }
+
+    /**
+     * Override the parent method to make the change to the inverse OpenPort relation
+     *
+     * @param Base\OpenPort $openPort
+     * @return Base\Asset
+     */
+    public function addOpenPort(Base\OpenPort $openPort)
+    {
+        $openPort->setAsset($this);
+        return parent::addOpenPort($openPort);
     }
 
     /**

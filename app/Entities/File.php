@@ -26,6 +26,12 @@ class File extends Base\File implements SystemComponent
     protected $user;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="files", cascade={"persist"}, fetch="EAGER")
+     * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $workspace;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files")
      * @ORM\JoinTable(name="files_assets")
      */

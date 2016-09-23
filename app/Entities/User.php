@@ -11,7 +11,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use stdClass;
 
-
 /**
  * App\Entities\User
  *
@@ -84,6 +83,17 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      * @return $this
      */
     public function getUser()
+    {
+        return $this;
+    }
+
+    /**
+     * Does nothing, but required to implement the SystemComponent contract
+     *
+     * @param Base\User $user
+     * @return $this
+     */
+    public function setUser(Base\User $user)
     {
         return $this;
     }

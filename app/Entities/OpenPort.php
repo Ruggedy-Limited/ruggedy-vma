@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use App\Contracts\HasIdColumn;
+use App\Contracts\RelatesToFiles;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repositories\OpenPortRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class OpenPort extends Base\OpenPort implements HasIdColumn
+class OpenPort extends Base\OpenPort implements HasIdColumn, RelatesToFiles
 {
     /**
      * @ORM\ManyToMany(targetEntity="File", mappedBy="open_ports")
@@ -29,11 +30,16 @@ class OpenPort extends Base\OpenPort implements HasIdColumn
     }
 
     /**
-     * @return Base\User
+     * Override the parent setter to always uppercase the input before setting the property with the value
+     *
+     * @param string $protocol
+     * @return Base\OpenPort
      */
-    function getUser()
+    public function setProtocol($protocol)
     {
-        return $this->getFile()->getUser();
+        return parent::setProtocol(
+            strtoupper($protocol)
+        );
     }
 
     /**
@@ -56,5 +62,26 @@ class OpenPort extends Base\OpenPort implements HasIdColumn
         $this->files->removeElement($file);
 
         return $this;
+    }
+
+    /**
+     * Convenience method for returning the parent Asset entity
+     *
+     * @return mixed
+     */
+    public function getParent()
+    {
+        return $this->asset;
+    }
+
+    /**
+     * Convenience method for setting the parent Asset entity
+     *
+     * @param Base\Asset $asset
+     * @return Base\OpenPort
+     */
+    public function setParent(Base\Asset $asset)
+    {
+        return parent::setAsset($asset);
     }
 }
