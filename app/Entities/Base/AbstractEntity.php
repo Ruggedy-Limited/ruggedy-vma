@@ -76,11 +76,18 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     /**
      * Generate an array representation of the object
      *
+     * @param bool $excludeNulls
      * @return array
      */
-    public function toArray()
+    public function toArray(bool $excludeNulls = false)
     {
-        return get_object_vars($this);
+        if ($excludeNulls === false) {
+            return get_object_vars($this);
+        }
+
+        return collect(get_object_vars($this))->filter(function ($value) {
+            return isset($value);
+        })->toArray();
     }
 
     /**

@@ -16,21 +16,17 @@ class File extends AbstractEntity
     const TABLE_NAME = 'files';
 
     /** Column name constants */
-    const PATH            = 'path';
-    const FORMAT          = 'format';
-    const SIZE            = 'size';
-    const USER_ID         = 'user_id';
-    const WORKSPACE_ID    = 'workspace_id';
-    const ASSET_ID        = 'asset_id';
-    const SCANNER_APP_ID  = 'scanner_app_id';
-    const PROCESSED       = 'processed';
-    const DELETED         = 'deleted';
-    const OPENPORTS       = 'openPorts';
-    const VULNERABILITIES = 'vulnerabilities';
-    const USER            = 'user';
-    const WORKSPACE       = 'workspace';
-    const ASSET           = 'asset';
-    const SCANNERAPP      = 'scannerApp';
+    const PATH           = 'path';
+    const FORMAT         = 'format';
+    const SIZE           = 'size';
+    const USER_ID        = 'user_id';
+    const WORKSPACE_ID   = 'workspace_id';
+    const SCANNER_APP_ID = 'scanner_app_id';
+    const PROCESSED      = 'processed';
+    const DELETED        = 'deleted';
+    const USER           = 'user';
+    const WORKSPACE      = 'workspace';
+    const SCANNERAPP     = 'scannerApp';
 
     /**
      * @ORM\Id

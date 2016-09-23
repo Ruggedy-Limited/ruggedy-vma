@@ -33,7 +33,6 @@ class Asset extends AbstractEntity
     const USER_ID         = 'user_id';
     const SUPPRESSED      = 'suppressed';
     const DELETED         = 'deleted';
-    const FILES           = 'files';
     const OPENPORTS       = 'openPorts';
     const VULNERABILITIES = 'vulnerabilities';
     const WORKSPACE       = 'workspace';
