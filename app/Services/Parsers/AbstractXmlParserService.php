@@ -9,8 +9,10 @@ use App\Entities\Asset;
 use App\Entities\File;
 use App\Entities\OpenPort;
 use App\Entities\SoftwareInformation;
+use App\Entities\User;
 use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
+use App\Entities\Workspace;
 use App\Exceptions\ParserMappingException;
 use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
@@ -20,6 +22,7 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Factory;
 use Monolog\Logger;
 use ReflectionClass;
@@ -96,15 +99,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected $model;
 
     /** @var Collection */
-    protected $models;
-
-    /** @var Collection */
-    protected $assets;
-
-    protected $assetUniqueKey;
-
-    protected $entityHashToIdValueMap;
-
     protected $entityRelationshipSetterMap;
 
     /**
@@ -123,26 +117,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * Override the method that adds related Vulnerabilities relations to the Asset entity to use the a key, e.g.
      * CVE or vulnerability ID or a hash where there isn't anything specific in the scan.
      */
-    protected $currentAssetHash;
 
-    protected $currentVulnerabilityId;
-
+    /** @var Collection */
     protected $entities;
 
-    protected $entityCurrentIdMap;
+    /** @var Collection */
+    protected $temporaryEntities;
 
-    protected $asset;
-
-    protected $vulnerability;
-
-    protected $openPort;
-
-    protected $softwareInformation;
-
-    protected $vulnerabilityReference;
-
-    protected $exploit;
-
+    /** @var File */
     protected $file;
 
     /**
@@ -177,48 +159,43 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $this->nodePostProcessingMap      = new Collection();
         $this->attributePreProcessingMap  = new Collection();
         $this->attributePostProcessingMap = new Collection();
-        $this->models                     = new Collection();
 
         $this->entities           = new Collection();
-        $this->entityCurrentIdMap = new Collection();
+        $this->temporaryEntities  = new Collection();
+
         // TODO: Complete these mappings
         $this->entityRelationshipSetterMap = new Collection([
-            Asset::class => new Collection([
+            Workspace::class           => new Collection([
+                Asset::class => 'addAsset',
+            ]),
+            Asset::class               => new Collection([
                 Vulnerability::class       => 'addVulnerability',
                 OpenPort::class            => 'addOpenPort',
                 SoftwareInformation::class => 'addSoftwareInformation'
             ]),
-            Vulnerability::class => new Collection([
+            Vulnerability::class       => new Collection([
+                Asset::class                      => 'setAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
             ]),
+            OpenPort::class            => new Collection([
+                Asset::class => 'setAsset',
+            ]),
+            SoftwareInformation::class => new Collection([
+                Asset::class => 'addAsset',
+            ]),
         ]);
-        $this->asset                  = new Asset();
-        $this->vulnerability          = new Vulnerability();
-        $this->openPort               = new OpenPort();
-        $this->softwareInformation    = new SoftwareInformation();
-        $this->vulnerabilityReference = new VulnerabilityReferenceCode();
-
-        $this->entityHashToIdValueMap = new Collection();
-
-        $this->assetUniqueKey = new Collection([
-            Asset::IP_ADDRESS_V4 => null,
-            Asset::HOSTNAME      => null,
-            Asset::NETBIOS       => null,
-        ]);
-        $this->assets         = new Collection();
     }
 
     /**
      * Parse an XML file and return the relevant model or false on failure
      *
      * @param File $file
-     * @return Collection
      * @throws FileNotFoundException
      */
-    public function processXmlFile(File $file): Collection
+    public function processXmlFile(File $file)
     {
         if (!isset($file)) {
-            return new Collection();
+            return;
         }
 
         // Check that the file exists
@@ -227,12 +204,18 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         $this->file = $file;
+        $this->entities->put(Workspace::class, $file->getWorkspace());
 
         // Attempt to parse the XML and catch any exceptions
-        $parser = $this->parser;
         try {
-            $parser->open($file->getPath());
+            $this->parser->open($file->getPath());
+
+            // Authenticate the User who uploaded the file so that their permissions will be used for applying any
+            // operations that result from processing the file
+            $this->getAndAuthenticateFileUser($file);
+
             $this->parseXml();
+            $this->em->flush();
         } catch (Exception $e) {
             $this->logger->log(Logger::ERROR, "Failed to parse XML file.", [
                 'file'      => $file->getPath(),
@@ -242,11 +225,10 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 'trace'     => $this->logger->getTraceAsArrayOfLines($e),
             ]);
 
-            return new Collection();
+            return;
         }
 
-        // Return a Collection of populated models
-        return $this->models;
+        $this->moveFileToProcessed($file);
     }
 
     /**
@@ -256,23 +238,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     {
         while ($this->parser->read()) {
             $this->setParentNodeName();
-            $this->doNodePreprocessing();
-            // If we match the "end tag" for the base tag, add the current model
-            // to the models Collection and reset the model
-            /*if ($this->parser->nodeType === XMLReader::END_ELEMENT
-                && $this->parser->name === $this->getBaseTagName()) {
-
-                $this->models->push($this->model);
-                $this->resetModel();
-                continue;
-            }
-
-            // Any other end tag
-            if ($this->parser->nodeType === XMLReader::END_ELEMENT) {
-                continue;
-            }*/
-
             $parentChildNodeName = $this->getParentChildNodeName();
+            $this->doNodePreprocessing();
 
             // Get the mappings for this node or a combination of parent node name, a dot and this node's name
             $fields = $this->fileToSchemaMapping->get($this->parser->name) ??
@@ -598,6 +565,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function doNodePreprocessing()
     {
+        // Do post processing only on closing node tags or after empty nodes
+        if ($this->parser->nodeType === XMLReader::END_ELEMENT) {
+            return;
+        }
+
         $this->callPreOrPostProcessingMethods($this->nodePreprocessingMap);
     }
 
@@ -606,6 +578,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function doNodePostprocessing()
     {
+        // Do post processing only on closing node tags or after empty nodes
+        if ($this->parser->nodeType !== XMLReader::END_ELEMENT && !$this->parser->isEmptyElement) {
+            return;
+        }
+
         $this->callPreOrPostProcessingMethods($this->nodePostProcessingMap);
     }
 
@@ -744,6 +721,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     }
 
     /**
+     * Flush the current Doctrine Unit of Work
+     */
+    protected function flushDoctrineUnitOfWork()
+    {
+        $this->em->flush();
+    }
+
+    /**
      * Get the short class name from a FQCN (Fully Qualified Class Name)
      *
      * @param string $fqcn
@@ -780,6 +765,23 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function getParentChildNodeName(): string
     {
         return $this->parentNodeNames->last() . '.' . $this->parser->name;
+    }
+
+    /**
+     * Check the current authenticated User is the same as the User who uploaded the file and if not, authenticate the
+     * User who uploaded the file so that all permissions for all operations are checked against that user
+     *
+     * @param File $file
+     */
+    protected function getAndAuthenticateFileUser(File $file)
+    {
+        $currentUser = Auth::user();
+        $fileUser    = $file->getUser();
+        if (!empty($currentUser) && $currentUser instanceof User && $currentUser->getId() === $fileUser->getId()) {
+            return;
+        }
+
+        Auth::login($fileUser);
     }
 
     /**
@@ -891,21 +893,5 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function getModel()
     {
         return $this->model;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getModels()
-    {
-        return $this->models;
-    }
-
-    /**
-     * Reset the models property to a new, empty Collection
-     */
-    public function resetModels()
-    {
-        $this->models = new Collection();
     }
 }

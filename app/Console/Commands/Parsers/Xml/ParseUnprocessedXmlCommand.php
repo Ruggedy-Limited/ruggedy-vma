@@ -8,6 +8,7 @@ use App\Commands\CreateSoftwareInformation;
 use App\Commands\CreateVulnerability;
 use App\Commands\CreateVulnerabilityReference;
 use App\Commands\CreateOpenPort;
+use App\Commands\ParseFile;
 use App\Contracts\CollectsScanOutput;
 use App\Contracts\CustomLogging;
 use App\Contracts\SystemComponent;
@@ -89,24 +90,23 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
         }
 
         // Iterate over the files
-        $filesByWorkspace->each(function($file, $offset) {
+        $filesByWorkspace->each(function ($file, $offset) {
             /** @var File $file */
-            return $this->processFile($file);
+            try {
+                $parseFileCommand = new ParseFile($file);
+                $this->bus->handle($parseFileCommand);
+            } catch (Exception $e) {
+                $this->logger->log(Logger::ERROR, "Unhandled exception when parsing file", [
+                    'fileInfo' => $file->toArray(),
+                ]);
+
+                $this->error("Failed to process file: {$file->getPath()}: {$e->getMessage()}");
+                return true;
+            }
+
+            $this->info("Successfully processing file: {$file->getPath()}.");
+            return true;
         });
-
-        // Some entities won't have been flushed immediately, flush all unflushed entities
-        $command = new CommitCurrentUnitOfWork();
-        try {
-            $this->bus->handle($command);
-        } catch (ORMException $e) {
-            $this->logger->log(Logger::ERROR, 'Failed to persist some entities imported from the given files', [
-                'exception' => $e->getMessage(),
-                'trace'     => $e->getTraceAsString(),
-            ]);
-            $this->error("Failed to persist entities imported from the given files!");
-        }
-
-        return true;
     }
 
     /**
