@@ -15,7 +15,6 @@ use App\Services\ScanIdentificationService;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use ProxyManager\Exception\FileNotWritableException;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class UploadScanOutput extends CommandHandler

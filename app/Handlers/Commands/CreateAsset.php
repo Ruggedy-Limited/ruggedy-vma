@@ -59,9 +59,10 @@ class CreateAsset extends CommandHandler
         
         // Check that all the required fields were set on the command
         $workspaceId = $command->getId();
-        $details     = $command->getDetails();
+        /** @var Asset $entity */
+        $entity     = $command->getEntity();
         
-        if (!isset($workspaceId, $details)) {
+        if (!isset($workspaceId, $entity)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
@@ -80,9 +81,9 @@ class CreateAsset extends CommandHandler
         }
 
         // Set the Workspace ID
-        $details[Asset::WORKSPACE_ID] = $workspaceId;
+        $entity->setWorkspaceId($workspaceId);
         // Create a new Asset or find a matching existing Asset
-        $asset = $this->assetRepository->findOrCreateOneBy($details);
+        $asset = $this->assetRepository->findOrCreateOneBy($entity->toArray());
 
         // If this is a deleted or suppressed Asset then don't persist any changes but return the Asset as is
         if ($asset->getDeleted() || $asset->getSuppressed()) {

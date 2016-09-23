@@ -32,9 +32,7 @@ class AssetRepository extends EntityRepository
             $asset = $this->findOneBy([
                 Asset::HOSTNAME     => $hostname,
                 Asset::WORKSPACE_ID => $workspaceId
-            ]) ?? $this->createNewAssetEntity();
-
-            $asset->setFromArray($data);
+            ]) ?? $this->createNewAssetEntity($data);
 
             return $asset;
         }
@@ -53,21 +51,22 @@ class AssetRepository extends EntityRepository
         }
 
         // Attempt to retrieve the Asset from the DB or create a new Asset entity if no matching Asset is found
-        $asset = $queryBuilder->getQuery()->getOneOrNullResult() ?? $this->createNewAssetEntity();
-
-        // Populate the Asset with the given data and return
-        $asset->setFromArray($data);
-        return $asset;
+        return $queryBuilder->getQuery()->getOneOrNullResult() ?? $this->createNewAssetEntity($data);
     }
 
     /**
      * Prepare a new Asset Entity
      *
+     * @param array $dataToPopulate
      * @return Asset
      */
-    protected function createNewAssetEntity(): Asset
+    protected function createNewAssetEntity(array $dataToPopulate = []): Asset
     {
         $asset = new Asset();
+
+        if (!empty($dataToPopulate)) {
+            $asset->setFromArray($dataToPopulate);
+        }
 
         // For new Assets we always set suppressed and deleted to false
         $asset->setSuppressed(false);

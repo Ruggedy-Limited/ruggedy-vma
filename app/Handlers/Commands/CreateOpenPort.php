@@ -59,7 +59,7 @@ class CreateOpenPort extends CommandHandler
         
         // Check that all the required fields were set on the command
         $assetId = $command->getId();
-        $details = $command->getDetails();
+        $details = $command->getEntity();
         
         if (!isset($assetId, $details)) {
             throw new InvalidInputException("One or more required members are not set on the command");

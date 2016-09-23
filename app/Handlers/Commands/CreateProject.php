@@ -48,7 +48,7 @@ class CreateProject extends CommandHandler
         $requestingUser = $this->authenticate();
 
         $userId         = $command->getId();
-        $projectDetails = $command->getDetails();
+        $projectDetails = $command->getEntity();
 
         // Check that the required member is set on the command
         if (!isset($userId) || empty($projectDetails)) {
