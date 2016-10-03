@@ -4,6 +4,7 @@ namespace App\Services\Parsers;
 
 use App\Contracts\CollectsScanOutput;
 use App\Contracts\CustomLogging;
+use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
 use App\Entities\File;
@@ -177,6 +178,9 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 Asset::class                      => 'setAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
             ]),
+            VulnerabilityReferenceCode::class => new Collection([
+                Vulnerability::class => 'setVulnerability',
+            ]),
             OpenPort::class            => new Collection([
                 Asset::class => 'setAsset',
             ]),
@@ -215,7 +219,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->getAndAuthenticateFileUser($file);
 
             $this->parseXml();
-            $this->em->flush();
         } catch (Exception $e) {
             $this->logger->log(Logger::ERROR, "Failed to parse XML file.", [
                 'file'      => $file->getPath(),
@@ -253,7 +256,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             }
 
             // Parse the node based on the mappings
-            $fields->each(function($mappingAttributes, $setter) {
+            $fields->each(function ($mappingAttributes, $setter) {
                 // Defensiveness in case of bad mappings
                 if (empty($setter) || !($mappingAttributes instanceof Collection)) {
                     $this->logger->log(Logger::WARNING, "Empty setter method or bad mappings", [
@@ -657,7 +660,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 return;
             }
 
-            call_user_func_array([$this, $processingMethod], $parameters->toArray());
+            call_user_func_array([$this, $processingMethod], $parameters->all());
         } catch (Exception $e) {
             $this->logger->log(Logger::ERROR, "Error when call pre or post-processing method", [
                 'processingMethodName' => $processingMethod,
@@ -710,7 +713,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         try {
             call_user_func_array([$this, $processingMethod], $methodAndParameters);
         } catch (Exception $e) {
-            $this->logger->log(Logger::ERROR, "Erro when call pre or post-processing method with parameters", [
+            $this->logger->log(Logger::ERROR, "Error when call pre or post-processing method with parameters", [
                 'processingMethodName' => $processingMethod,
                 'xmlNodeName'          => $this->parser->name ?? null,
                 'methodParameters'     => $methodAndParameters,
@@ -726,6 +729,27 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function flushDoctrineUnitOfWork()
     {
         $this->em->flush();
+    }
+
+    /**
+     * Refresh the Collection of temporary entities with the managed entities that have IDs (PRIMARY KEY values)
+     */
+    protected function refreshTemporaryEntities()
+    {
+        if ($this->temporaryEntities->isEmpty()) {
+            return;
+        }
+
+        $this->temporaryEntities->merge(
+            $this->temporaryEntities->collapse()->filter(function ($entity) {
+                return $entity instanceof GeneratesUniqueHash;
+            })->map(function ($entity) {
+                /** @var GeneratesUniqueHash $entity */
+                $existingEntity = $this->em->getRepository(get_class($entity))
+                    ->findOneBy($entity->getUniqueKeyColumns()->all());
+                return $existingEntity ?? $entity;
+            })
+        );
     }
 
     /**

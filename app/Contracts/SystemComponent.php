@@ -2,6 +2,7 @@
 
 namespace App\Contracts;
 
+use App\Entities\Base\AbstractEntity;
 use App\Entities\Base\User;
 
 /**

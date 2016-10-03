@@ -4,6 +4,7 @@ namespace App\Entities\Base;
 
 use Carbon\Carbon;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Contracts\Support\Jsonable;
@@ -86,8 +87,9 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
         }
 
         return collect(get_object_vars($this))->filter(function ($value) {
-            return isset($value);
-        })->toArray();
+            return (isset($value) && !($value instanceof ArrayCollection))
+                || ($value instanceof ArrayCollection && !$value->isEmpty());
+        })->all();
     }
 
     /**
@@ -237,5 +239,13 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
             self::IS_INITIALIZED,
             self::PASSWORD_FIELD
         ]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMinimumRequiredPropertiesSet(): bool
+    {
+        return true;
     }
 }

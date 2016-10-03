@@ -3,13 +3,14 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\ParseFile as ParseFileCommand;
+use App\Contracts\CustomLogging;
 use App\Services\JsonLogService;
 use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\XmlParserFactoryService;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Monolog\Logger;
 
-class ParseFile
+class ParseFile extends CommandHandler implements CustomLogging
 {
     /** @var JsonLogService */
     protected $logger;
@@ -21,6 +22,7 @@ class ParseFile
      */
     public function __construct(JsonLogService $logger)
     {
+        $this->setLoggerContext($logger);
         $this->logger = $logger;
     }
 
@@ -51,5 +53,34 @@ class ParseFile
         }
 
         return true;
+    }
+
+    /**
+     * @param JsonLogService $logger
+     * @return mixed|void
+     */
+    public function setLoggerContext(JsonLogService $logger)
+    {
+        $directory = $this->getLogContext();
+        $logger->setLoggerName($directory);
+
+        $filename  = $this->getLogFilename();
+        $logger->setLogFilename($filename);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogContext(): string
+    {
+        return 'handler';
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogFilename(): string
+    {
+        return 'parse-file.json.log';
     }
 }
