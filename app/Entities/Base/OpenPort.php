@@ -23,6 +23,7 @@ class OpenPort extends AbstractEntity
     const SERVICE_EXTRA_INFO   = 'service_extra_info';
     const SERVICE_FINGER_PRINT = 'service_finger_print';
     const SERVICE_BANNER       = 'service_banner';
+    const SERVICE_MESSAGE      = 'service_message';
     const ASSET_ID             = 'asset_id';
     const ASSET                = 'asset';
 
@@ -64,9 +65,14 @@ class OpenPort extends AbstractEntity
     protected $service_finger_print;
 
     /**
-     * @ORM\Column(name="`service_banner`", type="string", length=150, nullable=true)
+     * @ORM\Column(name="`service_banner`", type="string", length=255, nullable=true)
      */
     protected $service_banner;
+
+    /**
+     * @ORM\Column(name="`service_message`", type="string", length=255, nullable=true)
+     */
+    protected $service_message;
 
     /**
      * @ORM\Column(name="`asset_id`", type="integer", options={"unsigned":true})
@@ -278,6 +284,29 @@ class OpenPort extends AbstractEntity
     }
 
     /**
+     * Set the value of service_message.
+     *
+     * @param string $service_message
+     * @return \App\Entities\Base\OpenPort
+     */
+    public function setServiceMessage($service_message)
+    {
+        $this->service_message = $service_message;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of service_message.
+     *
+     * @return string
+     */
+    public function getServiceMessage()
+    {
+        return $this->service_message;
+    }
+
+    /**
      * Set the value of asset_id.
      *
      * @param integer $asset_id
@@ -371,6 +400,6 @@ class OpenPort extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'asset_id', 'created_at', 'updated_at');
+        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'service_message', 'asset_id', 'created_at', 'updated_at');
     }
 }

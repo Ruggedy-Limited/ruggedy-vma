@@ -17,26 +17,25 @@ class Asset extends AbstractEntity
     const TABLE_NAME = 'assets';
 
     /** Column name constants */
-    const NAME            = 'name';
-    const CPE             = 'cpe';
-    const VENDOR          = 'vendor';
-    const IP_ADDRESS_V4   = 'ip_address_v4';
-    const IP_ADDRESS_V6   = 'ip_address_v6';
-    const HOSTNAME        = 'hostname';
-    const MAC_ADDRESS     = 'mac_address';
-    const MAC_VENDOR      = 'mac_vendor';
-    const OS_VERSION      = 'os_version';
-    const NETBIOS         = 'netbios';
-    const UPTIME          = 'uptime';
-    const LAST_BOOT       = 'last_boot';
-    const WORKSPACE_ID    = 'workspace_id';
-    const USER_ID         = 'user_id';
-    const SUPPRESSED      = 'suppressed';
-    const DELETED         = 'deleted';
-    const OPENPORTS       = 'openPorts';
-    const VULNERABILITIES = 'vulnerabilities';
-    const WORKSPACE       = 'workspace';
-    const USER            = 'user';
+    const NAME          = 'name';
+    const CPE           = 'cpe';
+    const VENDOR        = 'vendor';
+    const IP_ADDRESS_V4 = 'ip_address_v4';
+    const IP_ADDRESS_V6 = 'ip_address_v6';
+    const HOSTNAME      = 'hostname';
+    const MAC_ADDRESS   = 'mac_address';
+    const MAC_VENDOR    = 'mac_vendor';
+    const OS_VERSION    = 'os_version';
+    const NETBIOS       = 'netbios';
+    const UPTIME        = 'uptime';
+    const LAST_BOOT     = 'last_boot';
+    const WORKSPACE_ID  = 'workspace_id';
+    const USER_ID       = 'user_id';
+    const SUPPRESSED    = 'suppressed';
+    const DELETED       = 'deleted';
+    const OPENPORTS     = 'openPorts';
+    const WORKSPACE     = 'workspace';
+    const USER          = 'user';
 
     /**
      * @ORM\Id
@@ -142,12 +141,6 @@ class Asset extends AbstractEntity
     protected $openPorts;
 
     /**
-     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="asset", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
-     */
-    protected $vulnerabilities;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="assets", cascade={"persist"})
      * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -162,7 +155,6 @@ class Asset extends AbstractEntity
     public function __construct()
     {
         $this->openPorts = new ArrayCollection();
-        $this->vulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -636,42 +628,6 @@ class Asset extends AbstractEntity
     public function getOpenPorts()
     {
         return $this->openPorts;
-    }
-
-    /**
-     * Add Vulnerability entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Vulnerability $vulnerability
-     * @return \App\Entities\Base\Asset
-     */
-    public function addVulnerability(Vulnerability $vulnerability)
-    {
-        $this->vulnerabilities[] = $vulnerability;
-
-        return $this;
-    }
-
-    /**
-     * Remove Vulnerability entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Vulnerability $vulnerability
-     * @return \App\Entities\Base\Asset
-     */
-    public function removeVulnerability(Vulnerability $vulnerability)
-    {
-        $this->vulnerabilities->removeElement($vulnerability);
-
-        return $this;
-    }
-
-    /**
-     * Get Vulnerability entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getVulnerabilities()
-    {
-        return $this->vulnerabilities;
     }
 
     /**

@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\User
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk_idx", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
+ * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
 class User extends AbstractEntity
 {

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\Notification
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`notifications`", indexes={@ORM\Index(name="notifications_user_id_created_at_index", columns={"`user_id`", "`created_at`"}), @ORM\Index(name="notifications_fk_user_created_idx", columns={"`created_by`"})})
+ * @ORM\Table(name="`notifications`", indexes={@ORM\Index(name="notifications_user_id_created_at_index", columns={"`user_id`", "`created_at`"}), @ORM\Index(name="notifications_fk_user_created", columns={"`created_by`"})})
  */
 class Notification extends AbstractEntity
 {
