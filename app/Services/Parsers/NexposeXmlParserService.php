@@ -201,7 +201,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             'configuration'      => collect([
                 'setServiceExtraInfo' => collect([
                     parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
-                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled'
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
             ]),
             'config'             => collect([
@@ -213,10 +213,10 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                              'name' => [
                                  'filled',
                                  'regex:/banner/',
-                             ]
+                             ],
                         ]),
                     ]),
-                ])
+                ]),
             ]),
             'vulnerability'   => collect([
                 'setIdFromScanner' => collect([
@@ -306,7 +306,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . VulnerabilityReferenceCode::getValidReferenceCodeTypeRegex(),
-                    ]
+                    ],
                 ]),
                 'setValue'      => collect([
                     parent::MAP_ATTRIBUTE_ENTITY_CLASS  => VulnerabilityReferenceCode::class,
@@ -316,7 +316,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                             'source' => [
                                 'filled',
                                 'regex:' . VulnerabilityReferenceCode::getValidReferenceCodeTypeRegex(),
-                            ]
+                            ],
                         ]),
                     ]),
                 ]),
