@@ -166,7 +166,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     {
         $objectForJson = new stdClass();
 
-        $members = new Collection($this->toArray());
+        $members = collect($this->toArray());
         $members->filter(function($memberValue, $memberName) use ($onlyTheseAttributes)
         {
             // Explicitly excluded items
@@ -191,7 +191,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
                 $memberValue = $memberValue->format(env('APP_DATE_FORMAT'));
             }
 
-            if ($memberValue instanceof PersistentCollection) {
+            if ($memberValue instanceof PersistentCollection || $memberValue instanceof ArrayCollection) {
                 $collectionForEncoding = [];
                 /** @var AbstractEntity $entity */
                 foreach ($memberValue->toArray() as $entity) {
@@ -226,6 +226,32 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
         });
 
         return $objectForJson;
+    }
+
+    /**
+     * Implementation of hashing functionality so the majority of the code is not repeated
+     *
+     * @param Collection $uniqueColumns
+     * @return string
+     */
+    protected static function generateUniqueHash(Collection $uniqueColumns)
+    {
+        // Create a SHA1 hash of the property values that constitute a unique key by iterating over the columns, getting
+        // the spl_object_hash of any keys that contain objects and then imploding the Collection to a string where the
+        // values of the relevant properties are concatenated using a ":" character
+        $objectHashes = $uniqueColumns->filter(function ($value) {
+            return is_object($value);
+        })->map(function ($value) {
+            return spl_object_hash($value);
+        });
+
+        if ($objectHashes->isEmpty()) {
+            return sha1($uniqueColumns->implode(":"));
+        }
+
+        return sha1(
+            $uniqueColumns->merge($objectHashes)->implode(":")
+        );
     }
 
     /**

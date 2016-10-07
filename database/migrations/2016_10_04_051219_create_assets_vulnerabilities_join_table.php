@@ -21,9 +21,10 @@ ALTER TABLE `vulnerabilities`
   DROP COLUMN `asset_id`;
 
 CREATE TABLE IF NOT EXISTS `assets_vulnerabilities` (
-  `id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
   `asset_id` INT(10) UNSIGNED NOT NULL COMMENT '',
   `vulnerability_id` INT(10) UNSIGNED NOT NULL COMMENT '',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
   PRIMARY KEY (`id`) COMMENT '',
   UNIQUE KEY `asset_vulnerability_idx` (`asset_id`, `vulnerability_id`),
   CONSTRAINT `assets_vulnerabilities_asset_fk` FOREIGN KEY (`asset_id`)

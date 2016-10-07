@@ -79,6 +79,12 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $relatedSoftwareInformation;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets")
+     * @ORM\JoinTable(name="assets_vulnerabilities")
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\ManyToMany(targetEntity="File", mappedBy="assets")
      */
     protected $files;
@@ -90,6 +96,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     {
         parent::__construct();
         $this->relatedSoftwareInformation = new ArrayCollection();
+        $this->vulnerabilities            = new ArrayCollection();
         $this->files                      = new ArrayCollection();
     }
 
@@ -175,6 +182,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function addSoftwareInformation(SoftwareInformation $softwareInformation)
     {
+        $softwareInformation->addAsset($this);
         $this->relatedSoftwareInformation[] = $softwareInformation;
 
         return $this;
@@ -186,21 +194,40 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function removeSoftwareInformation(SoftwareInformation $softwareInformation)
     {
+        $softwareInformation->removeAsset($this);
         $this->relatedSoftwareInformation->removeElement($softwareInformation);
 
         return $this;
     }
 
     /**
-     * Override the parent method to make the change to the inverse Vulnerability relation
+     * Relate the given Vulnerability to this Asset instance and create the relation on the inverse Vulnerability
+     * entity
      *
-     * @param Base\Vulnerability $vulnerability
+     * @param Vulnerability $vulnerability
      * @return Base\Asset
      */
-    public function addVulnerability(Base\Vulnerability $vulnerability)
+    public function addVulnerability(Vulnerability $vulnerability)
     {
-        $vulnerability->setAsset($this);
-        return parent::addVulnerability($vulnerability);
+        $vulnerability->addAsset($this);
+        $this->vulnerabilities[] = $vulnerability;
+
+        return $this;
+    }
+
+    /**
+     * Remove the relation between this Asset and given Vulnerability and remove the relation on the inverse
+     * Vulnerability entity
+     *
+     * @param Vulnerability $vulnerability
+     * @return $this
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $vulnerability->removeAsset($this);
+        $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
     }
 
     /**

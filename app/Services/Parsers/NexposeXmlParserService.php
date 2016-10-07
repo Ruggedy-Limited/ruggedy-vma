@@ -10,6 +10,7 @@ use App\Contracts\RelatesToFiles;
 use App\Contracts\SystemComponent;
 use App\Entities\Asset;
 use App\Entities\Base\AbstractEntity;
+use App\Entities\Exploit;
 use App\Entities\File;
 use App\Entities\OpenPort;
 use App\Entities\SoftwareInformation;
@@ -53,6 +54,9 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
 
     /** @var CommandBus */
     protected $bus;
+
+    /** @var Collection */
+    protected $genericOutput;
 
     /**
      * NexposeXmlParserService constructor.
@@ -168,17 +172,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled'
                 ]),
             ]),
-            'test' => collect([
-                'setIdFromScanner' => collect([
-                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'id',
-                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
-                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled'
-                ]),
-                'setGenericOutput' => collect([
-                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
-                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled'
-                ])
-            ]),
             'endpoint' => collect([
                 'setProtocol' => collect([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'protocol',
@@ -277,10 +270,21 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
             ]),
-            'exploits'          => collect([
-                'setExploitDescription' => collect([
-                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
+            'exploit'          => collect([
+                'setTitle' => collect([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'title',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Exploit::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+                'setUrlReference' => collect([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'link',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Exploit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|url',
+                ]),
+                'setSkillLevel' => collect([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'skillLevel',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Exploit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|in:Novice,Intermediate,Expert',
                 ]),
             ]),
             'description'       => collect([
@@ -341,10 +345,15 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                 ]),
             ]),
             'test'        => collect([
-                'initialiseNewEntity' => $vulnerabilityPreProcessing,
+                'storeTemporaryRawData' => collect(['id']),
             ]),
             'vulnerability' => collect([
                 'initialiseNewEntity' => $vulnerabilityPreProcessing,
+            ]),
+            'exploit'      => collect([
+                'initialiseNewEntity' => collect([
+                    Exploit::class,
+                ]),
             ]),
             'reference'     => collect([
                 'initialiseNewEntity' => collect([
@@ -387,23 +396,31 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     Asset::class,
                 ]),
             ]),
-            'test'        => collect([
-                'moveToTemporaryCollection' => collect([
-                    Vulnerability::class,
-                    Asset::class,
-                    'getIdFromScanner'
-                ]),
-            ]),
             'vulnerability' => collect([
-                'mergeWithTemporaryCollectionAndPersist' => collect([
+                'addTemporaryRawDataToEntity' => collect([
                     Vulnerability::class,
                     'getIdFromScanner',
+                    'genericOutput',
+                    'setGenericOutput'
+                ]),
+                'persistPopulatedEntity' => collect([
+                    Vulnerability::class,
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
-                        Vulnerability::ASSET           => null,
+                        Vulnerability::DESCRIPTION     => null,
                     ],
-                    'getVulnerabilityReferenceCodes'
+                    Asset::class,
+                ]),
+            ]),
+            'exploit'       => collect([
+                'addToParentForCascadePersist' => collect([
+                    Exploit::class,
+                    Vulnerability::class,
+                    [
+                        Exploit::TITLE       => null,
+                        Exploit::SKILL_LEVEL => null,
+                    ]
                 ]),
             ]),
             'reference'     => collect([
@@ -419,14 +436,13 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     false,
                 ]),
             ]),
-            // TODO: Move the above to the below key and change this to find all the VulnerabilityReferenceCodes in the
-            // temporary Collection and persist them in preparation for flushing
             'VulnerabilityDefinitions' => collect([
                 'flushDoctrineUnitOfWork',
             ]),
         ]);
 
-        $this->model = new NexposeModel();
+        $this->genericOutput = new Collection();
+        $this->model         = new NexposeModel();
     }
 
     /**
@@ -536,6 +552,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
         if ($entity instanceof Asset) {
             $command = new CreateAsset($this->file->getWorkspaceId(), $entity);
             $asset = $this->bus->handle($command);
+            $this->addFileRelation($asset, $entityClass);
             $this->entities->put(Asset::class, $asset);
             return;
         }
@@ -631,10 +648,10 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      * @param string $entityClass
      * @param string $keyGetterMethod
      * @param array $findOneBy
-     * @param string $getChildrenMethod
+     * @param array $getChildrenMethods
      */
     protected function mergeWithTemporaryCollectionAndPersist(
-        string $entityClass, string $keyGetterMethod, array $findOneBy = [], string $getChildrenMethod = ''
+        string $entityClass, string $keyGetterMethod, array $findOneBy = [], array $getChildrenMethods = []
     )
     {
         if (!isset($keyGetterMethod, $entityClass) || !class_exists($entityClass)) {
@@ -686,12 +703,12 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
         $entityCollection->filter(function ($temporaryEntity) {
             // Defensiveness: make sure we only operate on instances of AbstractEntity
             return $temporaryEntity instanceof AbstractEntity;
-        })->each(function ($temporaryEntity) use ($entity, $entityClass, $findOneBy, $getChildrenMethod) {
+        })->each(function ($temporaryEntity) use ($entity, $entityClass, $findOneBy, $getChildrenMethods) {
             // Merge the contents of the temporary entity with the current entity to form a single array
             /** @var AbstractEntity $temporaryEntity */
             //$entityContents = array_replace($entity->toArray(), $temporaryEntity->toArray(true));
             $temporaryEntity->setFromArray($entity->toArray(true));
-            $this->refreshChildEntities($temporaryEntity, $getChildrenMethod);
+            $this->callChildrenGetterMethods($temporaryEntity, $getChildrenMethods);
             // Create a new instance of $entityClass in the $this->entities Collection and add the entity that contains
             // the merged contents of the current entity and the temporary entity
             //$this->initialiseNewEntity($entityClass);
@@ -703,6 +720,23 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             // Persist the populated entity
             $this->persistPopulatedEntity($entityClass, $findOneBy, '', true);
             return true;
+        });
+    }
+
+    /**
+     * Iterate over the child getter methods and refresh the related entities
+     *
+     * @param AbstractEntity $parentEntity
+     * @param array $childGetterMethods
+     */
+    protected function callChildrenGetterMethods(AbstractEntity $parentEntity, array $childGetterMethods)
+    {
+        if (empty($childGetterMethods)) {
+            return;
+        }
+
+        collect($childGetterMethods)->each(function ($getChildrenMethod) use ($parentEntity) {
+            $this->refreshChildEntities($parentEntity, $getChildrenMethod);
         });
     }
 
@@ -757,8 +791,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
 
         $this->temporaryEntities->collapse()->filter(function ($entity) use ($entityClass) {
             return isset($entity) && is_object($entity) && $entity instanceof $entityClass;
-        })->filter(function ($entity) {
-            return empty($entity->getParent()->getId());
         })->each(function ($entity) {
             $this->em->persist($entity);
             return true;
@@ -856,6 +888,139 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
     }
 
     /**
+     * Store the related generic output on the vulnerability
+     * @param string $attributeNameForKey
+     */
+    protected function storeTemporaryRawData(string $attributeNameForKey)
+    {
+        // Make sure we have an attribute name, whose value we will extract to use as a key
+        if (empty($attributeNameForKey)) {
+            return;
+        }
+
+        // Check if there is something already stored at the key, but if not, create the key and store the value
+        $currentValueAtKey = $this->genericOutput->get($this->parser->getAttribute($attributeNameForKey));
+        if (empty($currentValueAtKey)) {
+            $this->genericOutput->put(
+                $this->parser->getAttribute($attributeNameForKey),
+                $this->parser->readInnerXml()
+            );
+
+            return;
+        }
+
+        // There key exists, but the current value is the same as the contents of the current node so do nothing
+        if ($this->parser->readInnerXml() == $currentValueAtKey) {
+            return;
+        }
+
+        // Append the contents of the current node to the value that already exists at the key
+        $this->genericOutput->put(
+            $this->parser->getAttribute($attributeNameForKey),
+            $currentValueAtKey . PHP_EOL . PHP_EOL . $this->parser->readInnerXml()
+        );
+    }
+
+    /**
+     * Extract raw XML data stored temporarily to be added to the entity of the given class
+     *
+     * @param string $entityClass
+     * @param string $keyGetterMethod
+     * @param string $propertyName
+     * @param string $setterMethod
+     */
+    protected function addTemporaryRawDataToEntity(
+        string $entityClass, string $keyGetterMethod, string $propertyName, string $setterMethod
+    )
+    {
+        // Make sure the relevant temporary property exists as a Collection
+        if (!property_exists($this, $propertyName) || !($this->$propertyName instanceof Collection)) {
+            $this->logger->log(Logger::ERROR, "No Collection found at the given property name", [
+                'entityClass'     => $entityClass ?? null,
+                'keyGetterMethod' => $keyGetterMethod ?? null,
+                'propertyName'    => $propertyName ?? null,
+                'setterMethod'    => $setterMethod ?? null,
+            ]);
+
+            return;
+        }
+
+        // Get the relevant entity from the entities Collection and validate it.
+        $entity = $this->entities->get($entityClass);
+        if (!$this->isValidEntity($entity, $entityClass)) {
+            $this->logger->log(Logger::ERROR, "A valid entity object with the given class name was not found", [
+                'entityClass'     => $entityClass ?? null,
+                'keyGetterMethod' => $keyGetterMethod ?? null,
+                'propertyName'    => $propertyName ?? null,
+                'setterMethod'    => $setterMethod ?? null,
+            ]);
+
+            return;
+        }
+
+        // Make sure the entity has the given setter method
+        if (empty($setterMethod) || !method_exists($entity, $setterMethod)) {
+            $this->logger->log(Logger::ERROR, "A valid entity object with the given class name was not found", [
+                'entityClass'     => $entityClass ?? null,
+                'keyGetterMethod' => $keyGetterMethod ?? null,
+                'propertyName'    => $propertyName ?? null,
+                'setterMethod'    => $setterMethod ?? null,
+            ]);
+
+            return;
+        }
+
+        // Make sure we have a valid key and that a value exists at the key
+        $id = $this->getKeyValueForTemporaryCollection($entity, $keyGetterMethod);
+        if (empty($id) || !$this->$propertyName->offsetExists($id)) {
+            $this->logger->log(
+                Logger::WARNING,
+                "Could not get key value using entity getter method or there is no value at the key",
+                [
+                    'entityClass'     => $entityClass,
+                    'keyGetterMethod' => $keyGetterMethod ?? null,
+                    'propertyName'    => $propertyName ?? null,
+                ]
+            );
+
+            return;
+        }
+
+        // Set the value from the value stored at the key on the entity
+        $entity->$setterMethod(
+            $this->$propertyName->get($id)
+        );
+    }
+
+    /**
+     * Set/add an entity on a parent entity without explicitly persisting it so that it can be cascade persisted
+     *
+     * @param string $entityClass
+     * @param string $parentClass
+     * @param array $findOneByCriteria
+     */
+    protected function addToParentForCascadePersist(string $entityClass, string $parentClass, array $findOneByCriteria)
+    {
+        // Get the relevant entity from the entities Collection and validate it.
+        $entity = $this->entities->get($entityClass);
+        if (!$this->isValidEntity($entity, $entityClass)) {
+            $this->logger->log(Logger::ERROR, "A valid entity object with the given class name was not found", [
+                'entityClass' => $entityClass ?? null,
+            ]);
+
+            return;
+        }
+
+        // Populate a criteria array with the values from the entity instance
+        $findOneByCriteria = $this->getPopulatedCriteria($entity, $findOneByCriteria, null);
+
+        // Check if the entity is managed or exists in the DB
+        $entity = $this->checkForExistingEntity($findOneByCriteria, $entityClass, $entity);
+
+        $this->setParentRelationship($entity, $entityClass, $parentClass);
+    }
+
+    /**
      * Get the current Entity's parent from the local Collection of entities
      *
      * @param string $parentEntityClass
@@ -927,7 +1092,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      * @param array $findOneByCriteria
      * @param string $entityClass
      * @param AbstractEntity $entity
-     * @return object
+     * @return object|AbstractEntity
      */
     protected function checkForExistingEntity(array $findOneByCriteria, string $entityClass, AbstractEntity $entity)
     {
@@ -948,7 +1113,35 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             $entity = $this->em->merge($entity);
         }
 
-        return $entity;
+        // If the entity doesn't implement the GeneratesUniqueHash contract, return the entity as is
+        if (!($entity instanceof GeneratesUniqueHash)) {
+            return $entity;
+        }
+
+        // Check if there are scheduled inserts in the Doctrine UnitOfWork, if not, return the entity as is
+        $scheduledInsertions = collect($this->em->getUnitOfWork()->getScheduledEntityInsertions());
+        if ($scheduledInsertions->isEmpty()) {
+            return $entity;
+        }
+
+        // See if an entity with same unique hash exists in the scheduled insertions
+        $filteredCollection = $scheduledInsertions->filter(function ($entity) use ($entityClass) {
+            return $entity instanceof $entityClass && $entity instanceof GeneratesUniqueHash;
+        });
+        $mappedCollection = $filteredCollection->map(function ($entity) {
+            /** @var GeneratesUniqueHash $entity */
+            return $entity->getHash();
+        });
+
+        $keyOfExisting = $mappedCollection->search($entity->getHash(), true);
+
+        // Check if we got a key back and if not return the entity as is
+        if ($keyOfExisting === false) {
+            return $entity;
+        }
+
+        // Found a matching entity in the scheduled insertions, return that instance to prevent duplicates
+        return $scheduledInsertions->get($keyOfExisting);
     }
 
     /**
@@ -956,6 +1149,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      *
      * @param object $entity
      * @param string $entityClass
+     * @param bool $addFileToEntity
      */
     protected function addFileRelation($entity, string $entityClass, $addFileToEntity = false)
     {

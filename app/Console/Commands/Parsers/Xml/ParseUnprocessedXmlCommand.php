@@ -74,7 +74,10 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
                 $this->bus->handle($parseFileCommand);
             } catch (Exception $e) {
                 $this->logger->log(Logger::ERROR, "Unhandled exception when parsing file", [
-                    'fileInfo' => $file->toArray(),
+                    'fileId'    => $file->getId(),
+                    'filePath'  => $file->getPath(),
+                    'exception' => $e->getMessage(),
+                    'trace'     => $this->logger->getTraceAsArrayOfLines($e),
                 ]);
 
                 $this->error("Failed to process file: {$file->getPath()}: {$e->getMessage()}");

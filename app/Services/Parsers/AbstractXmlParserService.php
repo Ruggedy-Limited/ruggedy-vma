@@ -7,6 +7,7 @@ use App\Contracts\CustomLogging;
 use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
+use App\Entities\Exploit;
 use App\Entities\File;
 use App\Entities\OpenPort;
 use App\Entities\SoftwareInformation;
@@ -164,7 +165,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $this->entities           = new Collection();
         $this->temporaryEntities  = new Collection();
 
-        // TODO: Complete these mappings
         $this->entityRelationshipSetterMap = new Collection([
             Workspace::class           => new Collection([
                 Asset::class => 'addAsset',
@@ -174,9 +174,13 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 OpenPort::class            => 'addOpenPort',
                 SoftwareInformation::class => 'addSoftwareInformation'
             ]),
+            Exploit::class             => new Collection([
+                Vulnerability::class => 'addVulnerability',
+            ]),
             Vulnerability::class       => new Collection([
-                Asset::class                      => 'setAsset',
+                Asset::class                      => 'addAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
+                Exploit::class                    => 'addExploit',
             ]),
             VulnerabilityReferenceCode::class => new Collection([
                 Vulnerability::class => 'setVulnerability',
@@ -194,6 +198,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * Parse an XML file and return the relevant model or false on failure
      *
      * @param File $file
+     * @throws Exception
      * @throws FileNotFoundException
      */
     public function processXmlFile(File $file)
@@ -228,7 +233,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 'trace'     => $this->logger->getTraceAsArrayOfLines($e),
             ]);
 
-            return;
+            throw $e;
         }
 
         $this->moveFileToProcessed($file);
@@ -642,6 +647,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      *
      * @param string $processingMethod
      * @param null $parameters
+     * @throws Exception
      */
     protected function callPreOrPostProcessingMethod(string $processingMethod, $parameters = null)
     {
@@ -669,6 +675,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 'exception'            => $e->getMessage(),
                 'exceptionTrace'       => $e->getTraceAsString(),
             ]);
+
+            throw $e;
         }
     }
 
@@ -676,6 +684,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * Call the pre or post-processing method for this node or attribute with parameters
      *
      * @param Collection $methodAndParameters
+     * @throws Exception
      */
     protected function callPreOrPostProcessingMethodWithParameters(Collection $methodAndParameters)
     {
@@ -720,6 +729,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 'exception'            => $e->getMessage(),
                 'exceptionTrace'       => $e->getTraceAsString(),
             ]);
+
+            throw $e;
         }
     }
 
