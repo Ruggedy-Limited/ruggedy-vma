@@ -35,11 +35,6 @@ ALTER TABLE `files_vulnerabilities`
   ADD UNIQUE KEY `file_vulnerability_idx` (`file_id`, `vulnerability_id`),
   ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT ''
     AFTER `vulnerability_id`;
-
-ALTER TABLE `files_vulnerability_reference_codes`
-  ADD UNIQUE KEY `file_vulnerability_reference_code_idx` (`file_id`, `vulnerability_reference_code_id`),
-  ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT ''
-    AFTER `vulnerability_reference_code_id`;
 SQL;
     }
 }

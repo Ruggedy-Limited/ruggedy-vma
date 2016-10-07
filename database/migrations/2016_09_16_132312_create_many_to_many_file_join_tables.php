@@ -60,17 +60,6 @@ CREATE TABLE `files_open_ports` (
     REFERENCES `open_ports` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `files_vulnerability_reference_codes` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `file_id` int(10) unsigned NOT NULL,
-  `vulnerability_reference_code_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `files_vulnerability_reference_codes_file_fk` FOREIGN KEY (`file_id`)
-    REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `files_vulnerability_reference_codes_vrc_fk` FOREIGN KEY (`vulnerability_reference_code_id`)
-      REFERENCES `vulnerability_reference_codes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `files_software_information` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `file_id` int(10) unsigned NOT NULL,

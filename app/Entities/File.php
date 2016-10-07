@@ -44,12 +44,6 @@ class File extends Base\File implements SystemComponent
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="VulnerabilityReferenceCode", inversedBy="files")
-     * @ORM\JoinTable(name="files_vulnerability_reference_codes")
-     */
-    protected $vulnerabilityReferenceCodes;
-
-    /**
      * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files")
      * @ORM\JoinTable(name="files_open_ports")
      */
@@ -69,7 +63,6 @@ class File extends Base\File implements SystemComponent
         parent::__construct();
         $this->assets                      = new ArrayCollection();
         $this->vulnerabilities             = new ArrayCollection();
-        $this->vulnerabilityReferenceCodes = new ArrayCollection();
         $this->openPorts                   = new ArrayCollection();
         $this->softwareInformation         = new ArrayCollection();
     }
@@ -142,24 +135,6 @@ class File extends Base\File implements SystemComponent
     {
         $vulnerability->removeFile($this); // synchronously updating inverse side
         $this->vulnerabilities->removeElement($vulnerability);
-    }
-
-    /**
-     * @param VulnerabilityReferenceCode $vulnerabilityReferenceCode
-     */
-    public function addVulnerabilityReferenceCode(VulnerabilityReferenceCode $vulnerabilityReferenceCode)
-    {
-        $vulnerabilityReferenceCode->addFile($this); // synchronously updating inverse side
-        $this->vulnerabilityReferenceCodes[] = $vulnerabilityReferenceCode;
-    }
-
-    /**
-     * @param VulnerabilityReferenceCode $vulnerabilityReferenceCode
-     */
-    public function removeVulnerabilityReferenceCode(VulnerabilityReferenceCode $vulnerabilityReferenceCode)
-    {
-        $vulnerabilityReferenceCode->removeFile($this); // synchronously updating inverse side
-        $this->vulnerabilityReferenceCodes->removeElement($vulnerabilityReferenceCode);
     }
 
     /**
