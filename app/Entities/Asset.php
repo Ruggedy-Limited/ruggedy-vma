@@ -85,7 +85,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="assets")
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="assets", indexBy="id")
      */
     protected $files;
 
@@ -248,7 +248,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function addFile(File $file)
     {
-        $this->files[] = $file;
+        $this->files[$file->getId()] = $file;
 
         return $this;
     }

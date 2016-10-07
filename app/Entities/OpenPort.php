@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 class OpenPort extends Base\OpenPort implements HasIdColumn, RelatesToFiles
 {
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="open_ports")
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="open_ports", indexBy="id")
      */
     protected $files;
 
@@ -48,7 +48,7 @@ class OpenPort extends Base\OpenPort implements HasIdColumn, RelatesToFiles
      */
     public function addFile(File $file)
     {
-        $this->files[] = $file;
+        $this->files[$file->getId()] = $file;
 
         return $this;
     }

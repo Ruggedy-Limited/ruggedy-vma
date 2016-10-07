@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 class SoftwareInformation extends Base\SoftwareInformation implements HasIdColumn, RelatesToFiles
 {
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="software_information")
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="software_information", indexBy="id")
      */
     protected $files;
 
@@ -42,7 +42,7 @@ class SoftwareInformation extends Base\SoftwareInformation implements HasIdColum
      */
     public function addFile(File $file)
     {
-        $this->files[] = $file;
+        $this->files[$file->getId()] = $file;
 
         return $this;
     }

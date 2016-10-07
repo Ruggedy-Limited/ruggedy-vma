@@ -32,25 +32,25 @@ class File extends Base\File implements SystemComponent
     protected $workspace;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files")
+     * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files", indexBy="id")
      * @ORM\JoinTable(name="files_assets")
      */
     protected $assets;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", indexBy="name")
      * @ORM\JoinTable(name="files_vulnerabilities")
      */
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files")
+     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", indexBy="number")
      * @ORM\JoinTable(name="files_open_ports")
      */
     protected $openPorts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", indexBy="name")
      * @ORM\JoinTable(name="files_software_information")
      */
     protected $softwareInformation;
@@ -107,7 +107,7 @@ class File extends Base\File implements SystemComponent
     public function addAsset(Asset $asset)
     {
         $asset->addFile($this); // synchronously updating inverse side
-        $this->assets[] = $asset;
+        $this->assets[$asset->getId()] = $asset;
     }
 
     /**
@@ -125,7 +125,7 @@ class File extends Base\File implements SystemComponent
     public function addVulnerability(Vulnerability $vulnerability)
     {
         $vulnerability->addFile($this); // synchronously updating inverse side
-        $this->vulnerabilities[] = $vulnerability;
+        $this->vulnerabilities[$vulnerability->getName()] = $vulnerability;
     }
 
     /**
@@ -143,7 +143,7 @@ class File extends Base\File implements SystemComponent
     public function addOpenPort(OpenPort $openPort)
     {
         $openPort->addFile($this); // synchronously updating inverse side
-        $this->openPorts[] = $openPort;
+        $this->openPorts[$openPort->getNumber()] = $openPort;
     }
 
     /**
@@ -161,7 +161,7 @@ class File extends Base\File implements SystemComponent
     public function addSoftwareInformation(SoftwareInformation $softwareInformation)
     {
         $softwareInformation->addFile($this); // synchronously updating inverse side
-        $this->softwareInformation[] = $softwareInformation;
+        $this->softwareInformation[$softwareInformation->getName()] = $softwareInformation;
     }
 
     /**
