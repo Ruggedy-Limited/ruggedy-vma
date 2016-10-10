@@ -5,6 +5,7 @@ namespace App\Services\Parsers;
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
 use App\Models\BurpModel;
+use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
 use Doctrine\ORM\EntityManager;
@@ -21,16 +22,17 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
      * @param XMLReader $parser
      * @param Filesystem $fileSystem
      * @param Factory $validatorFactory
+     * @param AssetRepository $assetRepository
      * @param FileRepository $fileRepository
      * @param EntityManager $em
      * @param JsonLogService $logger
      */
     public function __construct(
-        XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, FileRepository $fileRepository,
-        EntityManager $em, JsonLogService $logger
+        XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, AssetRepository $assetRepository,
+        FileRepository $fileRepository, EntityManager $em, JsonLogService $logger
     )
     {
-        parent::__construct($parser, $fileSystem, $validatorFactory, $fileRepository, $em, $logger);
+        parent::__construct($parser, $fileSystem, $validatorFactory, $assetRepository, $fileRepository, $em, $logger);
 
         // Create the mappings to use when parsing the NMAP XML output
         $this->fileToSchemaMapping = new Collection([

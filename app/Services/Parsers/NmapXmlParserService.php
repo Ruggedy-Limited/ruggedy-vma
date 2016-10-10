@@ -5,6 +5,7 @@ namespace App\Services\Parsers;
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
 use App\Models\NmapModel;
+use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
 use Doctrine\ORM\EntityManager;
@@ -26,23 +27,24 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
     /** @var int */
     protected $currentPortNumber;
-    
+
     /**
      * NmapXmlParserService constructor.
      *
      * @param XMLReader $parser
      * @param Filesystem $fileSystem
      * @param Factory $validatorFactory
+     * @param AssetRepository $assetRepository
      * @param FileRepository $fileRepository
      * @param EntityManager $em
      * @param JsonLogService $logger
      */
     public function __construct(
-        XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, FileRepository $fileRepository,
-        EntityManager $em, JsonLogService $logger
+        XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, AssetRepository $assetRepository,
+        FileRepository $fileRepository, EntityManager $em, JsonLogService $logger
     )
     {
-        parent::__construct($parser, $fileSystem, $validatorFactory, $fileRepository, $em, $logger);
+        parent::__construct($parser, $fileSystem, $validatorFactory, $assetRepository, $fileRepository, $em, $logger);
 
         // Create the mappings to use when parsing the NMAP XML output
         $this->fileToSchemaMapping = new Collection([
@@ -273,14 +275,14 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      * @param mixed $attributeValue
      * @param string $setter
      */
-    protected function setValueOnModel($attributeValue, string $setter)
+    protected function setValueOnModel($attributeValue, string $setter, string $entityClass = '')
     {
         if ($this->model->getMethodsRequiringAPortId()->contains($setter)) {
             $this->model->$setter($this->currentPortNumber, $attributeValue);
             return;
         }
 
-        parent::setValueOnModel($attributeValue, $setter);
+        parent::setValueOnModel($attributeValue, $setter, $entityClass);
     }
 
     /**

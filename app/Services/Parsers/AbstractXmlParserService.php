@@ -344,7 +344,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
         $attribute        = $mappingAttributes->get(self::MAP_ATTRIBUTE_XML_ATTRIBUTE, self::NODE_TEXT_VALUE_DEFAULT);
         $validationRules  = $mappingAttributes->get(self::MAP_ATTRIBUTE_VALIDATION);
-        $modelClass       = $mappingAttributes->get(self::MAP_ATTRIBUTE_ENTITY_CLASS);
+        $modelClass       = $mappingAttributes->get(self::MAP_ATTRIBUTE_ENTITY_CLASS, '');
 
         // If validation rules is a Collection then there are related attributes we need to validate on this node to
         // make sure we are checking the right node

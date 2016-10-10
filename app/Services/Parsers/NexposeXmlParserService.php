@@ -1163,19 +1163,18 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             return;
         }
 
+        // Check if the entity has a file relationship
         if (empty($entity) || !($entity instanceof RelatesToFiles)) {
-            $this->logger->log(Logger::WARNING, "The given entity is not related to files", [
-                'entityClass' => $entityClass ?? null,
-            ]);
-
             return;
         }
 
+        // Add the file to the entity where instructed by the the $addFileToEntity flag
         if ($addFileToEntity) {
             $entity->addFile($this->file);
             return;
         }
 
+        // Get the method on the file entity that adds this entity as a relation
         $addToFileMethod = $this->getMethodNameToAddEntityFileRelation($entityClass);
         if (empty($addToFileMethod) || !method_exists($this->file, $addToFileMethod)) {
             $this->logger->log(Logger::ERROR, "Method to add file relation for this entity does not exist", [
@@ -1186,6 +1185,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             return;
         }
 
+        // Add the entity to the file as a relation
         $this->file->$addToFileMethod($entity);
     }
 
