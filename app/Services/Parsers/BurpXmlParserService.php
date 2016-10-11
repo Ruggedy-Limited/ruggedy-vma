@@ -7,7 +7,6 @@ use App\Entities\Asset;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Entities\Vulnerability;
-use App\Models\BurpModel;
 use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
@@ -16,6 +15,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
+use Monolog\Logger;
 use XMLReader;
 
 class BurpXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
@@ -184,9 +184,6 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
             ]),
             'issues' => 'flushDoctrineUnitOfWork',
         ]);
-
-        // Instantiate a model
-        $this->model = new BurpModel();
     }
 
     /**
@@ -201,7 +198,9 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
         string $entityClass, string $setter, string $heading = '', bool $append = false
     )
     {
+        // Check if the base64 flag is set on the node
         $isBase64 = $this->checkForBase64Encoding();
+
         // Move into the CData node
         $this->parser->read();
 
@@ -250,28 +249,43 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
         $this->parser->read();
         $html = $this->parser->expand();
         if (empty($html) || !($html instanceof \DOMCdataSection)) {
+            $this->logger->log(Logger::WARNING, "Did not get a DOMCdataSection node when parsing references", [
+                'nodeName' => $this->parser->name,
+                'nodeType' => $this->parser->nodeType,
+                'type'     => is_object($html) ? get_class($html) : 'Not an object',
+            ]);
+
             return;
         }
 
         // Match all the URLs in the HTML
         preg_match_all('/<a href="(.*)">/', $html->nodeValue, $urls);
         if (empty($urls[1]) || !is_array($urls[1])) {
+            $this->logger->log(Logger::WARNING, "No URLs matched in references", [
+                'nodeName'   => $this->parser->name,
+                'nodeType'   => $this->parser->nodeType,
+                'type'       => is_object($html) ? get_class($html) : 'Not an object',
+                'urlMatches' => $urls ?? 'No matches',
+            ]);
+
             return;
         }
 
+        // Convert URLs to a Collection and iterate over each url to create and persist a new VulnerabilityReferenceCode
         $urls = collect($urls[1]);
-        // Iterate over each url
         $urls->each(function ($url) {
             // Create a new VulnerabilityReferenceCode and add it to the current Vulnerability
             $this->initialiseNewEntity(VulnerabilityReferenceCode::class);
 
-            $this->setValueOnModel($url, 'setValue', VulnerabilityReferenceCode::class);
-            $this->setValueOnModel(
+            // Set values on the new entity
+            $this->setValueOnEntity($url, 'setValue', VulnerabilityReferenceCode::class);
+            $this->setValueOnEntity(
                 VulnerabilityReferenceCode::REF_TYPE_ONLINE_OTHER,
                 'setReferenceType',
                 VulnerabilityReferenceCode::class
             );
 
+            // Persist the populated entity
             $this->persistPopulatedEntity(
                 VulnerabilityReferenceCode::class,
                 [
@@ -299,17 +313,17 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
     /**
      * @inheritdoc
      */
-    protected function resetModel()
+    protected function getBaseTagName()
     {
-        $this->model = new BurpModel();
+        return 'issue';
     }
 
     /**
      * @inheritdoc
      */
-    protected function getBaseTagName()
+    public function getLogFilename(): string
     {
-        return 'issue';
+        return 'burp-xml-parser.json.log';
     }
 
     /**

@@ -6,7 +6,6 @@ use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
 use App\Entities\OpenPort;
 use App\Entities\Workspace;
-use App\Models\NmapModel;
 use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
@@ -15,7 +14,6 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
-use Monolog\Logger;
 use XMLReader;
 
 class NmapXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
@@ -28,9 +26,6 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     /** NMAP XML node attribute names */
     const XML_ATTRIBUTE_ACCURACY = 'accuracy';
     const XML_ATTRIBUTE_PORTID   = 'portid';
-
-    /** @var int */
-    protected $currentPortNumber;
 
     /** @var Collection */
     protected $accuracies;
@@ -208,9 +203,6 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
         ]);
 
         $this->accuracies = new Collection();
-
-        // Instantiate a model
-        $this->model = new NmapModel();
     }
 
     /**
@@ -261,7 +253,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
         // If accuracy is invalid or less than the current accuracy for this attribute, return null so that nothing
         // nothing further is done on this node
-        if (!$accuracyIsValid || $accuracy <= $this->model->getCurrentAccuracyFor($nodeName)) {
+        if (!$accuracyIsValid || $accuracy <= $this->getCurrentAccuracyFor($nodeName)) {
             $this->skipToNextNode(collect(['osmatch', 'uptime']));
             return false;
         }
@@ -271,7 +263,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
         // Set the accuracy to the value of the accuracy attribute for this node
         // and return true so that it is added to the model
-        $this-> model->setCurrentAccuracyFor($nodeName, intval($accuracy));
+        $this->setCurrentAccuracyFor($nodeName, intval($accuracy));
 
         return true;
     }
@@ -335,38 +327,6 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
         while (!$nodeNames->contains($this->parser->name)) {
             $this->parser->next();
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function resetModel()
-    {
-        $this->model = new NmapModel();
-    }
-
-    /**
-     * @return NmapModel
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCurrentPortNumber(): int
-    {
-        return $this->currentPortNumber;
-    }
-
-    /**
-     * @param int $currentPortNumber
-     */
-    public function setCurrentPortNumber(int $currentPortNumber)
-    {
-        $this->currentPortNumber = $currentPortNumber;
     }
 
     /**

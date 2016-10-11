@@ -3,7 +3,6 @@
 namespace App\Services\Parsers;
 
 use App\Commands\CreateAsset;
-use App\Contracts\CollectsScanOutput;
 use App\Contracts\CustomLogging;
 use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\HasIdColumn;
@@ -107,28 +106,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     /** @var Collection */
     protected $attributePostProcessingMap;
 
-    /** @var CollectsScanOutput */
-    protected $model;
-
     /** @var Collection */
     protected $entityRelationshipSetterMap;
-
-    /**
-     * NOTES: My new idea is to have a Collection of Asset entities only once the parsing of a scan is complete. As we
-     * parse the data and we get Asset data, we set the data in the $entities Collection at the Asset class name offset
-     * which will be an Asset entity.
-     * We add a hook at the relevant point in the scan where we will have collected all possible Asset data,
-     * at which point we will do a findOneBy to see if an Asset with the same hostname and IP combination exists.
-     * If it does exist will will set the ID on and merge the entity from the Collection. If not, we will just persist
-     * the Asset.
-     * and if not, add the entity to the Collection, using the hash as a key, and then set the $currentAssetHash
-     * property to the hash. If the hash already exists, just set the $currentAssetHash property to the hash.
-     * As we parse the data in the file we add the data to the relevant temp property, e.g. $tempVulnerability,
-     * $tempOpenPort, $tempSoftwareInformation, $tempVulnerabilityReference, $tempExploit.
-     * Add hooks at the relevant points in the scan to add these related entities to Asset as relations.
-     * Override the method that adds related Vulnerabilities relations to the Asset entity to use the a key, e.g.
-     * CVE or vulnerability ID or a hash where there isn't anything specific in the scan.
-     */
 
     /** @var Collection */
     protected $entities;
@@ -396,36 +375,13 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         
         // No attributes specified, so look for a value on the XML node
         if ($attribute === self::NODE_TEXT_VALUE_DEFAULT) {
-            /* If we are on the start element, read into the node text.
-            if ($parser->nodeType === XMLReader::ELEMENT) {
-                $parser->read();
-            }
-
-            $value = $this->parser->value;
-
-            // If we have not hit a TEXT or CDATA node here, get the current node's raw outer XML
-            if ($parser->nodeType !== XMLReader::TEXT && $parser->nodeType !== XMLReader::CDATA) {
-
-                $this->parser->moveToElement()
-                $value = $this->parser->readOuterXml();
-
-                $this->logger->log(
-                    Logger::NOTICE, "Expected a text or cdata node, but got a {$parser->nodeType} node",
-                    [
-                        'nodeName'      => $this->parser->name ?? null,
-                        'attributeName' => $attribute ?? null,
-                        'setter'        => $setter ?? null,
-                    ]
-                );
-            }*/
-
             // Validate the XML node's text value
             if (!$this->isValidXmlValueOrAttribute($attribute, $validationRules, $this->parser->readInnerXml())) {
                 return true;
             }
 
             // Set the value on the model and continue to the next iteration
-            $this->setValueOnModel($this->parser->readInnerXml(), $setter, $modelClass);
+            $this->setValueOnEntity($this->parser->readInnerXml(), $setter, $modelClass);
             return true;
         }
 
@@ -460,7 +416,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Set the value on the model and continue to the next iteration
-        $this->setValueOnModel($attributeValue, $setter, $modelClass);
+        $this->setValueOnEntity($attributeValue, $setter, $modelClass);
 
         $this->doAttributePostProcessing();
 
@@ -468,25 +424,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     }
 
     /**
-     * Set the value of an attribute on the model
-     *
-     * @param mixed $attributeValue
-     * @param int|string $setter
-     * @param string $entityClass
-     *
-    protected function setValueOnModel($attributeValue, string $setter, string $entityClass = '')
-    {
-        $this->model->$setter($attributeValue);
-    }*/
-
-    /**
-     * @inheritdoc
-     * Override the parent method to pass the port ID for the methods requiring it
+     * Set a value from the XML on the relevant entity using the relevant setter method
      *
      * @param mixed $attributeValue
      * @param string $setter
+     * @param string $entityClass
+     * @return bool
      */
-    protected function setValueOnModel($attributeValue, string $setter, string $entityClass = '')
+    protected function setValueOnEntity($attributeValue, string $setter, string $entityClass = '')
     {
         // Check that we have an entity class. Without this we can't continue.
         if (empty($entityClass)) {
@@ -611,7 +556,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Mark the file as processed and persist to the DB
-        // TODO: Move the out into a command
         $file->setProcessed(true);
         $this->em->persist($file);
         $this->em->flush($file);
@@ -666,7 +610,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
-        // Persist Asset via the bus
+        // Persist Asset via the bus to handle permissions etc and so that this can be used as a primary entity that has
+        // been persisted to the DB
         if ($entity instanceof Asset) {
             $command = new CreateAsset($this->file->getWorkspaceId(), $entity);
             $asset = $this->bus->handle($command);
@@ -772,6 +717,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         string $entityClass, string $keyGetterMethod, array $findOneBy = [], array $getChildrenMethods = []
     )
     {
+        // Make sure we have a valid class and getter method
         if (!isset($keyGetterMethod, $entityClass) || !class_exists($entityClass)) {
             $this->logger->log(Logger::ERROR, "Invalid method parameter(s)", [
                 'keyGetterMethod'      => "Expected string",
@@ -783,6 +729,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        // Make sure we have a valid entity
         /** @var AbstractEntity $entity */
         $entity = $this->entities->get($entityClass);
         if (!$this->isValidEntity($entity, $entityClass)) {
@@ -793,6 +740,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        // Make sure we have a valid key to use on the temporary Collection
         $id = $this->getKeyValueForTemporaryCollection($entity, $keyGetterMethod);
         if (empty($id) || !$this->temporaryEntities->offsetExists($id)) {
             $this->logger->log(Logger::WARNING, "No temporary entity found at the relevant offset", [
@@ -824,15 +772,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         })->each(function ($temporaryEntity) use ($entity, $entityClass, $findOneBy, $getChildrenMethods) {
             // Merge the contents of the temporary entity with the current entity to form a single array
             /** @var AbstractEntity $temporaryEntity */
-            //$entityContents = array_replace($entity->toArray(), $temporaryEntity->toArray(true));
             $temporaryEntity->setFromArray($entity->toArray(true));
             $this->callChildrenGetterMethods($temporaryEntity, $getChildrenMethods);
+
             // Create a new instance of $entityClass in the $this->entities Collection and add the entity that contains
             // the merged contents of the current entity and the temporary entity
             //$this->initialiseNewEntity($entityClass);
             $this->entities->offsetUnset($entityClass);
             $this->entities->put($entityClass, $temporaryEntity);
-            //$this->entities->get($entityClass)->setFromArray($entityContents);
 
             // Populate the new entity instance with the merged contents of the current and temporary entities
             // Persist the populated entity
@@ -941,6 +888,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        // Set the parent entity on the child entity
         if ($setParentOnChild && !empty($this->getRelationSetterMethod($entityClass, $parentEntityClass))) {
             $setterMethod = $this->getRelationSetterMethod($entityClass, $parentEntityClass);
             $this->setEntityRelation($entity, $parentEntity, $setterMethod);
@@ -1187,22 +1135,26 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function populateParentIdWhereRelevant($parentEntity, array $criteria)
     {
+        // Make sure we can get an ID from the parent entity
         $parentId = $this->getParentIdFromParentEntity($parentEntity);
         if ($parentId === null) {
             return $criteria;
         }
 
+        // Make sure the ID column exists on the entity
         $idColumnName = $parentEntity::TABLE_NAME . '_id';
         if (!array_key_exists($idColumnName, $criteria)) {
             return $criteria;
         }
 
+        // Add the parent to the criteria
         $criteria[$idColumnName] = $parentId;
-
         return $criteria;
     }
 
     /**
+     * Get the ID (PRIMARY KEY) value of the parent entity
+     *
      * @param $parentEntity
      * @return null|int
      */
@@ -1217,6 +1169,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
     /**
      * Check for an existing entity in the entity hash value to ID value map Collection
+     *
      * @param array $findOneByCriteria
      * @param string $entityClass
      * @param AbstractEntity $entity
@@ -1432,13 +1385,16 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function callPreOrPostProcessingMethods(Collection $processingMap)
     {
+        // Get the pre or -post processing method Collection
         $parentChildNodeName = $this->getParentChildNodeName();
         $processingMethods   = $processingMap->get($this->parser->name) ?? $processingMap->get($parentChildNodeName);
 
+        // Exit early if there are no processing methods
         if (empty($processingMethods)) {
             return;
         }
 
+        // If we don't have a Collection we are executing a single method that has no parameters
         if (!($processingMethods instanceof Collection)) {
             $this->callPreOrPostProcessingMethod($processingMethods);
             return;
@@ -1451,6 +1407,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 $method     = $parameters;
                 $parameters = null;
             }
+
             // Process each hook
             $this->callPreOrPostProcessingMethod($method, $parameters);
             return true;
@@ -1466,6 +1423,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function callPreOrPostProcessingMethod(string $processingMethod, $parameters = null)
     {
+        // Make sure we have a valid processing method
         if (empty($processingMethod) || !method_exists($this, $processingMethod)) {
             $this->logger->log(Logger::ERROR, "Pre or Post-processing method does not exist", [
                 'processingMethodName' => $processingMethod ?? null,
@@ -1476,13 +1434,16 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         try {
+            // Process methods that have no parameters
             if (empty($parameters) || !($parameters instanceof Collection)) {
                 $this->$processingMethod();
                 return;
             }
 
+            // Process method that have parameters
             call_user_func_array([$this, $processingMethod], $parameters->all());
         } catch (Exception $e) {
+            // Catch any exceptions to log the error in this context and then re-throw the exception
             $this->logger->log(Logger::ERROR, "Error when call pre or post-processing method", [
                 'processingMethodName' => $processingMethod,
                 'xmlNodeName'          => $this->parser->name ?? null,
@@ -1503,6 +1464,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function callPreOrPostProcessingMethodWithParameters(Collection $methodAndParameters)
     {
+        // Make sure we have a Collection which will be the method as the key and a Collection of parameters
         if ($methodAndParameters->isEmpty()) {
             $this->logger->log(Logger::NOTICE, "Empty processing map Collection" ,[
                 'xmlNodeName' => $this->parser->name ?? null,
@@ -1511,9 +1473,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        // Extract the method and parameters separately from the Collection
         $processingMethod    = $methodAndParameters->get(self::MAP_ATTRIBUTE_HOOK_METHOD);
         $methodAndParameters = $methodAndParameters->get(self::MAP_ATTRIBUTE_HOOK_METHOD_PARAMETERS);
 
+        // Make sure we have a valid method
         if (empty($processingMethod) || !method_exists($this, $processingMethod)) {
             $this->logger->log(Logger::ERROR, "Pre or Post-processing method does not exist", [
                 'processingMethodName' => $processingMethod ?? null,
@@ -1523,6 +1487,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        // Make sure we have valid method parameters
         if (empty($methodAndParameters) || !($methodAndParameters instanceof Collection)) {
             $this->logger->log(Logger::ERROR, "No valid pre or post-processing method parameters found", [
                 'processingMethodName' => $processingMethod ?? null,
@@ -1533,10 +1498,13 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        // Convert the parameters to an array
         $methodAndParameters = $methodAndParameters->toArray();
         try {
+            // Call the method with the parameters
             call_user_func_array([$this, $processingMethod], $methodAndParameters);
         } catch (Exception $e) {
+            // Catch any exceptions to log the error in this context and then re-throw the exception
             $this->logger->log(Logger::ERROR, "Error when call pre or post-processing method with parameters", [
                 'processingMethodName' => $processingMethod,
                 'xmlNodeName'          => $this->parser->name ?? null,
@@ -1562,10 +1530,12 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      */
     protected function refreshTemporaryEntities()
     {
+        // Check that we have some temporary entities
         if ($this->temporaryEntities->isEmpty()) {
             return;
         }
 
+        // Replace entities with persistent versions where possible
         $this->temporaryEntities->merge(
             $this->temporaryEntities->collapse()->filter(function ($entity) {
                 return $entity instanceof GeneratesUniqueHash;
@@ -1618,6 +1588,50 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     }
 
     /**
+     * Extract and concatenate all the attribute values from the current node and set them on the relevant model
+     *
+     * @param string $setter
+     * @param string $entityClass
+     * @param bool $includeAttributeNames
+     * @param string $separator
+     */
+    protected function extractAndConcatenateAllAttributes(
+        string $setter, string $entityClass, $includeAttributeNames = false, $separator = ','
+    )
+    {
+        // Make sure the node has attributes
+        if (!$this->parser->hasAttributes) {
+            $this->logger->log(
+                Logger::WARNING,
+                "Function to extract XML attributes called on node that has no attributes",
+                [
+                    'nodeName'               => $this->parser->name ?? null,
+                    'setter'                 => $setter ?? null,
+                    'entityClass'            => $entityClass ?? null,
+                    'includeAttributesNames' => $includeAttributeNames,
+                    'separator'              => $separator,
+                ]
+            );
+            return;
+        }
+
+        // Iterate over all the attributes and concatenate into a string
+        $attributeValues = '';
+        while ($this->parser->moveToNextAttribute()) {
+            $currentAttribute = $this->parser->value;
+            if ($includeAttributeNames) {
+                $currentAttribute = $this->parser->name . "=" . $this->parser->value;
+            }
+
+            $attributeValues .= $currentAttribute . $separator;
+        }
+
+        // Trim the separator off the end of the string and add to the model
+        $attributeValues = rtrim($attributeValues, $separator);
+        $this->setValueOnEntity($attributeValues, $setter, $entityClass);
+    }
+
+    /**
      * Check the current authenticated User is the same as the User who uploaded the file and if not, authenticate the
      * User who uploaded the file so that all permissions for all operations are checked against that user
      *
@@ -1627,17 +1641,15 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     {
         $currentUser = Auth::user();
         $fileUser    = $file->getUser();
+
+        // If the authenticated User is the same as the User that uploaded the file, there is nothing to do
         if (!empty($currentUser) && $currentUser instanceof User && $currentUser->getId() === $fileUser->getId()) {
             return;
         }
 
+        // Login the User that uploaded the file
         Auth::login($fileUser);
     }
-
-    /**
-     * Reset the the model instance to a new instance
-     */
-    abstract protected function resetModel();
 
     /**
      * Get the name of the base tag used to identify the start of a new asset
@@ -1704,7 +1716,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     /**
      * @inheritdoc
      */
-    function setLoggerContext(JsonLogService $logger)
+    public function setLoggerContext(JsonLogService $logger)
     {
         $directory = $this->getLogContext();
         $logger->setLoggerName($directory);
@@ -1716,7 +1728,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     /**
      * @inheritdoc
      */
-    function getLogContext(): string
+    public function getLogContext(): string
     {
         return 'services';
     }
@@ -1724,7 +1736,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     /**
      * @inheritdoc
      */
-    function getLogFilename(): string
+    public function getLogFilename(): string
     {
         return 'xml-parser.json.log';
     }
@@ -1735,13 +1747,5 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function getFileToSchemaMapping(): Collection
     {
         return $this->fileToSchemaMapping;
-    }
-
-    /**
-     * @return CollectsScanOutput
-     */
-    public function getModel()
-    {
-        return $this->model;
     }
 }

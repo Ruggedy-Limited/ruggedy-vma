@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 use JsonSerializable;
 use stdClass;
 
-
 abstract class AbstractEntity implements Jsonable, JsonSerializable
 {
     /** Excluded field name constants */
@@ -86,21 +85,18 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
             return $dateString;
         }
 
-        $sanitisedDate = new Carbon($dateString);
-        if ($sanitisedDate instanceof Carbon) {
-            return $sanitisedDate;
+        // Check for a valid date format and return a Carbon instance if this is a valid date string
+        if (strtotime($dateString) !== false) {
+            return new Carbon($dateString);
         }
 
-        // Extra For Nexpose
-        $sanitisedDate = new Carbon(
-            substr($dateString, 0, 15)
-        );
-
-        if (!($sanitisedDate instanceof Carbon)) {
+        // For Nexpose: Try a string truncated to 15 characters and if that is not a valid date, return null
+        $dateString = substr($dateString, 0, 15);
+        if (strtotime($dateString) === false) {
             return null;
         }
 
-        return $sanitisedDate;
+        return new Carbon($dateString);
     }
 
     /**

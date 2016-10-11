@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 class SoftwareInformation extends Base\SoftwareInformation implements HasIdColumn, RelatesToFiles
 {
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="software_information", indexBy="id")
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="softwareInformation", indexBy="id")
      */
     protected $files;
 
