@@ -68,14 +68,16 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      * @param FileRepository $fileRepository
      * @param EntityManager $em
      * @param JsonLogService $logger
+     * @param CommandBus $commandBus
      */
     public function __construct(
         XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, AssetRepository $assetRepository,
-        FileRepository $fileRepository, EntityManager $em, JsonLogService $logger
+        FileRepository $fileRepository, EntityManager $em, JsonLogService $logger, CommandBus $commandBus
     )
     {
-        parent::__construct($parser, $fileSystem, $validatorFactory, $assetRepository, $fileRepository, $em, $logger);
-        $this->bus = App::make(CommandBus::class);
+        parent::__construct(
+            $parser, $fileSystem, $validatorFactory, $assetRepository, $fileRepository, $em, $logger, $commandBus
+        );
 
         // Create the mappings to use when parsing the NMAP XML output
         $this->fileToSchemaMapping = collect([
@@ -345,7 +347,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                 ]),
             ]),
             'test'        => collect([
-                'storeTemporaryRawData' => collect(['id']),
+                'storeTemporaryRawData' => collect(['id', 'genericOutput']),
             ]),
             'vulnerability' => collect([
                 'initialiseNewEntity' => $vulnerabilityPreProcessing,
@@ -408,7 +410,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
-                        Vulnerability::DESCRIPTION     => null,
                     ],
                     Asset::class,
                 ]),
@@ -885,40 +886,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
         }
 
         return $entity->$keyGetterMethod();
-    }
-
-    /**
-     * Store the related generic output on the vulnerability
-     * @param string $attributeNameForKey
-     */
-    protected function storeTemporaryRawData(string $attributeNameForKey)
-    {
-        // Make sure we have an attribute name, whose value we will extract to use as a key
-        if (empty($attributeNameForKey)) {
-            return;
-        }
-
-        // Check if there is something already stored at the key, but if not, create the key and store the value
-        $currentValueAtKey = $this->genericOutput->get($this->parser->getAttribute($attributeNameForKey));
-        if (empty($currentValueAtKey)) {
-            $this->genericOutput->put(
-                $this->parser->getAttribute($attributeNameForKey),
-                $this->parser->readInnerXml()
-            );
-
-            return;
-        }
-
-        // There key exists, but the current value is the same as the contents of the current node so do nothing
-        if ($this->parser->readInnerXml() == $currentValueAtKey) {
-            return;
-        }
-
-        // Append the contents of the current node to the value that already exists at the key
-        $this->genericOutput->put(
-            $this->parser->getAttribute($attributeNameForKey),
-            $currentValueAtKey . PHP_EOL . PHP_EOL . $this->parser->readInnerXml()
-        );
     }
 
     /**

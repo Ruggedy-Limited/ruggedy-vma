@@ -95,7 +95,7 @@ class Asset extends AbstractEntity
     protected $netbios;
 
     /**
-     * @ORM\Column(name="`uptime`", type="string", length=30, nullable=true)
+     * @ORM\Column(name="`uptime`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $uptime;
 
@@ -413,7 +413,7 @@ class Asset extends AbstractEntity
     /**
      * Set the value of uptime.
      *
-     * @param string $uptime
+     * @param integer $uptime
      * @return \App\Entities\Base\Asset
      */
     public function setUptime($uptime)
@@ -426,7 +426,7 @@ class Asset extends AbstractEntity
     /**
      * Get the value of uptime.
      *
-     * @return string
+     * @return integer
      */
     public function getUptime()
     {

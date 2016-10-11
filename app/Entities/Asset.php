@@ -60,7 +60,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     /** Valid OS Vendor values */
     const OS_VENDOR_LINUX     = 'Linux';
     const OS_VENDOR_APPLE     = 'Apple';
-    const OS_VENDOR_MICROSOFT = 'Windows';
+    const OS_VENDOR_MICROSOFT = 'Microsoft';
     const OS_VENDOR_UNKNOWN   = 'Unknown';
 
     /** String value to use when the Asset name cannot be automatically assigned */
@@ -116,7 +116,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function setHostname($hostname)
     {
-        parent::setHostname($hostname);
+        parent::setHostname(
+            $this->sanitiseHostname($hostname)
+        );
+
         return $this->conditionallySetName();
     }
 
@@ -127,11 +130,33 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     protected function conditionallySetName()
     {
-        if (!empty($this->getName())) {
+        if (isset($this->id)) {
             return $this;
         }
 
         return $this->setName($this->getHostname() ?? $this->getIpAddressV4());
+    }
+
+    /**
+     * Strip the given value down to the base hostname
+     *
+     * @param string $hostname
+     * @return mixed|null
+     */
+    protected function sanitiseHostname(string $hostname) {
+        if (!isset($hostname)) {
+            return null;
+        }
+
+        // Strip the scheme and the basic auth if it's there so we only store the actual hostname in the Asset entry
+        $hostname = preg_replace(
+            '~^' . Asset::REGEX_PROTOCOL . '?' . Asset::REGEX_BASIC_AUTH . '?~', '', $hostname
+        );
+
+        // Strip the port number too
+        $hostname = preg_replace('~' . Asset::REGEX_PORT_NUMBER . '~', '', $hostname);
+
+        return $hostname;
     }
 
     /**
@@ -145,6 +170,21 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         return parent::setMacAddress(
             $this->sanitiseMacAddress($mac_address)
         );
+    }
+
+    /**
+     * Override the parent method to sanitise and convert any non-date objects into a Carbon instance
+     *
+     * @param \DateTime $lastBoot
+     * @return Base\Asset
+     */
+    public function setLastBoot($lastBoot)
+    {
+        if (empty($this->sanitiseDate($lastBoot))) {
+            return $this;
+        }
+
+        return parent::setLastBoot($this->sanitiseDate($lastBoot));
     }
 
     /**
@@ -209,8 +249,14 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function addVulnerability(Vulnerability $vulnerability)
     {
+        if ($this->vulnerabilities->contains($vulnerability)) {
+            return $this;
+        }
+
         $vulnerability->addAsset($this);
-        $this->vulnerabilities[] = $vulnerability;
+
+        $vulnerabilityKey = $vulnerability->getId() ?? $vulnerability->getHash();
+        $this->vulnerabilities[$vulnerabilityKey] = $vulnerability;
 
         return $this;
     }
@@ -228,6 +274,14 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         $this->vulnerabilities->removeElement($vulnerability);
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
     }
 
     /**

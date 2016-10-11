@@ -75,6 +75,35 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     }
 
     /**
+     * Sanitise an incoming date string
+     *
+     * @param $dateString
+     * @return Carbon|null
+     */
+    protected function sanitiseDate($dateString)
+    {
+        if ($dateString instanceof Carbon || $dateString instanceof DateTime) {
+            return $dateString;
+        }
+
+        $sanitisedDate = new Carbon($dateString);
+        if ($sanitisedDate instanceof Carbon) {
+            return $sanitisedDate;
+        }
+
+        // Extra For Nexpose
+        $sanitisedDate = new Carbon(
+            substr($dateString, 0, 15)
+        );
+
+        if (!($sanitisedDate instanceof Carbon)) {
+            return null;
+        }
+
+        return $sanitisedDate;
+    }
+
+    /**
      * Generate an array representation of the object
      *
      * @param bool $excludeNulls
@@ -245,12 +274,10 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
             return spl_object_hash($value);
         });
 
-        if ($objectHashes->isEmpty()) {
-            return sha1($uniqueColumns->implode(":"));
-        }
-
         return sha1(
-            $uniqueColumns->merge($objectHashes)->implode(":")
+            $uniqueColumns->filter(function ($value) {
+                return isset($value);
+            })->merge($objectHashes)->implode(":")
         );
     }
 
