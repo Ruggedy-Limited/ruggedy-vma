@@ -83,7 +83,7 @@ class CreateAsset extends CommandHandler
         // Set the Workspace ID
         $entity->setWorkspaceId($workspaceId);
         // Create a new Asset or find a matching existing Asset
-        $asset = $this->assetRepository->findOrCreateOneBy($entity->toArray());
+        $asset = $this->assetRepository->findOrCreateOneBy($entity->toArray(true));
 
         // If this is a deleted or suppressed Asset then don't persist any changes but return the Asset as is
         if ($asset->getDeleted() || $asset->getSuppressed()) {

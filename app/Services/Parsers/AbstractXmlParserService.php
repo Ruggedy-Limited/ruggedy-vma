@@ -452,6 +452,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 'setter'         => $setter ?? null,
                 'entityClass'    => $entityClass,
             ]);
+
             return false;
         }
 
@@ -468,7 +469,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 
         // Call the setter method on the entity instance and pass in the value retrieved from the parser
         $entity->$setter($attributeValue);
-
         return true;
     }
 

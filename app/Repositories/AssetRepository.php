@@ -32,9 +32,13 @@ class AssetRepository extends EntityRepository
             $asset = $this->findOneBy([
                 Asset::HOSTNAME     => $hostname,
                 Asset::WORKSPACE_ID => $workspaceId
-            ]) ?? $this->createNewAssetEntity($data);
+            ]);
 
-            return $asset;
+            if (empty($asset)) {
+                return $this->createNewAssetEntity($data);
+            }
+
+            return $asset->setFromArray($data);
         }
 
         // Only search by these possible identifiers
@@ -50,8 +54,13 @@ class AssetRepository extends EntityRepository
             return null;
         }
 
+        $asset = $queryBuilder->getQuery()->getOneOrNullResult();
+        if (empty($asset)) {
+            return $this->createNewAssetEntity($data);
+        }
+
         // Attempt to retrieve the Asset from the DB or create a new Asset entity if no matching Asset is found
-        return $queryBuilder->getQuery()->getOneOrNullResult() ?? $this->createNewAssetEntity($data);
+        return $asset->setFromArray($data);
     }
 
     /**

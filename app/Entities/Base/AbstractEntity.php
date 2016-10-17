@@ -141,7 +141,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
 
         $members = new Collection($params);
         $members->filter(function ($memberValue, $memberName){
-            return property_exists($this, $memberName);
+            return property_exists($this, $memberName) && isset($memberValue);
         })->each(function ($memberValue, $memberName) {
             $this->$memberName = $memberValue;
             return true;

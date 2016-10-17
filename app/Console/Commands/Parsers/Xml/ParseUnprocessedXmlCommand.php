@@ -80,11 +80,11 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
                     'trace'     => $this->logger->getTraceAsArrayOfLines($e),
                 ]);
 
-                $this->error("Failed to process file: {$file->getPath()}: {$e->getMessage()}");
+                $this->error("Failed to process file: {$file->getPath()}: {$e->getMessage()}.");
                 return;
             }
 
-            $this->info("Successfully processing file: {$file->getPath()}.");
+            $this->info("Successfully processed file: {$file->getPath()}.");
             return;
         });
     }
