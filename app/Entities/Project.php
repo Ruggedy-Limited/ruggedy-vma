@@ -28,6 +28,6 @@ class Project extends Base\Project implements SystemComponent
      */
     public function getParent()
     {
-        return $this->getUser();
+        return $this->user;
     }
 }

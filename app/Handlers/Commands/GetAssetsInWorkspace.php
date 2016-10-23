@@ -11,7 +11,6 @@ use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 use App\Repositories\WorkspaceRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
@@ -45,7 +44,7 @@ class GetAssetsInWorkspace extends CommandHandler
     /**
      * @param GetAssetsInWorkspaceCommand $command
      *
-     * @return Collection
+     * @return array
      * @throws ActionNotPermittedException
      * @throws InvalidInputException
      * @throws WorkspaceNotFoundException
@@ -61,7 +60,7 @@ class GetAssetsInWorkspace extends CommandHandler
         }
 
         /** @var Workspace $workspace */
-        $workspace = $this->getWorkspaceRepository()->find($workspaceId);
+        $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace)) {
             throw new WorkspaceNotFoundException("There was no Workspace with the given ID in the database");
         }
@@ -72,14 +71,10 @@ class GetAssetsInWorkspace extends CommandHandler
             );
         }
 
-        return $workspace->getAssets()->map(function($asset) {
+        return $workspace->getAssets()->filter(function($asset) {
+            /** @var $asset Asset */
             // Exclude deleted Assets
-            /** @var Asset $asset */
-            if ($asset->getDeleted()) {
-                return false;
-            }
-
-            return $asset;
+            return $asset->getDeleted() !== true && $asset->getSuppressed() !== true;
         })->toArray();
     }
 

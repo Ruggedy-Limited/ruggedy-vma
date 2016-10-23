@@ -104,12 +104,12 @@ class ScanIdentificationService
 
         // Iterate over the regex and return the key (scanner) of the first regex that matches the file contents
         $scanner = $patternsByFormat->first(function ($regex, $scanner) {
-            $fileSize = $this->getFile()->getClientSize();
+            $fileSize = $this->file->getClientSize();
             if ($fileSize > self::MAX_FILE_BYTES_TO_READ) {
                 $fileSize = self::MAX_FILE_BYTES_TO_READ;
             }
 
-            $contents = $this->getFile()->openFile()->fread($fileSize);
+            $contents = $this->file->openFile()->fread($fileSize);
             return preg_match($regex, $contents);
         }, false);
 
@@ -164,8 +164,8 @@ class ScanIdentificationService
         $storagePath = $this->getProvisionalStoragePath($workspaceId);
 
         // If the destination folder does not exist, create it
-        if (!$this->getFileSystem()->exists($storagePath)) {
-            $this->getFileSystem()->mkdir($storagePath, 0755);
+        if (!$this->fileSystem->exists($storagePath)) {
+            $this->fileSystem->mkdir($storagePath, 0755);
         }
 
         return !empty($this->file->move($storagePath, $this->file->getClientOriginalName()));

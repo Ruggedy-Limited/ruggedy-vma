@@ -69,7 +69,7 @@ class RemoveFromTeam extends CommandHandler
 
         // Check for a valid team
         /** @var Team $team */
-        $team = $this->getTeamRepository()->find($teamId);
+        $team = $this->teamRepository->find($teamId);
         if (empty($team)) {
             throw new TeamNotFoundException("No team related to the given team ID was found in the database");
         }
@@ -81,7 +81,7 @@ class RemoveFromTeam extends CommandHandler
 
         // Check that the User exists
         /** @var User $user */
-        $user = $this->getUserRepository()->find($userId);
+        $user = $this->userRepository->find($userId);
         if (empty($user)) {
             throw new UserNotFoundException("No user related to the given user ID was found in the database");
         }
@@ -95,8 +95,8 @@ class RemoveFromTeam extends CommandHandler
         $user->removeTeam($team);
 
         // Save the changes to the database
-        $this->getEm()->persist($user);
-        $this->getEm()->flush($user);
+        $this->em->persist($user);
+        $this->em->flush($user);
 
         return [
             'user' => $user,

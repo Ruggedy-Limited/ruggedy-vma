@@ -34,7 +34,7 @@ class RevokePermission extends AbstractPermissionHandler
         }
 
         // Fetch the component in order to get the component's Doctrine entity class
-        $this->getService()->initialise($componentName, $id, $userId);
+        $this->service->initialise($componentName, $id, $userId);
 
         $permissionEntity = $this->findOrCreatePermissionEntity($id);
 
@@ -43,16 +43,12 @@ class RevokePermission extends AbstractPermissionHandler
         // only case were $permissionEntity->getPermission() should return null.
         if (!empty($permissionEntity->getPermission())) {
             // Save changes to the database
-            $this->getEm()->remove($permissionEntity);
-            $this->getEm()->flush($permissionEntity);
+            $this->em->remove($permissionEntity);
+            $this->em->flush($permissionEntity);
         }
 
         // Get all the permissions for this component instance to return
-        $componentInstancePermissions = $this->getService()->getComponentPermissionRepository()
-            ->findByComponentAndComponentInstanceId(
-                $this->getService()->getComponent()->getId(),
-                $this->getService()->getComponentInstance()->getId()
-            );
+        $componentInstancePermissions = $this->service->getPermissionsByComponentAndComponentInstanceId();
 
         return new Collection([
             ComponentPermission::RESULT_KEY_AFFECTED => $permissionEntity,

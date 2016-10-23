@@ -60,8 +60,8 @@ class EditUserAccount extends CommandHandler
         $requestingUser->setFromArray($profileChanges);
 
         // Save the changes
-        $this->getEm()->persist($requestingUser);
-        $this->getEm()->flush($requestingUser);
+        $this->em->persist($requestingUser);
+        $this->em->flush($requestingUser);
 
         return $requestingUser->toStdClass([
             'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'

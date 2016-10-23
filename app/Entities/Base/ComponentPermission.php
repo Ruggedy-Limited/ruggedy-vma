@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\ComponentPermission
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`component_permissions`", indexes={@ORM\Index(name="component_permissions_component_fk_idx", columns={"`component_id`"}), @ORM\Index(name="component_permissions_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="component_permissions_user_granted_fk_idx", columns={"`granted_by`"}), @ORM\Index(name="component_permissions_team_fk_idx", columns={"`team_id`"})})
+ * @ORM\Table(name="`component_permissions`", indexes={@ORM\Index(name="component_permissions_component_fk_idx", columns={"`component_id`"}), @ORM\Index(name="component_permissions_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="component_permissions_user_granted_fk_idx", columns={"`granted_by`"}), @ORM\Index(name="component_permissions_team_fk", columns={"`team_id`"})})
  */
 class ComponentPermission extends AbstractEntity
 {

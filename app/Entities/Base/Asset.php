@@ -17,27 +17,25 @@ class Asset extends AbstractEntity
     const TABLE_NAME = 'assets';
 
     /** Column name constants */
-    const NAME            = 'name';
-    const CPE             = 'cpe';
-    const VENDOR          = 'vendor';
-    const IP_ADDRESS_V4   = 'ip_address_v4';
-    const IP_ADDRESS_V6   = 'ip_address_v6';
-    const HOSTNAME        = 'hostname';
-    const MAC_ADDRESS     = 'mac_address';
-    const MAC_VENDOR      = 'mac_vendor';
-    const OS_VERSION      = 'os_version';
-    const NETBIOS         = 'netbios';
-    const UPTIME          = 'uptime';
-    const LAST_BOOT       = 'last_boot';
-    const WORKSPACE_ID    = 'workspace_id';
-    const USER_ID         = 'user_id';
-    const SUPPRESSED      = 'suppressed';
-    const DELETED         = 'deleted';
-    const FILES           = 'files';
-    const OPENPORTS       = 'openPorts';
-    const VULNERABILITIES = 'vulnerabilities';
-    const WORKSPACE       = 'workspace';
-    const USER            = 'user';
+    const NAME          = 'name';
+    const CPE           = 'cpe';
+    const VENDOR        = 'vendor';
+    const IP_ADDRESS_V4 = 'ip_address_v4';
+    const IP_ADDRESS_V6 = 'ip_address_v6';
+    const HOSTNAME      = 'hostname';
+    const MAC_ADDRESS   = 'mac_address';
+    const MAC_VENDOR    = 'mac_vendor';
+    const OS_VERSION    = 'os_version';
+    const NETBIOS       = 'netbios';
+    const UPTIME        = 'uptime';
+    const LAST_BOOT     = 'last_boot';
+    const WORKSPACE_ID  = 'workspace_id';
+    const USER_ID       = 'user_id';
+    const SUPPRESSED    = 'suppressed';
+    const DELETED       = 'deleted';
+    const OPENPORTS     = 'openPorts';
+    const WORKSPACE     = 'workspace';
+    const USER          = 'user';
 
     /**
      * @ORM\Id
@@ -97,7 +95,7 @@ class Asset extends AbstractEntity
     protected $netbios;
 
     /**
-     * @ORM\Column(name="`uptime`", type="string", length=30, nullable=true)
+     * @ORM\Column(name="`uptime`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $uptime;
 
@@ -137,22 +135,10 @@ class Asset extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="File", mappedBy="asset", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
-     */
-    protected $files;
-
-    /**
      * @ORM\OneToMany(targetEntity="OpenPort", mappedBy="asset", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
      */
     protected $openPorts;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="asset", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
-     */
-    protected $vulnerabilities;
 
     /**
      * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="assets", cascade={"persist"})
@@ -168,9 +154,7 @@ class Asset extends AbstractEntity
 
     public function __construct()
     {
-        $this->files = new ArrayCollection();
         $this->openPorts = new ArrayCollection();
-        $this->vulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -429,7 +413,7 @@ class Asset extends AbstractEntity
     /**
      * Set the value of uptime.
      *
-     * @param string $uptime
+     * @param integer $uptime
      * @return \App\Entities\Base\Asset
      */
     public function setUptime($uptime)
@@ -442,7 +426,7 @@ class Asset extends AbstractEntity
     /**
      * Get the value of uptime.
      *
-     * @return string
+     * @return integer
      */
     public function getUptime()
     {
@@ -611,42 +595,6 @@ class Asset extends AbstractEntity
     }
 
     /**
-     * Add File entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\Asset
-     */
-    public function addFile(File $file)
-    {
-        $this->files[] = $file;
-
-        return $this;
-    }
-
-    /**
-     * Remove File entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\Asset
-     */
-    public function removeFile(File $file)
-    {
-        $this->files->removeElement($file);
-
-        return $this;
-    }
-
-    /**
-     * Get File entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getFiles()
-    {
-        return $this->files;
-    }
-
-    /**
      * Add OpenPort entity to collection (one to many).
      *
      * @param \App\Entities\Base\OpenPort $openPort
@@ -680,42 +628,6 @@ class Asset extends AbstractEntity
     public function getOpenPorts()
     {
         return $this->openPorts;
-    }
-
-    /**
-     * Add Vulnerability entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Vulnerability $vulnerability
-     * @return \App\Entities\Base\Asset
-     */
-    public function addVulnerability(Vulnerability $vulnerability)
-    {
-        $this->vulnerabilities[] = $vulnerability;
-
-        return $this;
-    }
-
-    /**
-     * Remove Vulnerability entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Vulnerability $vulnerability
-     * @return \App\Entities\Base\Asset
-     */
-    public function removeVulnerability(Vulnerability $vulnerability)
-    {
-        $this->vulnerabilities->removeElement($vulnerability);
-
-        return $this;
-    }
-
-    /**
-     * Get Vulnerability entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getVulnerabilities()
-    {
-        return $this->vulnerabilities;
     }
 
     /**

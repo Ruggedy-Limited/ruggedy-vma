@@ -6,12 +6,10 @@ use App;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditWorkspace;
-use App\Team as EloquentTeam;
-use App\User as EloquentUser;
+use App\Entities\Workspace;
+use App\Services\EntityFactoryService;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
-use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
-
 
 /**
  * @Controller(prefix="api")
@@ -29,7 +27,8 @@ class WorkspaceController extends AbstractController
      */
     public function createWorkspace($projectId)
     {
-        $command = new CreateWorkspace($projectId, $this->getRequest()->json()->all());
+        $workspace = EntityFactoryService::makeEntity(Workspace::class, $this->getRequest()->json()->all());
+        $command = new CreateWorkspace($projectId, $workspace);
         return $this->sendCommandToBusHelper($command);
     }
 

@@ -4,13 +4,13 @@ namespace App\Entities\Base;
 
 use Carbon\Carbon;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Collection;
 use JsonSerializable;
 use stdClass;
-
 
 abstract class AbstractEntity implements Jsonable, JsonSerializable
 {
@@ -74,38 +74,80 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     }
 
     /**
+     * Sanitise an incoming date string
+     *
+     * @param $dateString
+     * @return Carbon|null
+     */
+    protected function sanitiseDate($dateString)
+    {
+        if ($dateString instanceof Carbon || $dateString instanceof DateTime) {
+            return $dateString;
+        }
+
+        // Check for a valid date format and return a Carbon instance if this is a valid date string
+        if (strtotime($dateString) !== false) {
+            return new Carbon($dateString);
+        }
+
+        // For Nexpose: Try a string truncated to 15 characters and if that is not a valid date, return null
+        $dateString = substr($dateString, 0, 15);
+        if (strtotime($dateString) === false) {
+            return null;
+        }
+
+        return new Carbon($dateString);
+    }
+
+    /**
      * Generate an array representation of the object
+     *
+     * @param bool $excludeNulls
+     * @return array
+     */
+    public function toArray(bool $excludeNulls = false)
+    {
+        if ($excludeNulls === false) {
+            return get_object_vars($this);
+        }
+
+        return collect(get_object_vars($this))->filter(function ($value) {
+            return (isset($value) && !($value instanceof ArrayCollection))
+                || ($value instanceof ArrayCollection && !$value->isEmpty());
+        })->all();
+    }
+
+    /**
+     * Alias for the toArray function when using an Entity as a model during parsing
      *
      * @return array
      */
-    public function toArray()
+    public function export()
     {
-        return get_object_vars($this);
+        return $this->toArray();
     }
 
     /**
      * Set the values of the entity by passing in an array
      *
      * @param array $params
-     * @return bool
+     * @return $this
      */
     public function setFromArray(array $params)
     {
         if (empty($params)) {
-            return false;
+            return $this;
         }
 
         $members = new Collection($params);
-        $members->each(function($memberValue, $memberName)
-        {
-            if (!property_exists($this, $memberName)) {
-                return;
-            }
-
+        $members->filter(function ($memberValue, $memberName){
+            return property_exists($this, $memberName) && isset($memberValue);
+        })->each(function ($memberValue, $memberName) {
             $this->$memberName = $memberValue;
+            return true;
         });
 
-        return true;
+        return $this;
     }
 
     /**
@@ -149,7 +191,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     {
         $objectForJson = new stdClass();
 
-        $members = new Collection($this->toArray());
+        $members = collect($this->toArray());
         $members->filter(function($memberValue, $memberName) use ($onlyTheseAttributes)
         {
             // Explicitly excluded items
@@ -174,7 +216,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
                 $memberValue = $memberValue->format(env('APP_DATE_FORMAT'));
             }
 
-            if ($memberValue instanceof PersistentCollection) {
+            if ($memberValue instanceof PersistentCollection || $memberValue instanceof ArrayCollection) {
                 $collectionForEncoding = [];
                 /** @var AbstractEntity $entity */
                 foreach ($memberValue->toArray() as $entity) {
@@ -212,6 +254,30 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     }
 
     /**
+     * Implementation of hashing functionality so the majority of the code is not repeated
+     *
+     * @param Collection $uniqueColumns
+     * @return string
+     */
+    protected static function generateUniqueHash(Collection $uniqueColumns)
+    {
+        // Create a SHA1 hash of the property values that constitute a unique key by iterating over the columns, getting
+        // the spl_object_hash of any keys that contain objects and then imploding the Collection to a string where the
+        // values of the relevant properties are concatenated using a ":" character
+        $objectHashes = $uniqueColumns->filter(function ($value) {
+            return is_object($value);
+        })->map(function ($value) {
+            return spl_object_hash($value);
+        });
+
+        return sha1(
+            $uniqueColumns->filter(function ($value) {
+                return isset($value);
+            })->merge($objectHashes)->implode(":")
+        );
+    }
+
+    /**
      * @return Collection
      */
     protected function getExcludedFields()
@@ -222,5 +288,13 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
             self::IS_INITIALIZED,
             self::PASSWORD_FIELD
         ]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMinimumRequiredPropertiesSet(): bool
+    {
+        return true;
     }
 }

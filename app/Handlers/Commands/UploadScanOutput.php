@@ -15,7 +15,6 @@ use App\Services\ScanIdentificationService;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use ProxyManager\Exception\FileNotWritableException;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class UploadScanOutput extends CommandHandler
@@ -76,7 +75,7 @@ class UploadScanOutput extends CommandHandler
         }
 
         // Check that the given Workspace exists
-        $workspace = $this->getWorkspaceRepository()->find($workspaceId);
+        $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace)) {
             throw new WorkspaceNotFoundException("There was no existing Workspace with the given ID");
         }
@@ -88,27 +87,27 @@ class UploadScanOutput extends CommandHandler
             );
         }
 
-        if (!$this->getService()->initialise($file)) {
+        if (!$this->service->initialise($file)) {
             throw new FileException("Could not match the file to any supported scanner output");
         }
 
-        $scanner = $this->getService()->getScanner();
+        $scanner = $this->service->getScanner();
 
-        $scannerApp = $this->getScannerAppRepository()->findByName($scanner);
+        $scannerApp = $this->scannerAppRepository->findByName($scanner);
         if (empty($scannerApp)) {
             throw new ScannerAppNotFoundException("No scanner app with the given name was found");
         }
 
-        if (!$this->getService()->storeUploadedFile($workspaceId)) {
+        if (!$this->service->storeUploadedFile($workspaceId)) {
             throw new FileNotWritableException("Could not store uploaded file on server");
         }
 
         // Create a new File entity, persist it to the DB and return it
         $fileEntity = new File();
         $fileEntity->setPath(
-            $this->getService()->getProvisionalStoragePath($workspaceId) . $file->getClientOriginalName()
+            $this->service->getProvisionalStoragePath($workspaceId) . $file->getClientOriginalName()
         );
-        $fileEntity->setFormat($this->getService()->getFormat());
+        $fileEntity->setFormat($this->service->getFormat());
         $fileEntity->setSize($file->getClientSize());
         $fileEntity->setUser($requestingUser);
         $fileEntity->setWorkspace($workspace);
@@ -116,8 +115,8 @@ class UploadScanOutput extends CommandHandler
         $fileEntity->setDeleted(false);
         $fileEntity->setProcessed(false);
 
-        $this->getEm()->persist($fileEntity);
-        $this->getEm()->flush($fileEntity);
+        $this->em->persist($fileEntity);
+        $this->em->flush($fileEntity);
 
         return $fileEntity;
     }

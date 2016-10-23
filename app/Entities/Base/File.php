@@ -3,13 +3,12 @@
 namespace App\Entities\Base;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\File
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="files_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="files_scanner_app_fk_idx", columns={"`scanner_app_id`"})})
+ * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="files_scanner_app_fk_idx", columns={"`scanner_app_id`"})})
  */
 class File extends AbstractEntity
 {
@@ -17,21 +16,17 @@ class File extends AbstractEntity
     const TABLE_NAME = 'files';
 
     /** Column name constants */
-    const PATH            = 'path';
-    const FORMAT          = 'format';
-    const SIZE            = 'size';
-    const USER_ID         = 'user_id';
-    const WORKSPACE_ID    = 'workspace_id';
-    const ASSET_ID        = 'asset_id';
-    const SCANNER_APP_ID  = 'scanner_app_id';
-    const PROCESSED       = 'processed';
-    const DELETED         = 'deleted';
-    const OPENPORTS       = 'openPorts';
-    const VULNERABILITIES = 'vulnerabilities';
-    const USER            = 'user';
-    const WORKSPACE       = 'workspace';
-    const ASSET           = 'asset';
-    const SCANNERAPP      = 'scannerApp';
+    const PATH           = 'path';
+    const FORMAT         = 'format';
+    const SIZE           = 'size';
+    const USER_ID        = 'user_id';
+    const WORKSPACE_ID   = 'workspace_id';
+    const SCANNER_APP_ID = 'scanner_app_id';
+    const PROCESSED      = 'processed';
+    const DELETED        = 'deleted';
+    const USER           = 'user';
+    const WORKSPACE      = 'workspace';
+    const SCANNERAPP     = 'scannerApp';
 
     /**
      * @ORM\Id
@@ -66,11 +61,6 @@ class File extends AbstractEntity
     protected $workspace_id;
 
     /**
-     * @ORM\Column(name="`asset_id`", type="integer", nullable=true, options={"unsigned":true})
-     */
-    protected $asset_id;
-
-    /**
      * @ORM\Column(name="`scanner_app_id`", type="integer", options={"unsigned":true})
      */
     protected $scanner_app_id;
@@ -96,18 +86,6 @@ class File extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="OpenPort", mappedBy="file", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
-     */
-    protected $openPorts;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
-     */
-    protected $vulnerabilities;
-
-    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -120,12 +98,6 @@ class File extends AbstractEntity
     protected $workspace;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Asset", inversedBy="files", cascade={"persist"})
-     * @ORM\JoinColumn(name="`asset_id`", referencedColumnName="`id`")
-     */
-    protected $asset;
-
-    /**
      * @ORM\ManyToOne(targetEntity="ScannerApp", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(name="`scanner_app_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -133,8 +105,6 @@ class File extends AbstractEntity
 
     public function __construct()
     {
-        $this->openPorts = new ArrayCollection();
-        $this->vulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -276,29 +246,6 @@ class File extends AbstractEntity
     }
 
     /**
-     * Set the value of asset_id.
-     *
-     * @param integer $asset_id
-     * @return \App\Entities\Base\File
-     */
-    public function setAssetId($asset_id)
-    {
-        $this->asset_id = $asset_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of asset_id.
-     *
-     * @return integer
-     */
-    public function getAssetId()
-    {
-        return $this->asset_id;
-    }
-
-    /**
      * Set the value of scanner_app_id.
      *
      * @param integer $scanner_app_id
@@ -414,78 +361,6 @@ class File extends AbstractEntity
     }
 
     /**
-     * Add OpenPort entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\OpenPort $openPort
-     * @return \App\Entities\Base\File
-     */
-    public function addOpenPort(OpenPort $openPort)
-    {
-        $this->openPorts[] = $openPort;
-
-        return $this;
-    }
-
-    /**
-     * Remove OpenPort entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\OpenPort $openPort
-     * @return \App\Entities\Base\File
-     */
-    public function removeOpenPort(OpenPort $openPort)
-    {
-        $this->openPorts->removeElement($openPort);
-
-        return $this;
-    }
-
-    /**
-     * Get OpenPort entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getOpenPorts()
-    {
-        return $this->openPorts;
-    }
-
-    /**
-     * Add Vulnerability entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Vulnerability $vulnerability
-     * @return \App\Entities\Base\File
-     */
-    public function addVulnerability(Vulnerability $vulnerability)
-    {
-        $this->vulnerabilities[] = $vulnerability;
-
-        return $this;
-    }
-
-    /**
-     * Remove Vulnerability entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Vulnerability $vulnerability
-     * @return \App\Entities\Base\File
-     */
-    public function removeVulnerability(Vulnerability $vulnerability)
-    {
-        $this->vulnerabilities->removeElement($vulnerability);
-
-        return $this;
-    }
-
-    /**
-     * Get Vulnerability entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getVulnerabilities()
-    {
-        return $this->vulnerabilities;
-    }
-
-    /**
      * Set User entity (many to one).
      *
      * @param \App\Entities\Base\User $user
@@ -532,29 +407,6 @@ class File extends AbstractEntity
     }
 
     /**
-     * Set Asset entity (many to one).
-     *
-     * @param \App\Entities\Base\Asset $asset
-     * @return \App\Entities\Base\File
-     */
-    public function setAsset(Asset $asset = null)
-    {
-        $this->asset = $asset;
-
-        return $this;
-    }
-
-    /**
-     * Get Asset entity (many to one).
-     *
-     * @return \App\Entities\Base\Asset
-     */
-    public function getAsset()
-    {
-        return $this->asset;
-    }
-
-    /**
      * Set ScannerApp entity (many to one).
      *
      * @param \App\Entities\Base\ScannerApp $scannerApp
@@ -579,6 +431,6 @@ class File extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_id', 'asset_id', 'scanner_app_id', 'processed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_id', 'scanner_app_id', 'processed', 'deleted', 'created_at', 'updated_at');
     }
 }

@@ -33,7 +33,7 @@ class SoftwareInformation extends AbstractEntity
     protected $name;
 
     /**
-     * @ORM\Column(name="`version`", type="string", length=100)
+     * @ORM\Column(name="`version`", type="string", length=100, nullable=true)
      */
     protected $version;
 

@@ -97,7 +97,7 @@ class ComponentPolicy
     )
     {
         // Break out of the loop if we've hit the maximum recursion limit
-        if ($this->getRecursionCount() >= self::HIERARCHY_RECURSION_LIMIT) {
+        if ($this->recursionCount >= self::HIERARCHY_RECURSION_LIMIT) {
             throw new RecursionLimitExceededException(
                 "The recursion limit of " . self::HIERARCHY_RECURSION_LIMIT . " was exceeded when iterating over the"
                 . " component permission hierarchy"

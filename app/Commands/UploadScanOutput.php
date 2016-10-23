@@ -1,12 +1,14 @@
 <?php
 
-
 namespace App\Commands;
 
 use Illuminate\Http\UploadedFile;
 
-class UploadScanOutput extends CreateSomething
+class UploadScanOutput extends Command
 {
+    /** @var int */
+    protected $id;
+
     /** @var UploadedFile */
     protected $file;
 
@@ -14,13 +16,20 @@ class UploadScanOutput extends CreateSomething
      * UploadScanOutputCommand constructor.
      *
      * @param int $id
-     * @param array $details
      * @param UploadedFile $file
      */
-    public function __construct($id, array $details, UploadedFile $file)
+    public function __construct(int $id, UploadedFile $file)
     {
-        parent::__construct($id, $details);
+        $this->id   = $id;
         $this->file = $file;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

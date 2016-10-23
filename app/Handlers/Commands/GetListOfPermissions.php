@@ -31,14 +31,10 @@ class GetListOfPermissions extends AbstractPermissionHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        $this->getService()->initialise($componentName, $id);
+        $this->service->initialise($componentName, $id);
 
         // Get all the permissions for this component instance to return
-        $componentInstancePermissions = $this->getService()->getComponentPermissionRepository()
-            ->findByComponentAndComponentInstanceId(
-                $this->getService()->getComponent()->getId(),
-                $this->getService()->getComponentInstance()->getId()
-            );
+        $componentInstancePermissions = $this->service->getPermissionsByComponentAndComponentInstanceId();
 
         if (empty($componentInstancePermissions)) {
             return new Collection();

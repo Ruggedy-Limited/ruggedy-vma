@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\User
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk_idx", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
+ * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
 class User extends AbstractEntity
 {
@@ -117,7 +117,7 @@ class User extends AbstractEntity
     protected $two_factor_reset_code;
 
     /**
-     * @ORM\Column(name="`current_team_id`", type="integer", nullable=true, options={"unsigned":true})
+     * @ORM\Column(name="`current_team_id`", type="integer", options={"unsigned":true})
      */
     protected $current_team_id;
 
@@ -292,7 +292,7 @@ class User extends AbstractEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="Team", inversedBy="users", cascade={"persist"})
-     * @ORM\JoinColumn(name="`current_team_id`", referencedColumnName="`id`")
+     * @ORM\JoinColumn(name="`current_team_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $team;
 

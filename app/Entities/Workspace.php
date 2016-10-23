@@ -20,12 +20,24 @@ class Workspace extends Base\Workspace implements SystemComponent
     protected $user;
 
     /**
+     * Override the parent method to set the inverse side of the relationship in the given Asset entity
+     *
+     * @param Base\Asset $asset
+     * @return Base\Workspace
+     */
+    public function addAsset(Base\Asset $asset)
+    {
+        $asset->setWorkspace($this);
+        return parent::addAsset($asset);
+    }
+
+    /**
      * Get the parent Entity of this Entity
      *
      * @return Base\Project
      */
     public function getParent()
     {
-        return $this->getProject();
+        return $this->project;
     }
 }

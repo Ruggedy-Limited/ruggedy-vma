@@ -2,8 +2,8 @@
 
 namespace App\Contracts;
 
+use App\Entities\Base\AbstractEntity;
 use App\Entities\Base\User;
-
 
 /**
  * An Interface for Entities that are owned by a User, indicated by a $user Entity member, and have the related
@@ -16,19 +16,26 @@ interface SystemComponent
      *
      * @return int
      */
-    function getId();
+    public function getId();
 
     /**
      * Get the owning User entity
      *
      * @return User
      */
-    function getUser();
+    public function getUser();
+
+    /**
+     * Set the owning User entity
+     *
+     * @param User $user
+     */
+    public function setUser(User $user);
 
     /**
      * Get the parent Entity of this one
      *
      * @return SystemComponent|null
      */
-    function getParent();
+    public function getParent();
 }

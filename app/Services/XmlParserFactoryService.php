@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entities\ScannerApp;
+use App\Repositories\AssetRepository;
 use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\Parsers\BurpXmlParserService;
 use App\Services\Parsers\NexposeXmlParserService;
@@ -13,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\Factory;
 use App\Repositories\FileRepository;
+use League\Tactician\CommandBus;
 use XMLReader;
 
 class XmlParserFactoryService
@@ -26,6 +28,9 @@ class XmlParserFactoryService
     /** @var Factory */
     protected static $validatorFactory;
 
+    /** @var AssetRepository */
+    protected static $assetRepository;
+
     /** @var FileRepository */
     protected static $fileRepository;
 
@@ -34,6 +39,9 @@ class XmlParserFactoryService
 
     /** @var JsonLogService */
     protected static $logger;
+
+    /** @var CommandBus */
+    protected static $commandBus;
 
     /** @var bool */
     protected static $isInitialised = false;
@@ -72,8 +80,8 @@ class XmlParserFactoryService
 
         // Create a new instance of the required service
         $service = new $serviceClassname(
-            static::$parser, static::$fileSystem, static::$validatorFactory,
-            static::$fileRepository, static::$em, static::$logger
+            static::$parser, static::$fileSystem, static::$validatorFactory, static::$assetRepository,
+            static::$fileRepository, static::$em, static::$logger, static::$commandBus
         );
 
         // Register the service instance and then return it
@@ -91,9 +99,11 @@ class XmlParserFactoryService
         static::$parser           = App::make(XMLReader::class);
         static::$fileSystem       = App::make(Filesystem::class);
         static::$validatorFactory = App::make(Factory::class);
+        static::$assetRepository  = App::make(AssetRepository::class);
         static::$fileRepository   = App::make(FileRepository::class);
         static::$em               = App::make(EntityManager::class);
         static::$logger           = App::make(JsonLogService::class);
+        static::$commandBus       = App::make(CommandBus::class);
 
         // Create a scanner name to service class map
         static::$scannerServiceMap = new Collection([

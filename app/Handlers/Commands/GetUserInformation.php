@@ -68,14 +68,14 @@ class GetUserInformation extends CommandHandler
 
         // Make sure the user exists
         /** @var User $queriedUser */
-        $queriedUser = $this->getUserRepository()->find($userId);
+        $queriedUser = $this->userRepository->find($userId);
         if (empty($queriedUser)) {
             throw new UserNotFoundException("No User with the given ID was found in the database");
         }
 
         // Make sure the team exists
         /** @var Team $team */
-        $team = $this->getTeamRepository()->find($teamId);
+        $team = $this->teamRepository->find($teamId);
         if (empty($team)) {
             throw new TeamNotFoundException("No Team with the given ID was found in the database");
         }

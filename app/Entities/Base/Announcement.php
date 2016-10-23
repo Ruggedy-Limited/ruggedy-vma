@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\Announcement
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`announcements`", indexes={@ORM\Index(name="announcements_fk_user_idx", columns={"`user_id`"})})
+ * @ORM\Table(name="`announcements`", indexes={@ORM\Index(name="announcements_fk_user", columns={"`user_id`"})})
  */
 class Announcement extends AbstractEntity
 {

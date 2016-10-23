@@ -9,7 +9,6 @@ use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\UploadScanOutput;
 use App\Entities\Asset;
-use App\Models\MessagingModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\UploadedFile;
@@ -37,7 +36,6 @@ class AssetController extends AbstractController
 
         $command = new UploadScanOutput(
             intval($workspaceId),
-            $this->getRequest()->json()->all(),
             $file
         );
 

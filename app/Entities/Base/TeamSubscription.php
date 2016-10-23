@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\TeamSubscription
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`team_subscriptions`", indexes={@ORM\Index(name="team_subscriptions_fk_team_idx", columns={"`team_id`"})})
+ * @ORM\Table(name="`team_subscriptions`", indexes={@ORM\Index(name="team_subscriptions_fk_team", columns={"`team_id`"})})
  */
 class TeamSubscription extends AbstractEntity
 {

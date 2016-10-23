@@ -49,7 +49,7 @@ class GetListOfUsersProjects extends CommandHandler
         }
 
         /** @var User $user */
-        $user = $this->getUserRepository()->find($userId);
+        $user = $this->userRepository->find($userId);
         if (empty($user)) {
             throw new UserNotFoundException("A User related to the given User ID was not found");
         }

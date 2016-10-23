@@ -58,7 +58,7 @@ class GetAssetsInProject extends CommandHandler
 
         // Make sure the Project ecxists
         /** @var Project $project */
-        $project = $this->getProjectRepository()->find($projectId);
+        $project = $this->projectRepository->find($projectId);
         if (empty($project)) {
             throw new ProjectNotFoundException("There was no Workspace with the given ID in the database");
         }
