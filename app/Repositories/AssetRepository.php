@@ -59,7 +59,7 @@ class AssetRepository extends EntityRepository
             return $this->createNewAssetEntity($data);
         }
 
-        // Attempt to retrieve the Asset from the DB or create a new Asset entity if no matching Asset is found
+        // Update the Asset with new data and return it
         return $asset->setFromArray($data);
     }
 

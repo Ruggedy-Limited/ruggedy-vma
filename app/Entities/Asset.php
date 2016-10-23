@@ -2,9 +2,11 @@
 
 namespace App\Entities;
 
+use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\HasIdColumn;
 use App\Contracts\RelatesToFiles;
 use App\Contracts\SystemComponent;
+use App\Entities\Base\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Collection;
@@ -15,7 +17,7 @@ use Illuminate\Support\Collection;
  * @ORM\Entity(repositoryClass="App\Repositories\AssetRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesToFiles
+class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesToFiles, GeneratesUniqueHash
 {
     /** Regular expressions used for validating the relevant Asset data fields */
     const REGEX_CPE         = '~(cpe:(\d)?(\.\d)?(/[aho])(([:]{1,3})([\pL\pN\pS_])+)*)~i';
@@ -361,6 +363,28 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     public function getUniqueAssetHash()
     {
         return sha1($this->getHostname() . $this->getIpAddressV4() . $this->getNetbios());
+    }
+
+    /**
+     * @inheritdoc
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return AbstractEntity::generateUniqueHash($this->getUniqueKeyColumns());
+    }
+
+    /**
+     * @inheritdoc
+     * @return Collection
+     */
+    public function getUniqueKeyColumns(): Collection
+    {
+        return collect([
+            parent::HOSTNAME      => $this->hostname,
+            parent::IP_ADDRESS_V4 => $this->ip_address_v4,
+            parent::NETBIOS       => $this->netbios,
+        ]);
     }
 
     /**

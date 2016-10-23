@@ -107,7 +107,8 @@ class File extends Base\File implements SystemComponent
     public function addAsset(Asset $asset)
     {
         $asset->addFile($this); // synchronously updating inverse side
-        $this->assets[$asset->getId()] = $asset;
+        $relationKey = $asset->getId() ?? $asset->getHash();
+        $this->assets[$relationKey] = $asset;
     }
 
     /**
@@ -125,7 +126,8 @@ class File extends Base\File implements SystemComponent
     public function addVulnerability(Vulnerability $vulnerability)
     {
         $vulnerability->addFile($this); // synchronously updating inverse side
-        $this->vulnerabilities[$vulnerability->getName()] = $vulnerability;
+        $relationKey = $vulnerability->getId() ?? $vulnerability->getHash();
+        $this->vulnerabilities[$relationKey] = $vulnerability;
     }
 
     /**
@@ -143,7 +145,8 @@ class File extends Base\File implements SystemComponent
     public function addOpenPort(OpenPort $openPort)
     {
         $openPort->addFile($this); // synchronously updating inverse side
-        $this->openPorts[$openPort->getNumber()] = $openPort;
+        $relationKey = $openPort->getId() ?? $openPort->getHash();
+        $this->openPorts[$relationKey] = $openPort;
     }
 
     /**
@@ -161,7 +164,8 @@ class File extends Base\File implements SystemComponent
     public function addSoftwareInformation(SoftwareInformation $softwareInformation)
     {
         $softwareInformation->addFile($this); // synchronously updating inverse side
-        $this->softwareInformation[$softwareInformation->getName()] = $softwareInformation;
+        $relationKey = $softwareInformation->getId() ?? $softwareInformation->getHash();
+        $this->softwareInformation[$relationKey] = $softwareInformation;
     }
 
     /**

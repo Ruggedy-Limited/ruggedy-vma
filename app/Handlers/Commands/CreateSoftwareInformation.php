@@ -56,9 +56,10 @@ class CreateSoftwareInformation extends CommandHandler
 
         // Check that all the required fields were set on the command
         $assetId = $command->getId();
-        $details = $command->getEntity();
+        /** @var SoftwareInformation $entity */
+        $entity = $command->getEntity();
 
-        if (!isset($assetId, $details)) {
+        if (!isset($assetId, $entity)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
@@ -78,17 +79,14 @@ class CreateSoftwareInformation extends CommandHandler
         }
 
         // Check if this Software Information already exists for this Asset and if so, exit early
-        $softwareInformation = $this->softwareInformationRepository->findOneBy($details);
+        $softwareInformation = $this->softwareInformationRepository->findOneBy($entity->getUniqueKeyColumns()->all());
         if (!empty($softwareInformation) && $softwareInformation instanceof SoftwareInformation) {
-            return $softwareInformation;
+            $entity = $softwareInformation->setFromArray($entity->toArray(true));
         }
 
-        $softwareInformation = new SoftwareInformation();
-        $softwareInformation->setFromArray($details);
+        $asset->addSoftwareInformation($entity);
 
-        $asset->addSoftwareInformation($softwareInformation);
-
-        // Persist the new Asset to the database
+        // Persist the Asset to cascade persist the new SoftwareInformation to the database
         $this->em->persist($asset);
 
         // Save immediately if we're not in multi-mode

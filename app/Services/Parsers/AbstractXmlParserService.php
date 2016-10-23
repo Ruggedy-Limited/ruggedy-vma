@@ -146,40 +146,48 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $this->logger = $logger;
         $this->bus    = $commandBus;
 
-        $this->parentNodeNames = new Collection();
-
+        // Initialise Collection properties
+        $this->parentNodeNames            = new Collection();
         $this->fileToSchemaMapping        = new Collection();
         $this->nodePreprocessingMap       = new Collection();
         $this->nodePostProcessingMap      = new Collection();
         $this->attributePreProcessingMap  = new Collection();
         $this->attributePostProcessingMap = new Collection();
+        $this->entities                   = new Collection();
+        $this->temporaryEntities          = new Collection();
 
-        $this->entities           = new Collection();
-        $this->temporaryEntities  = new Collection();
-
+        // A map of entity class and the various methods that add/set other related entities, indexed by the related
+        // entity's class name
         $this->entityRelationshipSetterMap = new Collection([
-            Workspace::class           => new Collection([
+
+            Workspace::class => new Collection([
                 Asset::class => 'addAsset',
             ]),
-            Asset::class               => new Collection([
+
+            Asset::class => new Collection([
                 Vulnerability::class       => 'addVulnerability',
                 OpenPort::class            => 'addOpenPort',
                 SoftwareInformation::class => 'addSoftwareInformation'
             ]),
-            Exploit::class             => new Collection([
+
+            Exploit::class => new Collection([
                 Vulnerability::class => 'addVulnerability',
             ]),
-            Vulnerability::class       => new Collection([
+
+            Vulnerability::class => new Collection([
                 Asset::class                      => 'addAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
                 Exploit::class                    => 'addExploit',
             ]),
+
             VulnerabilityReferenceCode::class => new Collection([
                 Vulnerability::class => 'setVulnerability',
             ]),
-            OpenPort::class            => new Collection([
+
+            OpenPort::class => new Collection([
                 Asset::class => 'setAsset',
             ]),
+
             SoftwareInformation::class => new Collection([
                 Asset::class => 'addAsset',
             ]),
@@ -228,7 +236,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             throw $e;
         }
 
-        $this->moveFileToProcessed($file);
+        //$this->moveFileToProcessed($file);
     }
 
     /**

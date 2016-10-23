@@ -10,7 +10,6 @@ use App\Entities\SoftwareInformation;
 use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
-use App\Models\SoftwareInformationModel;
 use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
@@ -34,9 +33,6 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
     const XML_ATTRIBUTE_VENDOR    = 'vendor';
     const XML_ATTRIBUTE_PRODUCT   = 'product';
     const XML_ATTRIBUTE_VERSION   = 'version';
-
-    /** @var SoftwareInformationModel */
-    protected $softwareInformationModel;
 
     /** @var CommandBus */
     protected $bus;

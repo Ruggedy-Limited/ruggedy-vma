@@ -51,9 +51,10 @@ class CreateWorkspace extends CommandHandler
         $requestingUser = $this->authenticate();
 
         // Make sure that all the required members are set on the command
-        $projectId        = $command->getId();
-        $workspaceDetails = $command->getEntity();
-        if (!isset($projectId) || empty($workspaceDetails)) {
+        $projectId = $command->getId();
+        /** @var Workspace $workspace */
+        $workspace = $command->getEntity();
+        if (!isset($projectId) || empty($workspace)) {
             throw new InvalidInputException("One or more of the required members are not set on the command object");
         }
 
@@ -70,8 +71,6 @@ class CreateWorkspace extends CommandHandler
                 . "create Workspaces for the given Project");
         }
 
-        $workspace = new Workspace();
-        $workspace->setFromArray($workspaceDetails);
         $workspace->setUser($project->getUser());
         $workspace->setProject($project);
         $workspace->setDeleted(false);

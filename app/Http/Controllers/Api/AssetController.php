@@ -34,8 +34,6 @@ class AssetController extends AbstractController
             $file = new UploadedFile('/dev/null', 'null');
         }
 
-
-
         $command = new UploadScanOutput(
             intval($workspaceId),
             $file

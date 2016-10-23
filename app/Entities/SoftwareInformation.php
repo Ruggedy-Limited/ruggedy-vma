@@ -2,10 +2,13 @@
 
 namespace App\Entities;
 
+use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\HasIdColumn;
 use App\Contracts\RelatesToFiles;
+use App\Entities\Base\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Illuminate\Support\Collection;
 
 /**
  * App\Entities\SoftwareInformation
@@ -14,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\HasLifecycleCallbacks
  * @ORM\Table(name="`software_information`")
  */
-class SoftwareInformation extends Base\SoftwareInformation implements HasIdColumn, RelatesToFiles
+class SoftwareInformation extends Base\SoftwareInformation implements HasIdColumn, RelatesToFiles, GeneratesUniqueHash
 {
     /**
      * @ORM\ManyToMany(targetEntity="File", mappedBy="softwareInformation", indexBy="id")
@@ -66,7 +69,7 @@ class SoftwareInformation extends Base\SoftwareInformation implements HasIdColum
      */
     public function addAsset(Asset $asset)
     {
-        $this->assets[] = $asset;
+        $this->assets[$asset->getId()] = $asset;
 
         return $this;
     }
@@ -93,5 +96,27 @@ class SoftwareInformation extends Base\SoftwareInformation implements HasIdColum
     public function setParent(Asset $asset)
     {
         return $this->addAsset($asset);
+    }
+
+    /**
+     * @inheritdoc
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return AbstractEntity::generateUniqueHash($this->getUniqueKeyColumns());
+    }
+
+    /**
+     * @inheritdoc
+     * @return Collection
+     */
+    public function getUniqueKeyColumns(): Collection
+    {
+        return collect([
+            parent::NAME    => $this->name,
+            parent::VERSION => $this->version,
+            parent::VENDOR  => $this->vendor,
+        ]);
     }
 }

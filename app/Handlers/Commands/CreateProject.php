@@ -47,11 +47,12 @@ class CreateProject extends CommandHandler
         // Get the authenticated user
         $requestingUser = $this->authenticate();
 
-        $userId         = $command->getId();
-        $projectDetails = $command->getEntity();
+        $userId = $command->getId();
+        /** @var Project $entity */
+        $entity = $command->getEntity();
 
         // Check that the required member is set on the command
-        if (!isset($userId) || empty($projectDetails)) {
+        if (!isset($userId) || empty($entity)) {
             throw new InvalidInputException("One or more required members were not set on the given command object");
         }
 
@@ -74,20 +75,18 @@ class CreateProject extends CommandHandler
         }
 
         // Create a new Project entity
-        $project = new Project();
-        $project->setFromArray($projectDetails);
-        $project->setUser($projectOwner);
-        $project->setUserId($projectOwner->getId());
-        $project->setDeleted(false);
+        $entity->setUser($projectOwner);
+        $entity->setUserId($projectOwner->getId());
+        $entity->setDeleted(false);
 
         // Add the project to the user in the current session
-        $requestingUser->addProject($project);
+        $requestingUser->addProject($entity);
 
         // Persist the Project in the Database
-        $this->em->persist($project);
-        $this->em->flush($project);
+        $this->em->persist($entity);
+        $this->em->flush($entity);
 
-        return $project->toStdClass([
+        return $entity->toStdClass([
             'id', 'name', 'user_id'
         ]);
     }
