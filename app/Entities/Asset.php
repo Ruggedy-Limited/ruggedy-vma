@@ -43,6 +43,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         . '|z39\.50|z39\.50r|z39\.50s))://)';
 
     const REGEX_BASIC_AUTH  = '(([\pL\pN\-]+:)?([\pL\pN\-]+)@)';
+    const REGEX_DOMAIN_NAME = '([\pL\pN\pS\-\.])+(\.([\pL]|xn\-\-[\pL\pN\-]+)+\.?)';
     const REGEX_PORT_NUMBER = '(:[0-9]+)';
 
     /**
@@ -53,7 +54,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     const REGEX_HOSTNAME    = '~^' . self::REGEX_PROTOCOL . '?' # protocol
         . self::REGEX_BASIC_AUTH . '?' # basic auth
-        . '([\pL\pN\pS\-\.])+(\.([\pL]|xn\-\-[\pL\pN\-]+)+\.?)' # a domain name
+        . self::REGEX_DOMAIN_NAME # a domain name
         . self::REGEX_PORT_NUMBER . '?' # a port (optional)
         . '(/?|/\S+|\?\S*|\#\S*)$~ixu'; # a /, nothing, a / with something, a query or a fragment
 
@@ -150,14 +151,11 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
             return null;
         }
 
-        // Strip the scheme and the basic auth if it's there so we only store the actual hostname in the Asset entry
-        $hostname = preg_replace(
-            '~^' . Asset::REGEX_PROTOCOL . '?' . Asset::REGEX_BASIC_AUTH . '?~', '', $hostname
-        );
+        if (preg_match("~^" . Asset::REGEX_DOMAIN_NAME . "$~", $hostname)) {
+            return $hostname;
+        }
 
-        // Strip the port number too
-        $hostname = preg_replace('~' . Asset::REGEX_PORT_NUMBER . '~', '', $hostname);
-
+        $hostname = parse_url($hostname, PHP_URL_HOST);
         return $hostname;
     }
 
