@@ -1378,25 +1378,26 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
-        $value = $isBase64 ? base64_decode($this->parser->value) : $this->parser->value;
+        // Check if we need to decode a base64 encoded string
+        $value = $this->parser->value;
+        if ($isBase64) {
+            $value = base64_decode($this->parser->value);
+        }
+
+        // If we have an empty value then exit early
         if (empty($value)) {
             return;
         }
 
         // When the append flag is not set, set the heading and node contents
         if (!$append) {
-            $entity->$setter(
-                $heading . $value
-            );
-
+            $entity->$setter($heading . $value);
             return;
         }
 
         // When the append flag is set, append the heading and node contents to the the value that exists
         $getter = 'g' . substr($setter, 1);
-        $entity->$setter(
-            $entity->$getter() . PHP_EOL . $heading . $value
-        );
+        $entity->$setter($entity->$getter() . PHP_EOL . $heading . $value);
     }
 
     /**
