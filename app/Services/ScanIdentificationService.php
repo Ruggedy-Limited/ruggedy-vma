@@ -14,6 +14,7 @@ class ScanIdentificationService
     const XML_NMAP_REGEX = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
     const XML_BURP_REGEX = '%<!ATTLIST issues burpVersion.*>%';
     const XML_NEXPOSE_REGEX = '%^<NexposeReport.*>$%im';
+    const XML_NETSPARKER_REGEX = '%^<netsparker%im';
 
     const MAX_FILE_BYTES_TO_READ = 256000;
 
@@ -128,9 +129,10 @@ class ScanIdentificationService
     {
         // Define the XML-based scanner output patterns
         $xmlScannerPatterns = new Collection([
-            self::XML_NMAP_REGEX    => ScannerApp::SCANNER_NMAP,
-            self::XML_BURP_REGEX    => ScannerApp::SCANNER_BURP,
-            self::XML_NEXPOSE_REGEX => ScannerApp::SCANNER_NEXPOSE,
+            self::XML_NMAP_REGEX       => ScannerApp::SCANNER_NMAP,
+            self::XML_BURP_REGEX       => ScannerApp::SCANNER_BURP,
+            self::XML_NEXPOSE_REGEX    => ScannerApp::SCANNER_NEXPOSE,
+            self::XML_NETSPARKER_REGEX => ScannerApp::SCANNER_NETSPARKER,
         ]);
 
         // Define the CSV-based scanner output patterns

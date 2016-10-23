@@ -6,6 +6,7 @@ use App\Entities\ScannerApp;
 use App\Repositories\AssetRepository;
 use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\Parsers\BurpXmlParserService;
+use App\Services\Parsers\NetsparkerXmlParserService;
 use App\Services\Parsers\NexposeXmlParserService;
 use App\Services\Parsers\NmapXmlParserService;
 use Doctrine\ORM\EntityManager;
@@ -107,9 +108,10 @@ class XmlParserFactoryService
 
         // Create a scanner name to service class map
         static::$scannerServiceMap = new Collection([
-            ScannerApp::SCANNER_NMAP    => NmapXmlParserService::class,
-            ScannerApp::SCANNER_BURP    => BurpXmlParserService::class,
-            ScannerApp::SCANNER_NEXPOSE => NexposeXmlParserService::class,
+            ScannerApp::SCANNER_NMAP       => NmapXmlParserService::class,
+            ScannerApp::SCANNER_BURP       => BurpXmlParserService::class,
+            ScannerApp::SCANNER_NEXPOSE    => NexposeXmlParserService::class,
+            ScannerApp::SCANNER_NETSPARKER => NetsparkerXmlParserService::class,
         ]);
 
         // Create an empty Collection of registered services and set the $isInitialised flag to true

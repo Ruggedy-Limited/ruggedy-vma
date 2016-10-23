@@ -187,61 +187,6 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
     }
 
     /**
-     * Extract a CData field and set the value on the model, optionally appending the value
-     *
-     * @param string $entityClass
-     * @param string $setter
-     * @param string $heading
-     * @param bool $append
-     */
-    protected function captureCDataField(
-        string $entityClass, string $setter, string $heading = '', bool $append = false
-    )
-    {
-        // Check if the base64 flag is set on the node
-        $isBase64 = $this->checkForBase64Encoding();
-
-        // Move into the CData node
-        $this->parser->read();
-
-        // Exit early is this is not a CData field
-        if ($this->parser->nodeType !== XMLReader::CDATA) {
-            return;
-        }
-
-        // Wrap the heading in <h3></h3> tags
-        if (!empty($heading)) {
-            $heading = '<h3>' . $heading . '</h3>' . PHP_EOL;
-        }
-
-        // Get the entity and validate it and the setter method
-        $entity = $this->entities->get($entityClass);
-        if (empty($entity) || !method_exists($entity, $setter)) {
-            return;
-        }
-
-        $value = $isBase64 ? base64_decode($this->parser->value) : $this->parser->value;
-        if (empty($value)) {
-            return;
-        }
-
-        // When the append flag is not set, set the heading and node contents
-        if (!$append) {
-            $entity->$setter(
-                $heading . $value
-            );
-
-            return;
-        }
-
-        // When the append flag is set, append the heading and node contents to the the value that exists
-        $getter = 'g' . substr($setter, 1);
-        $entity->$setter(
-            $entity->$getter() . PHP_EOL . $heading . $value
-        );
-    }
-
-    /**
      * Add online references for the current Vulnerability
      */
     protected function addReferences()
@@ -298,16 +243,6 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 false
             );
         });
-    }
-
-    /**
-     * Check if the value is base
-     *
-     * @return bool
-     */
-    protected function checkForBase64Encoding(): bool
-    {
-        return $this->parser->getAttribute('base64') === 'true';
     }
 
     /**
