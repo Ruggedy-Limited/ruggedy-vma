@@ -236,7 +236,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             throw $e;
         }
 
-        //$this->moveFileToProcessed($file);
+        $this->moveFileToProcessed($file);
     }
 
     /**
