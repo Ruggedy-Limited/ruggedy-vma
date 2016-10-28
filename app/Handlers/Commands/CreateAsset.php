@@ -6,6 +6,7 @@ use App\Commands\CreateAsset as CreateAssetCommand;
 use App\Entities\Asset;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
+use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
@@ -84,6 +85,9 @@ class CreateAsset extends CommandHandler
         $entity->setWorkspaceId($workspaceId);
         // Create a new Asset or find a matching existing Asset
         $asset = $this->assetRepository->findOrCreateOneBy($entity->toArray(true));
+        if (empty($asset)) {
+            throw new AssetNotFoundException("Could not find or create an Asset from the given input.");
+        }
 
         // If this is a deleted or suppressed Asset then don't persist any changes but return the Asset as is
         if ($asset->getDeleted() || $asset->getSuppressed()) {
