@@ -6,7 +6,7 @@
 
         <!-- Interval Selector Button Group -->
         <div class="pull-right">
-            <div class="btn-group" v-if="hasMonthlyAndYearlyPlans">
+            <div class="btn-group" v-if="hasMonthlyAndYearlyPaidPlans">
                 <!-- Monthly Plans -->
                 <button type="button" class="btn btn-default"
                         @click="showMonthlyPlans"
@@ -28,7 +28,7 @@
         <div class="clearfix"></div>
     </div>
 
-    <div class="panel-body">
+    <div class="panel-body table-responsive">
         <!-- Subscription Notice -->
         <div class="p-b-lg">
             You are not subscribed to a plan. Choose from the plans below to get started.
@@ -69,7 +69,7 @@
                     <!-- Plan Price -->
                     <td>
                         <div class="btn-table-align">
-                            @{{ plan.price | currency spark.currencySymbol }} / @{{ plan.interval | capitalize }}
+                            @{{ plan.price | currency }} / @{{ plan.interval | capitalize }}
                         </div>
                     </td>
 
