@@ -13,6 +13,17 @@ class TokenRepository implements Contract
     /**
      * {@inheritdoc}
      */
+    public function all($user)
+    {
+        return $user->tokens()
+                    ->where('transient', false)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function validToken($token)
     {
         return Token::where('token', $token)->where(function ($query) {

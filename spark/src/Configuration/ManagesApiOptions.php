@@ -2,6 +2,8 @@
 
 namespace Laravel\Spark\Configuration;
 
+use Laravel\Passport\Passport;
+
 trait ManagesApiOptions
 {
     /**
@@ -49,7 +51,7 @@ trait ManagesApiOptions
      * Get or set the abilities that may be assigned to tokens.
      *
      * @param  array  $abilities
-     * @return void
+     * @return array|void
      */
     public static function tokensCan(array $abilities = null)
     {
@@ -57,6 +59,10 @@ trait ManagesApiOptions
             return static::$tokensCan;
         } else {
             static::$tokensCan = $abilities;
+
+            if (class_exists('Laravel\Passport\Passport')) {
+                Passport::tokensCan($abilities);
+            }
         }
     }
 

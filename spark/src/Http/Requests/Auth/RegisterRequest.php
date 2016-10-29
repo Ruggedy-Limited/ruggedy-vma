@@ -51,7 +51,9 @@ class RegisterRequest extends FormRequest
             CreateUser::class.'@validator', [$this]
         );
 
-        $validator->sometimes('plan', 'required|in:'.Spark::activePlanIdList(), function () {
+        $allPlanIdList = Spark::activePlanIdList().','.Spark::activeTeamPlanIdList();
+
+        $validator->sometimes('plan', 'required|in:'.$allPlanIdList, function () {
             return Spark::needsCardUpFront();
         });
 
@@ -80,7 +82,7 @@ class RegisterRequest extends FormRequest
     /**
      * Validate the coupon on the request.
      *
-     * @param  \Illuminate\Validation\Validator  $valdiator
+     * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      */
     protected function validateCoupon($validator)
@@ -93,7 +95,7 @@ class RegisterRequest extends FormRequest
     /**
      * Validate the invitation code on the request.
      *
-     * @param  \Illuminate\Validation\Validator  $valdiator
+     * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      */
     protected function validateInvitation($validator)
@@ -121,7 +123,7 @@ class RegisterRequest extends FormRequest
     public function plan()
     {
         if ($this->plan) {
-            return Spark::plans()->where('id', $this->plan)->first();
+            return Spark::plans()->merge(Spark::teamPlans())->where('id', $this->plan)->first();
         }
     }
 

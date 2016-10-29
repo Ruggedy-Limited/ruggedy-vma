@@ -38,6 +38,8 @@ class StripeWebhookController extends WebhookController
         $this->sendInvoiceNotification(
             $user, $invoice
         );
+
+        return new Response('Webhook Handled', 200);
     }
 
     /**
@@ -63,6 +65,8 @@ class StripeWebhookController extends WebhookController
         $this->sendInvoiceNotification(
             $team, $invoice
         );
+
+        return new Response('Webhook Handled', 200);
     }
 
     /**
@@ -106,6 +110,8 @@ class StripeWebhookController extends WebhookController
             })->each(function ($subscription) {
                 $subscription->markAsCancelled();
             });
+        } else {
+            return new Response('Webhook Handled', 200);
         }
 
         event(new TeamSubscriptionCancelled($team));

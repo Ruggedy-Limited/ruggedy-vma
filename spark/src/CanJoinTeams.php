@@ -78,6 +78,16 @@ trait CanJoinTeams
     }
 
     /**
+     * Get the user's role on the team currently being viewed.
+     *
+     * @return string
+     */
+    public function roleOnCurrentTeam()
+    {
+        return $this->roleOn($this->currentTeam);
+    }
+
+    /**
      * Accessor for the currentTeam method.
      *
      * @return \Illuminate\Database\Eloquent\Model|null
@@ -118,7 +128,7 @@ trait CanJoinTeams
     /**
      * Switch the current team for the user.
      *
-     * @param  \Laravel\Spark\Teams\Team  $team
+     * @param  \Laravel\Spark\Team  $team
      * @return void
      */
     public function switchToTeam($team)
@@ -135,7 +145,7 @@ trait CanJoinTeams
     /**
      * Refresh the current team for the user.
      *
-     * @return  \Laravel\Spark\Teams\Team
+     * @return  \Laravel\Spark\Team
      */
     public function refreshCurrentTeam()
     {
