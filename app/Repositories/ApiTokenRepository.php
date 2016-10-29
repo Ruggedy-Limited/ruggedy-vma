@@ -116,4 +116,13 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
 
         $this->_em->flush();
     }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public function all($user)
+    {
+        return collect($user->getApiTokens()->toArray());
+    }
 }

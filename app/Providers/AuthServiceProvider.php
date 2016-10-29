@@ -50,6 +50,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerPolicies();
+
         // Send requests using the 'ruggedy' auth driver via the request driver
         Auth::viaRequest('ruggedy', function ($request) {
             return app(RuggedyTokenGuard::class)->user($request);
