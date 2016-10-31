@@ -3,11 +3,12 @@
 namespace Laravel\Spark;
 
 use Illuminate\Support\Str;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Billable, HasApiTokens;
+    use Billable, HasApiTokens, Notifiable;
 
     /**
      * Get the profile photo URL attribute.
@@ -53,7 +54,9 @@ class User extends Authenticatable
     {
         $array = parent::toArray();
 
-        $array['tax_rate'] = $this->taxPercentage();
+        if (! in_array('tax_rate', $this->hidden)) {
+            $array['tax_rate'] = $this->taxPercentage();
+        }
 
         return $array;
     }

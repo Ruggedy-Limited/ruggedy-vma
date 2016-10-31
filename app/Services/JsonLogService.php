@@ -32,14 +32,14 @@ class JsonLogService
      */
     public function initLogger()
     {
-        if (empty($this->getLoggerName())) {
+        if (empty($this->loggerName)) {
             throw new Exception("Cannot create a logger without a logger name.");
         }
 
-        $logger = new Logger($this->getLoggerName());
+        $logger = new Logger($this->loggerName);
         $this->setLogger($logger);
 
-        $logDirectory = storage_path('logs') . DIRECTORY_SEPARATOR . $this->getLoggerName();
+        $logDirectory = storage_path('logs') . DIRECTORY_SEPARATOR . $this->loggerName;
         if (!realpath($logDirectory)) {
             mkdir($logDirectory, 0755, true);
         }
@@ -49,7 +49,7 @@ class JsonLogService
         }
 
         $handlers = $this->getStreamHandlers($logDirectory);
-        $this->getLogger()->setHandlers($handlers);
+        $this->logger->setHandlers($handlers);
     }
 
     /**
@@ -60,7 +60,7 @@ class JsonLogService
      */
     protected function getStreamHandlers($logDirectory)
     {
-        $streamHandler = new StreamHandler($logDirectory . DIRECTORY_SEPARATOR . $this->getLogFilename());
+        $streamHandler = new StreamHandler($logDirectory . DIRECTORY_SEPARATOR . $this->logFilename);
         $streamHandler->pushProcessor([$this, 'streamProcessor']);
         $streamHandler->setFormatter(new JsonFormatter());
 
@@ -83,9 +83,9 @@ class JsonLogService
         }
 
         $extra                =& $record['extra'];
-        $extra['class']       = $this->getCallingClass();
-        $extra['method']      = $this->getCallingMethod();
-        $extra['description'] = $this->getDescription();
+        $extra['class']       = $this->callingClass;
+        $extra['method']      = $this->callingMethod;
+        $extra['description'] = $this->description;
         $extra['env']         = env('APP_ENV');
 
         return $record;
@@ -118,7 +118,7 @@ class JsonLogService
         }
 
         try {
-            $this->getLogger()->log($level, $message, $context);
+            $this->logger->log($level, $message, $context);
         } catch (\Exception $e) {
             // TODO: Setup a Nagios alert to monitor long periods of inactivity in the log files
         }

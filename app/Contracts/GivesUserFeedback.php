@@ -10,5 +10,5 @@ interface GivesUserFeedback
      *
      * @return string
      */
-    function getTranslatorNamespace(): string;
+    public function getTranslatorNamespace(): string;
 }

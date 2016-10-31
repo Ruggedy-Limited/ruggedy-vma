@@ -60,8 +60,8 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
             ApiToken::EXPIRES_AT => null,
         ]);
 
-        $this->getEntityManager()->persist($newToken);
-        $this->getEntityManager()->flush($newToken);
+        $this->_em->persist($newToken);
+        $this->_em->flush($newToken);
 
         return $user->addApiToken($newToken);
     }
@@ -110,10 +110,19 @@ class ApiTokenRepository extends EntityRepository implements TokenRepository
         {
             /** @var ApiToken $token */
             if ($token->getExpiresAt() <= Carbon::now()) {
-                $this->getEntityManager()->remove($token);
+                $this->_em->remove($token);
             }
         });
 
-        $this->getEntityManager()->flush();
+        $this->_em->flush();
+    }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public function all($user)
+    {
+        return collect($user->getApiTokens()->toArray());
     }
 }

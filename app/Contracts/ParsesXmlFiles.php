@@ -12,5 +12,5 @@ interface ParsesXmlFiles
      *
      * @return Collection
      */
-    function getFileToSchemaMapping(): Collection;
+    public function getFileToSchemaMapping(): Collection;
 }

@@ -8,7 +8,7 @@
 
             <div class="pull-right">
                 <span v-if="billable.card_last_four">
-                    <i class="fa fa-btn @{{ cardIcon }}"></i>
+                    <i :class="['fa', 'fa-btn', cardIcon]"></i>
                     ************@{{ billable.card_last_four }}
                 </span>
             </div>
@@ -43,7 +43,7 @@
                     <label for="name" class="col-md-4 control-label">Cardholder's Name</label>
 
                     <div class="col-md-6">
-                        <input type="text" class="form-control" name="name" v-model="cardForm.name">
+                        <input type="text" class="form-control" v-model="cardForm.name">
                     </div>
                 </div>
 
@@ -54,7 +54,6 @@
                     <div class="col-md-6">
                         <input type="text"
                             class="form-control"
-                            name="number"
                             data-stripe="number"
                             :placeholder="placeholder"
                             v-model="cardForm.number">
@@ -70,7 +69,7 @@
                     <label for="cvc" class="col-md-4 control-label">Security Code</label>
 
                     <div class="col-md-6">
-                        <input type="text" class="form-control" name="cvc" data-stripe="cvc" v-model="cardForm.cvc">
+                        <input type="text" class="form-control" data-stripe="cvc" v-model="cardForm.cvc">
                     </div>
                 </div>
 
@@ -78,16 +77,20 @@
                 <div class="form-group">
                     <label class="col-md-4 control-label">Expiration</label>
 
-                    <!-- Month -->
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" name="month"
-                            placeholder="MM" maxlength="2" data-stripe="exp-month" v-model="cardForm.month">
-                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <!-- Month -->
+                            <div class="col-xs-6">
+                                <input type="text" class="form-control"
+                                    placeholder="MM" maxlength="2" data-stripe="exp-month" v-model="cardForm.month">
+                            </div>
 
-                    <!-- Year -->
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" name="year"
-                            placeholder="YYYY" maxlength="4" data-stripe="exp-year" v-model="cardForm.year">
+                            <!-- Year -->
+                            <div class="col-xs-6">
+                                <input type="text" class="form-control"
+                                    placeholder="YYYY" maxlength="4" data-stripe="exp-year" v-model="cardForm.year">
+                            </div>  
+                        </div>
                     </div>
                 </div>
 
@@ -96,7 +99,7 @@
                     <label for="zip" class="col-md-4 control-label">ZIP / Postal Code</label>
 
                     <div class="col-md-6">
-                        <input type="text" class="form-control" name="zip" v-model="form.zip">
+                        <input type="text" class="form-control" v-model="form.zip">
                     </div>
                 </div>
 

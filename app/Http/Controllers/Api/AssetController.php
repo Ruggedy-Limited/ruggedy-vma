@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Commands\DeleteAsset;
 use App\Commands\EditAsset;
+use App\Commands\GetAsset;
 use App\Commands\GetAssetsInProject;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\UploadScanOutput;
 use App\Entities\Asset;
-use App\Models\MessagingModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\UploadedFile;
@@ -37,10 +37,23 @@ class AssetController extends AbstractController
 
         $command = new UploadScanOutput(
             intval($workspaceId),
-            $this->getRequest()->json()->all(),
             $file
         );
 
+        return $this->sendCommandToBusHelper($command);
+    }
+
+    /**
+     * Get a single Asset by it's integer ID
+     *
+     * @GET("/asset/{assetId}", as="asset.get", where={"assetId":"[0-9]+"})
+     *
+     * @param $assetId
+     * @return ResponseFactory|JsonResponse
+     */
+    public function getSingleAsset($assetId)
+    {
+        $command = new GetAsset(intval($assetId));
         return $this->sendCommandToBusHelper($command);
     }
 
@@ -59,7 +72,7 @@ class AssetController extends AbstractController
     }
 
     /**
-     * Delete and Asset
+     * Delete an Asset
      *
      * @DELETE("/asset/{assetId}/{confirm?}", as="asset.delete", where={"assetId":"[0-9]+", "confirm":"^confirm$"})
      *

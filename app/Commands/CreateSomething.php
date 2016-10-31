@@ -3,13 +3,15 @@
 namespace App\Commands;
 
 
+use App\Entities\Base\AbstractEntity;
+
 abstract class CreateSomething extends Command
 {
     /** @var int */
     protected $id;
 
-    /** @var array */
-    protected $details;
+    /** @var AbstractEntity */
+    protected $entity;
 
     /** @var bool */
     protected $multiMode;
@@ -18,13 +20,13 @@ abstract class CreateSomething extends Command
      * CreateSomething constructor.
      *
      * @param int $id
-     * @param array $details
+     * @param AbstractEntity $entity
      * @param bool $multiMode
      */
-    public function __construct(int $id, array $details, bool $multiMode = false)
+    public function __construct(int $id, AbstractEntity $entity, bool $multiMode = false)
     {
         $this->id        = $id;
-        $this->details   = $details;
+        $this->entity    = $entity;
         $this->multiMode = $multiMode;
     }
 
@@ -37,11 +39,11 @@ abstract class CreateSomething extends Command
     }
 
     /**
-     * @return array
+     * @return AbstractEntity
      */
-    public function getDetails(): array
+    public function getEntity(): AbstractEntity
     {
-        return $this->details;
+        return $this->entity;
     }
 
     /**

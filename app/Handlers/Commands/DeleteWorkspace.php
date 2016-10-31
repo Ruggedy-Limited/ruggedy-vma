@@ -57,7 +57,7 @@ class DeleteWorkspace extends CommandHandler
 
         // Check that the Workspace exists
         /** @var Workspace $workspace */
-        $workspace = $this->getWorkspaceRepository()->find($workspaceId);
+        $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace) || !empty($workspace->getDeleted())) {
             throw new WorkspaceNotFoundException("A Project with the given project ID was not found");
         }
@@ -70,8 +70,8 @@ class DeleteWorkspace extends CommandHandler
         // If the deletion has been confirmed, then set the deleted flag on the Workspace and save to the database
         if ($command->isConfirm()) {
             $workspace->setDeleted(true);
-            $this->getEm()->persist($workspace);
-            $this->getEm()->flush($workspace);
+            $this->em->persist($workspace);
+            $this->em->flush($workspace);
         }
 
         return $workspace->toStdClass(['id', 'name', 'deleted', 'created_at', 'updated_at']);

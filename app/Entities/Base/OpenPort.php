@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\OpenPort
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="open_ports_asset_fk_idx", columns={"`asset_id`"}), @ORM\Index(name="open_ports_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`open_ports`", indexes={@ORM\Index(name="open_ports_asset_fk_idx", columns={"`asset_id`"})})
  */
 class OpenPort extends AbstractEntity
 {
@@ -23,10 +23,9 @@ class OpenPort extends AbstractEntity
     const SERVICE_EXTRA_INFO   = 'service_extra_info';
     const SERVICE_FINGER_PRINT = 'service_finger_print';
     const SERVICE_BANNER       = 'service_banner';
+    const SERVICE_MESSAGE      = 'service_message';
     const ASSET_ID             = 'asset_id';
-    const FILE_ID              = 'file_id';
     const ASSET                = 'asset';
-    const FILE                 = 'file';
 
     /**
      * @ORM\Id
@@ -66,19 +65,19 @@ class OpenPort extends AbstractEntity
     protected $service_finger_print;
 
     /**
-     * @ORM\Column(name="`service_banner`", type="string", length=150, nullable=true)
+     * @ORM\Column(name="`service_banner`", type="string", length=255, nullable=true)
      */
     protected $service_banner;
+
+    /**
+     * @ORM\Column(name="`service_message`", type="string", length=255, nullable=true)
+     */
+    protected $service_message;
 
     /**
      * @ORM\Column(name="`asset_id`", type="integer", options={"unsigned":true})
      */
     protected $asset_id;
-
-    /**
-     * @ORM\Column(name="`file_id`", type="integer", options={"unsigned":true})
-     */
-    protected $file_id;
 
     /**
      * @ORM\Column(name="`created_at`", type="datetime")
@@ -95,12 +94,6 @@ class OpenPort extends AbstractEntity
      * @ORM\JoinColumn(name="`asset_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $asset;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="File", inversedBy="openPorts", cascade={"persist"})
-     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
-     */
-    protected $file;
 
     public function __construct()
     {
@@ -291,6 +284,29 @@ class OpenPort extends AbstractEntity
     }
 
     /**
+     * Set the value of service_message.
+     *
+     * @param string $service_message
+     * @return \App\Entities\Base\OpenPort
+     */
+    public function setServiceMessage($service_message)
+    {
+        $this->service_message = $service_message;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of service_message.
+     *
+     * @return string
+     */
+    public function getServiceMessage()
+    {
+        return $this->service_message;
+    }
+
+    /**
      * Set the value of asset_id.
      *
      * @param integer $asset_id
@@ -311,29 +327,6 @@ class OpenPort extends AbstractEntity
     public function getAssetId()
     {
         return $this->asset_id;
-    }
-
-    /**
-     * Set the value of file_id.
-     *
-     * @param integer $file_id
-     * @return \App\Entities\Base\OpenPort
-     */
-    public function setFileId($file_id)
-    {
-        $this->file_id = $file_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of file_id.
-     *
-     * @return integer
-     */
-    public function getFileId()
-    {
-        return $this->file_id;
     }
 
     /**
@@ -405,31 +398,8 @@ class OpenPort extends AbstractEntity
         return $this->asset;
     }
 
-    /**
-     * Set File entity (many to one).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\OpenPort
-     */
-    public function setFile(File $file = null)
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    /**
-     * Get File entity (many to one).
-     *
-     * @return \App\Entities\Base\File
-     */
-    public function getFile()
-    {
-        return $this->file;
-    }
-
     public function __sleep()
     {
-        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'asset_id', 'file_id', 'created_at', 'updated_at');
+        return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'service_message', 'asset_id', 'created_at', 'updated_at');
     }
 }

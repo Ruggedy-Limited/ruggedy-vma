@@ -29,8 +29,6 @@ class Component extends AbstractEntity
     protected $id;
 
     /**
-     * The name of the component and the name of the
-     *
      * @ORM\Column(name="`name`", type="string", length=45)
      */
     protected $name;

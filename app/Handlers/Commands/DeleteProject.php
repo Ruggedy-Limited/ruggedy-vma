@@ -57,7 +57,7 @@ class DeleteProject extends CommandHandler
 
         // Check that the project exists
         /** @var Project $project */
-        $project = $this->getProjectRepository()->find($projectId);
+        $project = $this->projectRepository->find($projectId);
         if (empty($project) || !empty($project->getDeleted())) {
             throw new ProjectNotFoundException("A Project with the given project ID was not found");
         }
@@ -70,8 +70,8 @@ class DeleteProject extends CommandHandler
         // If the deletion has been confirmed, then set the deleted flag on the Project and save to the database
         if ($command->isConfirm()) {
             $project->setDeleted(true);
-            $this->getEm()->persist($project);
-            $this->getEm()->flush($project);
+            $this->em->persist($project);
+            $this->em->flush($project);
         }
 
         return $project->toStdClass(['id', 'name', 'workspaces', 'deleted']);

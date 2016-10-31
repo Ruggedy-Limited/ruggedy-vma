@@ -1,5 +1,43 @@
 # Change Log
 
+## Version 3.0.0
+
+- Update to Vue 2.0
+
+## Version 2.0.4
+
+- Revert Vue Resource upgrade.
+
+## Version 2.0.3
+
+- Update Vue Resource and JWT libraries.
+
+## Version 2.0.0
+
+- Compatibility with Laravel 5.3
+
+## Version 1.0.14
+
+- Various minor bug fixes.
+
+## Version 1.0.13
+
+- Various minor bug fixes.
+
+## Version 1.0.12
+
+- Various improvements to notifications.
+- Allow full state names in billing information instead of just abbreviations.
+
+## Version 1.0.11
+
+- Remove empty parentheses on "delete announcement" modal.
+- Fix notifications overflow.
+
+## Version 1.0.10
+
+- Fix relative date formatting.
+
 ## Version 1.0.9
 
 - Fix various bugs.

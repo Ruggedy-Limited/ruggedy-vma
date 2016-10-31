@@ -9,7 +9,6 @@ use App\Services\PermissionService;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
-
 abstract class AbstractPermissionHandler extends CommandHandler
 {
     /** @var EntityManager */
@@ -45,9 +44,9 @@ abstract class AbstractPermissionHandler extends CommandHandler
      */
     protected function findOrCreatePermissionEntity(int $id, string $permission = null): ComponentPermission
     {
-        $component         = $this->getService()->getComponent();
-        $componentInstance = $this->getService()->getComponentInstance();
-        $user              = $this->getService()->getUser();
+        $component         = $this->service->getComponent();
+        $componentInstance = $this->service->getComponentInstance();
+        $user              = $this->service->getUser();
         $requestingUser    = $this->getAuthenticatedUser();
 
         // Check that the command handler state is set as required
@@ -56,7 +55,7 @@ abstract class AbstractPermissionHandler extends CommandHandler
         }
 
         /** @var ComponentPermission $permissionEntity */
-        $permissionEntity = $this->getService()
+        $permissionEntity = $this->service
             ->getComponentPermissionRepository()
             ->findOneByComponentInstanceAndUserIds($component->getId(), $id, $user->getId());
 

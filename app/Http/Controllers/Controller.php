@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Responses\ErrorResponse;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use Illuminate\Translation\Translator;
-use App\Models\MessagingModel;
 use Illuminate\Http\Request;
 
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /** @var  Translator */
     protected $translator;

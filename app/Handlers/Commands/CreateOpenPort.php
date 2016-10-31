@@ -59,15 +59,16 @@ class CreateOpenPort extends CommandHandler
         
         // Check that all the required fields were set on the command
         $assetId = $command->getId();
-        $details = $command->getDetails();
+        /** @var OpenPort $entity */
+        $entity = $command->getEntity();
         
-        if (!isset($assetId, $details)) {
+        if (!isset($assetId, $entity)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
         // Make sure the given Asset exists
         /** @var Asset $asset */
-        $asset = $this->getAssetRepository()->find($assetId);
+        $asset = $this->assetRepository->find($assetId);
         if (empty($asset) || $asset->getDeleted()) {
             throw new AssetNotFoundException("No Asset with the given ID was found in the database");
         }
@@ -85,25 +86,23 @@ class CreateOpenPort extends CommandHandler
         }
 
         // See if a record of this open port already exists for this Asset and if so, exit early
-        $details[OpenPort::ASSET_ID] = $assetId;
-        $openPort = $this->getOpenPortRepository()->findOneBy($details);
+        $entity->setAsset($asset)
+            ->setAssetId($assetId);
+
+        $openPort = $this->openPortRepository->findOneBy($entity->getUniqueKeyColumns()->all());
         if (!empty($openPort) && $openPort instanceof OpenPort) {
-            return $openPort;
+            $entity = $openPort->setFromArray($entity->toArray(true));
         }
 
-        $openPort = new OpenPort();
-        $openPort->setFromArray($details);
-        $openPort->setAsset($asset);
-
         // Persist the new OpenPort to the database
-        $this->getEm()->persist($openPort);
+        $this->em->persist($entity);
 
         // Save immediately if we're not in multi-mode
         if (!$command->isMultiMode()) {
-            $this->getEm()->flush($openPort);
+            $this->em->flush($entity);
         }
 
-        return $openPort;
+        return $entity;
     }
 
     /**

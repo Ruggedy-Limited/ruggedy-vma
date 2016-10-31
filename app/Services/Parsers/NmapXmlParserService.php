@@ -4,13 +4,16 @@ namespace App\Services\Parsers;
 
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
-use App\Models\NmapModel;
+use App\Entities\OpenPort;
+use App\Entities\Workspace;
+use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
 use Doctrine\ORM\EntityManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Factory;
+use League\Tactician\CommandBus;
 use XMLReader;
 
 class NmapXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
@@ -24,138 +27,182 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     const XML_ATTRIBUTE_ACCURACY = 'accuracy';
     const XML_ATTRIBUTE_PORTID   = 'portid';
 
-    /** @var int */
-    protected $currentPortNumber;
-
     /** @var Collection */
-    protected $methodsRequiringAPortId;
-    
+    protected $accuracies;
+
     /**
      * NmapXmlParserService constructor.
      *
      * @param XMLReader $parser
      * @param Filesystem $fileSystem
      * @param Factory $validatorFactory
+     * @param AssetRepository $assetRepository
      * @param FileRepository $fileRepository
      * @param EntityManager $em
      * @param JsonLogService $logger
+     * @param CommandBus $commandBus
      */
     public function __construct(
-        XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, FileRepository $fileRepository,
-        EntityManager $em, JsonLogService $logger
+        XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, AssetRepository $assetRepository,
+        FileRepository $fileRepository, EntityManager $em, JsonLogService $logger, CommandBus $commandBus
     )
     {
-        parent::__construct($parser, $fileSystem, $validatorFactory, $fileRepository, $em, $logger);
+        parent::__construct(
+            $parser, $fileSystem, $validatorFactory, $assetRepository, $fileRepository, $em, $logger, $commandBus
+        );
 
         // Create the mappings to use when parsing the NMAP XML output
         $this->fileToSchemaMapping = new Collection([
-            'osclass'               => new Collection([
-                'setOsVendor' => new Collection([
+            'osclass'                => new Collection([
+                'setVendor' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'vendor',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::getValidVendorsRegex(),
                     ]
                 ]),
-            ]),
-            'osmatch'               => new Collection([
                 'setOsVersion' => new Collection([
-                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'name',
-                    parent::MAP_ATTRIBUTE_VALIDATION    => [
-                        'filled',
-                        'regex:' . Asset::REGEX_OS_VERSION,
-                    ]
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'osgen',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
             ]),
-            'address'               => new Collection([
-                'setIpV4'       => new Collection([
+            'address'                => new Collection([
+                'setIpAddressV4' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'addr',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV4,
                 ]),
-                'setIpV6'       => new Collection([
+                'setIpAddressV6' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'addr',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => FILTER_FLAG_IPV6,
                 ]),
-                'setMacAddress' => new Collection([
+                'setMacAddress'  => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'addr',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::REGEX_MAC_ADDRESS,
                     ]
                 ]),
-                'setMacVendor'  => new Collection([
+                'setMacVendor'   => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'vendor',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => new Collection([
-                        'main'    => ['vendor' => 'filled'],
-                        'related' => new Collection(['addrtype' => 'filled|in:mac']),
+                        parent::MAP_ATTRIBUTE_MAIN_VALIDATION    => ['vendor' => 'filled'],
+                        parent::MAP_ATTRIBUTE_RELATED_VALIDATION => new Collection(['addrtype' => 'filled|in:mac']),
                     ]),
                 ]),
             ]),
-            'hostname'              => new Collection([
+            'hostname'               => new Collection([
                 'setHostname' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'name',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => [
                         'filled',
                         'regex:' . Asset::REGEX_HOSTNAME
                     ]
                 ]),
             ]),
-            self::XML_NODE_NAME_CPE => new Collection([
+            self::XML_NODE_NAME_CPE  => new Collection([
                 'setCpe' => new Collection([
-                    parent::MAP_ATTRIBUTE_VALIDATION    => [
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Asset::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION   => [
                         'filled',
                         'regex:' . Asset::REGEX_CPE
                     ],
                 ]),
             ]),
-            self::XML_NODE_NAME_PORT                  => new Collection([
-                'setPortId'       => new Collection([
+            self::XML_NODE_NAME_PORT => new Collection([
+                'setNumber' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => self::XML_ATTRIBUTE_PORTID,
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|int',
                 ]),
-                'setPortProtocol' => new Collection([
+                'setProtocol'   => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'protocol',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
             ]),
-            'state'                 => new Collection([
-                'setPortState' => new Collection([
-                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'state',
-                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|in:open',
-                ])
-            ]),
-            'service'               => new Collection([
-                'setPortServiceName' => new Collection([
+            'service'                => new Collection([
+                'setServiceName'        => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'name',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
-                'setPortServiceProduct' => new Collection([
+                'setServiceProduct'     => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'product',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
-                'setPortExtraInfo' => new Collection([
+                'setServiceExtraInfo'   => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'extrainfo',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
-                'setPortFingerPrint' => new Collection([
+                'setServiceFingerPrint' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'servicefp',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
             ]),
-            'uptime'                => new Collection([
-                'setUptime' => new Collection([
+            'uptime'                 => new Collection([
+                'setUptime'   => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'seconds',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|int',
                 ]),
                 'setLastBoot' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'lastboot',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Asset::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
             ]),
         ]);
 
-        // Instantiate a model
-        $this->model = new NmapModel();
+        $this->nodePreprocessingMap = new Collection([
+            'host'    => new Collection([
+                'initialiseNewEntity' => collect([
+                    Asset::class,
+                ]),
+            ]),
+            'port'    => collect([
+                'initialiseNewEntity' => collect([
+                    OpenPort::class,
+                ]),
+            ]),
+            'osmatch' => 'isMoreAccurate',
+            'state'   => 'skipNonOpenPortAndMoveOnToNext',
+        ]);
+
+        $this->nodePostProcessingMap = collect([
+            'hostnames' => collect([
+                'persistPopulatedEntity' => collect([
+                    Asset::class,
+                    [
+                        Asset::HOSTNAME      => null,
+                        Asset::IP_ADDRESS_V4 => null,
+                    ],
+                    Workspace::class
+                ]),
+            ]),
+            'port'      => collect([
+                'persistPopulatedEntity' => collect([
+                    OpenPort::class,
+                    [
+                        OpenPort::NUMBER   => null,
+                        OpenPort::ASSET_ID => null,
+                    ],
+                    Asset::class,
+                ]),
+            ]),
+            'nmaprun'   => 'flushDoctrineUnitOfWork',
+        ]);
+
+        $this->accuracies = new Collection();
     }
 
     /**
@@ -165,7 +212,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function getXmlNodeAccuracyAttributeValue()
     {
-        return $this->getParser()->getAttribute(self::XML_ATTRIBUTE_ACCURACY);
+        return $this->parser->getAttribute(self::XML_ATTRIBUTE_ACCURACY);
     }
 
     /**
@@ -189,18 +236,25 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function isMoreAccurate()
     {
-        $accuracy = $this->getXmlNodeAccuracyAttributeValue();
+        $vendorName = $this->parser->getAttribute('name');
+        $validation = ['filled', 'regex:' . Asset::getValidVendorsRegex()];
+        if (!$this->isValidXmlValueOrAttribute('name', $validation, $vendorName)) {
+            $this->skipToNextNode(collect(['osmatch', 'uptime']));
+            return false;
+        }
 
+        $accuracy = $this->getXmlNodeAccuracyAttributeValue();
         $accuracyIsValid = $accuracy !== true && parent::isValidXmlValueOrAttribute(
             self::XML_ATTRIBUTE_ACCURACY, 'filled|integer|between:0,100', $accuracy
         );
 
         // Get the name of the current node to use as an index for the accuracy value
-        $nodeName = $this->getParser()->name;
+        $nodeName = $this->parser->name;
 
         // If accuracy is invalid or less than the current accuracy for this attribute, return null so that nothing
         // nothing further is done on this node
-        if (!$accuracyIsValid || $accuracy <= $this->getModel()->getCurrentAccuracyFor($nodeName)) {
+        if (!$accuracyIsValid || $accuracy <= $this->getCurrentAccuracyFor($nodeName)) {
+            $this->skipToNextNode(collect(['osmatch', 'uptime']));
             return false;
         }
 
@@ -209,7 +263,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
 
         // Set the accuracy to the value of the accuracy attribute for this node
         // and return true so that it is added to the model
-        $this->getModel()->setCurrentAccuracyFor($nodeName, intval($accuracy));
+        $this->setCurrentAccuracyFor($nodeName, intval($accuracy));
 
         return true;
     }
@@ -220,12 +274,12 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     protected function extractCpe()
     {
         // only check osclass nodes
-        if (!$nodeName = $this->getParser()->name !== 'osclass') {
+        if (!$nodeName = $this->parser->name !== 'osclass') {
             return false;
         }
 
         // Expand the XML node into a DOMNode so that we can extract the text value
-        $domNode = $this->getParser()->expand();
+        $domNode = $this->parser->expand();
         /** @var \DOMNode $childNode */
         foreach ($domNode->childNodes as $childNode) {
             // Only attempt extract from nodes named 'cpe' that have a text value
@@ -233,7 +287,7 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
                 continue;
             }
 
-            $validationRules = $this->getFileToSchemaMapping()
+            $validationRules = $this->fileToSchemaMapping
                 ->get(self::XML_NODE_NAME_CPE)
                 ->get(self::MAP_ATTRIBUTE_VALIDATION);
 
@@ -245,119 +299,56 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
             }
 
             // Set the CPE on the model
-            $this->getModel()->setCpe($childNode->nodeValue);
+            $this->entities->get(Asset::class)->setCpe($childNode->nodeValue);
         }
 
         return true;
     }
 
     /**
-     * @inheritdoc
-     * Override the base class method to set the current port number
-     *
-     * @param string $attribute
-     * @return string
+     * If the state of this port is not open skip it and move on to the next port or os node
      */
-    protected function getXmlNodeAttributeValue(string $attribute)
+    protected function skipNonOpenPortAndMoveOnToNext()
     {
-        $value = parent::getXmlNodeAttributeValue($attribute);
-        if ($attribute == self::XML_ATTRIBUTE_PORTID) {
-            $value = intval($value);
-            $this->currentPortNumber = $value;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @inheritdoc
-     * Override the parent method to pass the port ID for the methods requiring it
-     *
-     * @param mixed $attributeValue
-     * @param string $setter
-     */
-    protected function setValueOnModel($attributeValue, string $setter)
-    {
-        if ($this->getModel()->getMethodsRequiringAPortId()->contains($setter)) {
-            $this->getModel()->$setter($this->getCurrentPortNumber(), $attributeValue);
+        if ($this->parser->getAttribute('state') === 'open') {
             return;
         }
 
-        parent::setValueOnModel($attributeValue, $setter);
+        $this->skipToNextNode(collect([self::XML_NODE_NAME_PORT, self::XML_NODE_NAME_OS]));
     }
 
     /**
-     * @inheritdoc
-     * Override the parent method to add a check for the accuracy attribute
+     * Keep skipping nodes until the current node name matches one of the names in the given Collection
      *
-     * @param string $attribute
-     * @param $validationRules
-     * @param mixed $value
-     * @return bool
+     * @param Collection $nodeNames
      */
-    protected function isValidXmlValueOrAttribute(string $attribute, $validationRules, $value): bool
+    protected function skipToNextNode(Collection $nodeNames)
     {
-        // Check that the parent class's validation method passes
-        $isValid = parent::isValidXmlValueOrAttribute($attribute, $validationRules, $value);
-        if (empty($isValid) && $attribute === 'state') {
-            $this->removePortAndMoveOnToNext();
-        }
-
-        if (empty($isValid)) {
-            return false;
-        }
-
-        // Check for an accuracy attribute and if there isn't one return true because the validation passed above
-        if (!$this->nodeHasAccuracyAttribute()) {
-            return true;
-        }
-
-        // The node attribute or text value only passes validation if this node's accuracy is higher than the accuracy
-        // of the node where the model's current value was found
-        return $this->isMoreAccurate();
-    }
-
-    /**
-     * Remove the port from the list of ports if the state is not open and move on to the next port or os node
-     */
-    protected function removePortAndMoveOnToNext()
-    {
-        $this->getModel()->removePort($this->getCurrentPortNumber());
-        while ($this->getParser()->name !== self::XML_NODE_NAME_PORT && $this->getParser()->name !== self::XML_NODE_NAME_OS) {
-            $this->getParser()->next();
+        while (!$nodeNames->contains($this->parser->name)) {
+            $this->parser->next();
         }
     }
 
     /**
-     * @inheritdoc
-     */
-    protected function resetModel()
-    {
-        $this->model = new NmapModel();
-    }
-
-    /**
-     * @return NmapModel
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
+     * Get the current accuracy for the given field
+     *
+     * @param string $field
      * @return int
      */
-    public function getCurrentPortNumber(): int
+    public function getCurrentAccuracyFor(string $field): int
     {
-        return $this->currentPortNumber;
+        return $this->accuracies->get($field, 0);
     }
 
     /**
-     * @param int $currentPortNumber
+     * Set the accuracy for the given field
+     *
+     * @param string $field
+     * @param int $accuracy
      */
-    public function setCurrentPortNumber(int $currentPortNumber)
+    public function setCurrentAccuracyFor(string $field, int $accuracy)
     {
-        $this->currentPortNumber = $currentPortNumber;
+        $this->accuracies->put($field, $accuracy);
     }
 
     /**
@@ -374,5 +365,13 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     public function getStoragePath(): string
     {
         return storage_path('scans/xml/nmap');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLogFilename(): string
+    {
+        return 'nmap-xml-parser.json.log';
     }
 }

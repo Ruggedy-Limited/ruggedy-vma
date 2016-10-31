@@ -7,12 +7,10 @@ use App\Commands\CreateProject;
 use App\Commands\DeleteProject;
 use App\Commands\EditProject;
 use App\Commands\GetListOfUsersProjects;
-use App\Team as EloquentTeam;
-use App\User as EloquentUser;
+use App\Entities\Project;
+use App\Services\EntityFactoryService;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
-use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
-
 
 /**
  * @Controller(prefix="api")
@@ -30,7 +28,8 @@ class ProjectController extends AbstractController
      */
     public function createProject($userId)
     {
-        $command = new CreateProject($userId, $this->getRequest()->json()->all());
+        $project = EntityFactoryService::makeEntity(Project::class, $this->getRequest()->json()->all());
+        $command = new CreateProject($userId, $project);
         return $this->sendCommandToBusHelper($command);
     }
 

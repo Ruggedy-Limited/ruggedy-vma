@@ -57,7 +57,7 @@ class EditAsset extends CommandHandler
 
         // Get the asset instance from the database
         /** @var Asset $asset */
-        $asset = $this->getAssetRepository()->find($id);
+        $asset = $this->assetRepository->find($id);
         if (empty($asset)) {
             throw new AssetNotFoundException("There is no existing Asset with the given Asset ID");
         }
@@ -71,8 +71,8 @@ class EditAsset extends CommandHandler
 
         // Save the changes
         $asset->setFromArray($changes);
-        $this->getEm()->persist($asset);
-        $this->getEm()->flush($asset);
+        $this->em->persist($asset);
+        $this->em->flush($asset);
 
         return $asset;
     }

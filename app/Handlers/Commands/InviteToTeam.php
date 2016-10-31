@@ -65,7 +65,7 @@ class InviteToTeam extends CommandHandler
 
         // Check that the team exists
         /** @var Team $team */
-        $team = $this->getRepository()->find($teamId);
+        $team = $this->repository->find($teamId);
         if (empty($team)) {
             throw new TeamNotFoundException("Could not find a team associated with the given ID");
         }
@@ -78,7 +78,7 @@ class InviteToTeam extends CommandHandler
         }
 
         // Check for a valid email in the POST payload
-        $validation = $this->getValidator()->make(['email' => $email], [
+        $validation = $this->validator->make(['email' => $email], [
             'email' => 'required|email'
         ]);
         
@@ -90,7 +90,7 @@ class InviteToTeam extends CommandHandler
         $eloquentTeam->forceFill($team->toArray());
         
         // Send the invitation and return an instance
-        return $this->getService()->handle($eloquentTeam, $email);
+        return $this->service->handle($eloquentTeam, $email);
     }
 
     /**

@@ -46,7 +46,7 @@ class GetListOfUsersInTeam extends CommandHandler
      * Process the GetListOfUsersInTeam command
      *
      * @param GetListOfUsersInTeamCommand $command
-     * @return User
+     * @return array
      * @throws ActionNotPermittedException
      * @throws Exception
      * @throws InvalidInputException
@@ -67,7 +67,7 @@ class GetListOfUsersInTeam extends CommandHandler
 
         // Make sure the team exists
         /** @var Team $team */
-        $team = $this->getTeamRepository()->find($teamId);
+        $team = $this->teamRepository->find($teamId);
         if (empty($team)) {
             throw new TeamNotFoundException("No Team with the given ID was found in the database");
         }

@@ -57,7 +57,7 @@ class EditWorkspace extends CommandHandler
 
         // Make sure the Project exists
         /** @var Workspace $workspace */
-        $workspace = $this->getWorkspaceRepository()->find($workspaceId);
+        $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace) || !empty($workspace->getDeleted())) {
             throw new WorkspaceNotFoundException("The Project was not found or has been deleted");
         }
@@ -69,8 +69,8 @@ class EditWorkspace extends CommandHandler
 
         // Set the changes on the Project entity and save it
         $workspace->setFromArray($requestedChanges);
-        $this->getEm()->persist($workspace);
-        $this->getEm()->flush($workspace);
+        $this->em->persist($workspace);
+        $this->em->flush($workspace);
 
         return $workspace;
     }

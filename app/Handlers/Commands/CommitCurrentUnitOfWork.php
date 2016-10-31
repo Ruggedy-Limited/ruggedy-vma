@@ -27,7 +27,7 @@ class CommitCurrentUnitOfWork extends CommandHandler
      */
     public function handle(CommitCurrentUnitOfWorkCommand $command)
     {
-        $this->getEm()->flush();
+        $this->em->flush();
     }
 
     /**

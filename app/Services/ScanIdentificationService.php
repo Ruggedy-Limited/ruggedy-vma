@@ -11,8 +11,11 @@ use Illuminate\Http\UploadedFile;
 
 class ScanIdentificationService
 {
-    const XML_NMAP_REGEX = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
-    const XML_BURP_REGEX = '%<!ATTLIST issues burpVersion.*>%';
+    const XML_NMAP_REGEX       = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
+    const XML_BURP_REGEX       = '%<!ATTLIST issues burpVersion.*>%';
+    const XML_NEXPOSE_REGEX    = '%^<NexposeReport.*>$%im';
+    const XML_NETSPARKER_REGEX = '%^<netsparker%im';
+    const XML_NESSUS_REGEX     = '%^<Nessus%im';
 
     const MAX_FILE_BYTES_TO_READ = 256000;
 
@@ -70,7 +73,11 @@ class ScanIdentificationService
             $fileType = $mimeExtension;
         }
 
-        // Check that it is a valid/accepted file type
+        if ($fileType === File::FILE_TYPE_STREAM) {
+            $fileType = $file->extension();
+        }
+
+            // Check that it is a valid/accepted file type
         if (!File::isValidFileType($fileType)) {
             throw new FileException("File of unsupported type '$fileType' given");
         }
@@ -102,13 +109,13 @@ class ScanIdentificationService
         }
 
         // Iterate over the regex and return the key (scanner) of the first regex that matches the file contents
-        $scanner = $patternsByFormat->first(function ($regex, $scanner) {
-            $fileSize = $this->getFile()->getClientSize();
+        $scanner = $patternsByFormat->first(function ($scanner, $regex) {
+            $fileSize = $this->file->getClientSize();
             if ($fileSize > self::MAX_FILE_BYTES_TO_READ) {
                 $fileSize = self::MAX_FILE_BYTES_TO_READ;
             }
 
-            $contents = $this->getFile()->openFile()->fread($fileSize);
+            $contents = $this->file->openFile()->fread($fileSize);
             return preg_match($regex, $contents);
         }, false);
 
@@ -127,8 +134,11 @@ class ScanIdentificationService
     {
         // Define the XML-based scanner output patterns
         $xmlScannerPatterns = new Collection([
-            self::XML_NMAP_REGEX => ScannerApp::SCANNER_NMAP,
-            self::XML_BURP_REGEX => ScannerApp::SCANNER_BURP,
+            self::XML_NMAP_REGEX       => ScannerApp::SCANNER_NMAP,
+            self::XML_BURP_REGEX       => ScannerApp::SCANNER_BURP,
+            self::XML_NEXPOSE_REGEX    => ScannerApp::SCANNER_NEXPOSE,
+            self::XML_NETSPARKER_REGEX => ScannerApp::SCANNER_NETSPARKER,
+            self::XML_NESSUS_REGEX     => ScannerApp::SCANNER_NESSUS,
         ]);
 
         // Define the CSV-based scanner output patterns
@@ -162,8 +172,8 @@ class ScanIdentificationService
         $storagePath = $this->getProvisionalStoragePath($workspaceId);
 
         // If the destination folder does not exist, create it
-        if (!$this->getFileSystem()->exists($storagePath)) {
-            $this->getFileSystem()->mkdir($storagePath, 0755);
+        if (!$this->fileSystem->exists($storagePath)) {
+            $this->fileSystem->mkdir($storagePath, 0755);
         }
 
         return !empty($this->file->move($storagePath, $this->file->getClientOriginalName()));
