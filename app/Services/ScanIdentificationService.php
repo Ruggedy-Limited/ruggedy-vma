@@ -11,10 +11,11 @@ use Illuminate\Http\UploadedFile;
 
 class ScanIdentificationService
 {
-    const XML_NMAP_REGEX = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
-    const XML_BURP_REGEX = '%<!ATTLIST issues burpVersion.*>%';
-    const XML_NEXPOSE_REGEX = '%^<NexposeReport.*>$%im';
+    const XML_NMAP_REGEX       = '%^<nmaprun.*(<host.*<address.*\/>.*<ports>.*</ports>.*</host>)+.*</nmaprun>$%ms';
+    const XML_BURP_REGEX       = '%<!ATTLIST issues burpVersion.*>%';
+    const XML_NEXPOSE_REGEX    = '%^<NexposeReport.*>$%im';
     const XML_NETSPARKER_REGEX = '%^<netsparker%im';
+    const XML_NESSUS_REGEX     = '%^<Nessus%im';
 
     const MAX_FILE_BYTES_TO_READ = 256000;
 
@@ -72,7 +73,11 @@ class ScanIdentificationService
             $fileType = $mimeExtension;
         }
 
-        // Check that it is a valid/accepted file type
+        if ($fileType === File::FILE_TYPE_STREAM) {
+            $fileType = $file->extension();
+        }
+
+            // Check that it is a valid/accepted file type
         if (!File::isValidFileType($fileType)) {
             throw new FileException("File of unsupported type '$fileType' given");
         }
@@ -133,6 +138,7 @@ class ScanIdentificationService
             self::XML_BURP_REGEX       => ScannerApp::SCANNER_BURP,
             self::XML_NEXPOSE_REGEX    => ScannerApp::SCANNER_NEXPOSE,
             self::XML_NETSPARKER_REGEX => ScannerApp::SCANNER_NETSPARKER,
+            self::XML_NESSUS_REGEX     => ScannerApp::SCANNER_NESSUS,
         ]);
 
         // Define the CSV-based scanner output patterns

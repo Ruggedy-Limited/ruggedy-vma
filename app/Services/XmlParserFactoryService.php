@@ -6,6 +6,7 @@ use App\Entities\ScannerApp;
 use App\Repositories\AssetRepository;
 use App\Services\Parsers\AbstractXmlParserService;
 use App\Services\Parsers\BurpXmlParserService;
+use App\Services\Parsers\NessusXmlParserService;
 use App\Services\Parsers\NetsparkerXmlParserService;
 use App\Services\Parsers\NexposeXmlParserService;
 use App\Services\Parsers\NmapXmlParserService;
@@ -112,6 +113,7 @@ class XmlParserFactoryService
             ScannerApp::SCANNER_BURP       => BurpXmlParserService::class,
             ScannerApp::SCANNER_NEXPOSE    => NexposeXmlParserService::class,
             ScannerApp::SCANNER_NETSPARKER => NetsparkerXmlParserService::class,
+            ScannerApp::SCANNER_NESSUS     => NessusXmlParserService::class,
         ]);
 
         // Create an empty Collection of registered services and set the $isInitialised flag to true

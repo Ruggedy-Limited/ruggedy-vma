@@ -189,4 +189,11 @@ class NetsparkerXmlParserService extends AbstractXmlParserService
         return storage_path('scans/xml/netsparker');
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getLogFilename(): string
+    {
+        return 'netsparker-xml-parser.json.log';
+    }
 }

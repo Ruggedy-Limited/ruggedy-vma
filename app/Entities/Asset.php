@@ -173,6 +173,31 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     }
 
     /**
+     * Override the parent method to attempt to extract a valid vendor name from the given string
+     *
+     * @param string $vendor
+     * @return Base\Asset
+     */
+    public function setVendor($vendor)
+    {
+        // Parameter is a valid vendor name
+        if (static::isValidOsVendor($vendor)) {
+            return parent::setVendor($vendor);
+        }
+
+        // Attempt to match a valid vendor name in the given parameter value
+        preg_match(static::getValidVendorsRegex(), $vendor, $matches);
+
+        // No match was found, set the OS vendor to 'Unknown'
+        if (empty($matches[1]) || !static::isValidOsVendor($matches[1])) {
+            return parent::setVendor(self::OS_VENDOR_UNKNOWN);
+        }
+
+        // Set the OS vendor to the matched value
+        return parent::setVendor($matches[1]);
+    }
+
+    /**
      * Override the parent method to sanitise and convert any non-date objects into a Carbon instance
      *
      * @param \DateTime $lastBoot

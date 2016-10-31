@@ -16,4 +16,5 @@ class ScannerApp extends Base\ScannerApp
     const SCANNER_BURP       = 'burp';
     const SCANNER_NEXPOSE    = 'nexpose';
     const SCANNER_NETSPARKER = 'netsparker';
+    const SCANNER_NESSUS     = 'nessus';
 }

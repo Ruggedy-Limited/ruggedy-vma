@@ -366,4 +366,12 @@ class NmapXmlParserService extends AbstractXmlParserService implements ParsesXml
     {
         return storage_path('scans/xml/nmap');
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLogFilename(): string
+    {
+        return 'nmap-xml-parser.json.log';
+    }
 }

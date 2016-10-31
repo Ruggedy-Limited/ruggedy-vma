@@ -15,9 +15,12 @@ use Illuminate\Support\Collection;
  */
 class File extends Base\File implements SystemComponent
 {
-    const FILE_TYPE_XML  = 'xml';
-    const FILE_TYPE_CSV  = 'csv';
-    const FILE_TYPE_JSON = 'json';
+    const FILE_TYPE_XML    = 'xml';
+    const FILE_TYPE_CSV    = 'csv';
+    const FILE_TYPE_JSON   = 'json';
+    const FILE_TYPE_STREAM = 'octet-stream';
+
+    const FILE_EXTENSION_NESSUS = 'nessus';
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"}, fetch="EAGER")
@@ -78,6 +81,7 @@ class File extends Base\File implements SystemComponent
             static::FILE_TYPE_XML,
             static::FILE_TYPE_CSV,
             static::FILE_TYPE_JSON,
+            static::FILE_TYPE_STREAM
         ]);
     }
 
