@@ -17,7 +17,6 @@ use DoctrineProxies\__CG__\App\Entities\Project as ProjectProxy;
 use DoctrineProxies\__CG__\App\Entities\Team as TeamProxy;
 use DoctrineProxies\__CG__\App\Entities\User as UserProxy;
 use DoctrineProxies\__CG__\App\Entities\Workspace as WorkspaceProxy;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,12 +46,11 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * Register any application authentication / authorization services.
      *
-     * @param  \Illuminate\Contracts\Auth\Access\Gate  $gate
      * @return void
      */
-    public function boot(GateContract $gate)
+    public function boot()
     {
-        $this->registerPolicies($gate);
+        $this->registerPolicies();
 
         // Send requests using the 'ruggedy' auth driver via the request driver
         Auth::viaRequest('ruggedy', function ($request) {

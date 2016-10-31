@@ -109,7 +109,7 @@ class ScanIdentificationService
         }
 
         // Iterate over the regex and return the key (scanner) of the first regex that matches the file contents
-        $scanner = $patternsByFormat->first(function ($regex, $scanner) {
+        $scanner = $patternsByFormat->first(function ($scanner, $regex) {
             $fileSize = $this->file->getClientSize();
             if ($fileSize > self::MAX_FILE_BYTES_TO_READ) {
                 $fileSize = self::MAX_FILE_BYTES_TO_READ;

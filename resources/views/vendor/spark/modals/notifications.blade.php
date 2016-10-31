@@ -22,11 +22,11 @@
 
                     <div class="modal-body">
                         <!-- Informational Messages -->
-                        <div v-if="loadingNotifications">
+                        <div class="notification-container" v-if="loadingNotifications">
                             <i class="fa fa-btn fa-spinner fa-spin"></i>Loading Notifications
                         </div>
 
-                        <div v-if=" ! loadingNotifications && activeNotifications.length == 0">
+                        <div class="notification-container" v-if=" ! loadingNotifications && activeNotifications.length == 0">
                             <div class="alert alert-warning m-b-none">
                                 We don't have anything to show you right now! But when we do,
                                 we'll be sure to let you know. Talk to you soon!
@@ -34,7 +34,7 @@
                         </div>
 
                         <!-- List Of Notifications -->
-                        <div v-if="showingNotifications && hasNotifications">
+                        <div class="notification-container" v-if="showingNotifications && hasNotifications">
                             <div class="notification" v-for="notification in notifications.notifications">
 
                                 <!-- Notification Icon -->
@@ -43,7 +43,7 @@
 
                                     <span v-else class="fa-stack fa-2x">
                                         <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa @{{ notification.icon }} fa-stack-1x fa-inverse"></i>
+                                        <i :class="['fa', 'fa-stack-1x', 'fa-inverse', notification.icon]"></i>
                                     </span>
                                 </figure>
 
@@ -56,7 +56,7 @@
                                             </span>
 
                                             <span v-else>
-                                                Spark
+                                                {{ Spark::product() }}
                                             </span>
                                         </p>
 
@@ -65,9 +65,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="notification-body">
-                                        @{{{ notification.parsed_body }}}
-                                    </div>
+                                    <div class="notification-body" v-html="notification.parsed_body"></div>
 
                                     <!-- Notification Action -->
                                     <a :href="notification.action_url" class="btn btn-primary" v-if="notification.action_text">
@@ -79,7 +77,7 @@
                         </div>
 
                         <!-- List Of Announcements -->
-                        <div v-if="showingAnnouncements && hasAnnouncements">
+                        <div class="notification-container" v-if="showingAnnouncements && hasAnnouncements">
                             <div class="notification" v-for="announcement in notifications.announcements">
 
                                 <!-- Notification Icon -->
@@ -97,9 +95,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="notification-body">
-                                        @{{{ announcement.parsed_body }}}
-                                    </div>
+                                    <div class="notification-body" v-html="announcement.parsed_body"></div>
 
                                     <!-- Announcement Action -->
                                     <a :href="announcement.action_url" class="btn btn-primary" v-if="announcement.action_text">

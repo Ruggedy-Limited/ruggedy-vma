@@ -189,7 +189,7 @@
                         <button type="button " class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 
                         <h4 class="modal-title">
-                            Delete Announcement (@{{ deletingAnnouncement.title }})
+                            Delete Announcement
                         </h4>
                     </div>
 
@@ -201,7 +201,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">No, Go Back</button>
 
-                        <button type="button" class="btn btn-danger" @click="delete" :disabled="deleteForm.busy">
+                        <button type="button" class="btn btn-danger" @click="deleteAnnouncement" :disabled="deleteForm.busy">
                             Yes, Delete
                         </button>
                     </div>

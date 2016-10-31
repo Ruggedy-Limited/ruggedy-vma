@@ -4,7 +4,6 @@ namespace Laravel\Spark\Http\Controllers\Kiosk;
 
 use Carbon\Carbon;
 use Laravel\Spark\Spark;
-use Illuminate\Support\Facades\DB;
 use Laravel\Spark\Http\Controllers\Controller;
 use Laravel\Spark\Contracts\Repositories\PerformanceIndicatorsRepository;
 
@@ -87,6 +86,9 @@ class PerformanceIndicatorsController extends Controller
      */
     public function trialUsers()
     {
-        return Spark::user()->where('trial_ends_at', '>=', Carbon::now())->count();
+        return Spark::user()
+                        ->where('trial_ends_at', '>=', Carbon::now())
+                        ->whereDoesntHave('subscriptions')
+                        ->count();
     }
 }

@@ -2,13 +2,12 @@
 
 namespace Laravel\Spark;
 
-use Laravel\Spark\Billable;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Team extends Model
 {
-    use Billable;
+    use Billable, Notifiable;
 
     /**
      * The database table used by the model.
@@ -22,7 +21,7 @@ class Team extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'slug'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -48,6 +47,7 @@ class Team extends Model
      * @var array
      */
     protected $casts = [
+        'owner_id' => 'int',
         'trial_ends_at' => 'date',
     ];
 

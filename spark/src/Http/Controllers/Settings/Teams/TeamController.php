@@ -29,7 +29,11 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
-        $team = $this->interaction($request, CreateTeam::class, [
+        if (! Spark::createsAdditionalTeams()) {
+            abort(404);
+        }
+
+        $this->interaction($request, CreateTeam::class, [
             $request->user(), $request->all()
         ]);
     }
