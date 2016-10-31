@@ -219,7 +219,7 @@ class NessusXmlParserService extends AbstractXmlParserService
 
         // Pre-processing method map
         $this->nodePreprocessingMap = collect([
-            'ReportHost'        => collect([
+            'ReportHost' => collect([
                 'initialiseNewEntity' => collect([
                     Asset::class,
                 ]),
@@ -371,6 +371,16 @@ class NessusXmlParserService extends AbstractXmlParserService
 
         // For xref node the node text is in the format: referenceType:referenceCode
         list($referenceType, $value) = explode(":", $value);
+        if (empty($referenceType) || empty($value)) {
+            $this->logger->log(Logger::WARNING, "Could not get reference type or value from node", [
+                'nodeName'      => $this->parser->name ?? null,
+                'referenceType' => $referenceType ?? null,
+                'value'         => $value ?? null,
+            ]);
+
+            return;
+        }
+
         parent::setValueOnEntity($referenceType, 'setReferenceType', VulnerabilityReferenceCode::class);
         parent::setValueOnEntity($value, 'setValue', VulnerabilityReferenceCode::class);
         $this->saveVulnerabilityReferenceCode();
@@ -534,5 +544,21 @@ class NessusXmlParserService extends AbstractXmlParserService
     public function getStoragePath(): string
     {
         return storage_path('scans/xml/nessus');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLogContext(): string
+    {
+        return 'services';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLogFilename(): string
+    {
+        return 'nessus-xml-parser.json.log';
     }
 }
