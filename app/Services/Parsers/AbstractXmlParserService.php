@@ -439,7 +439,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * @param string $entityClass
      * @return bool
      */
-    protected function setValueOnEntity($attributeValue, string $setter, string $entityClass = '')
+    protected function setValueOnEntity($attributeValue, string $setter, string $entityClass)
     {
         // Check that we have an entity class. Without this we can't continue.
         if (empty($entityClass)) {

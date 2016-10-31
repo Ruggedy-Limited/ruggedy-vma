@@ -3,7 +3,9 @@
 namespace App\Services\Parsers;
 
 use App\Entities\Asset;
+use App\Entities\OpenPort;
 use App\Entities\Vulnerability;
+use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
@@ -13,6 +15,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
+use Monolog\Logger;
 use XMLReader;
 
 class NessusXmlParserService extends AbstractXmlParserService
@@ -153,6 +156,21 @@ class NessusXmlParserService extends AbstractXmlParserService
                     parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|int|min:1',
                 ]),
+                'setNumber' => collect([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'port',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|int|min:1',
+                ]),
+                'setProtocol' => collect([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'protocol',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+                'setServiceName' => collect([
+                    parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'svc_name',
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
             ]),
             'cvss_base_score' => collect([
                 'setCvssScore' => collect([
@@ -186,6 +204,10 @@ class NessusXmlParserService extends AbstractXmlParserService
                     parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
                 ]),
+                'setServiceExtraInfo' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => OpenPort::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ])
             ]),
             'plugin_type' => collect([
                 'setGenericOutput' => collect([
@@ -203,6 +225,8 @@ class NessusXmlParserService extends AbstractXmlParserService
                 ]),
             ]),
             'ReportItem' => 'getEntityClassAndInitialise',
+            'cve'        => 'extractVulnerabilityReference',
+            'xref'       => 'extractVulnerabilityReference',
         ]);
 
         // Post-processing method map
@@ -219,12 +243,9 @@ class NessusXmlParserService extends AbstractXmlParserService
             ]),
             'ReportItem' => collect([
                 'persistPopulatedEntity' => collect([
-                    Vulnerability::class,
-                    [
-                        Vulnerability::ID_FROM_SCANNER => null,
-                        Vulnerability::NAME            => null,
-                    ],
-                    Asset::class,
+                    'TBD',
+                    [],
+                    Asset::class
                 ]),
             ]),
             'ReportHost' => 'flushDoctrineUnitOfWork',
@@ -258,12 +279,24 @@ class NessusXmlParserService extends AbstractXmlParserService
         $this->initialiseNewEntity($entityClass);
     }
 
-    protected function getEntityClassAndPersist()
+    /**
+     * Persist a populated entity based on the Nessus plugin family
+     *
+     * @param string $entityClass
+     * @param array $findOneByCriteria
+     * @param string $parentEntityClass
+     * @param bool $isFromTemporary
+     * @param bool $persist
+     */
+    protected function persistPopulatedEntity(
+        string $entityClass, array $findOneByCriteria = [], string $parentEntityClass = '',
+        bool $isFromTemporary = false, bool $persist = true
+    )
     {
-        $this->persistPopulatedEntity(
+        parent::persistPopulatedEntity(
             $this->reportItemEntityClass,
             $this->entities->get($this->reportItemEntityClass)->getUniqueKeyColumns()->all(),
-            Asset::class
+            $parentEntityClass
         );
     }
 
@@ -276,6 +309,89 @@ class NessusXmlParserService extends AbstractXmlParserService
     {
         $pluginFamily = $this->getXmlNodeAttributeValue('pluginFamily');
         return $this->getNessusPluginFamilies()->get($pluginFamily, false);
+    }
+
+    /**
+     * Override the parent method to get the relevant entity class based on the ReportItem plugin name
+     *
+     * @param mixed $attributeValue
+     * @param string $setter
+     * @param string $entityClass
+     * @return bool
+     */
+    protected function setValueOnEntity($attributeValue, string $setter, string $entityClass)
+    {
+        // Just for debugging in case nodes that shouldn't be skipped are being skipped
+        if ($this->reportItemEntityClass !== $entityClass) {
+            $this->logger->log(Logger::DEBUG, "Skipping setter: not mapped for this entity class", [
+                'attributeValue'        => $attributeValue,
+                'setter'                => $setter,
+                'entityClass'           => $entityClass,
+                'reportItemEntityClass' => $this->reportItemEntityClass,
+            ]);
+
+            return false;
+        }
+
+        // If the node is not a mapped ReportItem node, then get the entity class from the parameter as normal
+        if (empty($this->getEntityClassByPluginFamily())) {
+            return parent::setValueOnEntity($attributeValue, $setter, $entityClass);
+        }
+
+        // We have a mapped ReportItem node, get the entity class from the mapping and pass it to the parent method
+        $entityClass = $this->getEntityClassByPluginFamily();
+        return parent::setValueOnEntity($attributeValue, $setter, $entityClass);
+    }
+
+    /**
+     * Extract a VulnerabilityReferenceCode and add it to the parent Vulnerability entity
+     */
+    protected function extractVulnerabilityReference()
+    {
+        $value = $this->parser->readInnerXml();
+        if (empty($value)) {
+            $this->logger->log(Logger::NOTICE, "Expected node to have text value", [
+                'nodeName'    => $this->parser->name ?? null,
+                'description' => "The nodes innerXML is empty",
+            ]);
+
+            return;
+        }
+
+        // Initialise a new VulnerabilityReferenceCode entity
+        parent::initialiseNewEntity(VulnerabilityReferenceCode::class);
+
+        // For CVEs the tag name is CVE, the reference type, and the CVE code is the node text
+        if (strpos($value, ":") === false) {
+            parent::setValueOnEntity($this->parser->name, 'setReferenceType', VulnerabilityReferenceCode::class);
+            parent::setValueOnEntity($value, 'setValue', VulnerabilityReferenceCode::class);
+            $this->saveVulnerabilityReferenceCode();
+            return;
+        }
+
+        // For xref node the node text is in the format: referenceType:referenceCode
+        list($referenceType, $value) = explode(":", $value);
+        parent::setValueOnEntity($referenceType, 'setReferenceType', VulnerabilityReferenceCode::class);
+        parent::setValueOnEntity($value, 'setValue', VulnerabilityReferenceCode::class);
+        $this->saveVulnerabilityReferenceCode();
+    }
+
+    /**
+     * Save the populated Vulnerability reference code
+     */
+    protected function saveVulnerabilityReferenceCode()
+    {
+        parent::persistPopulatedEntity(
+            VulnerabilityReferenceCode::class,
+            [
+                VulnerabilityReferenceCode::REFERENCE_TYPE,
+                VulnerabilityReferenceCode::VALUE,
+                VulnerabilityReferenceCode::VULNERABILITY
+            ],
+            Vulnerability::class,
+            false,
+            false
+        );
     }
 
     /**
@@ -321,12 +437,12 @@ class NessusXmlParserService extends AbstractXmlParserService
             'Palo Alto Local Security'           => Vulnerability::class,
             'Peer-To-Peer File Sharing'          => Vulnerability::class,
             'Policy Compliance'                  => Vulnerability::class,
-            'Port Scanners'                      => false,//OpenPort::class,
+            'Port Scanners'                      => OpenPort::class,
             'Red Hat Local Security Checks'      => Vulnerability::class,
             'RPC'                                => Vulnerability::class,
             'SCADA'                              => Vulnerability::class,
             'Scientific Linux Local Security'    => Vulnerability::class,
-            'Service detection'                  => false,//OpenPort::class,
+            'Service detection'                  => OpenPort::class,
             'Settings'                           => false,
             'Slackware Local Security'           => Vulnerability::class,
             'SMTP problems'                      => Vulnerability::class,
