@@ -344,6 +344,14 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     }
 
     /**
+     * @return mixed
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
      * Get an array of valid OS vendors
      *
      * @return Collection
