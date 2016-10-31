@@ -1,10 +1,10 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Asset;
 use League\Fractal\TransformerAbstract;
-​
+
 class AssetTransformer extends TransformerAbstract
 {
      /**
@@ -18,11 +18,21 @@ class AssetTransformer extends TransformerAbstract
         return [
             'id'                   => $asset->getId(),
             'name'                 => $asset->getName(),
-            'emailAddress'         => $asset->getEmail(),
-            'photo'                => $asset->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $asset->getUsesTwoFactorAuth(),
+            'cpe'                  => $asset->getCpe(),
+            'ipAddress'            => $asset->getIpAddressV4(),
+            'hostname'             => $asset->getHostname(),
+            'os'                   => $asset->getVendor(),
+            'osVersion'            => $asset->getOsVersion(),
+            'isSuppressed'         => $asset->getSuppressed(),
+            'isDeleted'            => $asset->getDeleted(),
             'createdDate'          => $asset->getCreatedAt(),
             'modifiedDate'         => $asset->getUpdatedAt(),
+            'userId'               => $asset->getUserId(),
+            'workspaceId'          => $asset->getWorkspaceId(),
+            'openPorts'            => $asset->getOpenPorts(),
+            'softwareInformation'  => $asset->getRelatedSoftwareInformation(),
+            'vulnerabilities'      => $asset->getVulnerabilities(),
+            'files'                => $asset->getFiles(),
         ];
     }
 }

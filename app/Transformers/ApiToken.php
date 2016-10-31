@@ -1,28 +1,31 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\ApiToken;
 use League\Fractal\TransformerAbstract;
-​
+
 class ApiTokenTransformer extends TransformerAbstract
 {
      /**
      * Transform a ApiToken entity for the API
      *
-     * @param ApiToken $api_token
+     * @param ApiToken $apiToken
      * @return array
      */
     public function transform(ApiToken $apiToken)
     {
         return [
-            'id'                   => $api_token->getId(),
-            'name'                 => $api_token->getName(),
-            'emailAddress'         => $api_token->getEmail(),
-            'photo'                => $api_token->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $api_token->getUsesTwoFactorAuth(),
-            'createdDate'          => $api_token->getCreatedAt(),
-            'modifiedDate'         => $api_token->getUpdatedAt(),
+            'id'                   => $apiToken->getId(),
+            'userId'               => $apiToken->getUserId(),
+            'name'                 => $apiToken->getName(),
+            'tokenString'          => $apiToken->getToken(),
+            'metaDataString'       => $apiToken->getMetadata(),
+            'isTransient'          => boolval($apiToken->getTransient()),
+            'lastUsed'             => $apiToken->getLastUsedAt(),
+            'expiryDate'           => $apiToken->getExpiresAt(),
+            'createdDate'          => $apiToken->getCreatedAt(),
+            'modifiedDate'         => $apiToken->getUpdatedAt(),
         ];
     }
 }

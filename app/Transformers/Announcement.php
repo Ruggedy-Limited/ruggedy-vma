@@ -1,10 +1,9 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Announcement;
 use League\Fractal\TransformerAbstract;
-​
 
 class AnnouncementTransformer extends TransformerAbstract
 {
@@ -18,10 +17,10 @@ class AnnouncementTransformer extends TransformerAbstract
     {
         return [
             'id'                   => $announcement->getId(),
-            'name'                 => $announcement->getName(),
-            'emailAddress'         => $announcement->getEmail(),
-            'photo'                => $announcement->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $announcement->getUsesTwoFactorAuth(),
+            'userId'               => $announcement->getUserId(),
+            'content'              => $announcement->getBody(),
+            'action'               => $announcement->getActionText(),
+            'actionUrl'            => $announcement->getActionUrl(),
             'createdDate'          => $announcement->getCreatedAt(),
             'modifiedDate'         => $announcement->getUpdatedAt(),
         ];
