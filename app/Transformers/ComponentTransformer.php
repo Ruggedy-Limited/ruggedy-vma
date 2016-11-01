@@ -16,11 +16,11 @@ class ComponentTransformer extends TransformerAbstract
     public function transform(Component $component)
     {
         return [
-            'id'                   => $component->getId(),
-            'name'                 => $component->getName(),
-            'class'                => $component->getClassName(),
-            'createdDate'          => $component->getCreatedAt(),
-            'modifiedDate'         => $component->getUpdatedAt(),
+            'id'           => $component->getId(),
+            'name'         => $component->getName(),
+            'class'        => $component->getClassName(),
+            'createdDate'  => $component->getCreatedAt(),
+            'modifiedDate' => $component->getUpdatedAt(),
         ];
     }
 }
