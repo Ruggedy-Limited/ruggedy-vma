@@ -1,10 +1,10 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\User;
 use League\Fractal\TransformerAbstract;
-​
+
 class UserTransformer extends TransformerAbstract
 {
     /**
@@ -19,6 +19,11 @@ class UserTransformer extends TransformerAbstract
             'id'                   => $user->getId(),
             'name'                 => $user->getName(),
             'emailAddress'         => $user->getEmail(),
+            'countryCode'          => $user->getCountryCode(),
+            'phoneNo'              => $user->getPhone(),
+            'activeTeam'           => $user->getTeam(),
+            'teams'                => $user->getTeams(),
+            'workspaces'           => $user->getWorkspaces(),
             'photo'                => $user->getPhotoUrl(),
             'twoFactorAuthEnabled' => $user->getUsesTwoFactorAuth(),
             'createdDate'          => $user->getCreatedAt(),

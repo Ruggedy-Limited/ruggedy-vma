@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 class AnnouncementTransformer extends TransformerAbstract
 {
     /**
-     * Transform a Announcent entity for the API
+     * Transform a Announcement entity for the API
      *
      * @param Announcement $announcement
      * @return array

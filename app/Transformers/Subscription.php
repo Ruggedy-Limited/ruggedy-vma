@@ -1,7 +1,7 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Subscription;
 use League\Fractal\TransformerAbstract;
 
@@ -18,9 +18,12 @@ class SubscriptionTransformer extends TransformerAbstract
         return [
             'id'                   => $subscription->getId(),
             'name'                 => $subscription->getName(),
-            'emailAddress'         => $subscription->getEmail(),
-            'photo'                => $subscription->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $subscription->getUsesTwoFactorAuth(),
+            'user'                 => $subscription->getUser(),
+            'stripeId'             => $subscription->getStripeId(),
+            'stripePlan'           => $subscription->getStripePlan(),
+            'quantity'             => $subscription->getQuantity(),
+            'trialEndDate'         => $subscription->getTrialEndsAt(),
+            'endDate'              => $subscription->getEndsAt(),
             'createdDate'          => $subscription->getCreatedAt(),
             'modifiedDate'         => $subscription->getUpdatedAt(),
         ];

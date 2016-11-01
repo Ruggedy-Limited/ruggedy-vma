@@ -1,7 +1,7 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Invoice;
 use League\Fractal\TransformerAbstract;
 
@@ -17,10 +17,11 @@ class InvoiceTransformer extends TransformerAbstract
     {
         return [
             'id'                   => $invoice->getId(),
-            'name'                 => $invoice->getName(),
-            'emailAddress'         => $invoice->getEmail(),
-            'photo'                => $invoice->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $invoice->getUsesTwoFactorAuth(),
+            'user'                 => $invoice->getUser(),
+            'team'                 => $invoice->getTeam(),
+            'providerId'           => $invoice->getProviderId(),
+            'total'                => $invoice->getTotal(),
+            'taxAmount'            => $invoice->getTax(),
             'createdDate'          => $invoice->getCreatedAt(),
             'modifiedDate'         => $invoice->getUpdatedAt(),
         ];

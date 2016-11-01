@@ -1,7 +1,7 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Team;
 use League\Fractal\TransformerAbstract;
 
@@ -18,9 +18,17 @@ class TeamTransformer extends TransformerAbstract
         return [
             'id'                   => $team->getId(),
             'name'                 => $team->getName(),
-            'emailAddress'         => $team->getEmail(),
             'photo'                => $team->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $team->getUsesTwoFactorAuth(),
+            'owner'                => $team->getUser(),
+            'members'              => $team->getUsers(),
+            'stripeId'             => $team->getStripeId(),
+            'billingPlan'          => $team->getCurrentBillingPlan(),
+            'vatId'                => $team->getVatId(),
+            'trialEndDate'         => $team->getTrialEndsAt(),
+            'invitations'          => $team->getInvitations(),
+            'invoices'             => $team->getInvoices(),
+            'teamSubscriptions'    => $team->getTeamSubscriptions(),
+            'permissions'          => $team->getComponentPermissions(),
             'createdDate'          => $team->getCreatedAt(),
             'modifiedDate'         => $team->getUpdatedAt(),
         ];

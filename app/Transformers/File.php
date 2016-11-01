@@ -1,10 +1,10 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\File;
 use League\Fractal\TransformerAbstract;
-​
+
 class FileTransformer extends TransformerAbstract
 {
      /**
@@ -17,10 +17,14 @@ class FileTransformer extends TransformerAbstract
     {
         return [
             'id'                   => $file->getId(),
-            'name'                 => $file->getName(),
-            'emailAddress'         => $file->getEmail(),
-            'photo'                => $file->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $file->getUsesTwoFactorAuth(),
+            'filename'             => basename($file->getPath()),
+            'format'               => $file->getFormat(),
+            'size'                 => $file->getSize(),
+            'scanner'              => $file->getScannerApp(),
+            'workspace'            => $file->getWorkspace(),
+            'user'                 => $file->getUser(),
+            'isProcessed'          => $file->getProcessed(),
+            'isDeleted'            => $file->getDeleted(),
             'createdDate'          => $file->getCreatedAt(),
             'modifiedDate'         => $file->getUpdatedAt(),
         ];

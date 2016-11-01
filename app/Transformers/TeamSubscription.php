@@ -1,7 +1,7 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\TeamSubscription;
 use League\Fractal\TransformerAbstract;
 
@@ -10,19 +10,22 @@ class TeamSubscriptionTransformer extends TransformerAbstract
      /**
      * Transform a TeamSubscription entity for the API
      *
-     * @param TeamSubscription $team_subscription
+     * @param TeamSubscription $teamSubscription
      * @return array
      */
     public function transform(TeamSubscription $teamSubscription)
     {
         return [
-            'id'                   => $team_subscription->getId(),
-            'name'                 => $team_subscription->getName(),
-            'emailAddress'         => $team_subscription->getEmail(),
-            'photo'                => $team_subscription->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $team_subscription->getUsesTwoFactorAuth(),
-            'createdDate'          => $team_subscription->getCreatedAt(),
-            'modifiedDate'         => $team_subscription->getUpdatedAt(),
+            'id'                   => $teamSubscription->getId(),
+            'name'                 => $teamSubscription->getName(),
+            'team'                 => $teamSubscription->getTeam(),
+            'stripeId'             => $teamSubscription->getStripeId(),
+            'stripePlan'           => $teamSubscription->getStripePlan(),
+            'quantity'             => $teamSubscription->getQuantity(),
+            'trialEndDate'         => $teamSubscription->getTrialEndsAt(),
+            'endDate'              => $teamSubscription->getEndsAt(),
+            'createdDate'          => $teamSubscription->getCreatedAt(),
+            'modifiedDate'         => $teamSubscription->getUpdatedAt(),
         ];
     }
 }

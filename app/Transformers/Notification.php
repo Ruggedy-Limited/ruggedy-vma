@@ -1,7 +1,7 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Notification;
 use League\Fractal\TransformerAbstract;
 
@@ -17,10 +17,13 @@ class NotificationTransformer extends TransformerAbstract
     {
         return [
             'id'                   => $notification->getId(),
-            'name'                 => $notification->getName(),
-            'emailAddress'         => $notification->getEmail(),
-            'photo'                => $notification->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $notification->getUsesTwoFactorAuth(),
+            'user'                 => $notification->getUserRelatedByUserId(),
+            'createdBy'            => $notification->getUserRelatedByCreatedBy(),
+            'icon'                 => $notification->getIcon(),
+            'content'              => $notification->getBody(),
+            'action'               => $notification->getActionText(),
+            'actionUrl'            => $notification->getActionUrl(),
+            'isRead'               => !empty($notification->getRead()),
             'createdDate'          => $notification->getCreatedAt(),
             'modifiedDate'         => $notification->getUpdatedAt(),
         ];

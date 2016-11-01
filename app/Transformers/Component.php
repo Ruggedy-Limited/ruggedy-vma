@@ -1,10 +1,10 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Component;
 use League\Fractal\TransformerAbstract;
-​
+
 class ComponentTransformer extends TransformerAbstract
 {
      /**
@@ -18,9 +18,7 @@ class ComponentTransformer extends TransformerAbstract
         return [
             'id'                   => $component->getId(),
             'name'                 => $component->getName(),
-            'emailAddress'         => $component->getEmail(),
-            'photo'                => $component->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $component->getUsesTwoFactorAuth(),
+            'class'                => $component->getClassName(),
             'createdDate'          => $component->getCreatedAt(),
             'modifiedDate'         => $component->getUpdatedAt(),
         ];

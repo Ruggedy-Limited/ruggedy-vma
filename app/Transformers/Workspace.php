@@ -1,7 +1,7 @@
 <?php
-​
+
 namespace App\Transformers;
-​
+
 use App\Entities\Workspace;
 use League\Fractal\TransformerAbstract;
 
@@ -18,9 +18,10 @@ class WorkspaceTransformer extends TransformerAbstract
         return [
             'id'                   => $workspace->getId(),
             'name'                 => $workspace->getName(),
-            'emailAddress'         => $workspace->getEmail(),
-            'photo'                => $workspace->getPhotoUrl(),
-            'twoFactorAuthEnabled' => $workspace->getUsesTwoFactorAuth(),
+            'owner'                => $workspace->getUser(),
+            'assets'               => $workspace->getAssets(),
+            'files'                => $workspace->getFiles(),
+            'isDeleted'            => $workspace->getDeleted(),
             'createdDate'          => $workspace->getCreatedAt(),
             'modifiedDate'         => $workspace->getUpdatedAt(),
         ];
