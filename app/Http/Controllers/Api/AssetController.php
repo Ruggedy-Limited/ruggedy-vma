@@ -10,6 +10,8 @@ use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\UploadScanOutput;
 use App\Entities\Asset;
+use App\Transformers\AssetTransformer;
+use App\Transformers\FileTransformer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\UploadedFile;
@@ -40,7 +42,7 @@ class AssetController extends AbstractController
             $file
         );
 
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new FileTransformer());
     }
 
     /**
@@ -54,7 +56,7 @@ class AssetController extends AbstractController
     public function getSingleAsset($assetId)
     {
         $command = new GetAsset(intval($assetId));
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
     /**
@@ -68,7 +70,7 @@ class AssetController extends AbstractController
     public function editAsset($assetId)
     {
         $command = new EditAsset(intval($assetId), $this->getRequest()->json()->all());
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
     /**
@@ -83,7 +85,7 @@ class AssetController extends AbstractController
     public function deleteAsset($assetId, $confirm = null)
     {
         $command = new DeleteAsset(intval($assetId), boolval($confirm));
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
     /**
@@ -96,7 +98,7 @@ class AssetController extends AbstractController
     public function assetsMasterList()
     {
         $command = new GetAssetsMasterList(0);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
     /**
@@ -110,7 +112,7 @@ class AssetController extends AbstractController
     public function assetByProjectList($projectId)
     {
         $command = new GetAssetsInProject(intval($projectId));
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
     /**
@@ -124,7 +126,7 @@ class AssetController extends AbstractController
     public function assetsByWorkspace($workspaceId)
     {
         $command = new GetAssetsInWorkspace($workspaceId);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
     /**

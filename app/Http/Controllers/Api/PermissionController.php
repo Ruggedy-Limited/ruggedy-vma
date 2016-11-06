@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Commands\GetListOfPermissions;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
+use App\Transformers\ComponentPermissionTransformer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 
@@ -31,7 +32,7 @@ class PermissionController extends AbstractController
        $permission = $this->getRequest()->json('permission', '');
 
        $command = new UpsertPermission($componentInstanceId, $componentName, $userId, $permission);
-       return $this->sendCommandToBusHelper($command);
+       return $this->sendCommandToBusHelper($command, ComponentPermissionTransformer::class);
     }
 
     /**
@@ -46,7 +47,7 @@ class PermissionController extends AbstractController
     public function revokePermission($componentName, $componentInstanceId, $userId)
     {
         $command = new RevokePermission($componentInstanceId, $componentName, $userId);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, ComponentPermissionTransformer::class);
     }
 
     /**
@@ -61,7 +62,7 @@ class PermissionController extends AbstractController
     public function getComponentPermissions($componentName, $componentInstanceId)
     {
         $command = new GetListOfPermissions($componentInstanceId, $componentName);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, ComponentPermissionTransformer::class);
     }
 
     /**
