@@ -88,6 +88,12 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $vulnerabilities;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets")
+     * @ORM\JoinTable(name="assets_audits")
+     */
+    protected $audits;
+
+    /**
      * @ORM\ManyToMany(targetEntity="File", mappedBy="assets", indexBy="id")
      */
     protected $files;
@@ -100,6 +106,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         parent::__construct();
         $this->relatedSoftwareInformation = new ArrayCollection();
         $this->vulnerabilities            = new ArrayCollection();
+        $this->audits                     = new ArrayCollection();
         $this->files                      = new ArrayCollection();
     }
 
@@ -307,6 +314,48 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     public function getVulnerabilities()
     {
         return $this->vulnerabilities;
+    }
+
+    /**
+     * Relate the given Audit to this Asset instance and create the relation on the inverse Audit entity
+     *
+     * @param Audit $audit
+     * @return Base\Asset
+     */
+    public function addAudit(Audit $audit)
+    {
+        if ($this->audits->contains($audit)) {
+            return $this;
+        }
+
+        $audit->addAsset($this);
+
+        $auditKey = $audit->getId() ?? $audit->getHash();
+        $this->audits[$auditKey] = $audit;
+
+        return $this;
+    }
+
+    /**
+     * Remove the relation between this Asset and given Audit and remove the relation on the inverse Audit entity
+     *
+     * @param Audit $audit
+     * @return $this
+     */
+    public function removeAudit(Audit $audit)
+    {
+        $audit->removeAsset($this);
+        $this->audits->removeElement($audit);
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAudits()
+    {
+        return $this->audits;
     }
 
     /**
