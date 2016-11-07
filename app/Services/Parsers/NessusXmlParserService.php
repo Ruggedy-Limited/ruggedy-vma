@@ -3,6 +3,7 @@
 namespace App\Services\Parsers;
 
 use App\Entities\Asset;
+use App\Entities\Audit;
 use App\Entities\OpenPort;
 use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
@@ -22,6 +23,9 @@ class NessusXmlParserService extends AbstractXmlParserService
 {
     /** @var string */
     private $reportItemEntityClass;
+
+    /** @var Collection */
+    private $settersWithMultipleEntities;
 
     /**
      * NessusXmlParserService constructor.
@@ -215,6 +219,84 @@ class NessusXmlParserService extends AbstractXmlParserService
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|in:local,remote',
                 ]),
             ]),
+            'agent' => collect([
+                'setAgent' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-check-name' => collect([
+                'setComplianceCheckName' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-output' => collect([
+                'setOutput' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-audit-file' => collect([
+                'setAuditFile' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-check-id' => collect([
+                'setComplianceCheckId' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-actual-value' => collect([
+                'setActualValue' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-policy-value' => collect([
+                'setPolicyValue' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-info' => collect([
+                'setInfo' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-result' => collect([
+                'setResult' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|in:PASSED,FAILED,ERROR,WARNING',
+                ]),
+            ]),
+            'cm:compliance-reference' => collect([
+                'setReference' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-solution' => collect([
+                'setSolution' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-see-also' => collect([
+                'setSeeAlso' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
+            'cm:compliance-uname' => collect([
+                'setUname' => collect([
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Audit::class,
+                    parent::MAP_ATTRIBUTE_VALIDATION    => 'filled',
+                ]),
+            ]),
         ]);
 
         // Pre-processing method map
@@ -249,6 +331,13 @@ class NessusXmlParserService extends AbstractXmlParserService
                 ]),
             ]),
             'ReportHost' => 'flushDoctrineUnitOfWork',
+        ]);
+
+        $this->settersWithMultipleEntities = collect([
+            'setDescription' => collect([
+                Vulnerability::class,
+                Audit::class,
+            ]),
         ]);
     }
 
@@ -322,7 +411,7 @@ class NessusXmlParserService extends AbstractXmlParserService
     protected function setValueOnEntity($attributeValue, string $setter, string $entityClass)
     {
         // Just for debugging in case nodes that shouldn't be skipped are being skipped
-        if ($this->reportItemEntityClass !== $entityClass) {
+        if ($this->reportItemEntityClass !== $entityClass && !$this->setterHasMultipleEntities($setter)) {
             $this->logger->log(Logger::DEBUG, "Skipping setter: not mapped for this entity class", [
                 'attributeValue'        => $attributeValue,
                 'setter'                => $setter,
@@ -334,13 +423,7 @@ class NessusXmlParserService extends AbstractXmlParserService
         }
 
         // If the node is not a mapped ReportItem node, then get the entity class from the parameter as normal
-        if (empty($this->getEntityClassByPluginFamily())) {
-            return parent::setValueOnEntity($attributeValue, $setter, $entityClass);
-        }
-
-        // We have a mapped ReportItem node, get the entity class from the mapping and pass it to the parent method
-        $entityClass = $this->getEntityClassByPluginFamily();
-        return parent::setValueOnEntity($attributeValue, $setter, $entityClass);
+        return parent::setValueOnEntity($attributeValue, $setter, $this->reportItemEntityClass);
     }
 
     /**
@@ -405,6 +488,26 @@ class NessusXmlParserService extends AbstractXmlParserService
     }
 
     /**
+     * Check if this is a setter that can have multiple related entity classes
+     *
+     * @param string $setter
+     * @return bool
+     */
+    protected function setterHasMultipleEntities(string $setter): bool
+    {
+        if (empty($setter)) {
+            return false;
+        }
+
+        $validEntityClasses = $this->settersWithMultipleEntities->get($setter);
+        if (empty($validEntityClasses) || !($validEntityClasses instanceof Collection)) {
+            return false;
+        }
+
+        return $validEntityClasses->contains($this->reportItemEntityClass);
+    }
+
+    /**
      * Get the full collection of Nessus pluginFamily values mapped to an entity class
      *
      * @return Collection
@@ -446,7 +549,7 @@ class NessusXmlParserService extends AbstractXmlParserService
             'OracleVM Local Security'            => Vulnerability::class,
             'Palo Alto Local Security'           => Vulnerability::class,
             'Peer-To-Peer File Sharing'          => Vulnerability::class,
-            'Policy Compliance'                  => Vulnerability::class,
+            'Policy Compliance'                  => Audit::class,
             'Port Scanners'                      => OpenPort::class,
             'Red Hat Local Security Checks'      => Vulnerability::class,
             'RPC'                                => Vulnerability::class,
@@ -549,16 +652,8 @@ class NessusXmlParserService extends AbstractXmlParserService
     /**
      * @inheritdoc
      */
-    public function getLogContext(): string
-    {
-        return 'services';
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getLogFilename(): string
     {
-        return 'nessus-xml-parser.json.log';
+        return 'nessus-' . parent::getLogFilename();
     }
 }

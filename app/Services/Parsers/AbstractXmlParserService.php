@@ -10,6 +10,7 @@ use App\Contracts\ParsesXmlFiles;
 use App\Contracts\RelatesToFiles;
 use App\Contracts\SystemComponent;
 use App\Entities\Asset;
+use App\Entities\Audit;
 use App\Entities\Base\AbstractEntity;
 use App\Entities\Exploit;
 use App\Entities\File;
@@ -167,7 +168,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             Asset::class => new Collection([
                 Vulnerability::class       => 'addVulnerability',
                 OpenPort::class            => 'addOpenPort',
-                SoftwareInformation::class => 'addSoftwareInformation'
+                SoftwareInformation::class => 'addSoftwareInformation',
+                Audit::class               => 'addAudit',
             ]),
 
             Exploit::class => new Collection([
@@ -189,6 +191,10 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             ]),
 
             SoftwareInformation::class => new Collection([
+                Asset::class => 'addAsset',
+            ]),
+
+            Audit::class => new Collection([
                 Asset::class => 'addAsset',
             ]),
         ]);
