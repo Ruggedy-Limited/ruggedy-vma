@@ -59,6 +59,12 @@ class File extends Base\File implements SystemComponent
     protected $softwareInformation;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="files")
+     * @ORM\JoinTable(name="files_audits")
+     */
+    protected $audits;
+
+    /**
      * File constructor.
      */
     public function __construct()
@@ -68,6 +74,7 @@ class File extends Base\File implements SystemComponent
         $this->vulnerabilities             = new ArrayCollection();
         $this->openPorts                   = new ArrayCollection();
         $this->softwareInformation         = new ArrayCollection();
+        $this->audits                      = new ArrayCollection();
     }
 
     /**
@@ -107,77 +114,146 @@ class File extends Base\File implements SystemComponent
 
     /**
      * @param Asset $asset
+     * @return $this
      */
     public function addAsset(Asset $asset)
     {
+        if ($this->assets->contains($asset)) {
+            return $this;
+        }
+
         $asset->addFile($this); // synchronously updating inverse side
         $relationKey = $asset->getId() ?? $asset->getHash();
         $this->assets[$relationKey] = $asset;
+
+        return $this;
     }
 
     /**
      * @param Asset $asset
+     * @return $this
      */
     public function removeAsset(Asset $asset)
     {
         $asset->removeFile($this); // synchronously updating inverse side
         $this->assets->removeElement($asset);
+
+        return $this;
     }
 
     /**
      * @param Vulnerability $vulnerability
+     * @return $this
      */
     public function addVulnerability(Vulnerability $vulnerability)
     {
+        if ($this->vulnerabilities->contains($vulnerability)) {
+            return $this;
+        }
+
         $vulnerability->addFile($this); // synchronously updating inverse side
         $relationKey = $vulnerability->getId() ?? $vulnerability->getHash();
         $this->vulnerabilities[$relationKey] = $vulnerability;
+
+        return $this;
     }
 
     /**
      * @param Vulnerability $vulnerability
+     * @return $this
      */
     public function removeVulnerability(Vulnerability $vulnerability)
     {
         $vulnerability->removeFile($this); // synchronously updating inverse side
         $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
     }
 
     /**
      * @param OpenPort $openPort
+     * @return $this
      */
     public function addOpenPort(OpenPort $openPort)
     {
+        if ($this->openPorts->contains($openPort)) {
+            return $this;
+        }
+
         $openPort->addFile($this); // synchronously updating inverse side
         $relationKey = $openPort->getId() ?? $openPort->getHash();
         $this->openPorts[$relationKey] = $openPort;
+
+        return $this;
     }
 
     /**
      * @param OpenPort $openPort
+     * @return $this
      */
     public function removeOpenPort(OpenPort $openPort)
     {
         $openPort->removeFile($this); // synchronously updating inverse side
         $this->openPorts->removeElement($openPort);
+
+        return $this;
     }
 
     /**
      * @param SoftwareInformation $softwareInformation
+     * @return $this
      */
     public function addSoftwareInformation(SoftwareInformation $softwareInformation)
     {
+        if ($this->softwareInformation->contains($softwareInformation)) {
+            return $this;
+        }
+
         $softwareInformation->addFile($this); // synchronously updating inverse side
         $relationKey = $softwareInformation->getId() ?? $softwareInformation->getHash();
         $this->softwareInformation[$relationKey] = $softwareInformation;
+
+        return $this;
     }
 
     /**
      * @param SoftwareInformation $softwareInformation
+     * @return $this
      */
     public function removeSoftwareInformation(SoftwareInformation $softwareInformation)
     {
         $softwareInformation->removeFile($this);
         $this->softwareInformation->removeElement($softwareInformation);
+
+        return $this;
+    }
+
+    /**
+     * @param Audit $audit
+     * @return $this
+     */
+    public function addAudit(Audit $audit)
+    {
+        if ($this->audits->contains($audit)) {
+            return $this;
+        }
+
+        $audit->addFile($this); // synchronously updating inverse side
+        $relationKey = $audit->getId() ?? $audit->getHash();
+        $this->audits[$relationKey] = $audit;
+
+        return $this;
+    }
+
+    /**
+     * @param Audit $audit
+     * @return $this
+     */
+    public function removeAudit(Audit $audit)
+    {
+        $audit->removeFile($this);
+        $this->audits->removeElement($audit);
+
+        return $this;
     }
 }
