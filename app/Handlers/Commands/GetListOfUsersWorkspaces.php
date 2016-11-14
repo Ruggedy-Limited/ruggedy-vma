@@ -2,7 +2,7 @@
 
 namespace App\Handlers\Commands;
 
-use App\Commands\GetListOfUsersProjects as GetListOfUsersProjectsCommand;
+use App\Commands\GetListOfUsersWorkspaces as GetListOfUsersWorkspacesCommand;
 use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -12,7 +12,7 @@ use App\Repositories\UserRepository;
 use Exception;
 
 
-class GetListOfUsersProjects extends CommandHandler
+class GetListOfUsersWorkspaces extends CommandHandler
 {
     /** @var UserRepository */
     protected $userRepository;
@@ -30,14 +30,14 @@ class GetListOfUsersProjects extends CommandHandler
     /**
      * Process the GetListOfUsersProjects command
      *
-     * @param GetListOfUsersProjectsCommand $command
+     * @param GetListOfUsersWorkspacesCommand $command
      * @return array
      * @throws ActionNotPermittedException
      * @throws Exception
      * @throws InvalidInputException
      * @throws UserNotFoundException
      */
-    public function handle(GetListOfUsersProjectsCommand $command)
+    public function handle(GetListOfUsersWorkspacesCommand $command)
     {
         // Get the authenticated User
         $requestingUser = $this->authenticate();
@@ -59,7 +59,7 @@ class GetListOfUsersProjects extends CommandHandler
             throw new ActionNotPermittedException("The authenticated User does not have permission to list those Projects");
         }
 
-        return $user->getProjects()->toArray();
+        return $user->getWorkspaces()->toArray();
 
     }
 
