@@ -23,29 +23,23 @@ Feature: As an account or team owner
       | id | role   |
       | 1  | owner  |
       | 2  | member |
-    And the following existing Projects:
-      | id | name              | user_id | created_at          | updated_at          |
-      | 1  | John's Project    | 1       | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
-      | 2  | Someone's Project | 2       | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
-      | 3  | Another Project   | 3       | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     And the following existing Workspaces:
-      | id | name                | user_id  | project_id | created_at          | updated_at          |
-      | 1  | John's Workspace    | 1        | 1          | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
-      | 2  | Someone's Workspace | 2        | 2          | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
-      | 3  | Another Workspace   | 3        | 3          | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
+      | id | name                | user_id  | created_at          | updated_at          |
+      | 1  | John's Workspace    | 1        | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
+      | 2  | Someone's Workspace | 2        | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
+      | 3  | Another Workspace   | 3        | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     And the following existing Components:
       | id | name            | class_name | created_at          | updated_at          |
       | 1  | User Account    | User       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
       | 2  | Team            | Team       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 3  | Project         | Project    | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 4  | Workspace       | Workspace  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 5  | Asset           | Asset      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 6  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 7  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 8  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 3  | Workspace       | Workspace  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 4  | Asset           | Asset      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 5  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 6  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 7  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And the following existing ComponentPermissions:
       | id | component_id | instance_id | permission | user_id | team_id | granted_by | created_at          | updated_at          |
-      | 1  | 3            | 2           | rw         | 1       | NULL    | 2          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 1  | 1            | 2           | rw         | 1       | NULL    | 2          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   Scenario: Create a new Workspace on my account
@@ -62,9 +56,6 @@ Feature: As an account or team owner
     And the response has a "ownerId" property
     And the type of the "ownerId" property is integer
     And the "ownerId" property equals "1"
-    And the response has a "projectId" property
-    And the type of the "projectId" property is integer
-    And the "projectId" property equals "1"
 
   Scenario: Create a new Workspace on someone else's account where I have write access
     Given that I want to make a new "Workspace"
@@ -81,9 +72,6 @@ Feature: As an account or team owner
     And the response has a "ownerId" property
     And the type of the "ownerId" property is integer
     And the "ownerId" property equals "2"
-    And the response has a "projectId" property
-    And the type of the "projectId" property is integer
-    And the "projectId" property equals "2"
 
   Scenario: I attempt to create a Workspace on someone else's account where I don't have write access
     Given that I want to make a new "Workspace"
@@ -109,7 +97,7 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, that Project does not exist."
+    And the "message" property equals "Sorry, that person does not exist."
 
   Scenario: Delete a Workspace from my account
     Given that I want to delete a "Workspace"
@@ -218,9 +206,6 @@ Feature: As an account or team owner
     And the response has a "ownerId" property
     And the type of the "ownerId" property is integer
     And the "ownerId" property equals "1"
-    And the response has a "projectId" property
-    And the type of the "projectId" property is integer
-    And the "projectId" property equals "1"
 
   Scenario: Edit the name of someone else's Workspace where I have write permission
     Given that I want to update a "Workspace"
@@ -238,9 +223,6 @@ Feature: As an account or team owner
     And the response has a "ownerId" property
     And the type of the "ownerId" property is integer
     And the "ownerId" property equals "2"
-    And the response has a "projectId" property
-    And the type of the "projectId" property is integer
-    And the "projectId" property equals "2"
 
   Scenario: I attempt to edit the name of someone else's Workspace where I don't have read/write permission
     Given that I want to update a "Workspace"

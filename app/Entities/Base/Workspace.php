@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\Workspace
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`workspaces`", indexes={@ORM\Index(name="workspaces_fk_user", columns={"`user_id`"}), @ORM\Index(name="workspaces_fk_project", columns={"`project_id`"})})
+ * @ORM\Table(name="`workspaces`", indexes={@ORM\Index(name="workspaces_fk_user", columns={"`user_id`"})})
  */
 class Workspace extends AbstractEntity
 {
@@ -19,12 +19,10 @@ class Workspace extends AbstractEntity
     /** Column name constants */
     const NAME       = 'name';
     const USER_ID    = 'user_id';
-    const PROJECT_ID = 'project_id';
     const DELETED    = 'deleted';
     const ASSETS     = 'assets';
     const FILES      = 'files';
     const USER       = 'user';
-    const PROJECT    = 'project';
 
     /**
      * @ORM\Id
@@ -42,11 +40,6 @@ class Workspace extends AbstractEntity
      * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
      */
     protected $user_id;
-
-    /**
-     * @ORM\Column(name="`project_id`", type="integer", options={"unsigned":true})
-     */
-    protected $project_id;
 
     /**
      * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
@@ -80,12 +73,6 @@ class Workspace extends AbstractEntity
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $user;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Project", inversedBy="workspaces", cascade={"persist"})
-     * @ORM\JoinColumn(name="`project_id`", referencedColumnName="`id`", nullable=false)
-     */
-    protected $project;
 
     public function __construct()
     {
@@ -160,29 +147,6 @@ class Workspace extends AbstractEntity
     public function getUserId()
     {
         return $this->user_id;
-    }
-
-    /**
-     * Set the value of project_id.
-     *
-     * @param integer $project_id
-     * @return \App\Entities\Base\Workspace
-     */
-    public function setProjectId($project_id)
-    {
-        $this->project_id = $project_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of project_id.
-     *
-     * @return integer
-     */
-    public function getProjectId()
-    {
-        return $this->project_id;
     }
 
     /**
@@ -349,31 +313,8 @@ class Workspace extends AbstractEntity
         return $this->user;
     }
 
-    /**
-     * Set Project entity (many to one).
-     *
-     * @param \App\Entities\Base\Project $project
-     * @return \App\Entities\Base\Workspace
-     */
-    public function setProject(Project $project = null)
-    {
-        $this->project = $project;
-
-        return $this;
-    }
-
-    /**
-     * Get Project entity (many to one).
-     *
-     * @return \App\Entities\Base\Project
-     */
-    public function getProject()
-    {
-        return $this->project;
-    }
-
     public function __sleep()
     {
-        return array('id', 'name', 'user_id', 'project_id', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'user_id', 'deleted', 'created_at', 'updated_at');
     }
 }

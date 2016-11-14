@@ -29,12 +29,11 @@ Feature: As a user of the API framework and the owner of at least one team
       | id | name            | class_name | created_at          | updated_at          |
       | 1  | User Account    | User       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
       | 2  | Team            | Team       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 3  | Project         | Project    | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 4  | Workspace       | Workspace  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 5  | Asset           | Asset      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 6  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 7  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-      | 8  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 3  | Workspace       | Workspace  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 4  | Asset           | Asset      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 5  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 6  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+      | 7  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And the following existing ComponentPermissions:
       | id | component_id | instance_id | permission | user_id | team_id | granted_by | created_at          | updated_at          |
       | 1  | 1            | 2           | rw         | 1       | NULL    | 2          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |

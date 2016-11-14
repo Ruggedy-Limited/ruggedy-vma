@@ -3,21 +3,17 @@
 namespace App\Models;
 
 use App\Commands\Command;
-use App\Commands\CreateProject;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteAsset;
-use App\Commands\DeleteProject;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditAsset;
-use App\Commands\EditProject;
 use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
-use App\Commands\GetAssetsInProject;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
-use App\Commands\GetListOfUsersProjects;
+use App\Commands\GetListOfUsersWorkspaces;
 use App\Commands\GetUserInformation;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
@@ -27,7 +23,6 @@ use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
-use App\Exceptions\ProjectNotFoundException;
 use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\UserNotInTeamException;
@@ -53,16 +48,6 @@ class MessagingModel
     const ERROR_CANNOT_EDIT_ACCOUNT               = "error_cannot_edit_account";
     const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = "error_account_with_email_already_exists";
     const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
-
-    /** API Project Management */
-    const ERROR_COULD_NOT_CREATE_PROJECT  = "error_could_not_create_project";
-    const ERROR_PROJECT_CREATE_PERMISSION = "error_project_create_permission";
-    const ERROR_PROJECT_DOES_NOT_EXIST    = "error_project_does_not_exist";
-    const ERROR_DELETE_PROJECT_PERMISSION = "error_delete_project_permission";
-    const WARNING_DELETING_PROJECT        = "warning_deleting_project";
-    const ERROR_COULD_NOT_DELETE_PROJECT  = "error_could_not_delete_project";
-    const ERROR_EDIT_PROJECT_PERMISSION   = "error_project_permission";
-    const ERROR_LIST_PROJECTS_PERMISSION  = "error_list_projects_permission";
 
     /** API Workspace Management */
     const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
@@ -105,31 +90,26 @@ class MessagingModel
 
         // Initialise the command message map as a Collection
         $actionNotPermittedMap = new Collection([
-            GetUserInformation::class     => static::ERROR_USER_NOT_TEAM_OWNER,
-            GetListOfUsersInTeam::class   => static::ERROR_USER_NOT_TEAM_OWNER,
-            EditUserAccount::class        => static::ERROR_CANNOT_EDIT_ACCOUNT,
-            CreateProject::class          => static::ERROR_PROJECT_CREATE_PERMISSION,
-            DeleteProject::class          => static::ERROR_DELETE_PROJECT_PERMISSION,
-            EditProject::class            => static::ERROR_EDIT_PROJECT_PERMISSION,
-            GetListOfUsersProjects::class => static::ERROR_LIST_PROJECTS_PERMISSION,
-            CreateWorkspace::class        => static::ERROR_WORKSPACE_CREATE_PERMISSION,
-            DeleteWorkspace::class        => static::ERROR_DELETE_WORKSPACE_PERMISSION,
-            EditWorkspace::class          => static::ERROR_EDIT_WORKSPACE_PERMISSION,
-            EditAsset::class              => static::ERROR_EDIT_ASSET_PERMISSION,
-            DeleteAsset::class            => static::ERROR_DELETE_ASSET_PERMISSION,
-            GetAssetsMasterList::class    => static::ERROR_LIST_ASSETS_PERMISSION,
-            GetAssetsInProject::class     => static::ERROR_LIST_ASSETS_PERMISSION,
-            GetAssetsInWorkspace::class   => static::ERROR_LIST_ASSETS_PERMISSION,
-            UpsertPermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
-            RevokePermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
-            GetListOfPermissions::class   => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
+            GetUserInformation::class       => static::ERROR_USER_NOT_TEAM_OWNER,
+            GetListOfUsersInTeam::class     => static::ERROR_USER_NOT_TEAM_OWNER,
+            EditUserAccount::class          => static::ERROR_CANNOT_EDIT_ACCOUNT,
+            CreateWorkspace::class          => static::ERROR_WORKSPACE_CREATE_PERMISSION,
+            DeleteWorkspace::class          => static::ERROR_DELETE_WORKSPACE_PERMISSION,
+            EditWorkspace::class            => static::ERROR_EDIT_WORKSPACE_PERMISSION,
+            GetListOfUsersWorkspaces::class => static::ERROR_LIST_WORKSPACES_PERMISSION,
+            EditAsset::class                => static::ERROR_EDIT_ASSET_PERMISSION,
+            DeleteAsset::class              => static::ERROR_DELETE_ASSET_PERMISSION,
+            GetAssetsMasterList::class      => static::ERROR_LIST_ASSETS_PERMISSION,
+            GetAssetsInWorkspace::class     => static::ERROR_LIST_ASSETS_PERMISSION,
+            UpsertPermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
+            RevokePermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
+            GetListOfPermissions::class     => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
         ]);
 
         static::$commandMessageMap = new Collection([
             ActionNotPermittedException::class => $actionNotPermittedMap,
             InvalidEmailException::class       => static::ERROR_INVALID_EMAIL,
             InvalidInputException::class       => static::ERROR_INVALID_INPUT,
-            ProjectNotFoundException::class    => static::ERROR_PROJECT_DOES_NOT_EXIST,
             TeamNotFoundException::class       => static::ERROR_TEAM_DOES_NOT_EXIST,
             UserNotFoundException::class       => static::ERROR_USER_DOES_NOT_EXIST,
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,

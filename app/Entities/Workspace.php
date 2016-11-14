@@ -34,10 +34,10 @@ class Workspace extends Base\Workspace implements SystemComponent
     /**
      * Get the parent Entity of this Entity
      *
-     * @return Base\Project
+     * @return Base\User
      */
     public function getParent()
     {
-        return $this->project;
+        return $this->user;
     }
 }

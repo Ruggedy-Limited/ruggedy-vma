@@ -52,14 +52,14 @@ class DeleteWorkspace extends CommandHandler
         // Make sure that all the required members are set on the command
         $workspaceId = $command->getId();
         if (!isset($workspaceId)) {
-            throw new InvalidInputException("The required projectId member is not set on the command object");
+            throw new InvalidInputException("The required workspaceId member is not set on the command object");
         }
 
         // Check that the Workspace exists
         /** @var Workspace $workspace */
         $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace) || !empty($workspace->getDeleted())) {
-            throw new WorkspaceNotFoundException("A Project with the given project ID was not found");
+            throw new WorkspaceNotFoundException("A Workspace with the given workspace ID was not found");
         }
 
         // Check that the User has permission to delete the Workspace

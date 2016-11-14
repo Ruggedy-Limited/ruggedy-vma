@@ -3,36 +3,34 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\CreateWorkspace as CreateWorkspaceCommand;
-use App\Entities\Base\AbstractEntity;
-use App\Entities\Project;
+use App\Entities\User;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
-use App\Exceptions\ProjectNotFoundException;
+use App\Exceptions\UserNotFoundException;
 use App\Policies\ComponentPolicy;
-use App\Repositories\ProjectRepository;
+use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
-
 class CreateWorkspace extends CommandHandler
 {
-    /** @var ProjectRepository */
-    protected $projectRepository;
+    /** @var UserRepository */
+    protected $userRepository;
 
     /** @var EntityManager */
     protected $em;
 
     /**
      * CreateWorkspace constructor.
-     * 
-     * @param ProjectRepository $projectRepository
+     *
+     * @param UserRepository $userRepository
      * @param EntityManager $em
      */
-    public function __construct(ProjectRepository $projectRepository, EntityManager $em)
+    public function __construct(UserRepository $userRepository, EntityManager $em)
     {
-        $this->projectRepository = $projectRepository;
-        $this->em                = $em;
+        $this->userRepository = $userRepository;
+        $this->em             = $em;
     }
 
     /**
@@ -43,7 +41,7 @@ class CreateWorkspace extends CommandHandler
      * @throws ActionNotPermittedException
      * @throws Exception
      * @throws InvalidInputException
-     * @throws ProjectNotFoundException
+     * @throws UserNotFoundException
      */
     public function handle(CreateWorkspaceCommand $command)
     {
@@ -51,28 +49,28 @@ class CreateWorkspace extends CommandHandler
         $requestingUser = $this->authenticate();
 
         // Make sure that all the required members are set on the command
-        $projectId = $command->getId();
+        $userId = $command->getId();
+
         /** @var Workspace $workspace */
         $workspace = $command->getEntity();
-        if (!isset($projectId) || empty($workspace)) {
+        if (!isset($userId) || empty($workspace)) {
             throw new InvalidInputException("One or more of the required members are not set on the command object");
         }
 
-        // Check that the parent Project exists
-        /** @var Project $project */
-        $project = $this->projectRepository->find($projectId);
-        if (empty($project) || $project->getDeleted() === AbstractEntity::IS_DELETED) {
-            throw new ProjectNotFoundException("The Project was not found or has been deleted");
+        // Check that the parent User exists
+        /** @var User $user */
+        $user = $this->userRepository->find($userId);
+        if (empty($user)) {
+            throw new UserNotFoundException("The User was not found or has been deleted");
         }
 
-        // Check that the authenticated User has permission to create Workspace on the given Project
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $project)) {
+        // Check that the authenticated User has permission to create Workspace on the given User account
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $user)) {
             throw new ActionNotPermittedException("The authenticated user does not have permission to "
-                . "create Workspaces for the given Project");
+                . "create Workspaces on the given User account");
         }
 
-        $workspace->setUser($project->getUser());
-        $workspace->setProject($project);
+        $workspace->setUser($user);
         $workspace->setDeleted(false);
         
         $this->em->persist($workspace);
@@ -82,19 +80,19 @@ class CreateWorkspace extends CommandHandler
     }
 
     /**
-     * @return ProjectRepository
+     * @return UserRepository
      */
-    public function getProjectRepository()
+    public function getUserRepository()
     {
-        return $this->projectRepository;
+        return $this->userRepository;
     }
 
     /**
-     * @param ProjectRepository $projectRepository
+     * @param UserRepository $userRepository
      */
-    public function setProjectRepository($projectRepository)
+    public function setUserRepository($userRepository)
     {
-        $this->projectRepository = $projectRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**

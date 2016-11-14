@@ -53,7 +53,6 @@ class User extends AbstractEntity
     const INVOICES                                = 'invoices';
     const NOTIFICATIONRELATEDBYUSERIDS            = 'notificationRelatedByUserIds';
     const NOTIFICATIONRELATEDBYCREATEDBIES        = 'notificationRelatedByCreatedBies';
-    const PROJECTS                                = 'projects';
     const SUBSCRIPTIONS                           = 'subscriptions';
     const TEAMS                                   = 'teams';
     const WORKSPACES                              = 'workspaces';
@@ -267,12 +266,6 @@ class User extends AbstractEntity
     protected $notificationRelatedByCreatedBies;
 
     /**
-     * @ORM\OneToMany(targetEntity="Project", mappedBy="user", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
-     */
-    protected $projects;
-
-    /**
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -308,7 +301,6 @@ class User extends AbstractEntity
         $this->invoices = new ArrayCollection();
         $this->notificationRelatedByUserIds = new ArrayCollection();
         $this->notificationRelatedByCreatedBies = new ArrayCollection();
-        $this->projects = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->teams = new ArrayCollection();
         $this->workspaces = new ArrayCollection();
@@ -1339,42 +1331,6 @@ class User extends AbstractEntity
     public function getNotificationRelatedByCreatedBies()
     {
         return $this->notificationRelatedByCreatedBies;
-    }
-
-    /**
-     * Add Project entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Project $project
-     * @return \App\Entities\Base\User
-     */
-    public function addProject(Project $project)
-    {
-        $this->projects[] = $project;
-
-        return $this;
-    }
-
-    /**
-     * Remove Project entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Project $project
-     * @return \App\Entities\Base\User
-     */
-    public function removeProject(Project $project)
-    {
-        $this->projects->removeElement($project);
-
-        return $this;
-    }
-
-    /**
-     * Get Project entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getProjects()
-    {
-        return $this->projects;
     }
 
     /**

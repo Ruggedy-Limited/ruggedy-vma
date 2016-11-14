@@ -35,18 +35,12 @@ Feature: As an administrator or user with the correct access control
     | id | role   |
     | 2  | owner  |
     | 1  | member |
-    And the following existing Projects:
-    | id | name              | user_id | created_at          | updated_at          |
-    | 1  | John's Project    | 1       | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
-    | 2  | Someone's Project | 2       | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
-    | 3  | Another Project   | 3       | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
-    | 4  | Shared Project    | 1       | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
     And the following existing Workspaces:
-    | id | name                | user_id  | project_id | created_at          | updated_at          |
-    | 1  | John's Workspace    | 1        | 1          | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
-    | 2  | Someone's Workspace | 2        | 2          | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
-    | 3  | Another Workspace   | 3        | 3          | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
-    | 4  | Shared Workspace    | 1        | 4          | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
+    | id | name                | user_id  | created_at          | updated_at          |
+    | 1  | John's Workspace    | 1        | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
+    | 2  | Someone's Workspace | 2        | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
+    | 3  | Another Workspace   | 3        | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
+    | 4  | Shared Workspace    | 1        | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     And the following existing Assets:
     | id | name                      | cpe                                                                 | vendor    | ip_address_v4 | ip_address_v6                           | hostname                  | mac_address       | os_version | netbios | workspace_id | user_id | created_at          | updated_at          |
     | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | NULL    | 1            | 1       | 2016-06-20 09:00:00 | 2016-06-20 09:00:00 |
@@ -61,12 +55,11 @@ Feature: As an administrator or user with the correct access control
     | id | name            | class_name | created_at          | updated_at          |
     | 1  | User Account    | User       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 2  | Team            | Team       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 3  | Project         | Project    | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 4  | Workspace       | Workspace  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 5  | Asset           | Asset      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 6  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 7  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 8  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 3  | Workspace       | Workspace  | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 4  | Asset           | Asset      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 5  | Scanner App     | ScannerApp | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 6  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 7  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And the following existing ScannerApps:
     | id | name       | description                      | created_at          | updated_at          |
     | 1  | nmap       | NMAP Port Scanner Utility        | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
@@ -76,19 +69,14 @@ Feature: As an administrator or user with the correct access control
     | 5  | nessus     | Nessus Vulnerability Scanner     | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
     And the following existing ComponentPermissions:
     | id | component_id | instance_id | permission | user_id | team_id | granted_by | created_at          | updated_at          |
-    | 1  | 1            | 1           | rw         | 5       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 1  | 1            | 2           | rw         | 1       | NULL    | 2          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 2  | 1            | 1           | r          | 6       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 3  | 2            | 1           | rw         | 7       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 4  | 2            | 1           | r          | 8       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 5  | 3            | 4           | rw         | 9       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 6  | 3            | 4           | r          | 3       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 7  | 4            | 4           | rw         | 9       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 8  | 4            | 4           | r          | 3       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 9  | 3            | 4           | rw         | NULL    | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 10 | 3            | 4           | r          | NULL    | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 11 | 4            | 4           | rw         | NULL    | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 12 | 4            | 4           | r          | NULL    | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
-    | 13 | 3            | 2           | rw         | NULL    | 2       | 2          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 7  | 3            | 4           | rw         | NULL    | 1       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
+    | 8  | 3            | 4           | r          | NULL    | 2       | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   ##
@@ -632,58 +620,6 @@ Feature: As an administrator or user with the correct access control
     | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | *                                       | webapp.test               | *                 | *          | 1            |
     | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | *             | *                                       | ubuntu2.homenetwork.co.za | *                 | 12.10      | 1            |
     | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | *             | fde3:970e:b33d::/48                     | *                         | *                 | 6.0.6001   | 1            |
-
-  ##
-  # Get all Assets from a specific Project
-  ##
-  Scenario: Retrieve a list of Assets belonging that are part of one of my Projects
-    Given that I want to get information about my "Assets"
-    When I request "/api/assets/project/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the array response has the following items:
-    | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId  |
-    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1            |
-    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1            |
-    | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1            |
-    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | *                                       | webapp.test               | *                 | *          | 1            |
-    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | *             | *                                       | ubuntu2.homenetwork.co.za | *                 | 12.10      | 1            |
-    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | *             | fde3:970e:b33d::/48                     | *                         | *                 | 6.0.6001   | 1            |
-
-  Scenario: Retrieve a list of Assets that are part of someone else's Project where I have at least read permission
-    Given that I want to get information about my "Assets"
-    When I request "/api/assets/project/2"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the array response has the following items:
-    | id | name         | workspaceId  |
-    | 7  | 192.168.1.24 | 2            |
-
-  Scenario: Attempt to retrieve a list of Assets that are part of someone else's Project where I don't have permission
-    Given that I want to get information about my "Assets"
-    When I request "/api/assets/project/3"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "true"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Sorry, you don't have permission to list those Assets."
-
-  Scenario: Attempt to retrieve a list of Assets for an non-existent Project
-    Given that I want to get information about my "Assets"
-    When I request "/api/assets/project/100"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "true"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Sorry, that Project does not exist."
 
   ##
   # Get all Assets from a specific Workspace

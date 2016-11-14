@@ -2,7 +2,7 @@
 
 namespace App\Handlers\Commands;
 
-use App\Commands\GetListOfUsersProjects as GetListOfUsersProjectsCommand;
+use App\Commands\GetListOfUsersWorkspaces as GetListOfUsersWorkspacesCommand;
 use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -12,13 +12,13 @@ use App\Repositories\UserRepository;
 use Exception;
 
 
-class GetListOfUsersProjects extends CommandHandler
+class GetListOfUsersWorkspaces extends CommandHandler
 {
     /** @var UserRepository */
     protected $userRepository;
 
     /**
-     * GetListOfUsersProjects constructor.
+     * GetListOfUsersWorkspaces constructor.
      *
      * @param UserRepository $userRepository
      */
@@ -28,16 +28,16 @@ class GetListOfUsersProjects extends CommandHandler
     }
 
     /**
-     * Process the GetListOfUsersProjects command
+     * Process the GetListOfUsersWorkspaces command
      *
-     * @param GetListOfUsersProjectsCommand $command
+     * @param GetListOfUsersWorkspacesCommand $command
      * @return array
      * @throws ActionNotPermittedException
      * @throws Exception
      * @throws InvalidInputException
      * @throws UserNotFoundException
      */
-    public function handle(GetListOfUsersProjectsCommand $command)
+    public function handle(GetListOfUsersWorkspacesCommand $command)
     {
         // Get the authenticated User
         $requestingUser = $this->authenticate();
@@ -54,12 +54,14 @@ class GetListOfUsersProjects extends CommandHandler
             throw new UserNotFoundException("A User related to the given User ID was not found");
         }
 
-        // Make sure the User has permission to list these projects
+        // Make sure the User has permission to list these Workspaces
         if ($requestingUser->cannot(ComponentPolicy::ACTION_LIST, $user)) {
-            throw new ActionNotPermittedException("The authenticated User does not have permission to list those Projects");
+            throw new ActionNotPermittedException(
+                "The authenticated User does not have permission to list those Workspaces"
+            );
         }
 
-        return $user->getProjects()->toArray();
+        return $user->getWorkspaces()->toArray();
 
     }
 

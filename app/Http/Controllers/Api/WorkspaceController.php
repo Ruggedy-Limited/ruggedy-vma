@@ -6,6 +6,7 @@ use App;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditWorkspace;
+use App\Commands\GetListOfUsersWorkspaces;
 use App\Entities\Workspace;
 use App\Services\EntityFactoryService;
 use App\Transformers\WorkspaceTransformer;
@@ -19,17 +20,17 @@ use Illuminate\Http\JsonResponse;
 class WorkspaceController extends AbstractController
 {
     /**
-     * Create a workspace in the given project
+     * Create a workspace on the given User's account
      *
-     * @POST("/workspace/{projectId}", as="workspace.create", where={"projectId":"[0-9]+"})
+     * @POST("/workspace/{userId}", as="workspace.create", where={"userId":"[0-9]+"})
      *
-     * @param $projectId
+     * @param $userId
      * @return ResponseFactory|JsonResponse
      */
-    public function createWorkspace($projectId)
+    public function createWorkspace($userId)
     {
         $workspace = EntityFactoryService::makeEntity(Workspace::class, $this->getRequest()->json()->all());
-        $command = new CreateWorkspace($projectId, $workspace);
+        $command = new CreateWorkspace(intval($userId), $workspace);
         return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 

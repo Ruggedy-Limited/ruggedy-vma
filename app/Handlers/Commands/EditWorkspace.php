@@ -22,7 +22,7 @@ class EditWorkspace extends CommandHandler
     protected $em;
 
     /**
-     * EditProject constructor.
+     * EditWorkspace constructor.
      *
      * @param WorkspaceRepository $workspaceRepository
      * @param EntityManager $em
@@ -34,7 +34,7 @@ class EditWorkspace extends CommandHandler
     }
 
     /**
-     * Process the EditProject command
+     * Process the EditWorkspace command
      *
      * @param EditWorkspaceCommand $command
      * @return Workspace
@@ -55,19 +55,19 @@ class EditWorkspace extends CommandHandler
             throw new InvalidInputException("One or more required members were not set on the command object");
         }
 
-        // Make sure the Project exists
+        // Make sure the Workspace exists
         /** @var Workspace $workspace */
         $workspace = $this->workspaceRepository->find($workspaceId);
         if (empty($workspace) || !empty($workspace->getDeleted())) {
-            throw new WorkspaceNotFoundException("The Project was not found or has been deleted");
+            throw new WorkspaceNotFoundException("The Workspace was not found or has been deleted");
         }
 
-        // Make sure the authenticated User has permission to edit the Project
+        // Make sure the authenticated User has permission to edit the Workspace
         if ($requestingUser->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
-            throw new ActionNotPermittedException("The User does not have permission to edit the Project");
+            throw new ActionNotPermittedException("The User does not have permission to edit the Workspace");
         }
 
-        // Set the changes on the Project entity and save it
+        // Set the changes on the Workspace entity and save it
         $workspace->setFromArray($requestedChanges);
         $this->em->persist($workspace);
         $this->em->flush($workspace);

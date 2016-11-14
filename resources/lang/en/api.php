@@ -28,27 +28,6 @@ return [
     MessagingModel::ERROR_FIELD_DOES_NOT_EXIST              => "Sorry, one or more of the fields you tried to update do"
         . " not exist. No changes were saved.",
 
-    MessagingModel::ERROR_COULD_NOT_CREATE_PROJECT          => "Sorry, we could not create your project.",
-
-    MessagingModel::ERROR_PROJECT_CREATE_PERMISSION         => "Sorry, you don't have permission to create Projects on"
-        . " that account.",
-
-    MessagingModel::ERROR_PROJECT_DOES_NOT_EXIST            => "Sorry, that Project does not exist.",
-
-    MessagingModel::ERROR_DELETE_PROJECT_PERMISSION         => "Sorry, you don't have permission to delete that"
-        . " Project.",
-
-    MessagingModel::WARNING_DELETING_PROJECT                => "Deleting a project will delete all the data related to"
-        . " that project. This is not reversible. Please confirm.",
-
-    MessagingModel::ERROR_COULD_NOT_DELETE_PROJECT          => "Sorry, we could not delete that Project.",
-
-    MessagingModel::ERROR_EDIT_PROJECT_PERMISSION           => "Sorry, you don't have permission to make changes to"
-        . " that Project.",
-
-    MessagingModel::ERROR_LIST_PROJECTS_PERMISSION          => "Sorry, you don't have permission to list those"
-        . " Projects.",
-
     MessagingModel::ERROR_COULD_NOT_CREATE_WORKSPACE        => "Sorry, we could not create your workspace.",
 
     MessagingModel::ERROR_WORKSPACE_CREATE_PERMISSION       => "Sorry, you don't have permission to create Workspaces"
