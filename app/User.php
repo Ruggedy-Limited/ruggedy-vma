@@ -53,12 +53,4 @@ class User extends SparkUser
         'trial_ends_at' => 'date',
         'uses_two_factor_auth' => 'boolean',
     ];
-
-    /**
-     * Get all the projects that belong to a user
-     */
-    public function projects()
-    {
-        return $this->hasMany(Project::class);
-    }
 }

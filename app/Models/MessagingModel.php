@@ -3,16 +3,12 @@
 namespace App\Models;
 
 use App\Commands\Command;
-use App\Commands\CreateProject;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteAsset;
-use App\Commands\DeleteProject;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditAsset;
-use App\Commands\EditProject;
 use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
-use App\Commands\GetAssetsInProject;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\GetListOfPermissions;
@@ -27,7 +23,6 @@ use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
-use App\Exceptions\ProjectNotFoundException;
 use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\UserNotInTeamException;
@@ -95,19 +90,20 @@ class MessagingModel
 
         // Initialise the command message map as a Collection
         $actionNotPermittedMap = new Collection([
-            GetUserInformation::class     => static::ERROR_USER_NOT_TEAM_OWNER,
-            GetListOfUsersInTeam::class   => static::ERROR_USER_NOT_TEAM_OWNER,
-            EditUserAccount::class        => static::ERROR_CANNOT_EDIT_ACCOUNT,
-            CreateWorkspace::class        => static::ERROR_WORKSPACE_CREATE_PERMISSION,
-            DeleteWorkspace::class        => static::ERROR_DELETE_WORKSPACE_PERMISSION,
-            EditWorkspace::class          => static::ERROR_EDIT_WORKSPACE_PERMISSION,
-            EditAsset::class              => static::ERROR_EDIT_ASSET_PERMISSION,
-            DeleteAsset::class            => static::ERROR_DELETE_ASSET_PERMISSION,
-            GetAssetsMasterList::class    => static::ERROR_LIST_ASSETS_PERMISSION,
-            GetAssetsInWorkspace::class   => static::ERROR_LIST_ASSETS_PERMISSION,
-            UpsertPermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
-            RevokePermission::class       => static::ERROR_AUTH_USER_NOT_OWNER,
-            GetListOfPermissions::class   => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
+            GetUserInformation::class       => static::ERROR_USER_NOT_TEAM_OWNER,
+            GetListOfUsersInTeam::class     => static::ERROR_USER_NOT_TEAM_OWNER,
+            EditUserAccount::class          => static::ERROR_CANNOT_EDIT_ACCOUNT,
+            CreateWorkspace::class          => static::ERROR_WORKSPACE_CREATE_PERMISSION,
+            DeleteWorkspace::class          => static::ERROR_DELETE_WORKSPACE_PERMISSION,
+            EditWorkspace::class            => static::ERROR_EDIT_WORKSPACE_PERMISSION,
+            GetListOfUsersWorkspaces::class => static::ERROR_LIST_WORKSPACES_PERMISSION,
+            EditAsset::class                => static::ERROR_EDIT_ASSET_PERMISSION,
+            DeleteAsset::class              => static::ERROR_DELETE_ASSET_PERMISSION,
+            GetAssetsMasterList::class      => static::ERROR_LIST_ASSETS_PERMISSION,
+            GetAssetsInWorkspace::class     => static::ERROR_LIST_ASSETS_PERMISSION,
+            UpsertPermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
+            RevokePermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
+            GetListOfPermissions::class     => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
         ]);
 
         static::$commandMessageMap = new Collection([

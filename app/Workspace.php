@@ -20,7 +20,7 @@ class Workspace extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'user_id', 'project_id'];
+    protected $fillable = ['name', 'user_id'];
 
     /**
      * Get the owner of the workspace.
@@ -28,15 +28,5 @@ class Workspace extends Model
     public function owner()
     {
         return $this->belongsTo(Spark::userModel(), 'user_id');
-    }
-
-    /**
-     * Get the Project that contains this Workspace
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function project()
-    {
-        return $this->belongsTo(Project::class);
     }
 }

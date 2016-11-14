@@ -20,9 +20,9 @@ use Illuminate\Http\JsonResponse;
 class WorkspaceController extends AbstractController
 {
     /**
-     * Create a workspace in the given project
+     * Create a workspace on the given User's account
      *
-     * @POST("/workspace/{projectId}", as="workspace.create", where={"projectId":"[0-9]+"})
+     * @POST("/workspace/{userId}", as="workspace.create", where={"userId":"[0-9]+"})
      *
      * @param $userId
      * @return ResponseFactory|JsonResponse

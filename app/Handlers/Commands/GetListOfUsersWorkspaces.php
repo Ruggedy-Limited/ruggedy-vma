@@ -18,7 +18,7 @@ class GetListOfUsersWorkspaces extends CommandHandler
     protected $userRepository;
 
     /**
-     * GetListOfUsersProjects constructor.
+     * GetListOfUsersWorkspaces constructor.
      *
      * @param UserRepository $userRepository
      */
@@ -28,7 +28,7 @@ class GetListOfUsersWorkspaces extends CommandHandler
     }
 
     /**
-     * Process the GetListOfUsersProjects command
+     * Process the GetListOfUsersWorkspaces command
      *
      * @param GetListOfUsersWorkspacesCommand $command
      * @return array
@@ -54,9 +54,11 @@ class GetListOfUsersWorkspaces extends CommandHandler
             throw new UserNotFoundException("A User related to the given User ID was not found");
         }
 
-        // Make sure the User has permission to list these projects
+        // Make sure the User has permission to list these Workspaces
         if ($requestingUser->cannot(ComponentPolicy::ACTION_LIST, $user)) {
-            throw new ActionNotPermittedException("The authenticated User does not have permission to list those Projects");
+            throw new ActionNotPermittedException(
+                "The authenticated User does not have permission to list those Workspaces"
+            );
         }
 
         return $user->getWorkspaces()->toArray();

@@ -57,14 +57,14 @@ class CreateWorkspace extends CommandHandler
             throw new InvalidInputException("One or more of the required members are not set on the command object");
         }
 
-        // Check that the parent Project exists
+        // Check that the parent User exists
         /** @var User $user */
         $user = $this->userRepository->find($userId);
         if (empty($user)) {
             throw new UserNotFoundException("The User was not found or has been deleted");
         }
 
-        // Check that the authenticated User has permission to create Workspace on the given Project
+        // Check that the authenticated User has permission to create Workspace on the given User account
         if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $user)) {
             throw new ActionNotPermittedException("The authenticated user does not have permission to "
                 . "create Workspaces on the given User account");

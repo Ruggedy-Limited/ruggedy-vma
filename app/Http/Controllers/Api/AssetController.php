@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Commands\DeleteAsset;
 use App\Commands\EditAsset;
 use App\Commands\GetAsset;
-use App\Commands\GetAssetsInProject;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\UploadScanOutput;
@@ -98,20 +97,6 @@ class AssetController extends AbstractController
     public function assetsMasterList()
     {
         $command = new GetAssetsMasterList(0);
-        return $this->sendCommandToBusHelper($command, new AssetTransformer());
-    }
-
-    /**
-     * Get all the Assets that belong to a particular Project
-     *
-     * @GET("/assets/project/{projectId}", as="assets.project.list", where={"projectId":"[0-9]+"})
-     *
-     * @param $projectId
-     * @return ResponseFactory|JsonResponse
-     */
-    public function assetByProjectList($projectId)
-    {
-        $command = new GetAssetsInProject(intval($projectId));
         return $this->sendCommandToBusHelper($command, new AssetTransformer());
     }
 
