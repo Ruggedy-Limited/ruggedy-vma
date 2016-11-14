@@ -108,7 +108,7 @@ class UserController extends AbstractController
      */
     protected function transformResult($result, TransformerAbstract $transformer): string
     {
-        // Handle the transformation of the result from teh RemoveFromTeam command differently
+        // Handle the transformation of the result from the RemoveFromTeam command differently
         if ($result instanceof Collection && $transformer instanceof RemoveFromTeamTransformer) {
             return fractal()->item($result, $transformer)->toJson();
         }
