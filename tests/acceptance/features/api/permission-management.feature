@@ -87,20 +87,20 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "1"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "2"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "rw"
-    And the response has a "all_permissions" property
-    And the type of the "all_permissions" property is array
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | permission |
-    | 1           | 2       | rw         |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "1"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "2"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "rw"
+    And the response has a "allPermissions" property
+    And the type of the "allPermissions" property is array
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | permission |
+    | 1          | 2      | rw         |
 
   Scenario: Grant read only permissions for a Project to a user
     Given that I want to make a new "Permission"
@@ -110,20 +110,20 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "1"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "2"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "r"
-    And the response has a "all_permissions" property
-    And the type of the "all_permissions" property is array
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | permission |
-    | 1           | 2       | r          |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "1"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "2"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "r"
+    And the response has a "allPermissions" property
+    And the type of the "allPermissions" property is array
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | permission |
+    | 1          | 2      | r          |
 
   Scenario: I attempt to grant permissions for a Project that I don't own
     Given that I want to make a new "Permission"
@@ -189,19 +189,19 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "9"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "r"
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | permission |
-    | 4           | 9       | r          |
-    | 4           | 3       | r          |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "9"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "r"
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | permission |
+    | 4          | 9      | r          |
+    | 4          | 3      | r          |
 
   Scenario: Change a users permissions on a Project from read only to read/write
     Given that I want to update a "Permission"
@@ -211,19 +211,19 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "3"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "rw"
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | permission |
-    | 4           | 9       | rw         |
-    | 4           | 3       | rw         |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "3"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "rw"
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | permission |
+    | 4          | 9      | rw         |
+    | 4          | 3      | rw         |
 
   Scenario: Attempt to change permissions on a Project I own, but provide an invalid permission option
     Given that I want to update a "Permission"
@@ -287,16 +287,16 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "3"
-    And the response has a "affected_permissions.permission" property
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | permission |
-    | 4           | 9       | rw         |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "3"
+    And the response has a "affectedPermissions.permission" property
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | permission |
+    | 4          | 9      | rw         |
 
   Scenario: Attempt to revoke permissions on a Project I don't own
     Given that I want to remove a "Permission" from my team
@@ -329,9 +329,9 @@ Feature: As an owner of a team
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | instance_id | user_id | permission |
-    | 4           | 9       | rw         |
-    | 4           | 3       | r          |
+    | instanceId | userId | permission |
+    | 4          | 9      | rw         |
+    | 4          | 3      | r          |
 
   Scenario: I attempt to retrieve the permissions for a project that I don't own
     Given that I want to get information about "Permission"
@@ -365,22 +365,22 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "2"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "rw"
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | team_id | permission |
-    | 4           | 9       | *       | rw         |
-    | 4           | 3       | *       | r          |
-    | 4           | *       | 1       | rw         |
-    | 4           | *       | 2       | r          |
-    | 4           | 2       | *       | rw         |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "2"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "rw"
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | teamId | permission |
+    | 4          | 9      | *      | rw         |
+    | 4          | 3      | *      | r          |
+    | 4          | *      | 1      | rw         |
+    | 4          | *      | 2      | r          |
+    | 4          | 2      | *      | rw         |
 
   Scenario: Grant read only permissions for a Workspace to a user
     Given that I want to make a new "Permission"
@@ -390,22 +390,22 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "2"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "r"
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | team_id | permission |
-    | 4           | 9       | *       | rw         |
-    | 4           | 3       | *       | r          |
-    | 4           | *       | 1       | rw         |
-    | 4           | *       | 2       | r          |
-    | 4           | 2       | *       | r          |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "2"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "r"
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | teamId | permission |
+    | 4          | 9      | *      | rw         |
+    | 4          | 3      | *      | r          |
+    | 4          | *      | 1      | rw         |
+    | 4          | *      | 2      | r          |
+    | 4          | 2      | *      | r          |
 
   Scenario: I attempt to grant permissions for a Workspace that I don't own
     Given that I want to make a new "Permission"
@@ -471,21 +471,21 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "9"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "r"
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | team_id | permission |
-    | 4           | 9       | *       | r          |
-    | 4           | 3       | *       | r          |
-    | 4           | *       | 1       | rw         |
-    | 4           | *       | 2       | r          |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "9"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "r"
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | teamId | permission |
+    | 4          | 9      | *      | r          |
+    | 4          | 3      | *      | r          |
+    | 4          | *      | 1      | rw         |
+    | 4          | *      | 2      | r          |
 
   Scenario: Change a users permissions on a Workspace from read only to read/write
     Given that I want to update a "Permission"
@@ -495,21 +495,21 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "3"
-    And the response has a "affected_permissions.permission" property
-    And the type of the "affected_permissions.permission" property is string
-    And the "affected_permissions.permission" property equals "rw"
-    And the "all_permissions" array property has the following items:
-      | instance_id | user_id | team_id | permission |
-      | 4           | 9       | *       | rw         |
-      | 4           | 3       | *       | rw         |
-      | 4           | *       | 1       | rw         |
-      | 4           | *       | 2       | r          |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "3"
+    And the response has a "affectedPermissions.permission" property
+    And the type of the "affectedPermissions.permission" property is string
+    And the "affectedPermissions.permission" property equals "rw"
+    And the "allPermissions" array property has the following items:
+      | instanceId | userId | teamId | permission |
+      | 4          | 9      | *      | rw         |
+      | 4          | 3      | *      | rw         |
+      | 4          | *      | 1      | rw         |
+      | 4          | *      | 2      | r          |
 
   Scenario: Attempt to change permissions on a Workspace I own, but provide an invalid permission option
     Given that I want to update a "Permission"
@@ -573,18 +573,18 @@ Feature: As an owner of a team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "affected_permissions.instance_id" property
-    And the type of the "affected_permissions.instance_id" property is integer
-    And the "affected_permissions.instance_id" property equals "4"
-    And the response has a "affected_permissions.user_id" property
-    And the type of the "affected_permissions.user_id" property is integer
-    And the "affected_permissions.user_id" property equals "3"
-    And the response has a "affected_permissions.permission" property
-    And the "all_permissions" array property has the following items:
-    | instance_id | user_id | team_id | permission |
-    | 4           | 9       | *       | rw         |
-    | 4           | *       | 1       | rw         |
-    | 4           | *       | 2       | r          |
+    And the response has a "affectedPermissions.instanceId" property
+    And the type of the "affectedPermissions.instanceId" property is integer
+    And the "affectedPermissions.instanceId" property equals "4"
+    And the response has a "affectedPermissions.userId" property
+    And the type of the "affectedPermissions.userId" property is integer
+    And the "affectedPermissions.userId" property equals "3"
+    And the response has a "affectedPermissions.permission" property
+    And the "allPermissions" array property has the following items:
+    | instanceId | userId | teamId | permission |
+    | 4          | 9      | *      | rw         |
+    | 4          | *      | 1      | rw         |
+    | 4          | *      | 2      | r          |
 
   Scenario: Attempt to revoke permissions on a Workspace I don't own
     Given that I want to remove a "Permission" from my team
@@ -617,9 +617,9 @@ Feature: As an owner of a team
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | instance_id | user_id | permission |
-    | 4           | 9       | rw         |
-    | 4           | 3       | r          |
+    | instanceId | userId | permission |
+    | 4          | 9      | rw         |
+    | 4          | 3      | r          |
 
   Scenario: I attempt to retrieve the permissions for a workspace that I don't own
     Given that I want to get information about "Permission"

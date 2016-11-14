@@ -8,13 +8,14 @@ use App\Commands\GetUserInformation;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\InviteToTeam;
 use App\Commands\RemoveFromTeam;
-use App\Team as EloquentTeam;
-use App\User as EloquentUser;
+use App\Transformers\InvitationTransformer;
+use App\Transformers\RemoveFromTeamTransformer;
+use App\Transformers\UserTransformer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
-
+use Illuminate\Support\Collection;
+use League\Fractal\TransformerAbstract;
 
 /**
  * @Controller(prefix="api")
@@ -33,8 +34,7 @@ class UserController extends AbstractController
     public function inviteToTeam($teamId)
     {
         $command = new InviteToTeam($teamId, $this->getRequest()->json('email', null));
-        return $this->sendCommandToBusHelper($command, function($invitation)
-        {
+        return $this->sendCommandToBusHelper($command, new InvitationTransformer(), function ($invitation) {
             // Hide the team details and return the invitation
             /** @var Model $invitation */
             $invitation->setHidden(['team']);
@@ -54,7 +54,7 @@ class UserController extends AbstractController
     public function removeFromTeam($teamId, $userId)
     {
         $command = new RemoveFromTeam($teamId, $userId);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new RemoveFromTeamTransformer());
     }
 
     /**
@@ -69,7 +69,7 @@ class UserController extends AbstractController
     public function getUserInformation($teamId, $userId)
     {
         $command = new GetUserInformation($teamId, $userId);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new UserTransformer());
     }
 
     /**
@@ -83,7 +83,7 @@ class UserController extends AbstractController
     public function getListOfUsersInTeam($teamId)
     {
         $command = new GetListOfUsersInTeam($teamId);
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new UserTransformer());
     }
 
     /**
@@ -97,7 +97,23 @@ class UserController extends AbstractController
     public function editUserAccount($userId)
     {
         $command = new EditUserAccount($userId, $this->getRequest()->json()->all());
-        return $this->sendCommandToBusHelper($command);
+        return $this->sendCommandToBusHelper($command, new UserTransformer());
+    }
+
+    /**
+     * @inheritdoc
+     * @param $result
+     * @param TransformerAbstract $transformer
+     * @return string
+     */
+    protected function transformResult($result, TransformerAbstract $transformer): string
+    {
+        // Handle the transformation of the result from the RemoveFromTeam command differently
+        if ($result instanceof Collection && $transformer instanceof RemoveFromTeamTransformer) {
+            return fractal()->item($result, $transformer)->toJson();
+        }
+
+        return parent::transformResult($result, $transformer);
     }
 
     /**

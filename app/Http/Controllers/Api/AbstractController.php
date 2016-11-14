@@ -3,6 +3,7 @@
 namespace app\Http\Controllers\Api;
 
 use App;
+use App\Entities\Base\AbstractEntity;
 use App\Http\Controllers\Controller;
 use App\Commands\Command;
 use App\Contracts\CustomLogging;
@@ -10,19 +11,16 @@ use App\Contracts\GivesUserFeedback;
 use App\Http\Responses\ErrorResponse;
 use App\Models\MessagingModel;
 use App\Services\JsonLogService;
-use App\Team as EloquentTeam;
-use App\User as EloquentUser;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Translation\Translator;
-use Laravel\Spark\Interactions\Settings\Teams\SendInvitation;
+use League\Fractal\TransformerAbstract;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
-
 
 abstract class AbstractController extends Controller implements GivesUserFeedback, CustomLogging
 {
@@ -67,10 +65,11 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      * Send a command over the command bus and handle exceptions
      *
      * @param Command $command
+     * @param TransformerAbstract $transformer
      * @param null $closure
      * @return ResponseFactory|JsonResponse
      */
-    protected function sendCommandToBusHelper(Command $command, $closure = null)
+    protected function sendCommandToBusHelper(Command $command, TransformerAbstract $transformer, $closure = null)
     {
         try {
             $result = $this->getBus()->handle($command);
@@ -79,7 +78,9 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
                 $result = $closure($result);
             }
 
-            return response()->json($result);
+            // Tranform the result and return the response
+            $result = $this->transformResult($result, $transformer);
+            return response()->json()->setContent($result);
         } catch (Exception $e) {
             $this->getLogger()->log(Logger::ERROR, "Error processing command", [
                 'requestUri'        => $this->getRequest()->getUri(),
@@ -96,6 +97,22 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     }
 
     /**
+     * Transform the command result using a fractal transformer
+     *
+     * @param $result
+     * @param TransformerAbstract $transformer
+     * @return string
+     */
+    protected function transformResult($result, TransformerAbstract $transformer): string
+    {
+        if ($result instanceof AbstractEntity || $result instanceof Model) {
+            return fractal()->item($result, $transformer)->toJson();
+        }
+
+        return fractal()->collection($result, $transformer)->toJson();
+    }
+
+    /**
      * Generate an error response to return to the customer
      *
      * @param string $messageKey
@@ -104,8 +121,9 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     protected function generateErrorResponse($messageKey = '')
     {
         $translatorNamespace = null;
+        $errorResponse = new ErrorResponse(MessagingModel::ERROR_DEFAULT);
         if (!method_exists($this, 'getTranslatorNamespace')) {
-            return new ErrorResponse(MessagingModel::ERROR_DEFAULT);
+            return response()->json($errorResponse);
         }
 
         $translatorNamespace = $this->getTranslatorNamespace();
@@ -116,7 +134,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
             $message = MessagingModel::ERROR_DEFAULT;
         }
 
-        $errorResponse = new ErrorResponse($message);
+        $errorResponse->setMessage($message);
         return response()->json($errorResponse);
     }
 

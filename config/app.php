@@ -172,6 +172,7 @@ return [
         LaravelDoctrine\Migrations\MigrationsServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         Madewithlove\Tactician\ServiceProvider::class,
+        Spatie\Fractal\FractalServiceProvider::class,
     ],
 
     /*

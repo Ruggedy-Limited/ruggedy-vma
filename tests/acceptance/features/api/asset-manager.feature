@@ -68,9 +68,12 @@ Feature: As an administrator or user with the correct access control
     | 7  | Event           | Event      | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     | 8  | Rules           | Rule       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
     And the following existing ScannerApps:
-    | id | name | description                | created_at          | updated_at          |
-    | 1  | nmap | NMAP Port Scanner Utility  | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
-    | 2  | burp | Burp Vulnerability Scanner | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
+    | id | name       | description                      | created_at          | updated_at          |
+    | 1  | nmap       | NMAP Port Scanner Utility        | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
+    | 2  | burp       | Burp Vulnerability Scanner       | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
+    | 3  | netsparker | Netsparker Vulnerability Scanner | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
+    | 4  | nexpose    | Nexpose Vulnerability Scanner    | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
+    | 5  | nessus     | Nessus Vulnerability Scanner     | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
     And the following existing ComponentPermissions:
     | id | component_id | instance_id | permission | user_id | team_id | granted_by | created_at          | updated_at          |
     | 1  | 1            | 1           | rw         | 5       | NULL    | 1          | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
@@ -89,9 +92,9 @@ Feature: As an administrator or user with the correct access control
     And a valid API key "OaLLlZl4XB9wgmSGg7uai1nvtTiDsLpSBCfFoLKv18GCDdiIxxPLslKZmcPN"
 
   ##
-  # Create an Asset by importing scanner results
+  # Importing scanner results
   ##
-  Scenario: Add an asset to one of my Workspaces by importing an nmap scan result
+  Scenario: Import an NMAP scan into one of my Workspaces
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
     And that its "file" is "nmap-adv-multiple-node-dns.xml"
@@ -109,20 +112,20 @@ Feature: As an administrator or user with the correct access control
     And the "format" property equals "xml"
     And the response has a "size" property
     And the type of the "size" property is integer
-    And the response has a "processed" property
-    And the type of the "processed" property is boolean
-    And the "processed" property equals "false"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is boolean
-    And the "deleted" property equals "false"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "1"
-    And the response has a "workspace_id" property
-    And the type of the "workspace_id" property is integer
-    And the "workspace_id" property equals "1"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
 
-  Scenario: Add an asset to someone else's Workspaces where I have write access by importing an nmap scan result
+  Scenario: Import an NMAP scan into someone else's Workspace where I have write access
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
     And that its "file" is "nmap-adv-multiple-node-dns.xml"
@@ -140,353 +143,266 @@ Feature: As an administrator or user with the correct access control
     And the "format" property equals "xml"
     And the response has a "size" property
     And the type of the "size" property is integer
-    And the response has a "processed" property
-    And the type of the "processed" property is boolean
-    And the "processed" property equals "false"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is boolean
-    And the "deleted" property equals "false"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "1"
-    And the response has a "workspace_id" property
-    And the type of the "workspace_id" property is integer
-    And the "workspace_id" property equals "4"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "4"
 
-  Scenario: Add an asset to one of my Workspaces by importing an Nessus scan result
+  Scenario: Import a Burp scan into one of my Workspaces
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/nesus.xml"
+    And that its "file" is "burp/burp-multiple-auth-dns+ip.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    And the response has a "ip_address" property
-    And the type of the "ip_address" property is string
-    And the "ip_address" property equals "66.29.210.204"
-    And the response has a "hostname" property
-    And the type of the "hostname" property is string
-    And the "hostname" property equals "www.ruggedy.io"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "burp-multiple-auth-dns+ip.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
 
-  Scenario: Add an asset to one of my Workspaces by importing a Burp scan result
+  Scenario: Import a Burp scan into someone else's Workspace where I have write access
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/burp.xml"
-    When I request "/api/asset/1"
+    And that its "file" is "burp/burp-multiple-auth-dns+ip.xml"
+    When I request "/api/asset/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "burp-multiple-auth-dns+ip.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "4"
 
-  Scenario: Add an asset to one of my Workspaces by importing a ZAP Proxy scan result
+  Scenario: Import a Netsparker scan into one of my Workspaces
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/burp.xml"
+    And that its "file" is "netsparker/single-dns.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "single-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
 
-  Scenario: Add an asset to one of my Workspaces by importing a Nexpose scan result
+  Scenario: Import a Netsparker scan into someone else's Workspace where I have write access
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/nexpose.xml"
-    When I request "/api/asset/1"
+    And that its "file" is "netsparker/single-dns.xml"
+    When I request "/api/asset/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "single-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "4"
 
-  Scenario: Add an asset to one of my Workspaces by importing a OpenVAS scan result
+  Scenario: Import a Nexpose scan into one of my Workspaces
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/openvas.xml"
+    And that its "file" is "nexpose/full-multiple-dns.xml"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
 
-  Scenario: Add an asset to one of my Workspaces by importing a W3AF scan result
+  Scenario: Import a Nexpose scan into someone else's Workspace where I have write access
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/w3af.xml"
-    When I request "/api/asset/1"
+    And that its "file" is "nexpose/full-multiple-dns.xml"
+    When I request "/api/asset/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "4"
 
-  Scenario: Add an asset to one of my Workspaces by importing a Arachne scan result
+  Scenario: Import a Nessus scan into one of my Workspaces
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/arachne.xml"
+    And that its "file" is "nessus/full-audit-multiple-dns.nessus"
     When I request "/api/asset/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-audit-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
 
-  Scenario: Add an asset to one of my Workspaces by importing a NetSparker scan result
+  Scenario: Import a Nessus scan into someone else's Workspace where I have write access
     Given that I want to make a new "Asset"
     And that its "name" is "Web Server"
-    And that its "file" is "test_files/netsparker.xml"
-    When I request "/api/asset/1"
+    And that its "file" is "nessus/full-audit-multiple-dns.nessus"
+    When I request "/api/asset/4"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
     And the response has a "id" property
     And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Add an asset to one of my Workspaces by importing a Nikto scan result
-    Given that I want to make a new "Asset"
-    And that its "name" is "Web Server"
-    And that its "file" is "test_files/nikto.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Add an asset to one of my Workspaces by importing a Burp scan result, but provide a non-existent Workspace ID
-    Given that I want to make a new "Asset"
-    And that its "name" is "Web Server"
-    And that its "file" is "test_files/burp.xml"
-    When I request "/api/asset/10"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "true"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not import your scan result. That Workspace does not exist."
-    # Add more properties here when the schema is more fleshed out
-
-  ##
-  # Add scanner results to existing asset
-  ##
-  Scenario: Import an nmap scan result for an existing asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/nmap.txt"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    And the response has a "ip_address" property
-    And the type of the "ip_address" property is string
-    And the "ip_address" property equals "66.29.210.204"
-    And the type of the "open_ports" property is array
-    And the "open_ports" array property has a "80" value
-    And the "open_ports" array property has a "443" value
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Import a Nessus scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/nesus.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    And the response has a "ip_address" property
-    And the type of the "ip_address" property is string
-    And the "ip_address" property equals "66.29.210.204"
-    And the response has a "hostname" property
-    And the type of the "hostname" property is string
-    And the "hostname" property equals "www.ruggedy.io"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Import a Burp scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/burp.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Import a ZAP Proxy scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/burp.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Import a Nexpose scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/nexpose.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Import a OpenVAS scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/openvas.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Importing a W3AF scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/w3af.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Importing a Arachne scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/arachne.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Importing a NetSparker scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/netsparker.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Importing a Nikto scan result for an existing Asset
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/nikto.xml"
-    When I request "/api/asset/1"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response does not have a "error" property
-    And the response has a "id" property
-    And the type of the "id" property is integer
-    And the "id" property equals "1"
-    And the response has a "name" property
-    And the type of the "name" property is string
-    And the "name" property equals "Web Server"
-    # Add more properties here when the schema is more fleshed out
-
-  Scenario: Importing a Burp scan result, but provide a non-existent Asset ID
-    Given that I want to update my "Asset"
-    And that its "file" is "test_files/burp.xml"
-    When I request "/api/asset/10"
-    Then the HTTP response code should be 200
-    And the response is JSON
-    And the response has a "error" property
-    And the type of the "error" property is boolean
-    And the "error" property equals "true"
-    And the response has a "message" property
-    And the type of the "message" property is string
-    And the "message" property equals "Sorry, we could not import your scan result. That Asset does not exist."
-    # Add more properties here when the schema is more fleshed out
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-audit-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "userId" property
+    And the type of the "userId" property is integer
+    And the "userId" property equals "1"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "4"
 
   ##
   # Edit and Suppress Assets
@@ -555,9 +471,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "1"
-    And the response has a "suppressed" property
-    And the type of the "suppressed" property is boolean
-    And the "suppressed" property equals "true"
+    And the response has a "isSuppressed" property
+    And the type of the "isSuppressed" property is boolean
+    And the "isSuppressed" property equals "true"
 
   Scenario: Suppress someone else's Asset where I have write permission
     Given that I want to update my "Asset"
@@ -569,9 +485,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "id" property
     And the type of the "id" property is integer
     And the "id" property equals "7"
-    And the response has a "suppressed" property
-    And the type of the "suppressed" property is boolean
-    And the "suppressed" property equals "true"
+    And the response has a "isSuppressed" property
+    And the type of the "isSuppressed" property is boolean
+    And the "isSuppressed" property equals "true"
 
   Scenario: Attempt to suppress someone else's Asset where I don't have write permission
     Given that I want to update my "Asset"
@@ -618,9 +534,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "homenetwork.home.co.za"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is boolean
-    And the "deleted" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
 
   Scenario: Delete and confirm deletion of one of my Assets
     Given that I want to delete a "Asset"
@@ -634,9 +550,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "homenetwork.home.co.za"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is boolean
-    And the "deleted" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "true"
 
   Scenario: Delete someone else's Asset where I have write permission
     Given that I want to delete a "Asset"
@@ -650,9 +566,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "192.168.1.24"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is boolean
-    And the "deleted" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
 
   Scenario: Delete and confirm deletion of someone else's Asset where I have write permission
     Given that I want to delete a "Asset"
@@ -666,9 +582,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "192.168.1.24"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is boolean
-    And the "deleted" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "true"
 
   Scenario: Attempt to Delete an Asset where I don't have the write permission
     Given that I want to delete a "Asset"
@@ -709,7 +625,7 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | id | name                      | cpe                                                                 | vendor    | ip_address_v4 | ip_address_v6                           | hostname                  | mac_address       | os_version | workspace_id |
+    | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId  |
     | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1            |
     | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1            |
     | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1            |
@@ -727,7 +643,7 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | id | name                      | cpe                                                                 | vendor    | ip_address_v4 | ip_address_v6                           | hostname                  | mac_address       | os_version | workspace_id |
+    | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId  |
     | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1            |
     | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1            |
     | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1            |
@@ -742,7 +658,7 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | id | name         | workspace_id |
+    | id | name         | workspaceId  |
     | 7  | 192.168.1.24 | 2            |
 
   Scenario: Attempt to retrieve a list of Assets that are part of someone else's Project where I don't have permission
@@ -779,7 +695,7 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-      | id | name                      | cpe                                                                 | vendor    | ip_address_v4 | ip_address_v6                           | hostname                  | mac_address       | os_version | workspace_id |
+      | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId  |
       | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1            |
       | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1            |
       | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1            |
@@ -794,7 +710,7 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-      | id | name         | workspace_id |
+      | id | name         | workspaceId |
       | 7  | 192.168.1.24 | 2            |
 
   Scenario: Attempt to retrieve a list of Assets that are part of someone else's Workspace where I don't have permission

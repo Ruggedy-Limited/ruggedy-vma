@@ -16,7 +16,6 @@ use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
-
 class GetUserInformation extends CommandHandler
 {
     /** @var TeamRepository  */
@@ -90,13 +89,6 @@ class GetUserInformation extends CommandHandler
         // Make sure the given user is on the team
         if (empty($team->personIsInTeam($queriedUser))) {
             throw new UserNotInTeamException("The given User is not part of the given Team");
-        }
-
-        // Unless the authenticated user is requesting information about their own account, show only certain fields
-        if ($requestingUser->getId() !== intval($userId)) {
-            $queriedUser = $queriedUser->toStdClass([
-                'name', 'email', 'photo_url', 'uses_two_factor_auth',
-            ]);
         }
 
         return $queriedUser;

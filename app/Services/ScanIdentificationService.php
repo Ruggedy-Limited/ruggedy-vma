@@ -77,7 +77,8 @@ class ScanIdentificationService
             $fileType = $file->extension();
         }
 
-            // Check that it is a valid/accepted file type
+        $fileType = File::isValidFileType($fileType) ? $fileType : $file->getClientOriginalExtension();
+        // Check that it is a valid/accepted file type
         if (!File::isValidFileType($fileType)) {
             throw new FileException("File of unsupported type '$fileType' given");
         }

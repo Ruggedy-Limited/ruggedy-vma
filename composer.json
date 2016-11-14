@@ -22,7 +22,8 @@
         "laracasts/flash": "~2.0.0",
         "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": "^3.0",
         "mysql-workbench-schema-exporter/doctrine2-exporter": "^3.0",
-        "madewithlove/tactician-laravel": "^1.0"
+        "madewithlove/tactician-laravel": "^1.0",
+        "spatie/laravel-fractal": "~1.9"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.6.0",
