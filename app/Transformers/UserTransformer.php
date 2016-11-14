@@ -26,8 +26,8 @@ class UserTransformer extends TransformerAbstract
             'workspaces'           => $user->getWorkspaces(),
             'photo'                => $user->getPhotoUrl(),
             'twoFactorAuthEnabled' => $user->getUsesTwoFactorAuth(),
-            'createdDate'          => $user->getCreatedAt(),
-            'modifiedDate'         => $user->getUpdatedAt(),
+            'createdDate'          => $user->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate'         => $user->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

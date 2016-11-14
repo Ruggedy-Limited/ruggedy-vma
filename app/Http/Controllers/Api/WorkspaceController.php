@@ -30,7 +30,7 @@ class WorkspaceController extends AbstractController
     {
         $workspace = EntityFactoryService::makeEntity(Workspace::class, $this->getRequest()->json()->all());
         $command = new CreateWorkspace($projectId, $workspace);
-        return $this->sendCommandToBusHelper($command, WorkspaceTransformer::class);
+        return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 
     /**
@@ -45,7 +45,7 @@ class WorkspaceController extends AbstractController
     public function deleteWorkspace($workspaceId, $confirm = null)
     {
         $command = new DeleteWorkspace(intval($workspaceId), boolval($confirm));
-        return $this->sendCommandToBusHelper($command, WorkspaceTransformer::class);
+        return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 
     /**
@@ -59,7 +59,7 @@ class WorkspaceController extends AbstractController
     public function editWorkspace($workspaceId)
     {
         $command = new EditWorkspace(intval($workspaceId), $this->getRequest()->json()->all());
-        return $this->sendCommandToBusHelper($command, WorkspaceTransformer::class);
+        return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 
     /**
@@ -73,7 +73,7 @@ class WorkspaceController extends AbstractController
     public function getWorkspacesForUser($userId)
     {
         $command  = new GetListOfUsersWorkspaces(intval($userId));
-        return $this->sendCommandToBusHelper($command, WorkspaceTransformer::class);
+        return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 
     /**

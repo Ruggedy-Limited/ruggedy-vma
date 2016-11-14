@@ -92,13 +92,6 @@ class GetUserInformation extends CommandHandler
             throw new UserNotInTeamException("The given User is not part of the given Team");
         }
 
-        // Unless the authenticated user is requesting information about their own account, show only certain fields
-        if ($requestingUser->getId() !== intval($userId)) {
-            $queriedUser = $queriedUser->toStdClass([
-                'name', 'email', 'photo_url', 'uses_two_factor_auth',
-            ]);
-        }
-
         return $queriedUser;
     }
 

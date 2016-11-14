@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Commands\GetListOfPermissions;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
+use App\Entities\ComponentPermission;
+use App\Transformers\ComponentPermissionChangesTransformer;
 use App\Transformers\ComponentPermissionTransformer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
+use League\Fractal\TransformerAbstract;
 
 
 /**
@@ -32,7 +36,7 @@ class PermissionController extends AbstractController
        $permission = $this->getRequest()->json('permission', '');
 
        $command = new UpsertPermission($componentInstanceId, $componentName, $userId, $permission);
-       return $this->sendCommandToBusHelper($command, ComponentPermissionTransformer::class);
+       return $this->sendCommandToBusHelper($command, new ComponentPermissionChangesTransformer());
     }
 
     /**
@@ -47,7 +51,7 @@ class PermissionController extends AbstractController
     public function revokePermission($componentName, $componentInstanceId, $userId)
     {
         $command = new RevokePermission($componentInstanceId, $componentName, $userId);
-        return $this->sendCommandToBusHelper($command, ComponentPermissionTransformer::class);
+        return $this->sendCommandToBusHelper($command, new ComponentPermissionChangesTransformer());
     }
 
     /**
@@ -62,7 +66,23 @@ class PermissionController extends AbstractController
     public function getComponentPermissions($componentName, $componentInstanceId)
     {
         $command = new GetListOfPermissions($componentInstanceId, $componentName);
-        return $this->sendCommandToBusHelper($command, ComponentPermissionTransformer::class);
+        return $this->sendCommandToBusHelper($command, new ComponentPermissionTransformer());
+    }
+
+    /**
+     * @inheritdoc
+     * @param $result
+     * @param TransformerAbstract $transformer
+     * @return string
+     */
+    protected function transformResult($result, TransformerAbstract $transformer): string
+    {
+        // Handle the Collection to be passed for ComponentPermission changes differently
+        if ($result instanceof Collection && $transformer instanceof ComponentPermissionChangesTransformer) {
+            return fractal()->item($result, $transformer)->toJson();
+        }
+
+        return parent::transformResult($result, $transformer);
     }
 
     /**

@@ -74,7 +74,7 @@ class DeleteWorkspace extends CommandHandler
             $this->em->flush($workspace);
         }
 
-        return $workspace->toStdClass(['id', 'name', 'deleted', 'created_at', 'updated_at']);
+        return $workspace;
     }
 
     /**

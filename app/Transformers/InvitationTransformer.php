@@ -2,7 +2,7 @@
 
 namespace App\Transformers;
 
-use App\Entities\Invitation;
+use Laravel\Spark\Invitation;
 use League\Fractal\TransformerAbstract;
 
 class InvitationTransformer extends TransformerAbstract
@@ -16,14 +16,13 @@ class InvitationTransformer extends TransformerAbstract
     public function transform(Invitation $invitation)
     {
         return [
-            'id'           => $invitation->getId(),
-            'emailAddress' => $invitation->getEmail(),
-            'team'         => $invitation->getTeam(),
-            'user'         => $invitation->getUser(),
-            'token'        => $invitation->getToken(),
-            'isForTeam'    => !empty($invitation->getTeam()),
-            'createdDate'  => $invitation->getCreatedAt(),
-            'modifiedDate' => $invitation->getUpdatedAt(),
+            'id'           => $invitation->id,
+            'emailAddress' => $invitation->email,
+            'userId'       => $invitation->user_id,
+            'token'        => $invitation->token,
+            'isForTeam'    => !empty($invitation->team),
+            'createdDate'  => $invitation->created_at,
+            'modifiedDate' => $invitation->updated_at,
         ];
     }
 }

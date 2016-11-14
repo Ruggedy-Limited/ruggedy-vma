@@ -18,7 +18,8 @@ class WorkspaceTransformer extends TransformerAbstract
         return [
             'id'           => $workspace->getId(),
             'name'         => $workspace->getName(),
-            'owner'        => $workspace->getUser(),
+            'ownerId'      => $workspace->getUser()->getId(),
+            'projectId'    => $workspace->getProject()->getId(),
             'assets'       => $workspace->getAssets(),
             'files'        => $workspace->getFiles(),
             'isDeleted'    => $workspace->getDeleted(),

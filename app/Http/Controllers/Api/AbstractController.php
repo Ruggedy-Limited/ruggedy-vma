@@ -13,6 +13,7 @@ use App\Models\MessagingModel;
 use App\Services\JsonLogService;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -81,7 +82,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
 
             // Tranform the result and return the response
             $result = $this->transformResult($result, $transformer);
-            return response()->json($result);
+            return response()->json()->setContent($result);
         } catch (Exception $e) {
             $this->getLogger()->log(Logger::ERROR, "Error processing command", [
                 'requestUri'        => $this->getRequest()->getUri(),
@@ -106,7 +107,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      */
     protected function transformResult($result, TransformerAbstract $transformer): string
     {
-        if ($result instanceof AbstractEntity) {
+        if ($result instanceof AbstractEntity || $result instanceof Model) {
             return fractal()->item($result, $transformer)->toJson();
         }
 
@@ -123,7 +124,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     {
         $translatorNamespace = null;
         if (!method_exists($this, 'getTranslatorNamespace')) {
-            return new ErrorResponse(MessagingModel::ERROR_DEFAULT);
+            return response()->json(new ErrorResponse(MessagingModel::ERROR_DEFAULT));
         }
 
         $translatorNamespace = $this->getTranslatorNamespace();

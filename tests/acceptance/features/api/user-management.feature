@@ -47,9 +47,9 @@ Feature: As a user of the API framework and the owner of at least one team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "garethpeter@gmail.com"
+    And the response has a "emailAddress" property
+    And the type of the "emailAddress" property is string
+    And the "emailAddress" property equals "garethpeter@gmail.com"
     And the response has a "token" property
     And the type of the "token" property is string
 
@@ -85,9 +85,9 @@ Feature: As a user of the API framework and the owner of at least one team
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the response has a "user.email" property
-    And the type of the "user.email" property is string
-    And the "user.email" property equals "gregsymons@dispostable.com"
+    And the response has a "user.emailAddress" property
+    And the type of the "user.emailAddress" property is string
+    And the "user.emailAddress" property equals "gregsymons@dispostable.com"
     And the response has a "team.id" property
     And the type of the "team.id" property is integer
     And the "team.id" property equals "1"
@@ -127,15 +127,15 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Greg Symons"
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "gregsymons@dispostable.com"
-    And the response has a "photo_url" property
-    And the type of the "photo_url" property is string
-    And the "photo_url" property equals "/myphoto.jpg"
-    And the response has a "uses_two_factor_auth" property
-    And the type of the "uses_two_factor_auth" property is int
-    And the "uses_two_factor_auth" property equals "0"
+    And the response has a "emailAddress" property
+    And the type of the "emailAddress" property is string
+    And the "emailAddress" property equals "gregsymons@dispostable.com"
+    And the response has a "photo" property
+    And the type of the "photo" property is string
+    And the "photo" property equals "/myphoto.jpg"
+    And the response has a "twoFactorAuthEnabled" property
+    And the type of the "twoFactorAuthEnabled" property is int
+    And the "twoFactorAuthEnabled" property equals "0"
 
   Scenario: I attempt to get information about a person on one of my teams, but there is no person with the given ID in
     that team
@@ -169,7 +169,7 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response is JSON
     And the type of the response is array
     And the array response has the following items:
-    | name        | email                      | photo_url    | uses_two_factor_auth |
+    | name        | emailAddress               | photo        | twoFactorAuthEnabled |
     | John Smith  | johnsmith@dispostable.com  | *            | false                |
     | Greg Symons | gregsymons@dispostable.com | /myphoto.jpg | false                |
 
@@ -196,18 +196,18 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "garethpeter@gmail.com"
-    And the response has a "uses_two_factor_auth" property
-    And the type of the "uses_two_factor_auth" property is int
-    And the "uses_two_factor_auth" property equals "0"
-    And the response has a "created_at" property
-    And the type of the "created_at" property is string
-    And the "created_at" property equals "2016-05-09 14:39:01"
-    And the response has a "updated_at" property
-    And the type of the "updated_at" property is string
-    And the "updated_at" property does not equal "2016-05-09 14:39:02"
+    And the response has a "emailAddress" property
+    And the type of the "emailAddress" property is string
+    And the "emailAddress" property equals "garethpeter@gmail.com"
+    And the response has a "twoFactorAuthEnabled" property
+    And the type of the "twoFactorAuthEnabled" property is int
+    And the "twoFactorAuthEnabled" property equals "0"
+    And the response has a "createdDate" property
+    And the type of the "createdDate" property is string
+    And the "createdDate" property equals "2016-05-09 14:39:01"
+    And the response has a "modifiedDate" property
+    And the type of the "modifiedDate" property is string
+    And the "modifiedDate" property does not equal "2016-05-09 14:39:02"
     
   Scenario: Changing my password
     Given that I want to update my "Account"
@@ -219,18 +219,18 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "johnsmith@dispostable.com"
-    And the response has a "uses_two_factor_auth" property
-    And the type of the "uses_two_factor_auth" property is integer
-    And the "uses_two_factor_auth" property equals "0"
-    And the response has a "created_at" property
-    And the type of the "created_at" property is string
-    And the "created_at" property equals "2016-05-09 14:39:01"
-    And the response has a "updated_at" property
-    And the type of the "updated_at" property is string
-    And the "updated_at" property does not equal "2016-05-09 14:39:02"
+    And the response has a "emailAddress" property
+    And the type of the "emailAddress" property is string
+    And the "emailAddress" property equals "johnsmith@dispostable.com"
+    And the response has a "twoFactorAuthEnabled" property
+    And the type of the "twoFactorAuthEnabled" property is integer
+    And the "twoFactorAuthEnabled" property equals "0"
+    And the response has a "createdDate" property
+    And the type of the "createdDate" property is string
+    And the "createdDate" property equals "2016-05-09 14:39:01"
+    And the response has a "modifiedDate" property
+    And the type of the "modifiedDate" property is string
+    And the "modifiedDate" property does not equal "2016-05-09 14:39:02"
 
   Scenario: Changing multiple fields
     Given that I want to update my "Account"
@@ -245,21 +245,21 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "garethpeter@gmail.com"
-    And the response has a "photo_url" property
-    And the type of the "photo_url" property is string
-    And the "photo_url" property equals "/my/photo/url.jpg"
-    And the response has a "uses_two_factor_auth" property
-    And the type of the "uses_two_factor_auth" property is integer
-    And the "uses_two_factor_auth" property equals "1"
-    And the response has a "created_at" property
-    And the type of the "created_at" property is string
-    And the "created_at" property equals "2016-05-09 14:39:01"
-    And the response has a "updated_at" property
-    And the type of the "updated_at" property is string
-    And the "updated_at" property does not equal "2016-05-09 14:39:02"
+    And the response has a "emailAddress" property
+    And the type of the "emailAddress" property is string
+    And the "emailAddress" property equals "garethpeter@gmail.com"
+    And the response has a "photo" property
+    And the type of the "photo" property is string
+    And the "photo" property equals "/my/photo/url.jpg"
+    And the response has a "twoFactorAuthEnabled" property
+    And the type of the "twoFactorAuthEnabled" property is integer
+    And the "twoFactorAuthEnabled" property equals "1"
+    And the response has a "createdDate" property
+    And the type of the "createdDate" property is string
+    And the "createdDate" property equals "2016-05-09 14:39:01"
+    And the response has a "modifiedDate" property
+    And the type of the "modifiedDate" property is string
+    And the "modifiedDate" property does not equal "2016-05-09 14:39:02"
 
   Scenario: I attempt to modify another person's account
     Given that I want to update my "Account"
@@ -284,15 +284,15 @@ Feature: As a user of the API framework and the owner of at least one team
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John Smith"
-    And the response has a "email" property
-    And the type of the "email" property is string
-    And the "email" property equals "johnsmith@dispostable.com"
-    And the response has a "uses_two_factor_auth" property
-    And the type of the "uses_two_factor_auth" property is int
-    And the "uses_two_factor_auth" property equals "0"
-    And the response has a "created_at" property
-    And the type of the "created_at" property is string
-    And the "created_at" property equals "2016-05-09 14:39:01"
-    And the response has a "updated_at" property
-    And the type of the "updated_at" property is string
-    And the "updated_at" property does not equal "2016-05-09 14:39:02"
+    And the response has a "emailAddress" property
+    And the type of the "emailAddress" property is string
+    And the "emailAddress" property equals "johnsmith@dispostable.com"
+    And the response has a "twoFactorAuthEnabled" property
+    And the type of the "twoFactorAuthEnabled" property is int
+    And the "twoFactorAuthEnabled" property equals "0"
+    And the response has a "createdDate" property
+    And the type of the "createdDate" property is string
+    And the "createdDate" property equals "2016-05-09 14:39:01"
+    And the response has a "modifiedDate" property
+    And the type of the "modifiedDate" property is string
+    And the "modifiedDate" property does not equal "2016-05-09 14:39:02"

@@ -15,15 +15,27 @@ class ComponentPermissionTransformer extends TransformerAbstract
      */
     public function transform(ComponentPermission $componentPermission)
     {
+        // Allow for NULL team relations
+        $teamId = null;
+        if (!empty($componentPermission->getTeam())) {
+            $teamId = $componentPermission->getTeam()->getId();
+        }
+
+        // Allow for NULL user relations
+        $userId = null;
+        if (!empty($componentPermission->getUserRelatedByUserId())) {
+            $userId = $componentPermission->getUserRelatedByUserId()->getId();
+        }
+
         return [
             'id'              => $componentPermission->getId(),
-            'component'       => $componentPermission->getComponent(),
+            'componentName'   => $componentPermission->getComponent()->getName(),
             'instanceId'      => $componentPermission->getInstanceId(),
             'permission'      => $componentPermission->getPermission(),
-            'user'            => $componentPermission->getUserRelatedByUserId(),
-            'grantedBy'       => $componentPermission->getUserRelatedByGrantedBy(),
+            'userId'          => $userId,
+            'grantedByUserId' => $componentPermission->getUserRelatedByGrantedBy()->getId(),
             'isGrantedToTeam' => !empty($componentPermission->getTeamId()),
-            'team'            => $componentPermission->getTeam(),
+            'teamId'          =>  $teamId,
             'createdDate'     => $componentPermission->getCreatedAt(),
             'modifiedDate'    => $componentPermission->getUpdatedAt(),
         ];

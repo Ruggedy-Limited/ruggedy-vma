@@ -22,8 +22,8 @@ class ComponentPermission extends Base\ComponentPermission
      * Key constants for the result Collection returned by the
      * command handlers that handle permission-related commands
      */
-    const RESULT_KEY_AFFECTED = 'affected_permissions';
-    const RESULT_KEY_ALL      = 'all_permissions';
+    const RESULT_KEY_AFFECTED = 'affectedPermissions';
+    const RESULT_KEY_ALL      = 'allPermissions';
 
     /**
      * Override the AbstractEntity method, just to provide a default set of attributes to include when coercing to

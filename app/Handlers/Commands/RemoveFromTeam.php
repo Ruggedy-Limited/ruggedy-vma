@@ -98,10 +98,10 @@ class RemoveFromTeam extends CommandHandler
         $this->em->persist($user);
         $this->em->flush($user);
 
-        return [
+        return collect([
             'user' => $user,
             'team' => $team,
-        ];
+        ]);
     }
 
     /**

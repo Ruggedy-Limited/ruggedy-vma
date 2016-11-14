@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\EditUserAccount as EditUserAccountCommand;
+use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Repositories\UserRepository;
@@ -35,7 +36,7 @@ class EditUserAccount extends CommandHandler
      * Process the EditUserAccount command
      *
      * @param EditUserAccountCommand $command
-     * @return stdClass
+     * @return User
      * @throws ActionNotPermittedException
      * @throws Exception
      */
@@ -63,9 +64,7 @@ class EditUserAccount extends CommandHandler
         $this->em->persist($requestingUser);
         $this->em->flush($requestingUser);
 
-        return $requestingUser->toStdClass([
-            'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
-        ]);
+        return $requestingUser;
     }
 
     /**

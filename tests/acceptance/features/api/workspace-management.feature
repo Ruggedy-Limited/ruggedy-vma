@@ -59,12 +59,12 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "My New Workspace"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "1"
-    And the response has a "project_id" property
-    And the type of the "project_id" property is integer
-    And the "project_id" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "projectId" property
+    And the type of the "projectId" property is integer
+    And the "projectId" property equals "1"
 
   Scenario: Create a new Workspace on someone else's account where I have write access
     Given that I want to make a new "Workspace"
@@ -78,12 +78,12 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "My New Workspace"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "2"
-    And the response has a "project_id" property
-    And the type of the "project_id" property is integer
-    And the "project_id" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "projectId" property
+    And the type of the "projectId" property is integer
+    And the "projectId" property equals "2"
 
   Scenario: I attempt to create a Workspace on someone else's account where I don't have write access
     Given that I want to make a new "Workspace"
@@ -123,9 +123,9 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John's Workspace"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is bool
-    And the "deleted" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is bool
+    And the "isDeleted" property equals "false"
 
   Scenario: Delete and confirm deletion of a Workspace from my account
     Given that I want to delete a "Workspace"
@@ -139,9 +139,9 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "John's Workspace"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is bool
-    And the "deleted" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is bool
+    And the "isDeleted" property equals "true"
 
   Scenario: Delete a Workspace on someone else's account where I have write access
     Given that I want to delete a "Workspace"
@@ -155,9 +155,9 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Someone's Workspace"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is bool
-    And the "deleted" property equals "false"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is bool
+    And the "isDeleted" property equals "false"
 
   Scenario: Delete and confirm deletion of a Workspace on someone else's account where I have Workspace write access
     Given that I want to delete a "Workspace"
@@ -171,9 +171,9 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Someone's Workspace"
-    And the response has a "deleted" property
-    And the type of the "deleted" property is bool
-    And the "deleted" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is bool
+    And the "isDeleted" property equals "true"
 
   Scenario: I attempt to delete a Workspace on someone else's account where I don't have Workspace write access
     Given that I want to delete a "Workspace"
@@ -215,12 +215,12 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Renamed Workspace"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "1"
-    And the response has a "project_id" property
-    And the type of the "project_id" property is integer
-    And the "project_id" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "projectId" property
+    And the type of the "projectId" property is integer
+    And the "projectId" property equals "1"
 
   Scenario: Edit the name of someone else's Workspace where I have write permission
     Given that I want to update a "Workspace"
@@ -235,12 +235,12 @@ Feature: As an account or team owner
     And the response has a "name" property
     And the type of the "name" property is string
     And the "name" property equals "Renamed Workspace"
-    And the response has a "user_id" property
-    And the type of the "user_id" property is integer
-    And the "user_id" property equals "2"
-    And the response has a "project_id" property
-    And the type of the "project_id" property is integer
-    And the "project_id" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "projectId" property
+    And the type of the "projectId" property is integer
+    And the "projectId" property equals "2"
 
   Scenario: I attempt to edit the name of someone else's Workspace where I don't have read/write permission
     Given that I want to update a "Workspace"
