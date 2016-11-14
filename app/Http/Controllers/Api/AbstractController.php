@@ -21,8 +21,6 @@ use Illuminate\Translation\Translator;
 use League\Fractal\TransformerAbstract;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
-use Spatie\Fractal\Exceptions\InvalidTransformation;
-
 
 abstract class AbstractController extends Controller implements GivesUserFeedback, CustomLogging
 {
@@ -123,8 +121,9 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     protected function generateErrorResponse($messageKey = '')
     {
         $translatorNamespace = null;
+        $errorResponse = new ErrorResponse(MessagingModel::ERROR_DEFAULT);
         if (!method_exists($this, 'getTranslatorNamespace')) {
-            return response()->json(new ErrorResponse(MessagingModel::ERROR_DEFAULT));
+            return response()->json($errorResponse);
         }
 
         $translatorNamespace = $this->getTranslatorNamespace();
@@ -135,7 +134,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
             $message = MessagingModel::ERROR_DEFAULT;
         }
 
-        $errorResponse = new ErrorResponse($message);
+        $errorResponse->setMessage($message);
         return response()->json($errorResponse);
     }
 

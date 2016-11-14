@@ -16,7 +16,6 @@ use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
-
 class RemoveFromTeam extends CommandHandler
 {
     /** @var UserRepository  */

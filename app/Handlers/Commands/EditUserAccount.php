@@ -9,8 +9,6 @@ use App\Exceptions\InvalidInputException;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use stdClass;
-
 
 class EditUserAccount extends CommandHandler
 {

@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Commands\GetListOfPermissions;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
-use App\Entities\ComponentPermission;
 use App\Transformers\ComponentPermissionChangesTransformer;
 use App\Transformers\ComponentPermissionTransformer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use League\Fractal\TransformerAbstract;
-
 
 /**
  * @Controller(prefix="api/acl")
