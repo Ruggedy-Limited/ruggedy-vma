@@ -323,7 +323,7 @@ Feature: As an account or team owner
   ##
   Scenario: Get a list of Apps used in one of my Workspaces
     Given that I want to get information about "Apps"
-    When I request "/api/apps/1"
+    When I request "/api/workspace/apps/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
@@ -337,7 +337,7 @@ Feature: As an account or team owner
 
   Scenario: Get a list of Apps in someone else's Workspace where I have at least read access
     Given that I want to get information about "Apps"
-    When I request "/api/apps/2"
+    When I request "/api/workspace/apps/2"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
@@ -347,7 +347,7 @@ Feature: As an account or team owner
 
   Scenario: Attempt to get a list of Apps in someone else's Workspace where I don't have read access
     Given that I want to get information about "Apps"
-    When I request "/api/apps/3"
+    When I request "/api/workspace/apps/3"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -359,7 +359,7 @@ Feature: As an account or team owner
 
   Scenario: Attempt to get a list of Apps on a non-existent Workspace
     Given that I want to get information about "Apps"
-    When I request "/api/apps/99"
+    When I request "/api/workspace/apps/99"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property

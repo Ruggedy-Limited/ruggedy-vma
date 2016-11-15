@@ -48,6 +48,10 @@ return [
 
     MessagingModel::ERROR_LIST_WORKSPACES_PERMISSION        => "Sorry, you don't have permission to list those"
         . " Workspaces.",
+
+    MessagingModel::ERROR_LIST_WORKSPACE_APPS_PERMISSION     => "Sorry, you don't have permission to list those"
+        . " Apps.",
+
     MessagingModel::ERROR_AUTH_USER_NOT_OWNER               => "Sorry, we couldn't change/add those permissions."
         . " You can only modify permissions on your own things.",
     MessagingModel::ERROR_COMPONENT_DOES_NOT_EXIST          => "Sorry, that Component does not exist.",
