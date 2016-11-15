@@ -84,9 +84,9 @@ Feature: As an account or team owner
     And the "error" property equals "true"
     And the response has a "message" property
     And the type of the "message" property is string
-    And the "message" property equals "Sorry, you don't have permission to create Workspaces in that Project."
+    And the "message" property equals "Sorry, you don't have permission to create Workspaces on that User account."
 
-  Scenario: I attempt to create a Workspace on non-existent Project
+  Scenario: I attempt to create a Workspace on non-existent User account
     Given that I want to make a new "Workspace"
     And that its "name" is "My New Workspace"
     When I request "/api/workspace/10"

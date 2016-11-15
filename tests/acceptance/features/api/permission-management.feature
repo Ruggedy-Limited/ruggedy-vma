@@ -1,6 +1,5 @@
 Feature: As an owner of a team
   I want the ability to create permissions so that I can control access to:
-  * Projects
   * Workspaces
   * Assets
   * Scanner Modules
@@ -13,7 +12,7 @@ Feature: As an owner of a team
 
   Notes:
   If an authenticated user attempts to change the permissions for another user on a component that they own and
-  everything in the request is valid, but that user does not already have any permission on that particular project,
+  everything in the request is valid, but that user does not already have any permission on that particular workspace,
   then a new permission will be created for that User and a successful response will be returned.
   If the user does already have the same permissions on the component as the changed permission option, then a
   successful response will be returned.

@@ -31,7 +31,7 @@ return [
     MessagingModel::ERROR_COULD_NOT_CREATE_WORKSPACE        => "Sorry, we could not create your workspace.",
 
     MessagingModel::ERROR_WORKSPACE_CREATE_PERMISSION       => "Sorry, you don't have permission to create Workspaces"
-        . " in that Project.",
+        . " on that User account.",
 
     MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST          => "Sorry, that Workspace does not exist.",
 

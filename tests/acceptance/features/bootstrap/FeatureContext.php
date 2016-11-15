@@ -4,22 +4,14 @@ namespace Tests\Acceptance\Features\Bootstrap;
 
 use App\Exceptions\FeatureBackgroundSetupFailedException;
 use App\Exceptions\InvalidConfigurationException;
-use App\Project;
-use App\Team;
-use App\User;
-use App\Workspace;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
-use Doctrine\ORM\EntityManager;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
 
 /**
  * Defines application features from the specific context.
