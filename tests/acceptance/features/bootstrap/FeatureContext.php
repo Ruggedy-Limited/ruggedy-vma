@@ -32,6 +32,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'files',
         'scanner_apps',
         'vulnerabilities',
+        'assets_vulnerabilities',
         'vulnerability_reference_codes',
         'open_ports'
     ];
@@ -123,6 +124,11 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         Schema::disableForeignKeyConstraints();
 
         foreach ($table as $row) {
+            if (count($row) === 1) {
+                $attachments[] = $row['id'];
+                continue;
+            }
+
             $row = $this->sanitiseRowHelper($row);
             $id = $row['id'];
             unset($row['id']);
@@ -133,12 +139,12 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         try {
             $oneModel->$manyMethod()->attach($attachments);
             // Re-enable foreign key checks
-            Schema::enableForeignKeyConstraints();
         } catch (QueryException $e) {
             // Just catch the exception in the case of integrity constraint violations
             // Re-enable foreign key checks
-            Schema::enableForeignKeyConstraints();
         }
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -218,6 +224,10 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         $rootNamespace = env('APP_TEST_MODEL_NAMESPACE');
         if (empty($rootNamespace)) {
             throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
+        }
+
+        if (!empty($objectType) && substr($objectType, strlen($objectType) - 3, 3) === "ies") {
+            $objectType = substr($objectType, 0, strlen($objectType) - 3) . "y";
         }
 
         if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {

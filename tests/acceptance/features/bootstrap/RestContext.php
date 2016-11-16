@@ -33,6 +33,8 @@ class RestContext extends FeatureContext implements Context
     protected $response;
     /** @var string  */
     protected $requestUrl;
+    /** @var array */
+    protected $urlParameters = [];
 
     /**
      * Initializes context.
@@ -134,6 +136,13 @@ class RestContext extends FeatureContext implements Context
         }
 
         $fullUrl = $baseUrl . $uri . '?api_token=' . $this->getApiKey();
+
+        if (!empty($this->urlParameters)) {
+            $fullUrl .= "&" . collect($this->urlParameters)->map(function ($value, $paramName) {
+                return "$paramName=$value";
+            })->implode("&");
+        }
+
         switch (strtoupper($this->getRestObjectMethod())) {
             case self::HTTP_GET:
             case self::HTTP_DELETE:
@@ -188,6 +197,16 @@ class RestContext extends FeatureContext implements Context
 
         $this->setResponse($response);
         return true;
+    }
+
+    /**
+     * @When /^I use a URL parameter "([^"]*)" with value "([^"]*)"$/
+     * @param $parameterName
+     * @param $parameterValue
+     */
+    public function iAddUrlParameter($parameterName, $parameterValue)
+    {
+        $this->urlParameters[$parameterName] = $parameterValue;
     }
 
     /**
