@@ -22,10 +22,10 @@ class TeamSubscriptionTransformer extends TransformerAbstract
             'stripeId'     => $teamSubscription->getStripeId(),
             'stripePlan'   => $teamSubscription->getStripePlan(),
             'quantity'     => $teamSubscription->getQuantity(),
-            'trialEndDate' => $teamSubscription->getTrialEndsAt(),
-            'endDate'      => $teamSubscription->getEndsAt(),
-            'createdDate'  => $teamSubscription->getCreatedAt(),
-            'modifiedDate' => $teamSubscription->getUpdatedAt(),
+            'trialEndDate' => $teamSubscription->getTrialEndsAt()->format(env('APP_DATE_FORMAT')),
+            'endDate'      => $teamSubscription->getEndsAt()->format(env('APP_DATE_FORMAT')),
+            'createdDate'  => $teamSubscription->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $teamSubscription->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

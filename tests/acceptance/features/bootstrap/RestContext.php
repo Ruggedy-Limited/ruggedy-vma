@@ -33,6 +33,8 @@ class RestContext extends FeatureContext implements Context
     protected $response;
     /** @var string  */
     protected $requestUrl;
+    /** @var array */
+    protected $urlParameters = [];
 
     /**
      * Initializes context.
@@ -134,6 +136,13 @@ class RestContext extends FeatureContext implements Context
         }
 
         $fullUrl = $baseUrl . $uri . '?api_token=' . $this->getApiKey();
+
+        if (!empty($this->urlParameters)) {
+            $fullUrl .= "&" . collect($this->urlParameters)->map(function ($value, $paramName) {
+                return "$paramName=$value";
+            })->implode("&");
+        }
+
         switch (strtoupper($this->getRestObjectMethod())) {
             case self::HTTP_GET:
             case self::HTTP_DELETE:
@@ -188,6 +197,16 @@ class RestContext extends FeatureContext implements Context
 
         $this->setResponse($response);
         return true;
+    }
+
+    /**
+     * @When /^I use a URL parameter "([^"]*)" with value "([^"]*)"$/
+     * @param $parameterName
+     * @param $parameterValue
+     */
+    public function iAddUrlParameter($parameterName, $parameterValue)
+    {
+        $this->urlParameters[$parameterName] = $parameterValue;
     }
 
     /**
@@ -249,6 +268,9 @@ class RestContext extends FeatureContext implements Context
 
     /**
      * @Then /^the "([^"]*)" array property has a "([^"]*)" value$/
+     *
+     * @param $index
+     * @param $value
      */
     public function theArrayPropertyHasTheFollowing($index, $value)
     {
@@ -271,6 +293,7 @@ class RestContext extends FeatureContext implements Context
     /**
      * @Then /^the "([^"]+)" array property has the following items:$/
      *
+     * @param string $propertyName
      * @param TableNode $table
      */
     public function theArrayPropertyHasTheFollowingItems(string $propertyName, TableNode $table)
@@ -372,6 +395,7 @@ class RestContext extends FeatureContext implements Context
      * Assert that a value is an array
      *
      * @param $value
+     * @param $typeString
      */
     protected function theTypeIsHelper($value, $typeString)
     {
@@ -467,7 +491,6 @@ class RestContext extends FeatureContext implements Context
         // There is dot syntax in the property name. Check that the property exists, then return the parent level of the
         // object and the last part of the dot syntax string as the property name to check
         $properties         = explode(".", $propertyName);
-        $propertyNameResult = end($properties);
         reset($properties);
 
         foreach ($properties as $property) {
@@ -497,6 +520,8 @@ class RestContext extends FeatureContext implements Context
 
     /**
      * Assert that an element in the response contains an item
+     *
+     * @param $index
      * @param array $row
      * @param array $response
      */

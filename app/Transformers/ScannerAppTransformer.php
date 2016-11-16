@@ -19,9 +19,8 @@ class ScannerAppTransformer extends TransformerAbstract
             'id'           => $scannerApp->getId(),
             'name'         => $scannerApp->getName(),
             'description'  => $scannerApp->getDescription(),
-            'files'        => $scannerApp->getFiles(),
-            'createdDate'  => $scannerApp->getCreatedAt(),
-            'modifiedDate' => $scannerApp->getUpdatedAt(),
+            'createdDate'  => $scannerApp->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $scannerApp->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

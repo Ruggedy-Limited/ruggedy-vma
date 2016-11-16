@@ -31,7 +31,7 @@ return [
     MessagingModel::ERROR_COULD_NOT_CREATE_WORKSPACE        => "Sorry, we could not create your workspace.",
 
     MessagingModel::ERROR_WORKSPACE_CREATE_PERMISSION       => "Sorry, you don't have permission to create Workspaces"
-        . " in that Project.",
+        . " on that User account.",
 
     MessagingModel::ERROR_WORKSPACE_DOES_NOT_EXIST          => "Sorry, that Workspace does not exist.",
 
@@ -48,6 +48,10 @@ return [
 
     MessagingModel::ERROR_LIST_WORKSPACES_PERMISSION        => "Sorry, you don't have permission to list those"
         . " Workspaces.",
+
+    MessagingModel::ERROR_VIEW_WORKSPACE_PERMISSION         => "Sorry, you don't have permission to view that"
+        . " Workspace or anything in it.",
+
     MessagingModel::ERROR_AUTH_USER_NOT_OWNER               => "Sorry, we couldn't change/add those permissions."
         . " You can only modify permissions on your own things.",
     MessagingModel::ERROR_COMPONENT_DOES_NOT_EXIST          => "Sorry, that Component does not exist.",

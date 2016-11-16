@@ -19,8 +19,8 @@ class ComponentTransformer extends TransformerAbstract
             'id'           => $component->getId(),
             'name'         => $component->getName(),
             'class'        => $component->getClassName(),
-            'createdDate'  => $component->getCreatedAt(),
-            'modifiedDate' => $component->getUpdatedAt(),
+            'createdDate'  => $component->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $component->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

@@ -142,6 +142,14 @@ class File extends Base\File implements SystemComponent
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getAssets()
+    {
+        return $this->assets;
+    }
+
+    /**
      * @param Vulnerability $vulnerability
      * @return $this
      */
@@ -168,6 +176,14 @@ class File extends Base\File implements SystemComponent
         $this->vulnerabilities->removeElement($vulnerability);
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
     }
 
     /**
@@ -200,6 +216,14 @@ class File extends Base\File implements SystemComponent
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getOpenPorts()
+    {
+        return $this->openPorts;
+    }
+
+    /**
      * @param SoftwareInformation $softwareInformation
      * @return $this
      */
@@ -229,6 +253,14 @@ class File extends Base\File implements SystemComponent
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getSoftwareInformation()
+    {
+        return $this->softwareInformation;
+    }
+
+    /**
      * @param Audit $audit
      * @return $this
      */
@@ -255,5 +287,13 @@ class File extends Base\File implements SystemComponent
         $this->audits->removeElement($audit);
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAudits()
+    {
+        return $this->audits;
     }
 }

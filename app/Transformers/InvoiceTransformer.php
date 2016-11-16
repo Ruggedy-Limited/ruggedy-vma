@@ -22,8 +22,8 @@ class InvoiceTransformer extends TransformerAbstract
             'providerId'   => $invoice->getProviderId(),
             'total'        => $invoice->getTotal(),
             'taxAmount'    => $invoice->getTax(),
-            'createdDate'  => $invoice->getCreatedAt(),
-            'modifiedDate' => $invoice->getUpdatedAt(),
+            'createdDate'  => $invoice->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $invoice->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

@@ -105,11 +105,12 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      */
     protected function transformResult($result, TransformerAbstract $transformer): string
     {
+        $includes = $this->request->get('include', []);
         if ($result instanceof AbstractEntity || $result instanceof Model) {
-            return fractal()->item($result, $transformer)->toJson();
+            return fractal()->parseIncludes($includes)->item($result, $transformer)->toJson();
         }
 
-        return fractal()->collection($result, $transformer)->toJson();
+        return fractal()->parseIncludes($includes)->collection($result, $transformer)->toJson();
     }
 
     /**

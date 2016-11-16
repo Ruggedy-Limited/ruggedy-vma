@@ -29,8 +29,8 @@ class TeamTransformer extends TransformerAbstract
             'invoices'          => $team->getInvoices(),
             'teamSubscriptions' => $team->getTeamSubscriptions(),
             'permissions'       => $team->getComponentPermissions(),
-            'createdDate'       => $team->getCreatedAt(),
-            'modifiedDate'      => $team->getUpdatedAt(),
+            'createdDate'       => $team->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate'      => $team->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

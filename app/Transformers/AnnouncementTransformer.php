@@ -21,8 +21,8 @@ class AnnouncementTransformer extends TransformerAbstract
             'content'      => $announcement->getBody(),
             'action'       => $announcement->getActionText(),
             'actionUrl'    => $announcement->getActionUrl(),
-            'createdDate'  => $announcement->getCreatedAt(),
-            'modifiedDate' => $announcement->getUpdatedAt(),
+            'createdDate'  => $announcement->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $announcement->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

@@ -8,6 +8,15 @@ use League\Fractal\TransformerAbstract;
 class OpenPortTransformer extends TransformerAbstract
 {
     /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'asset',
+    ];
+
+    /**
      * Transform a OpenPort entity for the API
      *
      * @param OpenPort $openPort
@@ -25,9 +34,19 @@ class OpenPortTransformer extends TransformerAbstract
             'serviceFingerprint'      => $openPort->getServiceFingerPrint(),
             'serviceBanner'           => $openPort->getServiceBanner(),
             'serviceMessage'          => $openPort->getServiceMessage(),
-            'asset'                   => $openPort->getAsset(),
-            'createdDate'             => $openPort->getCreatedAt(),
-            'modifiedDate'            => $openPort->getUpdatedAt(),
+            'createdDate'             => $openPort->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate'            => $openPort->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
+    }
+
+    /**
+     * Optional include for the related Asset
+     *
+     * @param OpenPort $openPort
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeAsset(OpenPort $openPort)
+    {
+        return $this->item($openPort->getAsset(), new AssetTransformer());
     }
 }

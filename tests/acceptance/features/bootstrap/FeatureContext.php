@@ -4,27 +4,18 @@ namespace Tests\Acceptance\Features\Bootstrap;
 
 use App\Exceptions\FeatureBackgroundSetupFailedException;
 use App\Exceptions\InvalidConfigurationException;
-use App\Project;
-use App\Team;
-use App\User;
-use App\Workspace;
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
-use Doctrine\ORM\EntityManager;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
+class FeatureContext extends MinkContext implements Context
 {
     /** @var  string */
     protected $apiKey;
@@ -39,7 +30,10 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'assets',
         'files',
         'scanner_apps',
+        'software_information',
+        'asset_software_information',
         'vulnerabilities',
+        'assets_vulnerabilities',
         'vulnerability_reference_codes',
         'open_ports'
     ];
@@ -134,6 +128,14 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             $row = $this->sanitiseRowHelper($row);
             $id = $row['id'];
             unset($row['id']);
+
+            // If this is a join row with only an ID and no additional columns
+            if (empty($row)) {
+                $attachments[$id] = [];
+                continue;
+            }
+
+            // A join row with additional columns
             $attachments[$id] = $row;
         }
 
@@ -141,12 +143,12 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         try {
             $oneModel->$manyMethod()->attach($attachments);
             // Re-enable foreign key checks
-            Schema::enableForeignKeyConstraints();
         } catch (QueryException $e) {
             // Just catch the exception in the case of integrity constraint violations
             // Re-enable foreign key checks
-            Schema::enableForeignKeyConstraints();
         }
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -228,6 +230,10 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
             throw new InvalidConfigurationException("Please add APP_MODEL_NAMESPACE to your .env file");
         }
 
+        if (!empty($objectType) && substr($objectType, strlen($objectType) - 3, 3) === "ies") {
+            $objectType = substr($objectType, 0, strlen($objectType) - 3) . "y";
+        }
+
         if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
             $objectType = substr($objectType, 0, strlen($objectType) - 1);
         }
@@ -246,18 +252,25 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      *
      * @param string $objectType
      * @return string
+     * @throws FeatureBackgroundSetupFailedException
      */
     protected function getEloquentManyRelationsMethodHelper(string $objectType): string
     {
-        if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
-            return strtolower($objectType);
+        if (empty($objectType)) {
+            throw new FeatureBackgroundSetupFailedException("Invalid model relation");
         }
 
-        return strtolower($objectType) . "s";
+        if (substr($objectType, strlen($objectType) - 1, 1) === "s" || $objectType == "SoftwareInformation") {
+            return lcfirst($objectType);
+        }
+
+        return lcfirst($objectType) . "s";
     }
 
     /**
      * @Given a valid API key :apiKey
+     *
+     * @param $apiKey
      */
     public function aValidApiKey($apiKey)
     {

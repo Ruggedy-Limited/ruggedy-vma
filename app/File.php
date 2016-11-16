@@ -12,5 +12,5 @@ class File extends Model
      *
      * @var string
      */
-    protected $table = 'file';
+    protected $table = 'files';
 }

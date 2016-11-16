@@ -11,10 +11,12 @@ use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
+use App\Commands\GetListOfAppsInWorkspace;
 use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersWorkspaces;
 use App\Commands\GetUserInformation;
+use App\Commands\GetWorkspace;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
 use App\Exceptions\ActionNotPermittedException;
@@ -56,8 +58,9 @@ class MessagingModel
     const ERROR_DELETE_WORKSPACE_PERMISSION = "error_delete_workspace_permission";
     const WARNING_DELETING_WORKSPACE        = "warning_deleting_workspace";
     const ERROR_COULD_NOT_DELETE_WORKSPACE  = "error_could_not_delete_workspace";
-    const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_workspace_permission";
+    const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_edit_workspace_permission";
     const ERROR_LIST_WORKSPACES_PERMISSION  = "error_list_workspaces_permission";
+    const ERROR_VIEW_WORKSPACE_PERMISSION   = "error_view_workspace_permission";
     
     /** API Asset Management */
     const ERROR_COULD_NOT_CREATE_ASSET  = "error_could_not_create_asset";
@@ -97,6 +100,8 @@ class MessagingModel
             DeleteWorkspace::class          => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class            => static::ERROR_EDIT_WORKSPACE_PERMISSION,
             GetListOfUsersWorkspaces::class => static::ERROR_LIST_WORKSPACES_PERMISSION,
+            GetListOfAppsInWorkspace::class => static::ERROR_VIEW_WORKSPACE_PERMISSION,
+            GetWorkspace::class             => static::ERROR_VIEW_WORKSPACE_PERMISSION,
             EditAsset::class                => static::ERROR_EDIT_ASSET_PERMISSION,
             DeleteAsset::class              => static::ERROR_DELETE_ASSET_PERMISSION,
             GetAssetsMasterList::class      => static::ERROR_LIST_ASSETS_PERMISSION,

@@ -7,6 +7,7 @@ use App\Commands\CreateWorkspace;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditWorkspace;
 use App\Commands\GetListOfUsersWorkspaces;
+use App\Commands\GetWorkspace;
 use App\Entities\Workspace;
 use App\Services\EntityFactoryService;
 use App\Transformers\WorkspaceTransformer;
@@ -74,6 +75,20 @@ class WorkspaceController extends AbstractController
     public function getWorkspacesForUser($userId)
     {
         $command  = new GetListOfUsersWorkspaces(intval($userId));
+        return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
+    }
+
+    /**
+     * Get a single Workspace and various related data by using optional Fractal Transformer includes
+     *
+     * @GET("/workspace/{workspaceId}", as="workspace.vulnerabilities.list", where={"workspaceId":"[0-9]+"})
+     *
+     * @param $workspaceId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function getWorkspace($workspaceId)
+    {
+        $command = new GetWorkspace(intval($workspaceId));
         return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 
