@@ -31,6 +31,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         'assets',
         'files',
         'scanner_apps',
+        'software_information',
+        'asset_software_information',
         'vulnerabilities',
         'assets_vulnerabilities',
         'vulnerability_reference_codes',
@@ -248,14 +250,19 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      *
      * @param string $objectType
      * @return string
+     * @throws FeatureBackgroundSetupFailedException
      */
     protected function getEloquentManyRelationsMethodHelper(string $objectType): string
     {
-        if (!empty($objectType) && substr($objectType, strlen($objectType) - 1, 1) === "s") {
-            return strtolower($objectType);
+        if (empty($objectType)) {
+            throw new FeatureBackgroundSetupFailedException("Invalid model relation");
         }
 
-        return strtolower($objectType) . "s";
+        if (substr($objectType, strlen($objectType) - 1, 1) === "s" || $objectType == "SoftwareInformation") {
+            return lcfirst($objectType);
+        }
+
+        return lcfirst($objectType) . "s";
     }
 
     /**
