@@ -15,12 +15,22 @@ class Asset extends Model
     protected $table = 'assets';
 
     /**
-     * Many-to-many relationship
+     * Many-to-many relationship for Vulnerabilities
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function vulnerabilities()
     {
         return $this->belongsToMany(Vulnerability::class, 'assets_vulnerabilities')->withPivot('created_at');
+    }
+
+    /**
+     * Many-to-many relationship for Software Information
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function softwareInformation()
+    {
+        return $this->belongsToMany(SoftwareInformation::class, 'asset_software_information')->withPivot('created_at');
     }
 }
