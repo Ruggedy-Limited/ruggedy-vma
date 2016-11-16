@@ -6,12 +6,10 @@ use App;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditWorkspace;
-use App\Commands\GetListOfAppsInWorkspace;
 use App\Commands\GetListOfUsersWorkspaces;
 use App\Commands\GetWorkspace;
 use App\Entities\Workspace;
 use App\Services\EntityFactoryService;
-use App\Transformers\ScannerAppTransformer;
 use App\Transformers\WorkspaceTransformer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
@@ -78,20 +76,6 @@ class WorkspaceController extends AbstractController
     {
         $command  = new GetListOfUsersWorkspaces(intval($userId));
         return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
-    }
-
-    /**
-     * Get a list of Apps used in a particular Workspace
-     *
-     * @GET("/workspace/apps/{workspaceId}", as="workspace.apps.list", where={"workspaceId":"[0-9]+"})
-     *
-     * @param $workspaceId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory
-     */
-    public function getAppsUsedInWorkspace($workspaceId)
-    {
-        $command = new GetListOfAppsInWorkspace(intval($workspaceId));
-        return $this->sendCommandToBusHelper($command, new ScannerAppTransformer());
     }
 
     /**
