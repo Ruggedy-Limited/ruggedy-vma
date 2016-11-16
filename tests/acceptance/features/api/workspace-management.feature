@@ -65,6 +65,24 @@ Feature: As an account or team owner
       | 361 | OptionsMethodEnabled    | OptionsMethodEnabled                                                                                | 3.90     | NULL         | NULL              | NULL                | NULL   | NULL       | 2016-11-14 15:00:00 | 2016-11-14 15:00:17 |
       | 430 | 81263                   | MS15-010: Vulnerabilities in Windows Kernel-Mode Driver Could Allow Remote Code Execution (3036220) | 3.00     | NULL         | NULL              | NULL                | NULL   | 7.20       | 2016-11-14 15:00:04 | 2016-11-14 15:00:17 |
       | 147 | ubuntu-usn-2348-1       | USN-2348-1: APT vulnerabilities                                                                     | 8.00     | 5.00         | NULL              | NULL                | NULL   | 7.50       | 2016-11-14 14:59:55 | 2016-11-14 15:00:17 |
+    And the following existing SoftwareInformation:
+      | id  | name                                | version              | vendor             | created_at          | updated_at          |
+      | 1   | accountsservice                     | 0.6.35-0ubuntu7      | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 2   | acpid                               | 1:2.0.21-1ubuntu2    | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 3   | adduser                             | 3.113+nmu3ubuntu3    | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 4   | apache2                             | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 5   | apache2-bin                         | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 6   | apache2-data                        | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 7   | apparmor                            | 2.8.95~2430-0ubuntu5 | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 8   | apport                              | 2.14.1-0ubuntu3      | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 495 | WinPcap 4.1.3                       | 4.1.0.2980           | CACE Technologies  | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 496 | .NET Framework 4.5.1                | 4.5.1                | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 497 | .NET Framework 4.5.1 Client Profile | 4.5.1                | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 498 | Internet Explorer                   | 11.0.9600.17031      | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 499 | MSXML                               | 6.30.9600.16384      | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 500 | MSXML                               | 8.110.9600.16483     | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 501 | Oracle VM VirtualBox                | 4.2.36               | Oracle Corporation | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 502 | VMware Tools                        | 9.4.10.2092844       | VMware, Inc.       | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
     And the following Vulnerabilities in Asset 1:
       | id  | created_at          |
       | 103 | 2016-11-14 14:59:55 |
@@ -85,6 +103,26 @@ Feature: As an account or team owner
     And the following Vulnerabilities in Asset 8:
       | id  | created_at          |
       | 147 | 2016-11-14 14:59:55 |
+    And the following SoftwareInformation in Asset 1:
+      | id  | created_at          |
+      | 1   | 2016-11-14 14:59:55 |
+      | 2   | 2016-11-14 14:59:55 |
+      | 3   | 2016-11-14 14:59:55 |
+      | 4   | 2016-11-14 14:59:55 |
+      | 5   | 2016-11-14 14:59:55 |
+      | 6   | 2016-11-14 14:59:55 |
+      | 7   | 2016-11-14 14:59:55 |
+      | 8   | 2016-11-14 14:59:55 |
+    And the following SoftwareInformation in Asset 7:
+      | id  | created_at          |
+      | 495 | 2016-11-14 14:59:55 |
+      | 496 | 2016-11-14 14:59:55 |
+      | 497 | 2016-11-14 14:59:55 |
+      | 498 | 2016-11-14 14:59:55 |
+      | 499 | 2016-11-14 14:59:55 |
+      | 500 | 2016-11-14 14:59:55 |
+      | 501 | 2016-11-14 14:59:55 |
+      | 502 | 2016-11-14 14:59:55 |
     And the following existing Components:
       | id | name            | class_name | created_at          | updated_at          |
       | 1  | User Account    | User       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
@@ -488,7 +526,7 @@ Feature: As an account or team owner
 
   Scenario: Attempt to get a list of Vulnerabilities found in someone else's Workspace where I don't have read access
     Given that I want to get information about "Apps"
-    When I request "/api/workspace/apps/3"
+    When I request "/api/workspace/3"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
@@ -500,7 +538,109 @@ Feature: As an account or team owner
 
   Scenario: Attempt to get a list of Vulnerabilities found in a non-existent Workspace
     Given that I want to get information about "Apps"
-    When I request "/api/workspace/apps/99"
+    When I request "/api/workspace/99"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that Workspace does not exist."
+
+  ##
+  # Listing all the Software Information that have been found on all Assets in a Workspace
+  ##
+  Scenario: Get a list of Software Information found on all Assets in one of my own Workspaces
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "assets.softwareInformation"
+    And I request "/api/workspace/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "John's Workspace"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "assets" property
+    And the type of the "assets" property is array
+    And the "assets" array property has the following items:
+      | id | name                      | cpe                                                                 | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | os        | osVersion  | createdDate         | modifiedDate        |
+      | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | Ubuntu    | 9.10       | 2016-06-20 09:00:00 | 2016-06-20 09:00:00 |
+      | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | Microsoft | 5.2.3790   | 2016-06-20 09:02:23 | 2016-06-20 09:02:23 |
+      | 3  | 192.168.0.24              | NULL                                                                | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL      | NULL       | 2016-06-20 09:05:31 | 2016-06-20 09:05:31 |
+      | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | nginx     | NULL       | 2016-06-20 09:05:38 | 2016-06-20 09:05:38 |
+      | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | Ubuntu    | 12.10      | 2016-06-20 09:06:00 | 2016-06-20 09:06:00 |
+      | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | Microsoft | 6.0.6001   | 2016-06-20 09:07:23 | 2016-06-20 09:07:23 |
+    And the "assets.0.softwareInformation" array property has the following items:
+      | id  | name                                | version              | vendor             | createdDate         | modifiedDate        |
+      | 1   | accountsservice                     | 0.6.35-0ubuntu7      | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 2   | acpid                               | 1:2.0.21-1ubuntu2    | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 3   | adduser                             | 3.113+nmu3ubuntu3    | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 4   | apache2                             | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 5   | apache2-bin                         | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 6   | apache2-data                        | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 7   | apparmor                            | 2.8.95~2430-0ubuntu5 | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 8   | apport                              | 2.14.1-0ubuntu3      | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Vulnerabilities found in someone else's Workspace where I have at least read access
+    Given that I want to get information about "Vulnerabilities"
+    When I use a URL parameter "include" with value "assets.softwareInformation"
+    And I request "/api/workspace/2"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "Someone's Workspace"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "assets" property
+    And the type of the "assets" property is array
+    And the "assets" array property has the following items:
+      | id | name         | cpe  | ipAddress     | ipAddressV6 | hostname | macAddress | os   | osVersion | createdDate         | modifiedDate        |
+      | 7  | 192.168.1.24 | NULL | 192.168.1.24  | NULL        | NULL     | NULL       | NULL | NULL      | 2016-06-20 09:08:31 | 2016-06-20 09:08:31 |
+    And the "assets.0.softwareInformation" array property has the following items:
+      | id  | name                                | version          | vendor             | createdDate         | modifiedDate        |
+      | 495 | WinPcap 4.1.3                       | 4.1.0.2980       | CACE Technologies  | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 496 | .NET Framework 4.5.1                | 4.5.1            | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 497 | .NET Framework 4.5.1 Client Profile | 4.5.1            | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 498 | Internet Explorer                   | 11.0.9600.17031  | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 499 | MSXML                               | 6.30.9600.16384  | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 500 | MSXML                               | 8.110.9600.16483 | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 501 | Oracle VM VirtualBox                | 4.2.36           | Oracle Corporation | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 502 | VMware Tools                        | 9.4.10.2092844   | VMware, Inc.       | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+
+  Scenario: Attempt to get a list of Vulnerabilities found in someone else's Workspace where I don't have read access
+    Given that I want to get information about "Apps"
+    When I request "/api/workspace/3"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that Workspace or anything in it."
+
+  Scenario: Attempt to get a list of Vulnerabilities found in a non-existent Workspace
+    Given that I want to get information about "Apps"
+    When I request "/api/workspace/99"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response has a "error" property
