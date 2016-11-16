@@ -79,7 +79,7 @@ class WorkspaceController extends AbstractController
     }
 
     /**
-     * Get a list of Vulnerabilities found in a particular Workspace
+     * Get a single Workspace and various related data by using optional Fractal Transformer includes
      *
      * @GET("/workspace/{workspaceId}", as="workspace.vulnerabilities.list", where={"workspaceId":"[0-9]+"})
      *
