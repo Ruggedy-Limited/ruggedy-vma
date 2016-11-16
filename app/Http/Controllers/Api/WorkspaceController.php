@@ -8,6 +8,7 @@ use App\Commands\DeleteWorkspace;
 use App\Commands\EditWorkspace;
 use App\Commands\GetListOfAppsInWorkspace;
 use App\Commands\GetListOfUsersWorkspaces;
+use App\Commands\GetWorkspace;
 use App\Entities\Workspace;
 use App\Services\EntityFactoryService;
 use App\Transformers\ScannerAppTransformer;
@@ -91,6 +92,20 @@ class WorkspaceController extends AbstractController
     {
         $command = new GetListOfAppsInWorkspace(intval($workspaceId));
         return $this->sendCommandToBusHelper($command, new ScannerAppTransformer());
+    }
+
+    /**
+     * Get a list of Vulnerabilities found in a particular Workspace
+     *
+     * @GET("/workspace/{workspaceId}", as="workspace.vulnerabilities.list", where={"workspaceId":"[0-9]+"})
+     *
+     * @param $workspaceId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function getWorkspace($workspaceId)
+    {
+        $command = new GetWorkspace(intval($workspaceId));
+        return $this->sendCommandToBusHelper($command, new WorkspaceTransformer());
     }
 
     /**
