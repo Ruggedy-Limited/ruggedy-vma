@@ -216,7 +216,7 @@ class File extends Base\File implements SystemComponent
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
     public function getOpenPorts()
     {
@@ -253,7 +253,7 @@ class File extends Base\File implements SystemComponent
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
     public function getSoftwareInformation()
     {
@@ -290,7 +290,7 @@ class File extends Base\File implements SystemComponent
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
     public function getAudits()
     {
