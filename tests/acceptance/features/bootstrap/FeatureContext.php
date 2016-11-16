@@ -5,7 +5,6 @@ namespace Tests\Acceptance\Features\Bootstrap;
 use App\Exceptions\FeatureBackgroundSetupFailedException;
 use App\Exceptions\InvalidConfigurationException;
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends MinkContext implements Context, SnippetAcceptingContext
+class FeatureContext extends MinkContext implements Context
 {
     /** @var  string */
     protected $apiKey;
@@ -126,14 +125,17 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
         Schema::disableForeignKeyConstraints();
 
         foreach ($table as $row) {
-            if (count($row) === 1) {
-                $attachments[] = $row['id'];
-                continue;
-            }
-
             $row = $this->sanitiseRowHelper($row);
             $id = $row['id'];
             unset($row['id']);
+
+            // If this is a join row with only an ID and no additional columns
+            if (empty($row)) {
+                $attachments[$id] = [];
+                continue;
+            }
+
+            // A join row with additional columns
             $attachments[$id] = $row;
         }
 
@@ -267,6 +269,8 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
     /**
      * @Given a valid API key :apiKey
+     *
+     * @param $apiKey
      */
     public function aValidApiKey($apiKey)
     {

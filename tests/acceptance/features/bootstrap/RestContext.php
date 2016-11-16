@@ -268,6 +268,9 @@ class RestContext extends FeatureContext implements Context
 
     /**
      * @Then /^the "([^"]*)" array property has a "([^"]*)" value$/
+     *
+     * @param $index
+     * @param $value
      */
     public function theArrayPropertyHasTheFollowing($index, $value)
     {
@@ -290,6 +293,7 @@ class RestContext extends FeatureContext implements Context
     /**
      * @Then /^the "([^"]+)" array property has the following items:$/
      *
+     * @param string $propertyName
      * @param TableNode $table
      */
     public function theArrayPropertyHasTheFollowingItems(string $propertyName, TableNode $table)
@@ -391,6 +395,7 @@ class RestContext extends FeatureContext implements Context
      * Assert that a value is an array
      *
      * @param $value
+     * @param $typeString
      */
     protected function theTypeIsHelper($value, $typeString)
     {
@@ -486,7 +491,6 @@ class RestContext extends FeatureContext implements Context
         // There is dot syntax in the property name. Check that the property exists, then return the parent level of the
         // object and the last part of the dot syntax string as the property name to check
         $properties         = explode(".", $propertyName);
-        $propertyNameResult = end($properties);
         reset($properties);
 
         foreach ($properties as $property) {
@@ -516,6 +520,8 @@ class RestContext extends FeatureContext implements Context
 
     /**
      * Assert that an element in the response contains an item
+     *
+     * @param $index
      * @param array $row
      * @param array $response
      */
