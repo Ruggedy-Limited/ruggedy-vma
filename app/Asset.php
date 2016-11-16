@@ -33,4 +33,14 @@ class Asset extends Model
     {
         return $this->belongsToMany(SoftwareInformation::class, 'asset_software_information')->withPivot('created_at');
     }
+
+    /**
+     * One-to-many relationship for Open Ports
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function openPorts()
+    {
+        return $this->hasMany(OpenPort::class);
+    }
 }
