@@ -16,6 +16,7 @@ use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersWorkspaces;
 use App\Commands\GetUserInformation;
+use App\Commands\GetWorkspace;
 use App\Commands\RevokePermission;
 use App\Commands\UpsertPermission;
 use App\Exceptions\ActionNotPermittedException;
@@ -51,15 +52,15 @@ class MessagingModel
     const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
 
     /** API Workspace Management */
-    const ERROR_COULD_NOT_CREATE_WORKSPACE     = "error_could_not_create_workspace";
-    const ERROR_WORKSPACE_CREATE_PERMISSION    = "error_workspace_create_permission";
-    const ERROR_WORKSPACE_DOES_NOT_EXIST       = "error_workspace_does_not_exist";
-    const ERROR_DELETE_WORKSPACE_PERMISSION    = "error_delete_workspace_permission";
-    const WARNING_DELETING_WORKSPACE           = "warning_deleting_workspace";
-    const ERROR_COULD_NOT_DELETE_WORKSPACE     = "error_could_not_delete_workspace";
-    const ERROR_EDIT_WORKSPACE_PERMISSION      = "error_workspace_permission";
-    const ERROR_LIST_WORKSPACES_PERMISSION     = "error_list_workspaces_permission";
-    const ERROR_LIST_WORKSPACE_APPS_PERMISSION = "error_list_workspace_apps_permission";
+    const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
+    const ERROR_WORKSPACE_CREATE_PERMISSION = "error_workspace_create_permission";
+    const ERROR_WORKSPACE_DOES_NOT_EXIST    = "error_workspace_does_not_exist";
+    const ERROR_DELETE_WORKSPACE_PERMISSION = "error_delete_workspace_permission";
+    const WARNING_DELETING_WORKSPACE        = "warning_deleting_workspace";
+    const ERROR_COULD_NOT_DELETE_WORKSPACE  = "error_could_not_delete_workspace";
+    const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_edit_workspace_permission";
+    const ERROR_LIST_WORKSPACES_PERMISSION  = "error_list_workspaces_permission";
+    const ERROR_VIEW_WORKSPACE_PERMISSION   = "error_view_workspace_permission";
     
     /** API Asset Management */
     const ERROR_COULD_NOT_CREATE_ASSET  = "error_could_not_create_asset";
@@ -99,7 +100,8 @@ class MessagingModel
             DeleteWorkspace::class          => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class            => static::ERROR_EDIT_WORKSPACE_PERMISSION,
             GetListOfUsersWorkspaces::class => static::ERROR_LIST_WORKSPACES_PERMISSION,
-            GetListOfAppsInWorkspace::class => static::ERROR_LIST_WORKSPACE_APPS_PERMISSION,
+            GetListOfAppsInWorkspace::class => static::ERROR_VIEW_WORKSPACE_PERMISSION,
+            GetWorkspace::class             => static::ERROR_VIEW_WORKSPACE_PERMISSION,
             EditAsset::class                => static::ERROR_EDIT_ASSET_PERMISSION,
             DeleteAsset::class              => static::ERROR_DELETE_ASSET_PERMISSION,
             GetAssetsMasterList::class      => static::ERROR_LIST_ASSETS_PERMISSION,
