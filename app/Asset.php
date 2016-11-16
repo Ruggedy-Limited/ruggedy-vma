@@ -13,4 +13,14 @@ class Asset extends Model
      * @var string
      */
     protected $table = 'assets';
+
+    /**
+     * Many-to-many relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function vulnerabilities()
+    {
+        return $this->belongsToMany(Vulnerability::class, 'assets_vulnerabilities')->withPivot('created_at');
+    }
 }
