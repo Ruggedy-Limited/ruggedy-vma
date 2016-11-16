@@ -422,11 +422,26 @@ Feature: As an account or team owner
   ##
   Scenario: Get a list of Apps used in one of my Workspaces
     Given that I want to get information about "Apps"
-    When I request "/api/workspace/apps/1"
+    When I use a URL parameter "include" with value "apps"
+    And I request "/api/workspace/1"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the array response has the following items:
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "John's Workspace"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "apps" property
+    And the type of the "apps" property is array
+    And the "apps" array property has the following items:
       | id | name       | description                      |
       | 1  | nmap       | NMAP Port Scanner Utility        |
       | 2  | burp       | Burp Vulnerability Scanner       |
@@ -436,11 +451,26 @@ Feature: As an account or team owner
 
   Scenario: Get a list of Apps in someone else's Workspace where I have at least read access
     Given that I want to get information about "Apps"
-    When I request "/api/workspace/apps/2"
+    When I use a URL parameter "include" with value "apps"
+    And I request "/api/workspace/2"
     Then the HTTP response code should be 200
     And the response is JSON
     And the response does not have a "error" property
-    And the array response has the following items:
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "Someone's Workspace"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "apps" property
+    And the type of the "apps" property is array
+    And the "apps" array property has the following items:
       | id | name       | description                      |
       | 5  | nessus     | Nessus Vulnerability Scanner     |
 

@@ -3,6 +3,7 @@
 namespace App\Transformers;
 
 use App\Entities\Asset;
+use App\Entities\File;
 use App\Entities\Vulnerability;
 use App\Entities\Workspace;
 use League\Fractal\Manager;
@@ -16,6 +17,7 @@ class WorkspaceTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'apps',
         'assets',
         'files',
     ];
@@ -36,6 +38,24 @@ class WorkspaceTransformer extends TransformerAbstract
             'createdDate'  => $workspace->getCreatedAt()->format(env('APP_DATE_FORMAT')),
             'modifiedDate' => $workspace->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
+    }
+
+    /**
+     * Optional include for a unique collection of Apps
+     *
+     * @param Workspace $workspace
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeApps(Workspace $workspace)
+    {
+        $apps = collect(
+            $workspace->getFiles()->map(function ($file) {
+                /** @var File $file */
+                return $file->getScannerApp();
+            })->toArray()
+        )->unique();
+
+        return $this->collection($apps, new ScannerAppTransformer());
     }
 
     /**
