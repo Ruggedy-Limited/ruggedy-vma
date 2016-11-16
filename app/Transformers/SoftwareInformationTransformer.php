@@ -20,8 +20,8 @@ class SoftwareInformationTransformer extends TransformerAbstract
             'name'         => $softwareInformation->getName(),
             'version'      => $softwareInformation->getVersion(),
             'vendor'       => $softwareInformation->getVendor(),
-            'createdDate'  => $softwareInformation->getCreatedAt(),
-            'modifiedDate' => $softwareInformation->getUpdatedAt(),
+            'createdDate'  => $softwareInformation->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $softwareInformation->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

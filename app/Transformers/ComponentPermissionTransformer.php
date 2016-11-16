@@ -36,8 +36,8 @@ class ComponentPermissionTransformer extends TransformerAbstract
             'grantedByUserId' => $componentPermission->getUserRelatedByGrantedBy()->getId(),
             'isGrantedToTeam' => !empty($componentPermission->getTeamId()),
             'teamId'          =>  $teamId,
-            'createdDate'     => $componentPermission->getCreatedAt(),
-            'modifiedDate'    => $componentPermission->getUpdatedAt(),
+            'createdDate'     => $componentPermission->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate'    => $componentPermission->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

@@ -24,8 +24,8 @@ class NotificationTransformer extends TransformerAbstract
             'action'       => $notification->getActionText(),
             'actionUrl'    => $notification->getActionUrl(),
             'isRead'       => !empty($notification->getRead()),
-            'createdDate'  => $notification->getCreatedAt(),
-            'modifiedDate' => $notification->getUpdatedAt(),
+            'createdDate'  => $notification->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate' => $notification->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }

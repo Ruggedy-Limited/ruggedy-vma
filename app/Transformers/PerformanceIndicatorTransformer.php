@@ -21,8 +21,8 @@ class PerformanceIndicatorTransformer extends TransformerAbstract
             'yearlyRecurringRevenue'  => $performanceIndicator->getYearlyRecurringRevenue(),
             'dailyVolume'             => $performanceIndicator->getDailyVolume(),
             'newUsers'                => $performanceIndicator->getNewUsers(),
-            'createdDate'             => $performanceIndicator->getCreatedAt(),
-            'modifiedDate'            => $performanceIndicator->getUpdatedAt(),
+            'createdDate'             => $performanceIndicator->getCreatedAt()->format(env('APP_DATE_FORMAT')),
+            'modifiedDate'            => $performanceIndicator->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
     }
 }
