@@ -15,6 +15,16 @@ class Asset extends Model
     protected $table = 'assets';
 
     /**
+     * Many-to-many relationship for Audits
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function audits()
+    {
+        return $this->belongsToMany(Audit::class, 'assets_audits')->withPivot('created_at');
+    }
+
+    /**
      * Many-to-many relationship for Vulnerabilities
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

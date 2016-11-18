@@ -13,9 +13,10 @@ class AssetTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'audits',
+        'files',
         'openPorts',
         'softwareInformation',
-        'files',
         'vulnerabilities',
     ];
 
@@ -44,6 +45,17 @@ class AssetTransformer extends TransformerAbstract
             'createdDate'  => $asset->getCreatedAt()->format(env('APP_DATE_FORMAT')),
             'modifiedDate' => $asset->getUpdatedAt()->format(env('APP_DATE_FORMAT')),
         ];
+    }
+
+    /**
+     * Optional include for Audits
+     *
+     * @param Asset $asset
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeAudits(Asset $asset)
+    {
+        return $this->collection($asset->getAudits(), new AuditTransformer());
     }
 
     /**
