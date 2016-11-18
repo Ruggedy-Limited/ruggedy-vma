@@ -114,6 +114,18 @@ Feature: As an account or team owner
       | 85  | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.9 Collect Session Initiation Information - /var/log/btmp                                           | 398ce03b689740c2b46f320f35cb6897 | The file "/etc/audit/audit.rules" could not be found                                                                                                          | NULL                                                                                                                                   | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
       | 111 | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.1.2 Disable System on Audit Log Full - action_mail_acct                                            | 82e7bbe257caad125e0967e066b05314 | The file "/etc/audit/auditd.conf" could not be found                                                                                                          | NULL                                                                                                                                   | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
       | 72  | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.17 Collect Kernel Module Loading and Unloading - /sbin/rmmod                                       | 4df1c4a3e69cbfb4dbcfd339a1d6671e | The file "/etc/audit/audit.rules" could not be found                                                                                                          | NULL                                                                                                                                   | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+    And the following existing Exploits:
+      | id  | title                                                                                                       | url_reference                                                              | skill_level  | created_at          | updated_at          |
+      | 14  | Dhclient Bash Environment Variable Injection (Shellshock)                                                   | http://www.metasploit.com/modules/exploit/unix/dhcp/bash_environment       | Novice       | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 15  | DHCP Client Bash Environment Variable Code Injection (Shellshock)                                           | http://www.metasploit.com/modules/auxiliary/server/dhclient_bash_env       | Intermediate | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 30  | Linux Kernel 3.14-rc1 <= 3.15-rc4 - Raw Mode PTY Local Echo Race Condition Local Privilege Escalation (x64) | http://www.exploit-db.com/exploits/33516                                   | Expert       | 2016-11-14 14:59:55 | 2016-11-14 15:00:17 |
+      | 47  | Microsoft Internet Explorer 9/10 - CFormElement Use-After-Free and Memory Corruption PoC (MS14-035)         | http://www.exploit-db.com/exploits/34010                                   | Expert       | 2016-11-14 14:59:56 | 2016-11-14 15:00:17 |
+      | 82  | MS15-004 Microsoft Remote Desktop Services Web Proxy IE Sandbox Escape                                      | http://www.metasploit.com/modules/exploit/windows/local/ms15_004_tswbproxy | Intermediate | 2016-11-14 14:59:56 | 2016-11-14 15:00:17 |
+      | 99  | Microsoft Windows - Local Privilege Escalation (MS15-051)                                                   | http://www.exploit-db.com/exploits/37049                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 101 | Windows Kernel - win32k!vSolidFillRect Buffer Overflow (MS15-061)                                           | http://www.exploit-db.com/exploits/38270                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 132 | Windows 10 Build 10130 - User Mode Font Driver Thread Permissions Privilege Escalation                      | http://www.exploit-db.com/exploits/38198                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 152 | Windows Kernel win32k!OffsetChildren - Null Pointer Dereference                                             | http://www.exploit-db.com/exploits/39025                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 161 | Microsoft Windows 7-10 & Server 2008-2012 - Local Privilege Escalation (x32/x64) (MS16-032) (Powershell)    | http://www.exploit-db.com/exploits/39719                                   | Expert       | 2016-11-14 14:59:58 | 2016-11-14 15:00:17 |
     And the following Vulnerabilities in Asset 1:
       | id  | created_at          |
       | 103 | 2016-11-14 14:59:55 |
@@ -168,6 +180,24 @@ Feature: As an account or team owner
       | 85  | 2016-11-14 14:59:55 |
       | 111 | 2016-11-14 14:59:55 |
       | 72  | 2016-11-14 14:59:55 |
+    And the following Exploits in Vulnerability 103:
+      | id  | created_at          |
+      | 14  | 2016-11-14 14:59:55 |
+      | 15  | 2016-11-14 14:59:55 |
+      | 30  | 2016-11-14 14:59:55 |
+    And the following Exploits in Vulnerability 107:
+      | id  | created_at          |
+      | 47  | 2016-11-14 14:59:55 |
+      | 82  | 2016-11-14 14:59:55 |
+      | 99  | 2016-11-14 14:59:55 |
+    And the following Exploits in Vulnerability 361:
+      | id  | created_at          |
+      | 101 | 2016-11-14 14:59:55 |
+      | 132 | 2016-11-14 14:59:55 |
+      | 152 | 2016-11-14 14:59:55 |
+    And the following Exploits in Vulnerability 147:
+      | id  | created_at          |
+      | 161 | 2016-11-14 14:59:55 |
     And the following existing Components:
       | id | name            | class_name | created_at          | updated_at          |
       | 1  | User Account    | User       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
@@ -921,6 +951,103 @@ Feature: As an account or team owner
   Scenario: Attempt to get a list of Audits found in a non-existent Workspace
     Given that I want to get information about "Audits"
     When I use a URL parameter "include" with value "assets.audits"
+    And I request "/api/workspace/99"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that Workspace does not exist."
+
+  ##
+  # Listing all the Exploits that have been found on all Assets in a Workspace
+  ##
+  Scenario: Get a list of Exploits found on all Assets in one of my own Workspaces
+    Given that I want to get information about "Exploits"
+    When I use a URL parameter "include" with value "assets.exploits"
+    And I request "/api/workspace/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "John's Workspace"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "assets" property
+    And the type of the "assets" property is array
+    And the "assets" array property has the following items:
+      | id | name                      | cpe                                                                 | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | os        | osVersion  | createdDate         | modifiedDate        |
+      | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | Ubuntu    | 9.10       | 2016-06-20 09:00:00 | 2016-06-20 09:00:00 |
+      | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | Microsoft | 5.2.3790   | 2016-06-20 09:02:23 | 2016-06-20 09:02:23 |
+      | 3  | 192.168.0.24              | NULL                                                                | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL      | NULL       | 2016-06-20 09:05:31 | 2016-06-20 09:05:31 |
+      | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | nginx     | NULL       | 2016-06-20 09:05:38 | 2016-06-20 09:05:38 |
+      | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | Ubuntu    | 12.10      | 2016-06-20 09:06:00 | 2016-06-20 09:06:00 |
+      | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | Microsoft | 6.0.6001   | 2016-06-20 09:07:23 | 2016-06-20 09:07:23 |
+    And the "assets.0.exploits" array property has the following items:
+      | id  | title                                                                                                       | url                                                                        | skillLevel   | createdDate         | modifiedDate        |
+      | 14  | Dhclient Bash Environment Variable Injection (Shellshock)                                                   | http://www.metasploit.com/modules/exploit/unix/dhcp/bash_environment       | Novice       | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 15  | DHCP Client Bash Environment Variable Code Injection (Shellshock)                                           | http://www.metasploit.com/modules/auxiliary/server/dhclient_bash_env       | Intermediate | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 30  | Linux Kernel 3.14-rc1 <= 3.15-rc4 - Raw Mode PTY Local Echo Race Condition Local Privilege Escalation (x64) | http://www.exploit-db.com/exploits/33516                                   | Expert       | 2016-11-14 14:59:55 | 2016-11-14 15:00:17 |
+      | 47  | Microsoft Internet Explorer 9/10 - CFormElement Use-After-Free and Memory Corruption PoC (MS14-035)         | http://www.exploit-db.com/exploits/34010                                   | Expert       | 2016-11-14 14:59:56 | 2016-11-14 15:00:17 |
+      | 82  | MS15-004 Microsoft Remote Desktop Services Web Proxy IE Sandbox Escape                                      | http://www.metasploit.com/modules/exploit/windows/local/ms15_004_tswbproxy | Intermediate | 2016-11-14 14:59:56 | 2016-11-14 15:00:17 |
+      | 99  | Microsoft Windows - Local Privilege Escalation (MS15-051)                                                   | http://www.exploit-db.com/exploits/37049                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Exploits found in someone else's Workspace where I have at least read access
+    Given that I want to get information about "Exploits"
+    When I use a URL parameter "include" with value "assets.exploits"
+    And I request "/api/workspace/2"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "2"
+    And the response has a "name" property
+    And the type of the "name" property is string
+    And the "name" property equals "Someone's Workspace"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "assets" property
+    And the type of the "assets" property is array
+    And the "assets" array property has the following items:
+      | id | name         | cpe  | ipAddress     | ipAddressV6 | hostname | macAddress | os   | osVersion | createdDate         | modifiedDate        |
+      | 7  | 192.168.1.24 | NULL | 192.168.1.24  | NULL        | NULL     | NULL       | NULL | NULL      | 2016-06-20 09:08:31 | 2016-06-20 09:08:31 |
+    And the "assets.0.exploits" array property has the following items:
+      | id  | title                                                                                                       | url                                                                        | skillLevel   | createdDate         | modifiedDate        |
+      | 101 | Windows Kernel - win32k!vSolidFillRect Buffer Overflow (MS15-061)                                           | http://www.exploit-db.com/exploits/38270                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 132 | Windows 10 Build 10130 - User Mode Font Driver Thread Permissions Privilege Escalation                      | http://www.exploit-db.com/exploits/38198                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 152 | Windows Kernel win32k!OffsetChildren - Null Pointer Dereference                                             | http://www.exploit-db.com/exploits/39025                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+
+  Scenario: Attempt to get a list of Exploits found in someone else's Workspace where I don't have read access
+    Given that I want to get information about "Exploits"
+    When I use a URL parameter "include" with value "assets.exploits"
+    And I request "/api/workspace/3"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that Workspace or anything in it."
+
+  Scenario: Attempt to get a list of Exploits found in a non-existent Workspace
+    Given that I want to get information about "Exploits"
+    When I use a URL parameter "include" with value "assets.exploits"
     And I request "/api/workspace/99"
     Then the HTTP response code should be 200
     And the response is JSON

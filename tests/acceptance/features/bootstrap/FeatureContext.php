@@ -30,6 +30,8 @@ class FeatureContext extends MinkContext implements Context
         'assets',
         'audits',
         'assets_audits',
+        'exploits',
+        'vulnerabilities_exploits',
         'files',
         'scanner_apps',
         'software_information',

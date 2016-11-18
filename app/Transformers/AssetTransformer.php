@@ -3,6 +3,7 @@
 namespace App\Transformers;
 
 use App\Entities\Asset;
+use App\Entities\Vulnerability;
 use League\Fractal\TransformerAbstract;
 
 class AssetTransformer extends TransformerAbstract
@@ -14,6 +15,7 @@ class AssetTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'audits',
+        'exploits',
         'files',
         'openPorts',
         'softwareInformation',
@@ -56,6 +58,22 @@ class AssetTransformer extends TransformerAbstract
     public function includeAudits(Asset $asset)
     {
         return $this->collection($asset->getAudits(), new AuditTransformer());
+    }
+
+    /**
+     * Optional include for Exploits
+     *
+     * @param Asset $asset
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeExploits(Asset $asset)
+    {
+        $exploits = collect($asset->getVulnerabilities()->toArray())->flatMap(function ($vulnerability) {
+            /** @var Vulnerability $vulnerability */
+            return collect($vulnerability->getExploits()->toArray());
+        });
+
+        return $this->collection($exploits, new ExploitTransformer());
     }
 
     /**
