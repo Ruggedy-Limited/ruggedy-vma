@@ -416,6 +416,80 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
         $this->genericOutput = new Collection();
     }
 
+    protected function setValueOnEntity($attributeValue, string $setter, string $entityClass)
+    {
+        // Replace XML tags meant for HTML
+        if ($entityClass === Vulnerability::class && in_array($setter, ['setDescription', 'setSolution'])) {
+            $attributeValue = $this->formatXmlContentMeantForHtml($attributeValue);
+        }
+
+        return parent::setValueOnEntity($attributeValue, $setter, $entityClass);
+    }
+
+    /**
+     * An array of XML tags to replace
+     *
+     * @return array
+     */
+    protected function getXmlTagsToReplace(): array
+    {
+        return [
+            '<ContainerBlockElement>',
+            '</ContainerBlockElement>',
+            '<Paragraph>',
+            '<Paragraph preformat="true">',
+            '</Paragraph>',
+            '<UnorderedList>',
+            '</UnorderedList>',
+            '<OrderedList>',
+            '</OrderedList>',
+            '<ListItem>',
+            '</ListItem>',
+        ];
+    }
+
+    /**
+     * An array of replacements for XML tags that represent HTML
+     *
+     * @return array
+     */
+    protected function getXmlTagReplacements(): array
+    {
+        return [
+            '<div class="container">',
+            '</div>',
+            '<p>',
+            '<p>',
+            '</p>',
+            '<ul>',
+            '</ul>',
+            '<ol>',
+            '</ol>',
+            '<li>',
+            '</li>',
+        ];
+    }
+
+    /**
+     * Format XML content into HTML where the XML is purposed for HTML
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function formatXmlContentMeantForHtml(string $content): string
+    {
+        if (empty($content)) {
+            return '';
+        }
+
+        $formattedContent = str_replace($this->getXmlTagsToReplace(), $this->getXmlTagReplacements(), $content);
+        return preg_replace(
+            "/<URLLink LinkURL=\"([^\"]*)\"( href=\"[^\"]*\")?( LinkTitle=\"[^\"]*\")?\/?>(([^<]*)<\/URLLink>)?/i",
+            '<a href="$1">$1</a>',
+            $formattedContent
+        );
+    }
+
     /**
      * @inheritdoc
      */
