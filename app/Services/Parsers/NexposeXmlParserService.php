@@ -439,6 +439,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             '<Paragraph>',
             '<Paragraph preformat="true">',
             '</Paragraph>',
+            '<Paragraph/>',
             '<UnorderedList>',
             '</UnorderedList>',
             '<OrderedList>',
@@ -461,6 +462,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             '<p>',
             '<p>',
             '</p>',
+            '<p>&nbsp;</p>',
             '<ul>',
             '</ul>',
             '<ol>',
@@ -487,6 +489,26 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             "/<URLLink LinkURL=\"([^\"]*)\"( href=\"[^\"]*\")?( LinkTitle=\"[^\"]*\")?\/?>(([^<]*)<\/URLLink>)?/i",
             '<a href="$1">$1</a>',
             $formattedContent
+        );
+    }
+
+    /**
+     * Override the parent method to format the XML into HTML
+     *
+     * @param string $attributeNameForKey
+     * @param string $propertyName
+     */
+    protected function storeTemporaryRawData(string $attributeNameForKey, string $propertyName)
+    {
+        parent::storeTemporaryRawData($attributeNameForKey, $propertyName);
+        $currentValueAtKey = $this->$propertyName->get($this->parser->getAttribute($attributeNameForKey));
+        if (empty($currentValueAtKey)) {
+            return;
+        }
+
+        $this->$propertyName->put(
+            $this->parser->getAttribute($attributeNameForKey),
+            $this->formatXmlContentMeantForHtml($currentValueAtKey)
         );
     }
 
