@@ -439,7 +439,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      *
      * @return array
      */
-    protected function getXmlTagsToReplace(): array
+    private function getXmlTagsToReplace(): array
     {
         return [
             '<ContainerBlockElement>',
@@ -462,7 +462,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      *
      * @return array
      */
-    protected function getXmlTagReplacements(): array
+    private function getXmlTagReplacements(): array
     {
         return [
             '<div class="container">',
@@ -486,7 +486,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
      * @param string $content
      * @return string
      */
-    protected function formatXmlContentMeantForHtml(string $content): string
+    private function formatXmlContentMeantForHtml(string $content): string
     {
         if (empty($content)) {
             return '';
