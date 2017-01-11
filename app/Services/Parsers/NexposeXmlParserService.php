@@ -416,6 +416,14 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
         $this->genericOutput = new Collection();
     }
 
+    /**
+     * Override the parent method to format XML into HTML for the relevant Nexpose fields
+     *
+     * @param mixed $attributeValue
+     * @param string $setter
+     * @param string $entityClass
+     * @return bool
+     */ 
     protected function setValueOnEntity($attributeValue, string $setter, string $entityClass)
     {
         // Replace XML tags meant for HTML
