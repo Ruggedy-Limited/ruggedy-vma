@@ -417,6 +417,110 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
     }
 
     /**
+     * Override the parent method to format XML into HTML for the relevant Nexpose fields
+     *
+     * @param mixed $attributeValue
+     * @param string $setter
+     * @param string $entityClass
+     * @return bool
+     */ 
+    protected function setValueOnEntity($attributeValue, string $setter, string $entityClass)
+    {
+        // Replace XML tags meant for HTML
+        if ($entityClass === Vulnerability::class && in_array($setter, ['setDescription', 'setSolution'])) {
+            $attributeValue = $this->formatXmlContentMeantForHtml($attributeValue);
+        }
+
+        return parent::setValueOnEntity($attributeValue, $setter, $entityClass);
+    }
+
+    /**
+     * An array of XML tags to replace
+     *
+     * @return array
+     */
+    private function getXmlTagsToReplace(): array
+    {
+        return [
+            '<ContainerBlockElement>',
+            '</ContainerBlockElement>',
+            '<Paragraph>',
+            '<Paragraph preformat="true">',
+            '</Paragraph>',
+            '<Paragraph/>',
+            '<UnorderedList>',
+            '</UnorderedList>',
+            '<OrderedList>',
+            '</OrderedList>',
+            '<ListItem>',
+            '</ListItem>',
+        ];
+    }
+
+    /**
+     * An array of replacements for XML tags that represent HTML
+     *
+     * @return array
+     */
+    private function getXmlTagReplacements(): array
+    {
+        return [
+            '<div class="container">',
+            '</div>',
+            '<p>',
+            '<p>',
+            '</p>',
+            '<p>&nbsp;</p>',
+            '<ul>',
+            '</ul>',
+            '<ol>',
+            '</ol>',
+            '<li>',
+            '</li>',
+        ];
+    }
+
+    /**
+     * Format XML content into HTML where the XML is purposed for HTML
+     *
+     * @param string $content
+     * @return string
+     */
+    private function formatXmlContentMeantForHtml(string $content): string
+    {
+        if (empty($content)) {
+            return '';
+        }
+
+        $formattedContent = str_replace($this->getXmlTagsToReplace(), $this->getXmlTagReplacements(), $content);
+        return preg_replace(
+            "/<URLLink LinkURL=\"([^\"]*)\"( href=\"[^\"]*\")?( LinkTitle=\"[^\"]*\")?\/?>(([^<]*)<\/URLLink>)?/i",
+            '<a href="$1">$1</a>',
+            $formattedContent
+        );
+    }
+
+    /**
+     * Override the parent method to format the XML into HTML
+     *
+     * @param string $attributeNameForKey
+     * @param string $propertyName
+     */
+    protected function storeTemporaryRawData(string $attributeNameForKey, string $propertyName)
+    {
+        parent::storeTemporaryRawData($attributeNameForKey, $propertyName);
+        $currentValueAtKey = $this->$propertyName->get($this->parser->getAttribute($attributeNameForKey));
+        if (empty($currentValueAtKey)) {
+            return;
+        }
+
+        $this->$propertyName->put(
+            $this->parser->getAttribute($attributeNameForKey),
+            $this->formatXmlContentMeantForHtml($currentValueAtKey)
+        );
+    }
+
+    /**
      * @inheritdoc
      */
     protected function getBaseTagName()
