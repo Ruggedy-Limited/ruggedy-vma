@@ -25,7 +25,7 @@ class SoftwareInformation extends Base\SoftwareInformation implements HasIdColum
     protected $files;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Asset", mappedBy="softwareInformation")
+     * @ORM\ManyToMany(targetEntity="Asset", mappedBy="relatedSoftwareInformation")
      */
     protected $assets;
 

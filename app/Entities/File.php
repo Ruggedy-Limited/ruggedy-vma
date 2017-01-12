@@ -35,31 +35,31 @@ class File extends Base\File implements SystemComponent
     protected $workspace;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files", indexBy="id")
+     * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files", indexBy="id", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_assets")
      */
     protected $assets;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", indexBy="name")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_vulnerabilities")
      */
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", indexBy="number")
+     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", indexBy="number", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_open_ports")
      */
     protected $openPorts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", indexBy="name")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_software_information")
      */
     protected $softwareInformation;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="files")
+     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="files", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_audits")
      */
     protected $audits;

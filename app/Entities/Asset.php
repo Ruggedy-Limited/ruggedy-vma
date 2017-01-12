@@ -76,19 +76,19 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="asset_software_information")
      */
     protected $relatedSoftwareInformation;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="assets_vulnerabilities")
      */
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets")
+     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="assets_audits")
      */
     protected $audits;
@@ -254,8 +254,14 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function addSoftwareInformation(SoftwareInformation $softwareInformation)
     {
+        if ($this->relatedSoftwareInformation->contains($softwareInformation)) {
+            return $this;
+        }
+
         $softwareInformation->addAsset($this);
-        $this->relatedSoftwareInformation[] = $softwareInformation;
+
+        $softwareInformationKey = $softwareInformation->getId() ?? $softwareInformation->getHash();
+        $this->relatedSoftwareInformation[$softwareInformationKey] = $softwareInformation;
 
         return $this;
     }
