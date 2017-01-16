@@ -3,6 +3,7 @@
 namespace App\Entities\Base;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * App\Entities\Base\File
@@ -24,6 +25,7 @@ class File extends AbstractEntity
     const SCANNER_APP_ID = 'scanner_app_id';
     const PROCESSED      = 'processed';
     const DELETED        = 'deleted';
+    const ASSETS         = 'assets';
     const USER           = 'user';
     const WORKSPACE      = 'workspace';
     const SCANNERAPP     = 'scannerApp';
@@ -86,6 +88,12 @@ class File extends AbstractEntity
     protected $updated_at;
 
     /**
+     * @ORM\OneToMany(targetEntity="Asset", mappedBy="file", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
+     */
+    protected $assets;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -105,6 +113,7 @@ class File extends AbstractEntity
 
     public function __construct()
     {
+        $this->assets = new ArrayCollection();
     }
 
     /**
@@ -358,6 +367,42 @@ class File extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Add Asset entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Asset $asset
+     * @return \App\Entities\Base\File
+     */
+    public function addAsset(Asset $asset)
+    {
+        $this->assets[] = $asset;
+
+        return $this;
+    }
+
+    /**
+     * Remove Asset entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Asset $asset
+     * @return \App\Entities\Base\File
+     */
+    public function removeAsset(Asset $asset)
+    {
+        $this->assets->removeElement($asset);
+
+        return $this;
+    }
+
+    /**
+     * Get Asset entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAssets()
+    {
+        return $this->assets;
     }
 
     /**

@@ -94,11 +94,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $audits;
 
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="assets", indexBy="id")
-     */
-    protected $files;
-
-    /**
      * Asset constructor.
      */
     public function __construct()
@@ -107,7 +102,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         $this->relatedSoftwareInformation = new ArrayCollection();
         $this->vulnerabilities            = new ArrayCollection();
         $this->audits                     = new ArrayCollection();
-        $this->files                      = new ArrayCollection();
     }
 
     /**
@@ -226,18 +220,18 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function getParent()
     {
-        return $this->workspace;
+        return $this->file->getWorkspace();
     }
 
     /**
      * Convenience method for setting the parent relation
      *
-     * @param Base\Workspace $workspace
+     * @param Base\File $file
      * @return Base\Asset
      */
-    public function setParent(Base\Workspace $workspace)
+    public function setParent(Base\File $file)
     {
-        return parent::setWorkspace($workspace);
+        return parent::setFile($file);
     }
 
     /**
@@ -382,7 +376,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function addFile(File $file)
     {
-        $this->files[$file->getId()] = $file;
+        $this->file = $file;
 
         return $this;
     }
@@ -393,17 +387,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
      */
     public function removeFile(File $file)
     {
-        $this->files->removeElement($file);
-
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFiles()
-    {
-        return $this->files;
     }
 
     /**

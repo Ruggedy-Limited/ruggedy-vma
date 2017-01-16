@@ -35,12 +35,6 @@ class File extends Base\File implements SystemComponent
     protected $workspace;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Asset", inversedBy="files", indexBy="id", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="files_assets")
-     */
-    protected $assets;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_vulnerabilities")
      */
@@ -70,7 +64,6 @@ class File extends Base\File implements SystemComponent
     public function __construct()
     {
         parent::__construct();
-        $this->assets                      = new ArrayCollection();
         $this->vulnerabilities             = new ArrayCollection();
         $this->openPorts                   = new ArrayCollection();
         $this->softwareInformation         = new ArrayCollection();
@@ -110,43 +103,6 @@ class File extends Base\File implements SystemComponent
     public function getParent()
     {
         return $this->getUser();
-    }
-
-    /**
-     * @param Asset $asset
-     * @return $this
-     */
-    public function addAsset(Asset $asset)
-    {
-        if ($this->assets->contains($asset)) {
-            return $this;
-        }
-
-        $asset->addFile($this); // synchronously updating inverse side
-        $relationKey = $asset->getId() ?? $asset->getHash();
-        $this->assets[$relationKey] = $asset;
-
-        return $this;
-    }
-
-    /**
-     * @param Asset $asset
-     * @return $this
-     */
-    public function removeAsset(Asset $asset)
-    {
-        $asset->removeFile($this); // synchronously updating inverse side
-        $this->assets->removeElement($asset);
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getAssets()
-    {
-        return $this->assets;
     }
 
     /**
