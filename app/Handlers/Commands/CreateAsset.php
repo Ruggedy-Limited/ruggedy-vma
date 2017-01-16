@@ -4,22 +4,24 @@ namespace App\Handlers\Commands;
 
 use App\Commands\CreateAsset as CreateAssetCommand;
 use App\Entities\Asset;
+use App\Entities\File;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
+use App\Exceptions\FileNotFoundException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
-use App\Repositories\WorkspaceRepository;
+use App\Repositories\FileRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
 
 class CreateAsset extends CommandHandler
 {
-    /** @var WorkspaceRepository */
-    protected $workspaceRepository;
+    /** @var FileRepository */
+    protected $fileRepository;
 
     /** @var AssetRepository */
     protected $assetRepository;
@@ -30,17 +32,17 @@ class CreateAsset extends CommandHandler
     /**
      * CreateAsset constructor.
      *
-     * @param WorkspaceRepository $workspaceRepository
+     * @param FileRepository $fileRepository
      * @param AssetRepository $assetRepository
      * @param EntityManager $em
      */
     public function __construct(
-        WorkspaceRepository $workspaceRepository, AssetRepository $assetRepository, EntityManager $em
+        FileRepository $fileRepository, AssetRepository $assetRepository, EntityManager $em
     )
     {
-        $this->workspaceRepository = $workspaceRepository;
-        $this->assetRepository     = $assetRepository;
-        $this->em                  = $em;
+        $this->fileRepository  = $fileRepository;
+        $this->assetRepository = $assetRepository;
+        $this->em              = $em;
     }
 
     /**
@@ -59,32 +61,33 @@ class CreateAsset extends CommandHandler
         $requestingUser = $this->authenticate();
         
         // Check that all the required fields were set on the command
-        $workspaceId = $command->getId();
-        /** @var Asset $entity */
-        $entity     = $command->getEntity();
+        $fileId = $command->getId();
+        /** @var Asset $asset */
+        $asset = $command->getEntity();
         
-        if (!isset($workspaceId, $entity)) {
+        if (!isset($fileId, $asset)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
         // Make sure the given Workspace exists
-        /** @var Workspace $workspace */
-        $workspace = $this->workspaceRepository->find($workspaceId);
-        if (empty($workspace)) {
-            throw new WorkspaceNotFoundException("No Workspace with the given ID was found in the database");
+        /** @var Workspace $file */
+        $file = $this->fileRepository->find($fileId);
+        if (empty($file) || !($file instanceof File) || $file->getDeleted() === true) {
+            throw new FileNotFoundException("No File with the given ID was found in the database");
         }
 
         // Make sure the authenticated User has permission to add an Asset to this Workspace
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $file->getWorkspace())) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to create an Asset on the given Workspace"
             );
         }
 
-        // Set the Workspace ID
-        $entity->setWorkspaceId($workspaceId);
+        $asset->setFileId($fileId);
+        $asset->setFile($file);
+
         // Create a new Asset or find a matching existing Asset
-        $asset = $this->assetRepository->findOrCreateOneBy($entity->toArray(true));
+        $asset = $this->assetRepository->findOrCreateOneBy($asset->toArray(true));
         if (empty($asset)) {
             throw new AssetNotFoundException("Could not find or create an Asset from the given input.");
         }
@@ -94,9 +97,11 @@ class CreateAsset extends CommandHandler
             return $asset;
         }
 
+
+
+        // Set Asset name, as well as File and User relations
         $this->setAssetName($asset);
-        $asset->setWorkspace($workspace);
-        $asset->setUser($workspace->getUser());
+        $asset->setUser($file->getUser());
 
         // Persist the new Asset to the database
         $this->em->persist($asset);
@@ -115,29 +120,5 @@ class CreateAsset extends CommandHandler
         $assetName = $asset->getName() ?? $asset->getHostname() ?? $asset->getIpAddressV4()
             ?? Asset::ASSET_NAME_UNNAMED;
         $asset->setName($assetName);
-    }
-
-    /**
-     * @return WorkspaceRepository
-     */
-    public function getWorkspaceRepository()
-    {
-        return $this->workspaceRepository;
-    }
-
-    /**
-     * @return AssetRepository
-     */
-    public function getAssetRepository()
-    {
-        return $this->assetRepository;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    public function getEm()
-    {
-        return $this->em;
     }
 }

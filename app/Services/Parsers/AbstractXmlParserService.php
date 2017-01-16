@@ -161,15 +161,12 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // entity's class name
         $this->entityRelationshipSetterMap = new Collection([
 
-            Workspace::class => new Collection([
-                Asset::class => 'addAsset',
-            ]),
-
             Asset::class => new Collection([
                 Vulnerability::class       => 'addVulnerability',
                 OpenPort::class            => 'addOpenPort',
                 SoftwareInformation::class => 'addSoftwareInformation',
                 Audit::class               => 'addAudit',
+                File::class                => 'setFile',
             ]),
 
             Exploit::class => new Collection([
@@ -627,9 +624,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Persist Asset via the bus to handle permissions etc and so that this can be used as a primary entity that has
         // been persisted to the DB
         if ($entity instanceof Asset) {
-            $command = new CreateAsset($this->file->getWorkspaceId(), $entity);
+            $command = new CreateAsset($this->file->getId(), $entity);
             $asset = $this->bus->handle($command);
-            $this->addFileRelation($asset, $entityClass);
             $this->entities->put(Asset::class, $asset);
             return;
         }
