@@ -2,11 +2,8 @@
 
 namespace App\Transformers;
 
-use App\Entities\Asset;
 use App\Entities\File;
-use App\Entities\Vulnerability;
 use App\Entities\Workspace;
-use League\Fractal\Manager;
 use League\Fractal\TransformerAbstract;
 
 class WorkspaceTransformer extends TransformerAbstract
