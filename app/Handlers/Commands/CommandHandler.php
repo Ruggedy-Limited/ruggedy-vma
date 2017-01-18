@@ -4,7 +4,7 @@ namespace App\Handlers\Commands;
 
 use App\Entities\User;
 use Exception;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 
 /**
  * Abstract base class for command handlers

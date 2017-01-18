@@ -30,7 +30,7 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
@@ -1716,6 +1716,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function getAndAuthenticateFileUser(File $file)
     {
         $currentUser = Auth::user();
+        /** @var User $fileUser */
         $fileUser    = $file->getUser();
 
         // If the authenticated User is the same as the User that uploaded the file, there is nothing to do

@@ -143,4 +143,17 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     {
         return 'remember_token';
     }
+
+    /**
+     * Set an API Token
+     *
+     * @param ApiToken $token
+     * @return $this
+     */
+    public function setToken(ApiToken $token)
+    {
+        $this->addApiToken($token);
+
+        return $this;
+    }
 }

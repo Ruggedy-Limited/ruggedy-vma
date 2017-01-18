@@ -17,7 +17,7 @@ use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 
 class PermissionService
 {
