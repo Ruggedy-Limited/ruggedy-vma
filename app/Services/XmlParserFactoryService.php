@@ -13,7 +13,7 @@ use App\Services\Parsers\NmapXmlParserService;
 use Doctrine\ORM\EntityManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
+use App;
 use Illuminate\Validation\Factory;
 use App\Repositories\FileRepository;
 use League\Tactician\CommandBus;

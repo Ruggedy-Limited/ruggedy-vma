@@ -16,7 +16,7 @@ use DoctrineProxies\__CG__\App\Entities\Team as TeamProxy;
 use DoctrineProxies\__CG__\App\Entities\User as UserProxy;
 use DoctrineProxies\__CG__\App\Entities\Workspace as WorkspaceProxy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {

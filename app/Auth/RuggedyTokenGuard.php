@@ -3,6 +3,7 @@
 namespace App\Auth;
 
 use App\Entities\ApiToken;
+use App\Entities\User;
 use App\Repositories\ApiTokenRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -10,10 +11,8 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 use Laravel\Spark\JWT;
-use Laravel\Spark\TokenGuard;
-
 
 class RuggedyTokenGuard
 {
@@ -57,7 +56,7 @@ class RuggedyTokenGuard
         }
 
         if (! $token = $this->getToken($request)) {
-            return;
+            return null;
         }
 
         // If the token is valid we will return the user instance that is associated with
@@ -71,6 +70,7 @@ class RuggedyTokenGuard
             $this->em->flush($token);
         }
 
+        /** @var User $user */
         $user = $token->getUser();
         $user->addApiToken($token);
         
@@ -119,20 +119,23 @@ class RuggedyTokenGuard
         // First we will check to see if the token is in the request input data or is a bearer
         // token on the request. If it is, we will consider this the token, otherwise we'll
         // look for the token in the cookies then attempt to validate that it is correct.
-        if ($token = $request->input('api_token', $bearer)) {
+        $token = $request->input('api_token', $bearer);
+        if (isset($token)) {
             return $token;
         }
 
-        if ($request->cookie('spark_token')) {
-            return $this->getTokenFromCookie($request);
+        if (!$request->cookie('spark_token')) {
+            return null;
         }
+
+        return $this->getTokenFromCookie($request);
     }
 
     /**
      * Get the token for the given request cookie.
      *
      * @param  Request  $request
-     * @return Token
+     * @return ApiToken|null
      */
     protected function getTokenFromCookie($request)
     {
@@ -142,14 +145,14 @@ class RuggedyTokenGuard
         try {
             $token = JWT::decode(decrypt($request->cookie('spark_token')));
         } catch (Exception $e) {
-            return;
+            return null;
         }
 
         // We will compare the XSRF token in the decoded API token against the XSRF header
         // sent with the request. If the two don't match then this request is sent from
         // a valid source and we won't authenticate the request for further handling.
         if (! $this->validXsrf($token, $request)) {
-            return;
+            return null;
         }
 
         // Here we will create a token instance from the JWT token. This'll be a transient
