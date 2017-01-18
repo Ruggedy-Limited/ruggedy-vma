@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
  * @ORM\Entity(repositoryClass="App\Repositories\AssetRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesToFiles, GeneratesUniqueHash
+class Asset extends Base\Asset implements SystemComponent, HasIdColumn, GeneratesUniqueHash
 {
     /** Regular expressions used for validating the relevant Asset data fields */
     const REGEX_CPE         = '~(cpe:(\d)?(\.\d)?(/[aho])(([:]{1,3})([\pL\pN\pS_])+)*)~i';
@@ -368,26 +368,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     {
         $openPort->setAsset($this);
         return parent::addOpenPort($openPort);
-    }
-
-    /**
-     * @param File $file
-     * @return $this
-     */
-    public function addFile(File $file)
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    /**
-     * @param File $file
-     * @return $this
-     */
-    public function removeFile(File $file)
-    {
-        return $this;
     }
 
     /**
