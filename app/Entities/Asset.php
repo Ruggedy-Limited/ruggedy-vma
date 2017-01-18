@@ -214,7 +214,9 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     }
 
     /**
-     * Get the parent Entity of this Entity
+     * Get the parent Entity of this Entity. In this case we return the Workspace related to the parent file, because
+     * this method is used when determining permissions, and file have no permissions directly associated with them
+     * because they are not considered a component of our system, but rather a data source.
      *
      * @return Base\Workspace
      */
