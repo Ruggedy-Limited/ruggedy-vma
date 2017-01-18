@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use App\Contracts\SystemComponent;
 use Doctrine\ORM\Mapping as ORM;
+use Illuminate\Support\Collection;
 
 /**
  * App\Entities\Workspace
@@ -20,18 +21,6 @@ class Workspace extends Base\Workspace implements SystemComponent
     protected $user;
 
     /**
-     * Override the parent method to set the inverse side of the relationship in the given Asset entity
-     *
-     * @param Base\Asset $asset
-     * @return Base\Workspace
-     */
-    public function addAsset(Base\Asset $asset)
-    {
-        $asset->setWorkspace($this);
-        return parent::addAsset($asset);
-    }
-
-    /**
      * Get the parent Entity of this Entity
      *
      * @return Base\User
@@ -39,5 +28,27 @@ class Workspace extends Base\Workspace implements SystemComponent
     public function getParent()
     {
         return $this->user;
+    }
+
+    /**
+     * Get all the Assets in this Workspace
+     *
+     * @return Collection
+     */
+    public function getAssets()
+    {
+        return collect($this->getFiles()->toArray())
+            // Merge the Assets related to each file into a single Collection of Assets for the Workspace
+            ->reduce(function ($assets, $file) {
+                /** @var File $file */
+                /** @var Collection $assets */
+                return $assets->merge($file->getAssets()->toArray());
+            }, new Collection())
+            // Filter out any suppressed or deleted Assets
+            ->filter(function($asset) {
+                /** @var $asset Asset */
+                // Exclude deleted Assets
+                return $asset->getDeleted() !== true && $asset->getSuppressed() !== true;
+        });
     }
 }

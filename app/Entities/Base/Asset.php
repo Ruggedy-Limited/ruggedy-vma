@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\Asset
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`assets`", indexes={@ORM\Index(name="assets_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="assets_user_fk_idx", columns={"`user_id`"})})
+ * @ORM\Table(name="`assets`", indexes={@ORM\Index(name="assets_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="assets_file_fk_idx", columns={"`file_id`"})})
  */
 class Asset extends AbstractEntity
 {
@@ -29,12 +29,12 @@ class Asset extends AbstractEntity
     const NETBIOS       = 'netbios';
     const UPTIME        = 'uptime';
     const LAST_BOOT     = 'last_boot';
-    const WORKSPACE_ID  = 'workspace_id';
+    const FILE_ID       = 'file_id';
     const USER_ID       = 'user_id';
     const SUPPRESSED    = 'suppressed';
     const DELETED       = 'deleted';
     const OPENPORTS     = 'openPorts';
-    const WORKSPACE     = 'workspace';
+    const FILE          = 'file';
     const USER          = 'user';
 
     /**
@@ -105,9 +105,9 @@ class Asset extends AbstractEntity
     protected $last_boot;
 
     /**
-     * @ORM\Column(name="`workspace_id`", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="`file_id`", type="integer", options={"unsigned":true})
      */
-    protected $workspace_id;
+    protected $file_id;
 
     /**
      * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
@@ -141,10 +141,10 @@ class Asset extends AbstractEntity
     protected $openPorts;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="assets", cascade={"persist"})
-     * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\ManyToOne(targetEntity="File", inversedBy="assets", cascade={"persist"})
+     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
      */
-    protected $workspace;
+    protected $file;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="assets", cascade={"persist"})
@@ -457,26 +457,26 @@ class Asset extends AbstractEntity
     }
 
     /**
-     * Set the value of workspace_id.
+     * Set the value of file_id.
      *
-     * @param integer $workspace_id
+     * @param integer $file_id
      * @return \App\Entities\Base\Asset
      */
-    public function setWorkspaceId($workspace_id)
+    public function setFileId($file_id)
     {
-        $this->workspace_id = $workspace_id;
+        $this->file_id = $file_id;
 
         return $this;
     }
 
     /**
-     * Get the value of workspace_id.
+     * Get the value of file_id.
      *
      * @return integer
      */
-    public function getWorkspaceId()
+    public function getFileId()
     {
-        return $this->workspace_id;
+        return $this->file_id;
     }
 
     /**
@@ -631,26 +631,26 @@ class Asset extends AbstractEntity
     }
 
     /**
-     * Set Workspace entity (many to one).
+     * Set File entity (many to one).
      *
-     * @param \App\Entities\Base\Workspace $workspace
+     * @param \App\Entities\Base\File $file
      * @return \App\Entities\Base\Asset
      */
-    public function setWorkspace(Workspace $workspace = null)
+    public function setFile(File $file = null)
     {
-        $this->workspace = $workspace;
+        $this->file = $file;
 
         return $this;
     }
 
     /**
-     * Get Workspace entity (many to one).
+     * Get File entity (many to one).
      *
-     * @return \App\Entities\Base\Workspace
+     * @return \App\Entities\Base\File
      */
-    public function getWorkspace()
+    public function getFile()
     {
-        return $this->workspace;
+        return $this->file;
     }
 
     /**
@@ -678,6 +678,6 @@ class Asset extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'netbios', 'uptime', 'last_boot', 'workspace_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'netbios', 'uptime', 'last_boot', 'file_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');
     }
 }

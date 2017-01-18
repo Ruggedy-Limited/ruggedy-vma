@@ -16,7 +16,6 @@ class AssetTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'audits',
         'exploits',
-        'files',
         'openPorts',
         'softwareInformation',
         'vulnerabilities',
@@ -41,7 +40,7 @@ class AssetTransformer extends TransformerAbstract
             'os'           => $asset->getVendor(),
             'osVersion'    => $asset->getOsVersion(),
             'userId'       => $asset->getUser()->getId(),
-            'workspaceId'  => $asset->getWorkspace()->getId(),
+            'fileId'       => $asset->getFile()->getId(),
             'isSuppressed' => $asset->getSuppressed(),
             'isDeleted'    => $asset->getDeleted(),
             'createdDate'  => $asset->getCreatedAt()->format(env('APP_DATE_FORMAT')),
@@ -96,17 +95,6 @@ class AssetTransformer extends TransformerAbstract
     public function includeSoftwareInformation(Asset $asset)
     {
         return $this->collection($asset->getRelatedSoftwareInformation(), new SoftwareInformationTransformer());
-    }
-
-    /**
-     * Optional include for Files
-     *
-     * @param Asset $asset
-     * @return \League\Fractal\Resource\Collection
-     */
-    public function includeFiles(Asset $asset)
-    {
-        return $this->collection($asset->getFiles(), new FileTransformer());
     }
 
     /**

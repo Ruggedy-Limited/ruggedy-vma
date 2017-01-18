@@ -22,6 +22,7 @@ use App\Commands\UpsertPermission;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\ComponentNotFoundException;
+use App\Exceptions\FileNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
@@ -63,14 +64,15 @@ class MessagingModel
     const ERROR_VIEW_WORKSPACE_PERMISSION   = "error_view_workspace_permission";
     
     /** API Asset Management */
-    const ERROR_COULD_NOT_CREATE_ASSET  = "error_could_not_create_asset";
-    const ERROR_ASSET_CREATE_PERMISSION = "error_asset_create_permission";
-    const ERROR_ASSET_DOES_NOT_EXIST    = "error_asset_does_not_exist";
-    const ERROR_DELETE_ASSET_PERMISSION = "error_delete_asset_permission";
-    const WARNING_DELETING_ASSET        = "warning_deleting_asset";
-    const ERROR_COULD_NOT_DELETE_ASSET  = "error_could_not_delete_asset";
-    const ERROR_EDIT_ASSET_PERMISSION   = "error_asset_permission";
-    const ERROR_LIST_ASSETS_PERMISSION  = "error_list_assets_permission";
+    const ERROR_COULD_NOT_CREATE_ASSET      = "error_could_not_create_asset";
+    const ERROR_COULD_NOT_CREATE_ASSET_FILE = "error_could_not_create_asset_file";
+    const ERROR_ASSET_CREATE_PERMISSION     = "error_asset_create_permission";
+    const ERROR_ASSET_DOES_NOT_EXIST        = "error_asset_does_not_exist";
+    const ERROR_DELETE_ASSET_PERMISSION     = "error_delete_asset_permission";
+    const WARNING_DELETING_ASSET            = "warning_deleting_asset";
+    const ERROR_COULD_NOT_DELETE_ASSET      = "error_could_not_delete_asset";
+    const ERROR_EDIT_ASSET_PERMISSION       = "error_asset_permission";
+    const ERROR_LIST_ASSETS_PERMISSION      = "error_list_assets_permission";
     
     /** API Permission Management */
     const ERROR_AUTH_USER_NOT_OWNER       = 'error_auth_user_not_owner';
@@ -119,6 +121,7 @@ class MessagingModel
             UserNotFoundException::class       => static::ERROR_USER_DOES_NOT_EXIST,
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
+            FileNotFoundException::class       => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
             WorkspaceNotFoundException::class  => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
             AssetNotFoundException::class      => static::ERROR_ASSET_DOES_NOT_EXIST,
             ComponentNotFoundException::class  => static::ERROR_COMPONENT_DOES_NOT_EXIST,

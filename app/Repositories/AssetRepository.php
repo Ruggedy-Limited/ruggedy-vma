@@ -19,20 +19,17 @@ class AssetRepository extends EntityRepository
     public function findOrCreateOneBy(array $data)
     {
         // We must have some asset details and must definitely have a Workspace ID with which to associate the Asset
-        if (empty($data) || empty($data[Asset::WORKSPACE_ID])) {
+        if (empty($data) || empty($data[Asset::FILE_ID])) {
             return null;
         }
 
-        $workspaceId = $data[Asset::WORKSPACE_ID];
-
         // If we have a hostname value, either find an existing Asset with that hostname or create a new one
         if (!empty($data[Asset::HOSTNAME])) {
-            $hostname = $data[Asset::HOSTNAME];
 
-            $asset = $this->findOneBy([
-                Asset::HOSTNAME     => $hostname,
-                Asset::WORKSPACE_ID => $workspaceId
-            ]);
+            $asset = $this->findOneBy(array_intersect_key($data, [
+                Asset::HOSTNAME      => null,
+                Asset::FILE_ID       => null,
+            ]));
 
             if (empty($asset)) {
                 return $this->createNewAssetEntity($data);
@@ -41,20 +38,10 @@ class AssetRepository extends EntityRepository
             return $asset->setFromArray($data);
         }
 
-        // Only search by these possible identifiers
-        $criteria = new Collection(
-            array_intersect_key($data, [
-                Asset::IP_ADDRESS_V4 => null,
-                Asset::NETBIOS       => null,
-            ])
-        );
-
-        $queryBuilder = $this->whereAssetWithCriteriaExists($criteria, $workspaceId);
-        if (empty($queryBuilder->getDQLPart('where'))) {
-            return null;
-        }
-
-        $asset = $queryBuilder->getQuery()->getOneOrNullResult();
+        $asset = $this->findOneBy(array_intersect_key($data, [
+            Asset::IP_ADDRESS_V4 => null,
+            Asset::FILE_ID       => null,
+        ]));
         if (empty($asset)) {
             return $this->createNewAssetEntity($data);
         }

@@ -20,7 +20,6 @@ class Workspace extends AbstractEntity
     const NAME       = 'name';
     const USER_ID    = 'user_id';
     const DELETED    = 'deleted';
-    const ASSETS     = 'assets';
     const FILES      = 'files';
     const USER       = 'user';
 
@@ -57,12 +56,6 @@ class Workspace extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="Asset", mappedBy="workspace", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_id`", nullable=false)
-     */
-    protected $assets;
-
-    /**
      * @ORM\OneToMany(targetEntity="File", mappedBy="workspace", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_id`", nullable=false)
      */
@@ -76,7 +69,6 @@ class Workspace extends AbstractEntity
 
     public function __construct()
     {
-        $this->assets = new ArrayCollection();
         $this->files = new ArrayCollection();
     }
 
@@ -216,42 +208,6 @@ class Workspace extends AbstractEntity
     public function getUpdatedAt()
     {
         return $this->updated_at;
-    }
-
-    /**
-     * Add Asset entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Asset $asset
-     * @return \App\Entities\Base\Workspace
-     */
-    public function addAsset(Asset $asset)
-    {
-        $this->assets[] = $asset;
-
-        return $this;
-    }
-
-    /**
-     * Remove Asset entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Asset $asset
-     * @return \App\Entities\Base\Workspace
-     */
-    public function removeAsset(Asset $asset)
-    {
-        $this->assets->removeElement($asset);
-
-        return $this;
-    }
-
-    /**
-     * Get Asset entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getAssets()
-    {
-        return $this->assets;
     }
 
     /**

@@ -42,15 +42,41 @@ Feature: As an administrator or user with the correct access control
     | 3  | Another Workspace   | 3        | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     | 4  | Shared Workspace    | 1        | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     And the following existing Assets:
-    | id | name                      | cpe                                                                 | vendor    | ip_address_v4 | ip_address_v6                           | hostname                  | mac_address       | os_version | netbios | workspace_id | user_id | created_at          | updated_at          |
-    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | NULL    | 1            | 1       | 2016-06-20 09:00:00 | 2016-06-20 09:00:00 |
-    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | 5.2.3790   | NULL    | 1            | 1       | 2016-06-20 09:02:23 | 2016-06-20 09:02:23 |
-    | 3  | 192.168.0.24              | NULL                                                                | NULL      | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL       | NULL    | 1            | 1       | 2016-06-20 09:05:31 | 2016-06-20 09:05:31 |
-    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | NULL       | NULL    | 1            | 1       | 2016-06-20 09:05:38 | 2016-06-20 09:05:38 |
-    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | 12.10      | NULL    | 1            | 1       | 2016-06-20 09:06:00 | 2016-06-20 09:06:00 |
-    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | 6.0.6001   | NULL    | 1            | 1       | 2016-06-20 09:07:23 | 2016-06-20 09:07:23 |
-    | 7  | 192.168.1.24              | NULL                                                                | NULL      | 192.168.1.24  | NULL                                    | NULL                      | NULL              | NULL       | NULL    | 2            | 2       | 2016-06-20 09:08:31 | 2016-06-20 09:08:31 |
-    | 8  | local.mysite.com          | cpe:2.3:a:nginx:nginx:1.1.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | local.mysite.com          | NULL              | NULL       | NULL    | 3            | 3       | 2016-06-20 09:09:38 | 2016-06-20 09:09:38 |
+    | id | name                      | cpe                                                                 | vendor    | ip_address_v4 | ip_address_v6                           | hostname                  | mac_address       | os_version | netbios | file_id | user_id | created_at          | updated_at          |
+    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | NULL    | 1       | 1       | 2016-06-20 09:00:00 | 2016-06-20 09:00:00 |
+    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | 5.2.3790   | NULL    | 1       | 1       | 2016-06-20 09:02:23 | 2016-06-20 09:02:23 |
+    | 3  | 192.168.0.24              | NULL                                                                | NULL      | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL       | NULL    | 1       | 1       | 2016-06-20 09:05:31 | 2016-06-20 09:05:31 |
+    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | NULL       | NULL    | 1       | 1       | 2016-06-20 09:05:38 | 2016-06-20 09:05:38 |
+    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | 12.10      | NULL    | 1       | 1       | 2016-06-20 09:06:00 | 2016-06-20 09:06:00 |
+    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | 6.0.6001   | NULL    | 1       | 1       | 2016-06-20 09:07:23 | 2016-06-20 09:07:23 |
+    | 7  | 192.168.1.24              | NULL                                                                | NULL      | 192.168.1.24  | NULL                                    | NULL                      | NULL              | NULL       | NULL    | 2       | 2       | 2016-06-20 09:08:31 | 2016-06-20 09:08:31 |
+    | 8  | local.mysite.com          | cpe:2.3:a:nginx:nginx:1.1.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | local.mysite.com          | NULL              | NULL       | NULL    | 3       | 3       | 2016-06-20 09:09:38 | 2016-06-20 09:09:38 |
+    And the following existing Files:
+    | id | path                                                                                 | format | size    | user_id | workspace_id | scanner_app_id | processed | deleted | created_at          | updated_at          |
+    | 1  | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-adv-multiple-node-dns.xml   | xml    | 18646   | 1       | 1            | 1              | 1         | 0       | 2016-10-10 06:51:18 | 2017-01-11 15:31:06 |
+    | 2  | /usr/local/var/www/ruggedy/storage/scans/xml/burp/1/burp-multiple-auth-dns+ip.xml    | xml    | 4660178 | 1       | 2            | 2              | 1         | 0       | 2016-10-10 06:51:35 | 2017-01-11 15:31:06 |
+    | 3  | /usr/local/var/www/ruggedy/storage/scans/xml/nexpose/1/full-multiple-dns.xml         | xml    | 3662061 | 1       | 1            | 3              | 1         | 0       | 2016-10-10 06:51:53 | 2017-01-11 15:31:06 |
+    | 4  | /usr/local/var/www/ruggedy/storage/scans/xml/netsparker/1/single-dns.xml             | xml    | 568818  | 1       | 1            | 4              | 1         | 0       | 2016-10-17 19:25:33 | 2017-01-11 15:31:06 |
+    | 5  | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-multiple-dns.nessus       | xml    | 1841174 | 1       | 1            | 5              | 1         | 0       | 2016-10-24 07:26:59 | 2017-01-11 15:31:06 |
+    | 8  | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-audit-multiple-dns.nessus | xml    | 2664096 | 1       | 1            | 5              | 1         | 0       | 2016-11-07 07:22:00 | 2017-01-11 15:31:06 |
+    | 9  | /usr/local/var/www/ruggedy/storage/scans/xml/burp/1/burp-single-auth-dns             | xml    | 3564946 | 1       | 1            | 2              | 1         | 0       | 2017-01-11 12:06:30 | 2017-01-11 15:31:06 |
+    | 10 | /usr/local/var/www/ruggedy/storage/scans/xml/burp/1/burp-single-auth-ip              | xml    | 1166017 | 1       | 1            | 2              | 1         | 0       | 2017-01-11 12:06:48 | 2017-01-11 15:31:06 |
+    | 11 | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-audit-single-dns.nessus   | xml    | 1759340 | 1       | 1            | 5              | 1         | 0       | 2017-01-11 12:07:08 | 2017-01-11 15:31:06 |
+    | 12 | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-audit-multiple-ip.nessus  | xml    | 2657649 | 1       | 1            | 5              | 1         | 0       | 2017-01-11 12:07:25 | 2017-01-11 15:31:06 |
+    | 13 | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-audit-single-ip.nessus    | xml    | 2069530 | 1       | 1            | 5              | 1         | 0       | 2017-01-11 12:07:43 | 2017-01-11 15:31:06 |
+    | 14 | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-single-dns.nessus         | xml    | 1570556 | 1       | 1            | 5              | 1         | 0       | 2017-01-11 12:07:59 | 2017-01-11 15:31:06 |
+    | 15 | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-multiple-ip.nessus        | xml    | 1832322 | 1       | 1            | 5              | 1         | 0       | 2017-01-11 12:08:07 | 2017-01-11 15:31:06 |
+    | 16 | /usr/local/var/www/ruggedy/storage/scans/xml/nessus/1/full-single-ip.nessus          | xml    | 1564661 | 1       | 1            | 5              | 1         | 0       | 2017-01-11 12:08:16 | 2017-01-11 15:31:06 |
+    | 17 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-adv-1-node-dns              | xml    | 8428    | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:08:47 | 2017-01-11 15:31:06 |
+    | 18 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-basic-multiple-node-dns     | xml    | 8703    | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:08:59 | 2017-01-11 15:31:06 |
+    | 19 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-basic-1-node-dns            | xml    | 6750    | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:09:12 | 2017-01-11 15:31:06 |
+    | 20 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-adv-multiple-node-ip        | xml    | 18431   | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:09:21 | 2017-01-11 15:31:06 |
+    | 21 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-adv-1-node-ip               | xml    | 8369    | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:09:44 | 2017-01-11 15:31:06 |
+    | 22 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-basic-multiple-node-ip      | xml    | 8486    | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:09:53 | 2017-01-11 15:31:06 |
+    | 23 | /usr/local/var/www/ruggedy/storage/scans/xml/nmap/1/nmap-basic-1-node-ip             | xml    | 6692    | 1       | 1            | 1              | 1         | 0       | 2017-01-11 12:10:06 | 2017-01-11 15:31:06 |
+    | 24 | /usr/local/var/www/ruggedy/storage/scans/xml/nexpose/1/full-single-dns.xml           | xml    | 2909307 | 1       | 1            | 3              | 1         | 0       | 2017-01-11 12:10:16 | 2017-01-11 15:31:06 |
+    | 25 | /usr/local/var/www/ruggedy/storage/scans/xml/nexpose/1/full-multiple-ip.xml          | xml    | 3645992 | 1       | 1            | 3              | 1         | 0       | 2017-01-11 12:10:29 | 2017-01-11 15:31:06 |
+    | 26 | /usr/local/var/www/ruggedy/storage/scans/xml/nexpose/1/full-single-ip.xml            | xml    | 2907981 | 1       | 1            | 3              | 1         | 0       | 2017-01-11 12:10:40 | 2017-01-11 15:31:06 |
     And the following existing Components:
     | id | name            | class_name | created_at          | updated_at          |
     | 1  | User Account    | User       | 2016-05-10 00:00:00 | 2016-05-10 00:00:00 |
@@ -613,13 +639,13 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-    | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId  |
-    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1            |
-    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1            |
-    | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1            |
-    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | *                                       | webapp.test               | *                 | *          | 1            |
-    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | *             | *                                       | ubuntu2.homenetwork.co.za | *                 | 12.10      | 1            |
-    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | *             | fde3:970e:b33d::/48                     | *                         | *                 | 6.0.6001   | 1            |
+    | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | fileId  |
+    | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1       |
+    | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1       |
+    | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1       |
+    | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | *                                       | webapp.test               | *                 | *          | 1       |
+    | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | *             | *                                       | ubuntu2.homenetwork.co.za | *                 | 12.10      | 1       |
+    | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | *             | fde3:970e:b33d::/48                     | *                         | *                 | 6.0.6001   | 1       |
 
   ##
   # Get all Assets from a specific Workspace
@@ -631,13 +657,13 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-      | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | workspaceId  |
-      | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1            |
-      | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1            |
-      | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1            |
-      | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | *                                       | webapp.test               | *                 | *          | 1            |
-      | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | *             | *                                       | ubuntu2.homenetwork.co.za | *                 | 12.10      | 1            |
-      | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | *             | fde3:970e:b33d::/48                     | *                         | *                 | 6.0.6001   | 1            |
+      | id | name                      | cpe                                                                 | os        | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | osVersion  | fileId  |
+      | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | 1       |
+      | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | *                         | *                 | 5.2.3790   | 1       |
+      | 3  | 192.168.0.24              | *                                                                   | *         | 192.168.0.24  | *                                       | *                         | *                 | *          | 1       |
+      | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | *                                       | webapp.test               | *                 | *          | 1       |
+      | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | *             | *                                       | ubuntu2.homenetwork.co.za | *                 | 12.10      | 1       |
+      | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | *             | fde3:970e:b33d::/48                     | *                         | *                 | 6.0.6001   | 1       |
 
   Scenario: Retrieve a list of Assets that are part of someone else's Workspace where I have at least read permission
     Given that I want to get information about my "Assets"
@@ -646,8 +672,8 @@ Feature: As an administrator or user with the correct access control
     And the response is JSON
     And the response does not have a "error" property
     And the array response has the following items:
-      | id | name         | workspaceId |
-      | 7  | 192.168.1.24 | 2            |
+      | id | name         | fileId |
+      | 7  | 192.168.1.24 | 2      |
 
   Scenario: Attempt to retrieve a list of Assets that are part of someone else's Workspace where I don't have permission
     Given that I want to get information about my "Assets"

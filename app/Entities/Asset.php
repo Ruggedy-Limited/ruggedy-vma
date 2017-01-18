@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
  * @ORM\Entity(repositoryClass="App\Repositories\AssetRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesToFiles, GeneratesUniqueHash
+class Asset extends Base\Asset implements SystemComponent, HasIdColumn, GeneratesUniqueHash
 {
     /** Regular expressions used for validating the relevant Asset data fields */
     const REGEX_CPE         = '~(cpe:(\d)?(\.\d)?(/[aho])(([:]{1,3})([\pL\pN\pS_])+)*)~i';
@@ -94,11 +94,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     protected $audits;
 
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="assets", indexBy="id")
-     */
-    protected $files;
-
-    /**
      * Asset constructor.
      */
     public function __construct()
@@ -107,7 +102,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
         $this->relatedSoftwareInformation = new ArrayCollection();
         $this->vulnerabilities            = new ArrayCollection();
         $this->audits                     = new ArrayCollection();
-        $this->files                      = new ArrayCollection();
     }
 
     /**
@@ -220,24 +214,26 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     }
 
     /**
-     * Get the parent Entity of this Entity
+     * Get the parent Entity of this Entity. In this case we return the Workspace related to the parent file, because
+     * this method is used when determining permissions, and file have no permissions directly associated with them
+     * because they are not considered a component of our system, but rather a data source.
      *
      * @return Base\Workspace
      */
     public function getParent()
     {
-        return $this->workspace;
+        return $this->file->getWorkspace();
     }
 
     /**
      * Convenience method for setting the parent relation
      *
-     * @param Base\Workspace $workspace
+     * @param Base\File $file
      * @return Base\Asset
      */
-    public function setParent(Base\Workspace $workspace)
+    public function setParent(Base\File $file)
     {
-        return parent::setWorkspace($workspace);
+        return parent::setFile($file);
     }
 
     /**
@@ -374,36 +370,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, RelatesT
     {
         $openPort->setAsset($this);
         return parent::addOpenPort($openPort);
-    }
-
-    /**
-     * @param File $file
-     * @return $this
-     */
-    public function addFile(File $file)
-    {
-        $this->files[$file->getId()] = $file;
-
-        return $this;
-    }
-
-    /**
-     * @param File $file
-     * @return $this
-     */
-    public function removeFile(File $file)
-    {
-        $this->files->removeElement($file);
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFiles()
-    {
-        return $this->files;
     }
 
     /**

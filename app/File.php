@@ -13,4 +13,12 @@ class File extends Model
      * @var string
      */
     protected $table = 'files';
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function assets()
+    {
+        return $this->hasMany(Asset::class);
+    }
 }

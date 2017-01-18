@@ -70,4 +70,6 @@ return [
         . " to that Asset. This is not reversible. Please confirm.",
     MessagingModel::ERROR_ASSET_CREATE_PERMISSION           => "Sorry, you don't have permission to create Assets"
         . " in that Workspace.",
+    MessagingModel::ERROR_COULD_NOT_CREATE_ASSET_FILE       => "Sorry, we could not create an Asset because there is a "
+        . "problem with the related file."
 ];

@@ -3,7 +3,6 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetAssetsInWorkspace as GetAssetsInWorkspaceCommand;
-use App\Entities\Asset;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -13,6 +12,7 @@ use App\Repositories\AssetRepository;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
+use Illuminate\Support\Collection;
 
 class GetAssetsInWorkspace extends CommandHandler
 {
@@ -44,7 +44,7 @@ class GetAssetsInWorkspace extends CommandHandler
     /**
      * @param GetAssetsInWorkspaceCommand $command
      *
-     * @return array
+     * @return Collection
      * @throws ActionNotPermittedException
      * @throws InvalidInputException
      * @throws WorkspaceNotFoundException
@@ -71,34 +71,6 @@ class GetAssetsInWorkspace extends CommandHandler
             );
         }
 
-        return $workspace->getAssets()->filter(function($asset) {
-            /** @var $asset Asset */
-            // Exclude deleted Assets
-            return $asset->getDeleted() !== true && $asset->getSuppressed() !== true;
-        })->toArray();
-    }
-
-    /**
-     * @return AssetRepository
-     */
-    public function getAssetRepository()
-    {
-        return $this->assetRepository;
-    }
-
-    /**
-     * @return WorkspaceRepository
-     */
-    public function getWorkspaceRepository()
-    {
-        return $this->workspaceRepository;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    public function getEm()
-    {
-        return $this->em;
+        return $workspace->getAssets();
     }
 }
