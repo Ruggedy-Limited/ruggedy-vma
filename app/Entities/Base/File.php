@@ -68,12 +68,12 @@ class File extends AbstractEntity
     protected $scanner_app_id;
 
     /**
-     * @ORM\Column(name="`processed`", type="smallint", options={"unsigned":true})
+     * @ORM\Column(name="`processed`", type="boolean", options={"unsigned":true})
      */
     protected $processed;
 
     /**
-     * @ORM\Column(name="`deleted`", type="smallint", options={"unsigned":true})
+     * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
      */
     protected $deleted;
 
@@ -280,7 +280,7 @@ class File extends AbstractEntity
     /**
      * Set the value of processed.
      *
-     * @param integer $processed
+     * @param boolean $processed
      * @return \App\Entities\Base\File
      */
     public function setProcessed($processed)
@@ -293,7 +293,7 @@ class File extends AbstractEntity
     /**
      * Get the value of processed.
      *
-     * @return integer
+     * @return boolean
      */
     public function getProcessed()
     {
@@ -303,7 +303,7 @@ class File extends AbstractEntity
     /**
      * Set the value of deleted.
      *
-     * @param integer $deleted
+     * @param boolean $deleted
      * @return \App\Entities\Base\File
      */
     public function setDeleted($deleted)
@@ -316,7 +316,7 @@ class File extends AbstractEntity
     /**
      * Get the value of deleted.
      *
-     * @return integer
+     * @return boolean
      */
     public function getDeleted()
     {

@@ -91,7 +91,7 @@ class User extends AbstractEntity
     protected $photo_url;
 
     /**
-     * @ORM\Column(name="`uses_two_factor_auth`", type="smallint")
+     * @ORM\Column(name="`uses_two_factor_auth`", type="boolean")
      */
     protected $uses_two_factor_auth;
 
@@ -447,7 +447,7 @@ class User extends AbstractEntity
     /**
      * Set the value of uses_two_factor_auth.
      *
-     * @param integer $uses_two_factor_auth
+     * @param boolean $uses_two_factor_auth
      * @return \App\Entities\Base\User
      */
     public function setUsesTwoFactorAuth($uses_two_factor_auth)
@@ -460,7 +460,7 @@ class User extends AbstractEntity
     /**
      * Get the value of uses_two_factor_auth.
      *
-     * @return integer
+     * @return boolean
      */
     public function getUsesTwoFactorAuth()
     {
