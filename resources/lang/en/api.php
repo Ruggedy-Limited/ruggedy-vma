@@ -73,4 +73,5 @@ return [
     MessagingModel::ERROR_COULD_NOT_CREATE_ASSET_FILE       => "Sorry, we could not create an Asset because there is a "
         . "problem with the related file.",
     MessagingModel::ERROR_FILE_DOES_NOT_EXIST               => "Sorry, that file does not exist.",
+    MessagingModel::ERROR_FILE_VIEW_PERMISSION              => "Sorry, you don't have permission to view that file.",
 ];

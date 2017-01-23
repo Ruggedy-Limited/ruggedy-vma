@@ -150,6 +150,8 @@ class FeatureContext extends MinkContext implements Context
         } catch (QueryException $e) {
             // Just catch the exception in the case of integrity constraint violations
             // Re-enable foreign key checks
+            $e->getMessage();
+            $e->getCode();
         }
 
         Schema::enableForeignKeyConstraints();

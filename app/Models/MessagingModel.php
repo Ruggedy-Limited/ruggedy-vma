@@ -53,7 +53,8 @@ class MessagingModel
     const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
 
     /** API File Management */
-    const ERROR_FILE_DOES_NOT_EXIST = 'error_file_does_not_exist';
+    const ERROR_FILE_DOES_NOT_EXIST  = 'error_file_does_not_exist';
+    const ERROR_FILE_VIEW_PERMISSION = 'error_file_view_permission';
 
     /** API Workspace Management */
     const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
@@ -113,6 +114,7 @@ class MessagingModel
             UpsertPermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             RevokePermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             GetListOfPermissions::class     => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
+            GetFile::class                  => static::ERROR_FILE_VIEW_PERMISSION,
         ]);
 
         $fileNotFoundMap = new Collection([

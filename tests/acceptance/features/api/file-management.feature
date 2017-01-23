@@ -31,6 +31,7 @@ Feature: As an account or team owner
       | 4  | scans/xml/netsparker/1/single-dns.xml             | xml    | 568818  | 1       | 1            | 4              | 1         | 0       | 2016-10-17 19:25:33 | 2016-11-14 15:00:19 |
       | 5  | scans/xml/nessus/1/full-multiple-dns.nessus       | xml    | 1841174 | 2       | 2            | 5              | 1         | 0       | 2016-10-24 07:26:59 | 2016-11-14 16:58:45 |
       | 6  | scans/xml/nessus/1/full-audit-multiple-dns.nessus | xml    | 2664096 | 1       | 1            | 5              | 1         | 0       | 2016-11-07 07:22:00 | 2016-11-14 15:00:19 |
+      | 7  | scans/xml/nessus/1/full-audit.nessus              | xml    | 2664096 | 3       | 3            | 5              | 1         | 0       | 2016-11-07 07:22:00 | 2016-11-14 15:00:19 |
     And the following existing ScannerApps:
       | id | name       | description                      | created_at          | updated_at          |
       | 1  | nmap       | NMAP Port Scanner Utility        | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |
@@ -43,7 +44,7 @@ Feature: As an account or team owner
       | 1  | homenetwork.home.co.za    | cpe:/o:ubuntu:ubuntu_linux:9.10                                     | Ubuntu    | 192.168.0.10  | FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | homenetwork.home.co.za    | D0:E1:40:8C:63:6A | 9.10       | NULL    | 1       | 1       | 2016-06-20 09:00:00 | 2016-06-20 09:00:00 |
       | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | Microsoft | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | 5.2.3790   | NULL    | 1       | 1       | 2016-06-20 09:02:23 | 2016-06-20 09:02:23 |
       | 3  | 192.168.0.24              | NULL                                                                | NULL      | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL       | NULL    | 1       | 1       | 2016-06-20 09:05:31 | 2016-06-20 09:05:31 |
-      | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | nginx     | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | NULL       | NULL    | 2       | 1       | 2016-06-20 09:05:38 | 2016-06-20 09:05:38 |
+      | 4  | webapp.test               | cpe:2.3:a:nginx:nginx:1.9.8:*:*:*:*:*:*:*                           | NULL      | 192.168.0.38  | NULL                                    | webapp.test               | NULL              | NULL       | NULL    | 2       | 1       | 2016-06-20 09:05:38 | 2016-06-20 09:05:38 |
       | 5  | ubuntu2.homenetwork.co.za | cpe:/o:ubuntu:ubuntu_linux:12.10                                    | Ubuntu    | NULL          | NULL                                    | ubuntu2.homenetwork.co.za | NULL              | 12.10      | NULL    | 3       | 1       | 2016-06-20 09:06:00 | 2016-06-20 09:06:00 |
       | 6  | fde3:970e:b33d::/48       | cpe:2.3:o:microsoft:windows_server_2008:*:*:x64:*:*:*:*:*           | Microsoft | NULL          | fde3:970e:b33d::/48                     | NULL                      | NULL              | 6.0.6001   | NULL    | 4       | 1       | 2016-06-20 09:07:23 | 2016-06-20 09:07:23 |
       | 7  | 192.168.1.24              | NULL                                                                | NULL      | 192.168.1.24  | NULL                                    | NULL                      | NULL              | NULL       | NULL    | 5       | 2       | 2016-06-20 09:08:31 | 2016-06-20 09:08:31 |
@@ -139,6 +140,22 @@ Feature: As an account or team owner
       | 361 | 2016-11-14 14:59:55 |
       | 430 | 2016-11-14 14:59:55 |
     And the following Vulnerabilities in Asset 8:
+      | id  | created_at          |
+      | 147 | 2016-11-14 14:59:55 |
+    And the following Vulnerabilities in File 1:
+      | id  | created_at          |
+      | 103 | 2016-11-14 14:59:55 |
+      | 107 | 2016-11-14 14:59:55 |
+      | 566 | 2016-11-14 14:59:55 |
+      | 340 | 2016-11-14 14:59:55 |
+      | 482 | 2016-11-14 14:59:55 |
+      | 27  | 2016-11-14 14:59:55 |
+      | 614 | 2016-11-14 14:59:55 |
+    And the following Vulnerabilities in File 5:
+      | id  | created_at          |
+      | 361 | 2016-11-14 14:59:55 |
+      | 430 | 2016-11-14 14:59:55 |
+    And the following Vulnerabilities in File 6:
       | id  | created_at          |
       | 147 | 2016-11-14 14:59:55 |
     And the following SoftwareInformation in Asset 1:
@@ -260,9 +277,196 @@ Feature: As an account or team owner
       | 2  | Windows Server 2003       | cpe:2.3:o:microsoft:windows_2003_server:*:gold:enterprise:*:*:*:*:* | 192.168.0.12  | fd03:10d3:bb1c::/48                     | NULL                      | NULL              | Microsoft | 5.2.3790  | 2016-06-20 09:02:23 | 2016-06-20 09:02:23 |
       | 3  | 192.168.0.24              | NULL                                                                | 192.168.0.24  | NULL                                    | NULL                      | NULL              | NULL      | NULL      | 2016-06-20 09:05:31 | 2016-06-20 09:05:31 |
 
+  Scenario: Get a list of Assets found in a particular file in someone else's Workspaces where I have at least read access
+    Given that I want to get information about "Assets"
+    When I use a URL parameter "include" with value "assets"
+    And I request "/api/file/5"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "5"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "1841174"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "5"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nessus"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "assets" property
+    And the type of the "assets" property is array
+    And the "assets" array property has the following items:
+      | id | name                      | cpe                                                                 | ipAddress     | ipAddressV6                             | hostname                  | macAddress        | os        | osVersion | createdDate         | modifiedDate        |
+      | 7  | 192.168.1.24              | NULL                                                                | 192.168.1.24  | NULL                                    | NULL                      | NULL              | NULL      | NULL      | 2016-06-20 09:08:31 | 2016-06-20 09:08:31 |
+
+  Scenario: Get a list of Assets found in a particular file in someone else's Workspaces where I don't have at least read access
+    Given that I want to get information about "Assets"
+    When I use a URL parameter "include" with value "assets"
+    And I request "/api/file/7"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that file."
+
+  Scenario: Get a list of Assets found on a non-existent file
+    Given that I want to get information about "Assets"
+    When I use a URL parameter "include" with value "assets"
+    And I request "/api/file/17"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that file does not exist."
+
   ##
   # Listing all the Vulnerabilities that have been found in a File
   ##
+  Scenario: Get a list of Vulnerabilities found in a particular file in one of my Workspaces
+    Given that I want to get information about "Vulnerabilities"
+    When I use a URL parameter "include" with value "vulnerabilities"
+    And I request "/api/file/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "18646"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "1"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nmap"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "vulnerabilities" property
+    And the type of the "vulnerabilities" property is array
+    And the "vulnerabilities" array property has the following items:
+      | id  | sourceId                | name                                                                                             | severity | pciSeverity  | isMalwareAvailable | malwareDescription | impact | cvssScore | createdDate         | modifiedDate        |
+      | 27  | gnu-bash-cve-2014-6278  | CVE-2014-6278 bash: code execution via specially crafted environment variables                   | 10.00    | 5.00         | NULL               | NULL               | NULL   | 10.00     | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 103 | ubuntu-cve-2015-8395    | Ubuntu: USN-2943-1 (CVE-2015-8395): PCRE vulnerabilities                                         | 8.00     | 5.00         | NULL               | NULL               | NULL   | 7.50      | 2016-11-14 14:59:55 | 2016-11-14 15:00:17 |
+      | 107 | ubuntu-cve-2015-8710    | Ubuntu: USN-2875-1 (CVE-2015-8710): libxml2 vulnerabilities                                      | 8.00     | 5.00         | NULL               | NULL               | NULL   | 7.50      | 2016-11-14 14:59:55 | 2016-11-14 15:00:17 |
+      | 340 | windows-hotfix-ms16-037 | MS16-037: Cumulative Security Update for Internet Explorer (3148531)                             | 8.00     | 5.00         | NULL               | NULL               | NULL   | 7.60      | 2016-11-14 14:59:58 | 2016-11-14 15:00:17 |
+      | 482 | 84056                   | MS15-060: Vulnerability in Microsoft Common Controls Could Allow Remote Code Execution (3059317) | 3.00     | NULL         | NULL               | NULL               | NULL   | 9.30      | 2016-11-14 15:00:04 | 2016-11-14 15:00:17 |
+      | 566 | 87876                   | MS KB3109853: Update to Improve TLS Session Resumption Interoperability                          | 0.00     | NULL         | NULL               | NULL               | NULL   | NULL      | 2016-11-14 15:00:07 | 2016-11-14 15:00:17 |
+      | 614 | 77897                   | Ubuntu 10.04 LTS / 12.04 LTS / 14.04 : bash vulnerability (USN-2363-1)                           | 4.00     | NULL         | NULL               | NULL               | NULL   | 10.00     | 2016-11-14 15:00:16 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Vulnerabilities found in a particular file in someone else's Workspaces where I have at least read access
+    Given that I want to get information about "Vulnerabilities"
+    When I use a URL parameter "include" with value "vulnerabilities"
+    And I request "/api/file/5"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "5"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "1841174"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "5"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nessus"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "vulnerabilities" property
+    And the type of the "vulnerabilities" property is array
+    And the "vulnerabilities" array property has the following items:
+      | id  | sourceId             | name                                                                                                | severity | pciSeverity  | isMalwareAvailable | malwareDescription | impact | cvssScore | createdDate         | modifiedDate        |
+      | 361 | OptionsMethodEnabled | OptionsMethodEnabled                                                                                | 3.90     | NULL         | NULL               | NULL               | NULL   | NULL      | 2016-11-14 15:00:00 | 2016-11-14 15:00:17 |
+      | 430 | 81263                | MS15-010: Vulnerabilities in Windows Kernel-Mode Driver Could Allow Remote Code Execution (3036220) | 3.00     | NULL         | NULL               | NULL               | NULL   | 7.20      | 2016-11-14 15:00:04 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Vulnerabilities found in a particular file in someone else's Workspaces where I don't have at least read access
+    Given that I want to get information about "Vulnerabilities"
+    When I use a URL parameter "include" with value "vulnerabilities"
+    And I request "/api/file/7"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that file."
+
+  Scenario: Get a list of Vulnerabilities found on a non-existent file
+    Given that I want to get information about "Vulnerabilities"
+    When I use a URL parameter "include" with value "vulnerabilities"
+    And I request "/api/file/17"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that file does not exist."
 
   ##
   # Listing all the Software Information that has been found in a File
