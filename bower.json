@@ -1,0 +1,28 @@
+{
+  "name": "vendors",
+  "version": "0.0.0",
+  "authors": [],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "animate.css": "^3.5.2",
+    "bower": "*",
+    "install": "~1.0.4",
+    "jquery": "2.2.4",
+    "bootstrap": "^3.3.7",
+    "jqvmap": "manifestinteractive/jqvmap#^1.5.1",
+    "jquery-mask-plugin": "igorescobar/jQuery-Mask-Plugin#^1.14.0",
+    "sweetalert2": "^5.0.7",
+    "font-awesome": "^4.7.0"
+  }
+}
