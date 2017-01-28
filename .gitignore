@@ -1,0 +1,15 @@
+/node_modules
+/public/storage
+/public/images
+/public/img
+/public/vendor
+/storage/*.key
+/vendor
+.idea
+.DS_Store
+Homestead.json
+Homestead.yaml
+.env
+composer.phar
+.phpstorm.meta.php
+_ide_helper.php
