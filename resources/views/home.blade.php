@@ -5,6 +5,14 @@
     <button class="flat-btn" type="button">Primary Button</button>
     </div>
     <div class="col-md-4">
+        <div class="content-card">
+            <h4 class="h-4-1">Basic Card</h4>
+            <p>Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit lorem nisl, ac
+                lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est</p>
+        </div>
+    </div>
+    <div class="col-md-4">
         <div class="card hovercard animated pulse-hover">
             <div class="cardheader c-white">
             </div>
