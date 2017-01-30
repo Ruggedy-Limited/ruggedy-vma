@@ -10,13 +10,13 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row animated fadeIn">
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>Settings</label>
                 <div id=tab-content1 class=tab-content>
-                        <div class="col-md-4 animated fadeIn">
+                        <div class="col-md-4">
                             <br>
                             {!! Form::open(['url' => '/foo/bar']) !!}
                             <div class="form-group">
