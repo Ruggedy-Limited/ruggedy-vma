@@ -12,39 +12,65 @@
 </head>
 
 <body>
-<div>
-    <nav class="navbar navbar-default navigation-clean-search">
-        <div class="container-nav">
-            <div class="navbar-header"><a class="navbar-brand navbar-link">Ruggedy.io </a>
-                <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span
-                            class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span
-                            class="icon-bar"></span><span class="icon-bar"></span></button>
-            </div>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="nav navbar-nav">
-                    <li role="presentation"><a href="{{ route('home') }}"><span class="t-c-red">.W</span>orkspaces</a></li>
-                    <li role="presentation"><a href="{{ route('settings.index') }}"><span class="t-c-red">.S</span>ettings</a></li>
-                    <li role="presentation"><a href="#"><span class="t-c-red">.P</span>rofile</a></li>
-                </ul>
-                <form class="navbar-form navbar-left" target="_self">
-                    <div class="form-group">
-                        <label class="control-label" for="search-field"><i
-                                    class="glyphicon glyphicon-search t-c-red"></i></label>
-                        <input class="form-control search-field" type="search" name="search" id="search-field">
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                Ruggedy
+            </li>
+            <li>
+                <a href="{{ route('home') }}">
+                    <div class="nav-btn">
+                        <h4 class="nav-btn-header"><i class="fa fa-th-large fa-lg nav-indent" aria-hidden="true"></i>
+                        </h4>
+                        <p class="nav-btn-text">Workspaces</p>
                     </div>
-                </form>
-                <a class="btn btn-default navbar-btn navbar-right action-button" role="button" href="">Logout </a>
-            </div>
-        </div>
-    </nav>
-</div>
-    <div class="container">
-
-        @yield('content')
-
-        <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
-        <script src="{{ asset('/vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('settings.index') }}">
+                    <div class="nav-btn">
+                        <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
+                        <p class="nav-btn-text">Settings</p>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="nav-btn">
+                        <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
+                        </h4>
+                        <p class="nav-btn-text">Profile</p>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="nav-btn">
+                        <h4 class="nav-btn-header"><i class="fa fa-sign-out fa-lg nav-indent" aria-hidden="true"></i>
+                        </h4>
+                        <p class="nav-btn-text">Logout</p>
+                    </div>
+                </a>
+            </li>
+        </ul>
     </div>
+    <div id="page-content-wrapper">
+        <div class="c-black nav-sm-btn">
+            <i class="fa fa-bars fa-2x" id="menu-toggle"></i>
+        </div>
+
+        <div class="container">
+
+            @yield('content')
+
+        </div>
+    </div>
+</div>
+
+    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
+    <script src="{{ asset('/vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('/js/custom.js') }}"></script>
 </body>
 
 </html>
