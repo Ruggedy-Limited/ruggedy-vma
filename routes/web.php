@@ -18,8 +18,10 @@ Route::get('/theme', 'HomeController@theme'); //Temporary route to theme.
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index');
 
-Route::get('workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
+Route::get('/settings/', 'SettingsController@index')->name('settings.index');
+
+Route::get('/workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
 Route::get('/workspaces/', 'WorkspaceController@index')->name('workspaces.index');
 Route::get('/workspaces/create', 'WorkspaceController@create')->name('workspaces.create');
 
-
+Route::get('/folders/create', 'FolderController@create')->name('folders.create');

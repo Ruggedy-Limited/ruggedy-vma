@@ -11,7 +11,7 @@
             {!! Form::open(['url' => '/home']) !!}
             <div class="form-group fg-line">
                 {!! Form::label('name', 'Name') !!}
-                {!! Form::text('name', null, ['class' => 'red-form-control input-sm']) !!}
+                {!! Form::text('name', null, ['class' => 'red-form-control']) !!}
             </div>
             <div class="form-group fg-line">
                 {!! Form::label('description', 'Description') !!}

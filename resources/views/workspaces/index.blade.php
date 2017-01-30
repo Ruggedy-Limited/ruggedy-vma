@@ -7,35 +7,33 @@
     <div class="row animated fadeIn">
         <div class="col-md-12">
             <a href="#" class="primary-btn" type="button">Add Application</a>
-            <a href="#" class="primary-btn" type="button">Add Folder</a>
+            <a href="{{ route('folders.create') }}" class="primary-btn" type="button">Add Folder</a>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row animated fadeIn">
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>Apps</label>
                 <div id=tab-content1 class=tab-content>
-                    <div class="row animated fadeIn">
-                        <div class="col-md-4">
-                            <div class="card hovercard animated pulse-hover">
-                                <div class="cardheader c-white">
+                    <div class="col-md-4">
+                        <div class="card hovercard animated pulse-hover">
+                            <div class="cardheader c-white">
+                            </div>
+                            <div class="avatar avatar-white">
+                                <img src="/img/nessus-logo.png">
+                            </div>
+                            <div class="info">
+                                <div class="title h-3">
+                                    <h4>DMZ Nessus Scan</h4>
                                 </div>
-                                <div class="avatar avatar-white">
-                                    <img src="/img/nessus-logo.png">
+                                <div class="desc t-3">DMZ scan completed on 18 November 2016.
                                 </div>
-                                <div class="info">
-                                    <div class="title h-3">
-                                        <h4>DMZ Nessus Scan</h4>
-                                    </div>
-                                    <div class="desc t-3">DMZ scan completed on 18 November 2016.
-                                    </div>
-                                    <div class="adm-card-footer">
-                                        <div class="pull-right">
-                                            <i class="fa fa-pencil"></i>
-                                            <i class="fa fa-trash p-l-8"></i>
-                                        </div>
+                                <div class="adm-card-footer">
+                                    <div class="pull-right">
+                                        <i class="fa fa-pencil"></i>
+                                        <i class="fa fa-trash p-l-8"></i>
                                     </div>
                                 </div>
                             </div>
