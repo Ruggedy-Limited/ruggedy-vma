@@ -600,6 +600,15 @@ Cards End
     border-radius: 0px;
 }
 
+.tabs-label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-style: inherit;
+
+}
+
 textarea.red-form-control {
     height: auto;
 }
@@ -643,6 +652,7 @@ Tabs
 .tabs label {
     display: block;
     padding: 14px 21px;
+    width: 150px;
     border-radius: 2px 2px 0 0;
     font-size: 16px;
     background: transparent;
@@ -653,7 +663,17 @@ Tabs
     -o-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
+    margin-left: -20px;
 }
+
+.tabs-label{
+    margin-left: -20px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px !important;
+    line-height: 1.42857143;
+    color: #333
+}
+
 .tabs [id^="tab"]:checked {
     color:inherit;
     -moz-transition: all 2.2s ease-in-out;
