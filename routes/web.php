@@ -17,4 +17,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/theme', 'HomeController@theme'); //Temporary route to theme.
+
 Route::get('/home', 'HomeController@index');
