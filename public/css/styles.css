@@ -99,7 +99,7 @@ Navbar
 .navigation-clean-search.navbar .navbar-nav > li > a {
     padding-left: 18px;
     padding-right: 18px;
-    margin-left: 20px;
+    margin-left: 15px;
     font-size: 22px;
     line-height: 1.7;
     text-shadow: none;
@@ -279,10 +279,14 @@ div.container {
 
 .primary-btn:hover {
     background: #bb9b1e;
+    color: #ffffff;
+    text-decoration: none;
 }
 
 .primary-btn:active {
     background: #bb9b1e;
+    color: #ffffff;
+    text-decoration: none;
 }
 
 .t-c-red {
@@ -314,6 +318,21 @@ Cards Start
 .content-card {
     position: relative;
     background: #fff;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0px;
+    height: 100%;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.black-content-card {
+    position: relative;
+    background: #2f2f2f;
+    color: #ffffff;
     margin-top: 15px;
     margin-bottom: 15px;
     border-radius: 0px;
@@ -382,6 +401,18 @@ Cards Start
     line-height: 1;
     vertical-align: middle;
 }
+
+.card.hovercard .info .title a {
+    text-decoration: none;
+    color: #333;
+}
+
+.card.hovercard .info .title a:hover {
+    text-decoration: none;
+    color: #333;
+}
+
+
 
 .card.hovercard .info .desc {
     overflow: hidden;
@@ -588,3 +619,73 @@ label:focus,
     outline: 0px !important;
     -webkit-appearance: none;
 }
+
+/*
+Tabs
+ */
+
+.tabs {
+    width: 100%;
+    float: none;
+    list-style: none;
+    position: relative;
+    margin: 15px 0 0 0px;
+}
+.tabs li {
+    float: left;
+    display: block;
+}
+.tabs input[type="radio"] {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+.tabs label {
+    display: block;
+    padding: 14px 21px;
+    border-radius: 2px 2px 0 0;
+    font-size: 16px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    top: 4px;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+.tabs [id^="tab"]:checked {
+    color:inherit;
+    -moz-transition: all 2.2s ease-in-out;
+    -o-transition: all 2.2s ease-in-out;
+    -webkit-transition: all 2.2s ease-in-out;
+    transition: all 2.2s ease-in-out;
+    padding: 25px;
+}
+.tabs label:hover {
+    background: transparent;
+}
+.tabs .tab-content {
+    z-index: 2;
+    display: none;
+    overflow: hidden;
+    width: 100%;
+    font-size: inherit;
+    line-height: 25px;
+    padding: 25px;
+    position: absolute;
+    top: 53px;
+    left: 0;
+    background: #e6e6e6;
+    margin-bottom: 15px;
+}
+.tabs [id^="tab"]:checked + label {
+    background: #e6e6e6;
+}
+.tabs [id^="tab"]:checked ~ [id^="tab-content"] {
+    display: block;
+}
+
+/*
+Tabs End
+ */

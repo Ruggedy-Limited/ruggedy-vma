@@ -22,7 +22,7 @@
             </div>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="nav navbar-nav">
-                    <li role="presentation"><a href="#"><span class="t-c-red">.W</span>orkspaces</a></li>
+                    <li role="presentation"><a href="{{ route('home') }}"><span class="t-c-red">.W</span>orkspaces</a></li>
                     <li role="presentation"><a href="#"><span class="t-c-red">.S</span>ettings</a></li>
                     <li role="presentation"><a href="#"><span class="t-c-red">.P</span>rofile</a></li>
                 </ul>
