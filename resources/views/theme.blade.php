@@ -6,7 +6,7 @@
             <button class="primary-btn" type="button">Primary Button</button>
         </div>
         <div class="col-md-4">
-            <h4>Form Heading</h4>
+            <h3>Form Heading</h3>
             <br>
             {!! Form::open(['url' => '/home']) !!}
             <div class="form-group fg-line">
@@ -23,6 +23,14 @@
         <div class="col-md-4">
             <div class="content-card">
                 <h4 class="h-4-1">Basic Card</h4>
+                <p>Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit lorem nisl, ac
+                    lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="black-content-card">
+                <h4 class="h-4-1 t-c-red">Basic Card / Notes</h4>
                 <p>Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit lorem nisl, ac
                     lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
                     rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est</p>
