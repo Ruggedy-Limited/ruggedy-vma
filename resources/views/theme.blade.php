@@ -37,6 +37,14 @@
             </div>
         </div>
         <div class="col-md-4">
+            <div class="clear-content-card">
+                <h4 class="h-4-1 t-c-red">Basic Card / Notes</h4>
+                <p>Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit lorem nisl, ac
+                    lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est</p>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="card hovercard animated pulse-hover">
                 <div class="cardheader c-white"></div>
                 <div class="avatar avatar-white">
@@ -94,6 +102,44 @@
                 <div class="info">
                     <div class="title h-3">
                         <h4>Nessus Scanner</h4>
+                    </div>
+                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
+                        lorem nisl,
+                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card hovercard animated pulse-hover">
+                <div class="cardheader c-white">
+                </div>
+                <div class="avatar avatar-white">
+                    <img src="/img/nmap-logo.png">
+                </div>
+                <div class="info">
+                    <div class="title h-3">
+                        <h4>NMAP Scanner</h4>
+                    </div>
+                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
+                        lorem nisl,
+                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card hovercard animated pulse-hover">
+                <div class="cardheader c-white">
+                </div>
+                <div class="avatar avatar-white">
+                    <img src="/img/burp-logo.png">
+                </div>
+                <div class="info">
+                    <div class="title h-3">
+                        <h4>Burp Scanner</h4>
                     </div>
                     <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
                         lorem nisl,

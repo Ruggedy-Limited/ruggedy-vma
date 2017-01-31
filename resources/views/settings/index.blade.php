@@ -28,7 +28,7 @@
                         </div>
                         <div class="col-md-2"></div>
                         <div class="col-md-6 animated fadeInUp">
-                            <div class="black-content-card">
+                            <div class="white-content-card">
                                 <h4 class="h-4-1 t-c-red">Settings</h4>
                                 <p>Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit lorem
                                     nisl, ac
