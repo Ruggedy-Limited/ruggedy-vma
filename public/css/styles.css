@@ -84,10 +84,10 @@ Navbar
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
-    left: 250px;
+    left: 0px;
     width: 0;
     height: 100%;
-    margin-left: -250px;
+    margin-left: 0;
     overflow-y: auto;
     background: #1d202a;
     -webkit-transition: all 0.5s ease;
@@ -171,32 +171,31 @@ Navbar
 
 @media(min-width:768px) {
     #wrapper {
-        padding-left: 250px;
-    }
-
-    #wrapper.toggled {
         padding-left: 0;
     }
 
-    #sidebar-wrapper {
-        width: 250px;
+    #wrapper.toggled {
+        padding-left: 250px;
     }
 
-    #wrapper.toggled #sidebar-wrapper {
+    #sidebar-wrapper {
         width: 0;
     }
 
+    #wrapper.toggled #sidebar-wrapper {
+        width: 250px;
+    }
+
     #page-content-wrapper {
-        padding: 0px;
         position: relative;
+        margin-right: 0;
     }
 
     #wrapper.toggled #page-content-wrapper {
         position: relative;
-        margin-right: 0;
+        padding: 0px;
     }
 }
-
 
 /*
 Navbar End
@@ -307,6 +306,36 @@ Cards Start
     padding-bottom: 15px;
 }
 
+.clear-content-card {
+    position: relative;
+    background: transparent;
+    color: inherit;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0px;
+    height: 100%;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.white-content-card {
+    position: relative;
+    background: #ffffff;
+    color: inherit;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0px;
+    height: 100%;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
 .content-card-header {
     position: relative;
     background: transparent;
@@ -359,7 +388,7 @@ Cards Start
 
 .card.hovercard .info .title {
     margin-bottom: 4px;
-    margin-top: 4px;
+    margin-top: 4.5px;
     font-size: 24px;
     line-height: 1;
     vertical-align: middle;
@@ -500,7 +529,7 @@ Cards End
 }
 
 .h-4-1 {
-    height: 20px;
+    height: 22px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 1;
