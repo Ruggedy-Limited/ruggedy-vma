@@ -2,6 +2,8 @@
 
 @section('content')
 
+    <h5>Breadcrumbs / Goes / Here </h5>
+    <br>
     <div class="row">
         <div class="col-md-4 animated fadeIn">
             <h3>Add App to Workspace</h3>
@@ -15,6 +17,7 @@
                 {!! Form::label('description', 'Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
+            <a href="#" class="border-btn" type="button">Cancel</a>
             <button class="primary-btn" type="submit">Submit</button>
             {!! Form::close() !!}
         </div>

@@ -1,6 +1,9 @@
 @extends('layouts.main')
 
 @section('content')
+
+    <h5>Breadcrumbs / Goes / Here </h5>
+
     <div class="row>">
         <div class="col-md-4">
             <button class="primary-btn" type="button">Primary Button</button>
@@ -18,6 +21,7 @@
                 {!! Form::label('description', 'Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
+            <a href="#" class="border-btn" type="button">Cancel</a>
             <button class="primary-btn" type="submit">Submit</button>
             {!! Form::close() !!}
         </div>
