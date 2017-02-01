@@ -43,7 +43,7 @@
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
                             </div>
-                            <div class="avatar avatar-white">
+                            <div class="avatar avatar-img">
                                 <img src="/img/nessus-logo.png">
                             </div>
                             <div class="info">
@@ -65,7 +65,7 @@
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
                             </div>
-                            <div class="avatar avatar-white">
+                            <div class="avatar avatar-img">
                                 <img src="/img/nessus-logo.png">
                             </div>
                             <div class="info">
@@ -92,7 +92,7 @@
                     <div class="col-md-4">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
-                            <div class="avatar avatar-white">
+                            <div class="avatar avatar-img">
                                 <i class="fa fa-folder fa-5x t-c-red"></i>
                             </div>
                             <div class="info">

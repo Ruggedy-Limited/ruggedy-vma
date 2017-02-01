@@ -223,6 +223,14 @@ div.container {
     padding-top: 15px;
 }
 
+.avatar-img {
+    height: 80px;
+    width: 200px;
+    background-color: #ffffff;
+    display: inline-block;
+    padding-top: 30px;
+}
+
 .primary-btn {
     display: inline-block;
     margin: 15px 5px;
