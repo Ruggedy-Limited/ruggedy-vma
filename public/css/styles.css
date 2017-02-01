@@ -243,7 +243,8 @@ div.container {
     padding-top: 15px;
 }
 
-.primary-btn {
+.primary-btn,
+.primary-btn:focus {
     display: inline-block;
     margin: 15px 5px;
     margin-left: 0px;
@@ -262,18 +263,18 @@ div.container {
 
 .primary-btn:hover {
     background: #bb9b1e;
-    color: #ffffff !important;
+    color: #ffffff;
     text-decoration: none !important;
 }
 
-.primary-btn:active,
-.primary-btn:focus {
+.primary-btn:active {
     background: #bb9b1e;
-    color: #ffffff !important;
+    color: #ffffff;
     text-decoration: none !important;
 }
 
-.border-btn {
+.border-btn,
+.border-btn:focus {
     display: inline-block;
     margin: 15px 5px;
     margin-left: 0px;
@@ -293,16 +294,15 @@ div.container {
 
 .border-btn:hover {
     background: transparent;
-    color: inherit !important;
+    color: inherit;
     text-decoration: none;
     border: 3px solid #bb9b1e;
     text-decoration: none !important;
 }
 
-.border-btn:active,
-.primary-btn:focus {
+.border-btn:active {
     background: transparent;
-    color: inherit !important;
+    color: inherit;
     text-decoration: none;
     border-: 3px solid #bb9b1e;
     text-decoration: none !important;
