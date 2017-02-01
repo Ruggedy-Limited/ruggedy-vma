@@ -21,9 +21,9 @@
                             {!! Form::open(['url' => '/foo/bar']) !!}
                             <div class="form-group">
                                 {!! Form::label('name', 'Company Name', ['class' => 'tabs-label']) !!}
-                                {!! Form::text('name', null, ['class' => 'red-form-control']) !!}
+                                {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                             </div>
-                            <button class="primary-btn" type="submit">Submit</button>
+                            <blackutton class="primary-btn" type="submit">Submit</blackutton>
                             {!! Form::close() !!}
                         </div>
                         <div class="col-md-2"></div>

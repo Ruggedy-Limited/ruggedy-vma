@@ -21,6 +21,7 @@ Route::get('/home', 'HomeController@index');
 Route::get('/settings/', 'SettingsController@index')->name('settings.index');
 
 Route::get('/workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
+Route::get('/workspaces/apps/create', 'WorkspaceController@appsCreate')->name('workspaces.apps.create');
 Route::get('/workspaces/', 'WorkspaceController@index')->name('workspaces.index');
 Route::get('/workspaces/create', 'WorkspaceController@create')->name('workspaces.create');
 

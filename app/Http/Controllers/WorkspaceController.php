@@ -85,5 +85,11 @@ class WorkspaceController extends Controller
     public function apps()
     {
 	return view ('workspaces.apps');
-    }		
+    }
+
+    public function appsCreate()
+    {
+        return view ('workspaces.appsCreate');
+    }
 }
+
