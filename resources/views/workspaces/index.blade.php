@@ -6,7 +6,7 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="#" class="primary-btn" type="button">Add Application</a>
+            <a href="{{ route('workspaces.apps') }}" class="primary-btn" type="button">Add Application</a>
             <a href="{{ route('folders.create') }}" class="primary-btn" type="button">Add Folder</a>
         </div>
     </div>
@@ -92,7 +92,7 @@
                     <div class="col-md-4">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
-                            <div class="avatar avatar-img">
+                            <div class="avatar avatar-white">
                                 <i class="fa fa-folder fa-5x t-c-red"></i>
                             </div>
                             <div class="info">

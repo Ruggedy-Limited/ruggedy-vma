@@ -9,11 +9,11 @@
             {!! Form::open(['url' => '/foo/bar']) !!}
             <div class="form-group fg-line">
                 {!! Form::label('name', 'Name') !!}
-                {!! Form::text('name', null, ['class' => 'red-form-control']) !!}
+                {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group fg-line">
                 {!! Form::label('description', 'Description') !!}
-                {!! Form::textarea('description', null, ['class' => 'red-form-control', 'rows' => '3']) !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
             <button class="primary-btn" type="submit">Submit</button>
             {!! Form::close() !!}
