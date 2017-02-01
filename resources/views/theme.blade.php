@@ -96,7 +96,7 @@
             <div class="card hovercard animated pulse-hover">
                 <div class="cardheader c-white">
                 </div>
-                <div class="avatar avatar-white">
+                <div class="avatar avatar-img">
                     <img src="/img/nessus-logo.png">
                 </div>
                 <div class="info">
@@ -115,7 +115,7 @@
             <div class="card hovercard animated pulse-hover">
                 <div class="cardheader c-white">
                 </div>
-                <div class="avatar avatar-white">
+                <div class="avatar avatar-img">
                     <img src="/img/nmap-logo.png">
                 </div>
                 <div class="info">
@@ -134,12 +134,50 @@
             <div class="card hovercard animated pulse-hover">
                 <div class="cardheader c-white">
                 </div>
-                <div class="avatar avatar-white">
+                <div class="avatar avatar-img">
                     <img src="/img/burp-logo.png">
                 </div>
                 <div class="info">
                     <div class="title h-3">
                         <h4>Burp Scanner</h4>
+                    </div>
+                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
+                        lorem nisl,
+                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card hovercard animated pulse-hover">
+                <div class="cardheader c-white">
+                </div>
+                <div class="avatar avatar-img">
+                    <img src="/img/netsparker-logo.png">
+                </div>
+                <div class="info">
+                    <div class="title h-3">
+                        <h4>Netsparker Scanner</h4>
+                    </div>
+                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
+                        lorem nisl,
+                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
+                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card hovercard animated pulse-hover">
+                <div class="cardheader c-white">
+                </div>
+                <div class="avatar avatar-img">
+                    <img src="/img/nexpose-logo.png">
+                </div>
+                <div class="info">
+                    <div class="title h-3">
+                        <h4>Nexpose Scanner</h4>
                     </div>
                     <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
                         lorem nisl,
