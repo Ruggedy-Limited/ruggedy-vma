@@ -2,7 +2,32 @@
 
 @section('content')
 
-    <h5>Breadcrumbs / Goes / Here </h5>
+    <div class="animated fadeIn">
+        <h5>Breadcrumbs / Goes / Here
+            <a data-toggle="modal" data-target="#help">
+                <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+        </h5>
+    </div>
+    <!-- Modal -->
+    <div id="help" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Help Ttile</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Help text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <div class="row animated fadeIn">
         <div class="col-md-12">

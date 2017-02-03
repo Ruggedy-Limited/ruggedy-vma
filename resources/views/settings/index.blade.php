@@ -2,7 +2,32 @@
 
 @section('content')
 
-    <h5>Breadcrumbs / Goes / Here </h5>
+    <div class="animated fadeIn">
+        <h5>Breadcrumbs / Goes / Here
+            <a data-toggle="modal" data-target="#help">
+                <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+        </h5>
+    </div>
+    <!-- Modal -->
+    <div id="help" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Help Ttile</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Help text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
@@ -23,19 +48,13 @@
                                 {!! Form::label('name', 'Company Name', ['class' => 'tabs-label']) !!}
                                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                             </div>
-                            <blackutton class="primary-btn" type="submit">Submit</blackutton>
+                            <a href="#" class="border-btn" type="button">Cancel</a>
+                            <button class="primary-btn" type="submit">Submit</button>
                             {!! Form::close() !!}
                         </div>
                         <div class="col-md-2"></div>
                         <div class="col-md-6 animated fadeInUp">
-                            <div class="white-content-card">
-                                <h4 class="h-4-1 t-c-red">Settings</h4>
-                                <p>Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit lorem
-                                    nisl, ac
-                                    lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est
-                                    s,
-                                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est</p>
-                            </div>
+
                         </div>
                 </div>
             </li>
