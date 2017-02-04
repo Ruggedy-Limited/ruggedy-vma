@@ -29,7 +29,8 @@ a:hover {
     text-decoration: none;
 }
 
-a:active {
+a:active,
+a:focus {
     color: #333333;
     text-decoration: none;
 }
@@ -281,6 +282,36 @@ div.container {
     text-decoration: none !important;
 }
 
+.edit-btn,
+.edit-btn:focus {
+    display: inline-block;
+    margin: 15px 5px;
+    margin-left: 0px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 20px;
+    border: 0;
+    background: #e0b921;
+    color: #FFF;
+    cursor: pointer;
+    outline: 0;
+    text-decoration: none !important;
+}
+
+.edit-btn:hover {
+    background: #bb9b1e;
+    color: #ffffff;
+    text-decoration: none !important;
+}
+
+.edit-btn:active {
+    background: #bb9b1e;
+    color: #ffffff;
+    text-decoration: none !important;
+}
+
 .border-btn,
 .border-btn:focus {
     display: inline-block;
@@ -355,7 +386,7 @@ Cards Start
     background: #fff;
     margin-top: 15px;
     margin-bottom: 15px;
-    border-radius: 0px;
+    border-radius: 6px;
     height: 100%;
     width: 100%;
     padding-left: 15px;
@@ -426,7 +457,7 @@ Cards Start
     background: #fff;
     margin-bottom: 15px;
     margin-top: 15px;
-    border-radius: 0px;
+    border-radius: 6px;
     height: 275px;
     max-height: 275px;
 }
