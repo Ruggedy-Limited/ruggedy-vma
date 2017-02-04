@@ -58,6 +58,16 @@
     <div id="page-content-wrapper">
         <div class="c-black nav-sm-btn">
             <i class="fa fa-bars fa-2x" id="menu-toggle"></i>
+            <div class="pull-right" style="width:275px;">
+                <div class="input-group custom-search-form">
+                    <input type="text" class="search-form-control">
+                    <span class="input-group-btn">
+              <button class="btn btn-default" type="button">
+              <span class="fa fa-search"></span>
+             </button>
+             </span>
+                </div><!-- /input-group -->
+            </div>
         </div>
 
         <div class="container">
