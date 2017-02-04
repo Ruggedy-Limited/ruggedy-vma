@@ -13,7 +13,7 @@ class FolderController extends Controller
      */
     public function index()
     {
-        //
+        return view ('folders.index');
     }
 
     /**

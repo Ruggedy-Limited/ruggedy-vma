@@ -33,6 +33,8 @@
         <div class="col-md-12">
             <a href="{{ route('workspaces.apps') }}" class="primary-btn" type="button">Add Application</a>
             <a href="{{ route('folders.create') }}" class="primary-btn" type="button">Add Folder</a>
+            <a href="#" class="edit-btn" type="button">Edit Workspace</a>
+            <a href="#" class="delete-btn" type="button">Delete Workspace</a>
         </div>
     </div>
 
@@ -55,12 +57,6 @@
                                 </div>
                                 <div class="desc t-3">DMZ scan completed on 18 November 2016.
                                 </div>
-                                <div class="adm-card-footer">
-                                    <div class="pull-right">
-                                        <i class="fa fa-pencil"></i>
-                                        <i class="fa fa-trash p-l-8"></i>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -77,12 +73,6 @@
                                 </div>
                                 <div class="desc t-3">DMZ scan completed on 18 November 2016.
                                 </div>
-                                <div class="adm-card-footer">
-                                    <div class="pull-right">
-                                        <i class="fa fa-pencil"></i>
-                                        <i class="fa fa-trash p-l-8"></i>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -98,12 +88,6 @@
                                     <h4>DMZ Nessus Scan</h4>
                                 </div>
                                 <div class="desc t-3">DMZ scan completed on 18 November 2016.
-                                </div>
-                                <div class="adm-card-footer">
-                                    <div class="pull-right">
-                                        <i class="fa fa-pencil"></i>
-                                        <i class="fa fa-trash p-l-8"></i>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -115,6 +99,7 @@
                 <label for=tab2>Folders</label>
                 <div id=tab-content2 class=tab-content>
                     <div class="col-md-4">
+                        <a href="{{ route('folders.index') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
                             <div class="avatar avatar-white">
@@ -131,14 +116,9 @@
                                     est s,
                                     rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
                                 </div>
-                                <div class="adm-card-footer">
-                                    <div class="pull-right">
-                                        <i class="fa fa-pencil"></i>
-                                        <i class="fa fa-trash p-l-8"></i>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+                        </a>
                     </div>
                 </div>
             </li>

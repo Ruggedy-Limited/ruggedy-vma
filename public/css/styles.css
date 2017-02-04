@@ -293,7 +293,7 @@ div.container {
     font-weight: bold;
     padding: 8px 20px;
     border: 0;
-    background: #e0b921;
+    background: #5d5e63;
     color: #FFF;
     cursor: pointer;
     outline: 0;
@@ -301,13 +301,43 @@ div.container {
 }
 
 .edit-btn:hover {
-    background: #bb9b1e;
+    background: #3a3b3e;
     color: #ffffff;
     text-decoration: none !important;
 }
 
 .edit-btn:active {
-    background: #bb9b1e;
+    background: #3a3b3e;
+    color: #ffffff;
+    text-decoration: none !important;
+}
+
+.delete-btn,
+.delete-btn:focus {
+    display: inline-block;
+    margin: 15px 5px;
+    margin-left: 0px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 20px;
+    border: 0;
+    background: #eb4957;
+    color: #FFF;
+    cursor: pointer;
+    outline: 0;
+    text-decoration: none !important;
+}
+
+.delete-btn:hover {
+    background: #d03d4a;
+    color: #ffffff;
+    text-decoration: none !important;
+}
+
+.delete-btn:active {
+    background: #d03d4a;
     color: #ffffff;
     text-decoration: none !important;
 }
@@ -355,6 +385,14 @@ div.container {
     color: #ffffff;
 }
 
+.t-c-yellow {
+    color: #e0b921;
+}
+
+.t-c-black {
+    color: #1d202a;
+}
+
 .c-black {
     background-color: #1d202a;
 }
@@ -371,8 +409,10 @@ div.container {
     color: #ffffff;
 }
 
-body {
-    background-color: #f1f0f0;
+a div i small {
+    font-family: Calibri, Helvetica, Arial, sans-serif;
+    color: #1d202a !important;
+    font-size: 14px;
 }
 
 /*
@@ -851,12 +891,12 @@ Tabs
     position: absolute;
     top: 53px;
     left: 0;
-    background: #e6e6e6;
+    background: #e2e2e2;
     margin-bottom: 15px;
 }
 
 .tabs [id^="tab"]:checked + label {
-    background: #e6e6e6;
+    background: #e2e2e2;
 }
 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
