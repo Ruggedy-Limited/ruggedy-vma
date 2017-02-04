@@ -81,4 +81,9 @@ class SettingsController extends Controller
     {
         //
     }
+
+    public function userCreate()
+    {
+        return view ('settings.usersCreate');
+    }
 }
