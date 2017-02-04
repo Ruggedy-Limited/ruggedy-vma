@@ -86,4 +86,9 @@ class SettingsController extends Controller
     {
         return view ('settings.usersCreate');
     }
+
+    public function userEdit()
+    {
+        return view ('settings.usersEdit');
+    }
 }
