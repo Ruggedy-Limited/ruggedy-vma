@@ -29,3 +29,4 @@ Route::get('/workspaces/create', 'WorkspaceController@create')->name('workspaces
 
 Route::get('/folders/index', 'FolderController@index')->name('folders.index');
 Route::get('/folders/create', 'FolderController@create')->name('folders.create');
+Route::get('/folders/show', 'FolderController@show')->name('folders.show');
