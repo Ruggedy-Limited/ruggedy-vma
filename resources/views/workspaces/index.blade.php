@@ -31,6 +31,7 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
+            <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="{{ route('workspaces.apps') }}" class="primary-btn" type="button">Add Application</a>
             <a href="{{ route('folders.create') }}" class="primary-btn" type="button">Add Folder</a>
             <a href="#" class="edit-btn" type="button">Edit Workspace</a>

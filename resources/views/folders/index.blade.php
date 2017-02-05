@@ -29,6 +29,7 @@
     </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
+            <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="#" class="edit-btn" type="button">Edit Folder</a>
             <a href="#" class="delete-btn" type="button">Delete Folder</a>
         </div>
