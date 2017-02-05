@@ -224,6 +224,8 @@ div.container-nav {
 div.container {
     padding-top: 15px;
     padding-bottom: 15px;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 .avatar-white {
@@ -920,3 +922,80 @@ Tabs
 /*
 Tabs End
  */
+
+/*
+==========================================================================
+Comments Start
+==========================================================================
+*/
+
+.chat-card {
+    position: relative;
+    background: transparent;
+    margin-bottom: 30px;
+    border-radius: 0px;
+}
+
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    width: 100%;
+    position: relative;
+    background: #fff;
+    margin-top: 5px;
+    border-radius: 6px;
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+.chat li .chat-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+    margin-right: 5px;
+}
+
+.body-panel
+{
+    overflow-y: scroll;
+    height: auto;
+    max-height: 200px;
+}
+
+.chat-footer {
+    position: relative;
+    background: transparent;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    border-radius: 0px;
+}
+
+/*
+==========================================================================
+Comments End
+==========================================================================
+*/
