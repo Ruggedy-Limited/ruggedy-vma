@@ -983,13 +983,13 @@ Comments Start
 {
     overflow-y: scroll;
     height: auto;
-    max-height: 200px;
+    max-height: 250px;
 }
 
 .chat-footer {
     position: relative;
     background: transparent;
-    margin-top: 15px;
+    margin-top: 0px;
     margin-bottom: 30px;
     border-radius: 0px;
 }
