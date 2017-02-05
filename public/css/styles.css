@@ -150,7 +150,7 @@ Navbar
     text-decoration: none;
     color: #ffffff;
     background: black;
-    border-left: 3px solid #eb4957;
+    border-left: 3px solid #e0b922;
     text-indent: -3px;
 
 }
@@ -160,7 +160,7 @@ Navbar
     text-decoration: none;
     color: #ffffff;
     background: black;
-    border-left: 3px solid #eb4957;
+    border-left: 3px solid #e0b922;
     text-indent: -3px;
 }
 
@@ -169,7 +169,7 @@ Navbar
     font-size: 18px;
     line-height: 100px;
     height: 100px;
-    background-color: #eb4957;
+    background-color: #e0b922;
     color: #ffffff;
 }
 
@@ -433,6 +433,20 @@ Cards Start
     padding-right: 15px;
     padding-top: 15px;
     padding-bottom: 15px;
+}
+
+.list-content-card {
+    position: relative;
+    background: #fff;
+    margin-top: 15px;
+    margin-bottom: 0px;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    padding-bottom: 5px;
 }
 
 .black-content-card {
