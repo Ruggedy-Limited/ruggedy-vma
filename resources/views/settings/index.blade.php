@@ -31,6 +31,7 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
+            <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="{{ route('settings.users.create') }}" class="primary-btn" type="button">Add User</a>
         </div>
     </div>
@@ -48,7 +49,6 @@
                             {!! Form::label('name', 'Company Name', ['class' => 'tabs-label']) !!}
                             {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                         </div>
-                        <a href="#" class="border-btn" type="button">Cancel</a>
                         <button class="primary-btn" type="submit">Submit</button>
                         {!! Form::close() !!}
                     </div>
