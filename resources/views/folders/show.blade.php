@@ -83,13 +83,13 @@
                 <label for=tab3>Comments</label>
                 <div id=tab-content3 class=tab-content>
                     <div class="col-md-12">
-                        <div class="chat-card">
-                            <div class="chat-footer">
-                                <textarea class="black-form-control" rows="1"></textarea>
-                                <span class="pull-left">
+                        <div class="chat-footer">
+                            <textarea class="black-form-control" rows="1"></textarea>
+                            <span class="pull-left">
                                 <button class="primary-btn" id="btn-chat">Post</button>
                                 </span>
-                            </div>
+                        </div>
+                        <div class="chat-card">
                             <div class="panel-body body-panel">
                                 <ul class="chat">
                                     <li>

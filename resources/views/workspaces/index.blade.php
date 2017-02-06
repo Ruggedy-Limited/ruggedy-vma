@@ -46,6 +46,7 @@
                 <label for=tab1>Apps</label>
                 <div id=tab-content1 class=tab-content>
                     <div class="col-md-4">
+                        <a href="{{ route('workspaces.app') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
                             </div>
@@ -60,38 +61,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/nessus-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>DMZ Nessus Scan</h4>
-                                </div>
-                                <div class="desc t-3">DMZ scan completed on 18 November 2016.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/nessus-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>DMZ Nessus Scan</h4>
-                                </div>
-                                <div class="desc t-3">DMZ scan completed on 18 November 2016.
-                                </div>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </li>

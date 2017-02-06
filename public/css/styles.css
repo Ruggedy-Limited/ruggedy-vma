@@ -872,7 +872,6 @@ Tabs
     -o-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
-    margin-left: -20px;
 }
 
 .tabs-label {
@@ -990,7 +989,7 @@ Comments Start
     position: relative;
     background: transparent;
     margin-top: 0px;
-    margin-bottom: 30px;
+    margin-bottom: 60px;
     border-radius: 0px;
 }
 
