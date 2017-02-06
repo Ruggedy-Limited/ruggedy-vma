@@ -178,6 +178,44 @@ Feature: As an account or team owner
       | 500 | 2016-11-14 14:59:55 |
       | 501 | 2016-11-14 14:59:55 |
       | 502 | 2016-11-14 14:59:55 |
+    And the following SoftwareInformation in File 1:
+      | id  | created_at          |
+      | 1   | 2016-11-14 14:59:55 |
+      | 2   | 2016-11-14 14:59:55 |
+      | 3   | 2016-11-14 14:59:55 |
+      | 4   | 2016-11-14 14:59:55 |
+      | 5   | 2016-11-14 14:59:55 |
+      | 6   | 2016-11-14 14:59:55 |
+      | 7   | 2016-11-14 14:59:55 |
+      | 8   | 2016-11-14 14:59:55 |
+    And the following SoftwareInformation in File 5:
+      | id  | created_at          |
+      | 495 | 2016-11-14 14:59:55 |
+      | 496 | 2016-11-14 14:59:55 |
+      | 497 | 2016-11-14 14:59:55 |
+      | 498 | 2016-11-14 14:59:55 |
+      | 499 | 2016-11-14 14:59:55 |
+      | 500 | 2016-11-14 14:59:55 |
+      | 501 | 2016-11-14 14:59:55 |
+      | 502 | 2016-11-14 14:59:55 |
+    And the following OpenPorts in File 1:
+      | id  | created_at          |
+      | 1   | 2016-11-14 14:59:55 |
+      | 2   | 2016-11-14 14:59:55 |
+      | 3   | 2016-11-14 14:59:55 |
+      | 4   | 2016-11-14 14:59:55 |
+      | 5   | 2016-11-14 14:59:55 |
+      | 6   | 2016-11-14 14:59:55 |
+      | 7   | 2016-11-14 14:59:55 |
+      | 8   | 2016-11-14 14:59:55 |
+      | 9   | 2016-11-14 14:59:55 |
+      | 10  | 2016-11-14 14:59:55 |
+      | 11  | 2016-11-14 14:59:55 |
+    And the following OpenPorts in File 5:
+      | id | created_at          |
+      | 12 | 2016-11-14 14:59:55 |
+      | 13 | 2016-11-14 14:59:55 |
+      | 14 | 2016-11-14 14:59:55 |
     And the following Audits in Asset 1:
       | id  | created_at          |
       | 128 | 2016-11-14 14:59:55 |
@@ -186,6 +224,20 @@ Feature: As an account or team owner
       | 70  | 2016-11-14 14:59:55 |
       | 93  | 2016-11-14 14:59:55 |
     And the following Audits in Asset 7:
+      | id  | created_at          |
+      | 17  | 2016-11-14 14:59:55 |
+      | 3   | 2016-11-14 14:59:55 |
+      | 85  | 2016-11-14 14:59:55 |
+      | 111 | 2016-11-14 14:59:55 |
+      | 72  | 2016-11-14 14:59:55 |
+    And the following Audits in File 1:
+      | id  | created_at          |
+      | 28  | 2016-11-14 14:59:55 |
+      | 70  | 2016-11-14 14:59:55 |
+      | 93  | 2016-11-14 14:59:55 |
+      | 125 | 2016-11-14 14:59:55 |
+      | 128 | 2016-11-14 14:59:55 |
+    And the following Audits in File 5:
       | id  | created_at          |
       | 17  | 2016-11-14 14:59:55 |
       | 3   | 2016-11-14 14:59:55 |
@@ -471,15 +523,500 @@ Feature: As an account or team owner
   ##
   # Listing all the Software Information that has been found in a File
   ##
+  Scenario: Get a list of Software Information found in a particular file in one of my Workspaces
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "softwareInformation"
+    And I request "/api/file/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "18646"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "1"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nmap"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "softwareInformation" property
+    And the type of the "softwareInformation" property is array
+    And the "softwareInformation" array property has the following items:
+      | id  | name                                | version              | vendor             | createdDate         | modifiedDate        |
+      | 1   | accountsservice                     | 0.6.35-0ubuntu7      | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 2   | acpid                               | 1:2.0.21-1ubuntu2    | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 3   | adduser                             | 3.113+nmu3ubuntu3    | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 4   | apache2                             | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 5   | apache2-bin                         | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 6   | apache2-data                        | 2.4.7-1ubuntu4.9     | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 7   | apparmor                            | 2.8.95~2430-0ubuntu5 | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+      | 8   | apport                              | 2.14.1-0ubuntu3      | Ubuntu             | 2016-11-14 14:59:53 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Software Information found in a particular file in someone else's Workspaces where I have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "softwareInformation"
+    And I request "/api/file/5"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "5"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "1841174"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "5"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nessus"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "softwareInformation" property
+    And the type of the "softwareInformation" property is array
+    And the "softwareInformation" array property has the following items:
+      | id  | name                                | version          | vendor             | createdDate         | modifiedDate        |
+      | 495 | WinPcap 4.1.3                       | 4.1.0.2980       | CACE Technologies  | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 496 | .NET Framework 4.5.1                | 4.5.1            | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 497 | .NET Framework 4.5.1 Client Profile | 4.5.1            | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 498 | Internet Explorer                   | 11.0.9600.17031  | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 499 | MSXML                               | 6.30.9600.16384  | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 500 | MSXML                               | 8.110.9600.16483 | Microsoft          | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 501 | Oracle VM VirtualBox                | 4.2.36           | Oracle Corporation | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 502 | VMware Tools                        | 9.4.10.2092844   | VMware, Inc.       | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Software Information found in a particular file in someone else's Workspaces where I don't have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "softwareInformation"
+    And I request "/api/file/7"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that file."
+
+  Scenario: Get a list of Software Information found on a non-existent file
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "softwareInformation"
+    And I request "/api/file/17"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that file does not exist."
 
   ##
   # Listing all the Open Ports that have been found in a File
   ##
+  Scenario: Get a list of Open Ports found in a particular file in one of my Workspaces
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "openPorts"
+    And I request "/api/file/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "18646"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "1"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nmap"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "openPorts" property
+    And the type of the "openPorts" property is array
+    And the "openPorts" array property has the following items:
+      | id | portNumber | protocol | serviceName   | serviceProduct        | serviceExtraInformation   | serviceFingerprint   | serviceBanner  | serviceMessage  | createdDate         | modifiedDate        |
+      | 1  | 135        | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 2  | 139        | TCP      | NETBIOS-SSN   | NULL                  | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 3  | 445        | TCP      | NETBIOS-SSN   | NULL                  | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 4  | 1025       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 5  | 1026       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 6  | 1027       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 7  | 1028       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 8  | 1029       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 9  | 1030       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 10 | 1031       | TCP      | MSRPC         | Microsoft Windows RPC | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 11 | 3389       | TCP      | MS-WBT-SERVER | NULL                  | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+
+  Scenario: Get a list of Open Ports found in a particular file in someone else's Workspaces where I have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "openPorts"
+    And I request "/api/file/5"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "5"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "1841174"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "5"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nessus"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "openPorts" property
+    And the type of the "openPorts" property is array
+    And the "openPorts" array property has the following items:
+      | id | portNumber | protocol | serviceName   | serviceProduct        | serviceExtraInformation   | serviceFingerprint   | serviceBanner  | serviceMessage  | createdDate         | modifiedDate        |
+      | 12 | 22         | TCP      | SSH           | NULL                  | protocol 2.0              | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 13 | 80         | TCP      | HTTP          | Apache httpd          | NULL                      | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+      | 14 | 3306       | TCP      | MYSQL         | MySQL                 | unauthorized              | NULL                 | NULL           | NULL            | 2016-11-14 14:59:49 | 2016-11-14 15:00:19 |
+
+  Scenario: Get a list of Open Ports found in a particular file in someone else's Workspaces where I don't have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "openPorts"
+    And I request "/api/file/7"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that file."
+
+  Scenario: Get a list of Open Ports found on a non-existent file
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "openPorts"
+    And I request "/api/file/17"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that file does not exist."
 
   ##
   # Listing all the Audits that have been found in a File
   ##
+  Scenario: Get a list of Audits found in a particular file in one of my Workspaces
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "audits"
+    And I request "/api/file/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "18646"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "1"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nmap"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "audits" property
+    And the type of the "audits" property is array
+    And the "audits" array property has the following items:
+      | id  | auditFile                                   | complianceCheckName                                                                                    | complianceCheckId                | actualValue                                                                                                                                                   | policyValue                                                                                                                            | result | agent   | uname                                                                                                    | createdDate         | modifiedDate        |
+      | 28  | CIS_MS_SERVER_2012_R2_Level_2_v2.1.0.audit  | 18.9.19.1.6 Set 'Turn off printing over HTTP' to 'Enabled'                                             | 190c8af55c2d3bc4adffb5fa0d204d91 | NULL                                                                                                                                                          | NULL                                                                                                                                   | ERROR  | windows | NULL                                                                                                     | 2016-11-14 15:00:06 | 2016-11-14 15:00:17 |
+      | 70  | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.18 Make the Audit Configuration Immutable                                                          | 67352c5a435797058a033cb2831d4e3f | The command '/usr/bin/strings /etc/audit/audit.rules 2&gt;&amp;1\|/bin/egrep -v '(^$\|^#)'\|/usr/bin/tail -1' returned : ↵↵sh: 1: /usr/bin/strings: not found | NULL                                                                                                                                   | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+      | 93  | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.6 Record Events That Modify the System's Network Environment - /etc/hosts                          | 2938a6a146388e032a894c42c0a35676 | The file "/etc/audit/audit.rules" could not be found                                                                                                          | NULL                                                                                                                                   | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+      | 125 | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 2.20 Disable Mounting of jffs2 Filesystems - loaded                                                    | 20925b29e471b3e8ddf4c8bf4231702d | ↵The command '/sbin/lsmod                                                                                                                                     | *                                                                                                                                      | PASSED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+      | 128 | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 2.19 Disable Mounting of freevxfs Filesystems - loadeable                                              | a0a282aee09ccc654048629e572f1e98 | The command '/sbin/modprobe -n -v freevxfs' returned : ↵↵insmod /lib/modules/3.13.0-24-generic/kernel/fs/freevxfs/freevxfs.ko                                 | NULL                                                                                                                                   | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Audits found in a particular file in someone else's Workspaces where I have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "audits"
+    And I request "/api/file/5"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "5"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "1841174"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "5"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nessus"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "audits" property
+    And the type of the "audits" property is array
+    And the "audits" array property has the following items:
+      | id  | auditFile                                   | complianceCheckName                                                                                    | complianceCheckId                | actualValue                                          | policyValue  | result | agent   | uname                                                                                                    | createdDate         | modifiedDate        |
+      | 3   | CIS_MS_SERVER_2012_R2_Level_2_v2.1.0.audit  | 18.10.65.2 Set 'Prevent Internet Explorer security prompt for Windows Installer scripts' to 'Disabled' | 2bd59f1d03bbd851f9a7a5c4623a7571 | NULL                                                 | NULL         | ERROR  | windows | NULL                                                                                                     | 2016-11-14 15:00:05 | 2016-11-14 15:00:17 |
+      | 17  | CIS_MS_SERVER_2012_R2_Level_2_v2.1.0.audit  | 18.9.31.2 Set 'Restrict Unauthenticated RPC clients' to 'Enabled: Authenticated'                       | 8f9cea1893aac092cdde7d9c94a43018 | NULL                                                 | NULL         | ERROR  | windows | NULL                                                                                                     | 2016-11-14 15:00:06 | 2016-11-14 15:00:17 |
+      | 72  | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.17 Collect Kernel Module Loading and Unloading - /sbin/rmmod                                       | 4df1c4a3e69cbfb4dbcfd339a1d6671e | The file "/etc/audit/audit.rules" could not be found | NULL         | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+      | 85  | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.9 Collect Session Initiation Information - /var/log/btmp                                           | 398ce03b689740c2b46f320f35cb6897 | The file "/etc/audit/audit.rules" could not be found | NULL         | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+      | 111 | CIS_Ubuntu_14.04_LTS_Server_L2_v1.0.0.audit | 8.1.1.2 Disable System on Audit Log Full - action_mail_acct                                            | 82e7bbe257caad125e0967e066b05314 | The file "/etc/audit/auditd.conf" could not be found | NULL         | FAILED | unix    | Linux app-8 3.13.0-24-generic #46-Ubuntu SMP Thu Apr 10 19:11:08 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux | 2016-11-14 15:00:17 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Audits found in a particular file in someone else's Workspaces where I don't have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "audits"
+    And I request "/api/file/7"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that file."
+
+  Scenario: Get a list of Audits found on a non-existent file
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "audits"
+    And I request "/api/file/17"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that file does not exist."
 
   ##
   # Listing all the Exploits that have been found in a File
   ##
+  Scenario: Get a list of Exploits found in a particular file in one of my Workspaces
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "exploits"
+    And I request "/api/file/1"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "1"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "nmap-adv-multiple-node-dns.xml"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "18646"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "1"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nmap"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "exploits" property
+    And the type of the "exploits" property is array
+    And the "exploits" array property has the following items:
+      | id  | title                                                                                                       | url                                                                        | skillLevel   | createdDate         | modifiedDate        |
+      | 14  | Dhclient Bash Environment Variable Injection (Shellshock)                                                   | http://www.metasploit.com/modules/exploit/unix/dhcp/bash_environment       | Novice       | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 15  | DHCP Client Bash Environment Variable Code Injection (Shellshock)                                           | http://www.metasploit.com/modules/auxiliary/server/dhclient_bash_env       | Intermediate | 2016-11-14 14:59:54 | 2016-11-14 15:00:17 |
+      | 30  | Linux Kernel 3.14-rc1 <= 3.15-rc4 - Raw Mode PTY Local Echo Race Condition Local Privilege Escalation (x64) | http://www.exploit-db.com/exploits/33516                                   | Expert       | 2016-11-14 14:59:55 | 2016-11-14 15:00:17 |
+      | 47  | Microsoft Internet Explorer 9/10 - CFormElement Use-After-Free and Memory Corruption PoC (MS14-035)         | http://www.exploit-db.com/exploits/34010                                   | Expert       | 2016-11-14 14:59:56 | 2016-11-14 15:00:17 |
+      | 82  | MS15-004 Microsoft Remote Desktop Services Web Proxy IE Sandbox Escape                                      | http://www.metasploit.com/modules/exploit/windows/local/ms15_004_tswbproxy | Intermediate | 2016-11-14 14:59:56 | 2016-11-14 15:00:17 |
+      | 99  | Microsoft Windows - Local Privilege Escalation (MS15-051)                                                   | http://www.exploit-db.com/exploits/37049                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Exploits found in a particular file in someone else's Workspaces where I have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "exploits"
+    And I request "/api/file/5"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response does not have a "error" property
+    And the response has a "id" property
+    And the type of the "id" property is integer
+    And the "id" property equals "5"
+    And the response has a "filename" property
+    And the type of the "filename" property is string
+    And the "filename" property equals "full-multiple-dns.nessus"
+    And the response has a "format" property
+    And the type of the "format" property is string
+    And the "format" property equals "xml"
+    And the response has a "size" property
+    And the type of the "size" property is integer
+    And the "size" property equals "1841174"
+    And the response has a "scannerId" property
+    And the type of the "scannerId" property is integer
+    And the "scannerId" property equals "5"
+    And the response has a "scannerName" property
+    And the type of the "scannerName" property is string
+    And the "scannerName" property equals "nessus"
+    And the response has a "workspaceId" property
+    And the type of the "workspaceId" property is integer
+    And the "workspaceId" property equals "2"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "2"
+    And the response has a "isProcessed" property
+    And the type of the "isProcessed" property is boolean
+    And the "isProcessed" property equals "true"
+    And the response has a "isDeleted" property
+    And the type of the "isDeleted" property is boolean
+    And the "isDeleted" property equals "false"
+    And the response has a "exploits" property
+    And the type of the "exploits" property is array
+    And the "exploits" array property has the following items:
+      | id  | title                                                                                                       | url                                                                        | skillLevel   | createdDate         | modifiedDate        |
+      | 101 | Windows Kernel - win32k!vSolidFillRect Buffer Overflow (MS15-061)                                           | http://www.exploit-db.com/exploits/38270                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 132 | Windows 10 Build 10130 - User Mode Font Driver Thread Permissions Privilege Escalation                      | http://www.exploit-db.com/exploits/38198                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+      | 152 | Windows Kernel win32k!OffsetChildren - Null Pointer Dereference                                             | http://www.exploit-db.com/exploits/39025                                   | Expert       | 2016-11-14 14:59:57 | 2016-11-14 15:00:17 |
+
+  Scenario: Get a list of Exploits found in a particular file in someone else's Workspaces where I don't have at least read access
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "exploits"
+    And I request "/api/file/7"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, you don't have permission to view that file."
+
+  Scenario: Get a list of Exploits found on a non-existent file
+    Given that I want to get information about "SoftwareInformation"
+    When I use a URL parameter "include" with value "exploits"
+    And I request "/api/file/17"
+    Then the HTTP response code should be 200
+    And the response is JSON
+    And the response has a "error" property
+    And the type of the "error" property is boolean
+    And the "error" property equals "true"
+    And the response has a "message" property
+    And the type of the "message" property is string
+    And the "message" property equals "Sorry, that file does not exist."
