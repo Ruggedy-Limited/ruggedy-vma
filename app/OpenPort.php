@@ -12,4 +12,14 @@ class OpenPort extends Model
      * @var string
      */
     protected $table = 'open_ports';
+
+    /**
+     * Many-to-many relationship for Files
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function files()
+    {
+        return $this->belongsToMany(File::class, 'files_vulnerabilities')->withPivot('created_at');
+    }
 }
