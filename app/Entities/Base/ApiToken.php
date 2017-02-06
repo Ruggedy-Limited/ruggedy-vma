@@ -52,7 +52,7 @@ class ApiToken extends AbstractEntity
     protected $metadata;
 
     /**
-     * @ORM\Column(name="`transient`", type="smallint")
+     * @ORM\Column(name="`transient`", type="boolean")
      */
     protected $transient;
 
@@ -204,7 +204,7 @@ class ApiToken extends AbstractEntity
     /**
      * Set the value of transient.
      *
-     * @param integer $transient
+     * @param boolean $transient
      * @return \App\Entities\Base\ApiToken
      */
     public function setTransient($transient)
@@ -217,7 +217,7 @@ class ApiToken extends AbstractEntity
     /**
      * Get the value of transient.
      *
-     * @return integer
+     * @return boolean
      */
     public function getTransient()
     {

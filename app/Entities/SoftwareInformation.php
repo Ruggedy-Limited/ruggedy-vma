@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
 class SoftwareInformation extends Base\SoftwareInformation implements HasIdColumn, RelatesToFiles, GeneratesUniqueHash
 {
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="softwareInformation", indexBy="id")
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="softwareInformation")
      */
     protected $files;
 

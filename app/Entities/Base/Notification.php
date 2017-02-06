@@ -63,7 +63,7 @@ class Notification extends AbstractEntity
     protected $action_url;
 
     /**
-     * @ORM\Column(name="`read`", type="smallint")
+     * @ORM\Column(name="`read`", type="boolean")
      */
     protected $read;
 
@@ -257,7 +257,7 @@ class Notification extends AbstractEntity
     /**
      * Set the value of read.
      *
-     * @param integer $read
+     * @param boolean $read
      * @return \App\Entities\Base\Notification
      */
     public function setRead($read)
@@ -270,7 +270,7 @@ class Notification extends AbstractEntity
     /**
      * Get the value of read.
      *
-     * @return integer
+     * @return boolean
      */
     public function getRead()
     {

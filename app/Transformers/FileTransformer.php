@@ -3,6 +3,7 @@
 namespace App\Transformers;
 
 use App\Entities\File;
+use App\Entities\Vulnerability;
 use League\Fractal\TransformerAbstract;
 
 class FileTransformer extends TransformerAbstract
@@ -15,6 +16,7 @@ class FileTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'assets',
         'audits',
+        'exploits',
         'openPorts',
         'softwareInformation',
         'vulnerabilities',
@@ -34,8 +36,9 @@ class FileTransformer extends TransformerAbstract
             'format'       => $file->getFormat(),
             'size'         => $file->getSize(),
             'scannerId'    => $file->getScannerApp()->getId(),
+            'scannerName'  => $file->getScannerApp()->getName(),
             'workspaceId'  => $file->getWorkspace()->getId(),
-            'userId'       => $file->getUser()->getId(),
+            'ownerId'      => $file->getUser()->getId(),
             'isProcessed'  => $file->getProcessed(),
             'isDeleted'    => $file->getDeleted(),
             'createdDate'  => $file->getCreatedAt()->format(env('APP_DATE_FORMAT')),
@@ -63,6 +66,22 @@ class FileTransformer extends TransformerAbstract
     public function includeAudits(File $file)
     {
         return $this->collection($file->getAudits(), new AuditTransformer());
+    }
+
+    /**
+     * Optional include for Exploits
+     *
+     * @param File $file
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeExploits(File $file)
+    {
+        $exploits = collect($file->getVulnerabilities()->toArray())->flatMap(function ($vulnerability) {
+            /** @var Vulnerability $vulnerability */
+            return collect($vulnerability->getExploits()->toArray());
+        });
+
+        return $this->collection($exploits, new ExploitTransformer());
     }
 
     /**

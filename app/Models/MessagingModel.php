@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Commands\Command;
+use App\Commands\CreateAsset;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteAsset;
 use App\Commands\DeleteWorkspace;
@@ -11,7 +12,7 @@ use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
-use App\Commands\GetListOfAppsInWorkspace;
+use App\Commands\GetFile;
 use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersWorkspaces;
@@ -34,7 +35,6 @@ use Doctrine\ORM\ORMException;
 use Illuminate\Support\Collection;
 use Exception;
 
-
 class MessagingModel
 {
     /** API General */
@@ -51,6 +51,10 @@ class MessagingModel
     const ERROR_CANNOT_EDIT_ACCOUNT               = "error_cannot_edit_account";
     const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = "error_account_with_email_already_exists";
     const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
+
+    /** API File Management */
+    const ERROR_FILE_DOES_NOT_EXIST  = 'error_file_does_not_exist';
+    const ERROR_FILE_VIEW_PERMISSION = 'error_file_view_permission';
 
     /** API Workspace Management */
     const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
@@ -102,7 +106,6 @@ class MessagingModel
             DeleteWorkspace::class          => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class            => static::ERROR_EDIT_WORKSPACE_PERMISSION,
             GetListOfUsersWorkspaces::class => static::ERROR_LIST_WORKSPACES_PERMISSION,
-            GetListOfAppsInWorkspace::class => static::ERROR_VIEW_WORKSPACE_PERMISSION,
             GetWorkspace::class             => static::ERROR_VIEW_WORKSPACE_PERMISSION,
             EditAsset::class                => static::ERROR_EDIT_ASSET_PERMISSION,
             DeleteAsset::class              => static::ERROR_DELETE_ASSET_PERMISSION,
@@ -111,6 +114,12 @@ class MessagingModel
             UpsertPermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             RevokePermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             GetListOfPermissions::class     => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
+            GetFile::class                  => static::ERROR_FILE_VIEW_PERMISSION,
+        ]);
+
+        $fileNotFoundMap = new Collection([
+            CreateAsset::class => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
+            GetFile::class     => static::ERROR_FILE_DOES_NOT_EXIST,
         ]);
 
         static::$commandMessageMap = new Collection([
@@ -121,7 +130,7 @@ class MessagingModel
             UserNotFoundException::class       => static::ERROR_USER_DOES_NOT_EXIST,
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
-            FileNotFoundException::class       => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
+            FileNotFoundException::class       => $fileNotFoundMap,
             WorkspaceNotFoundException::class  => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
             AssetNotFoundException::class      => static::ERROR_ASSET_DOES_NOT_EXIST,
             ComponentNotFoundException::class  => static::ERROR_COMPONENT_DOES_NOT_EXIST,

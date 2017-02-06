@@ -35,19 +35,19 @@ class File extends Base\File implements SystemComponent
     protected $workspace;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_vulnerabilities")
      */
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", indexBy="number", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_open_ports")
      */
     protected $openPorts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="files_software_information")
      */
     protected $softwareInformation;
