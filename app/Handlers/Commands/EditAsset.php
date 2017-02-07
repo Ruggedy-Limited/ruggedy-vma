@@ -73,6 +73,7 @@ class EditAsset extends CommandHandler
         $asset->setFromArray($changes);
         $this->em->persist($asset);
         $this->em->flush($asset);
+        $this->em->refresh($asset);
 
         return $asset;
     }
