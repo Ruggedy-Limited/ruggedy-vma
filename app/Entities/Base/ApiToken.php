@@ -52,7 +52,7 @@ class ApiToken extends AbstractEntity
     protected $metadata;
 
     /**
-     * @ORM\Column(name="`transient`", type="boolean")
+     * @ORM\Column(name="`transient`", type="boolean", options={"unsigned":true})
      */
     protected $transient;
 

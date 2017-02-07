@@ -91,7 +91,7 @@ class User extends AbstractEntity
     protected $photo_url;
 
     /**
-     * @ORM\Column(name="`uses_two_factor_auth`", type="boolean")
+     * @ORM\Column(name="`uses_two_factor_auth`", type="boolean", options={"unsigned":true})
      */
     protected $uses_two_factor_auth;
 

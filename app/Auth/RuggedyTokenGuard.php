@@ -72,6 +72,10 @@ class RuggedyTokenGuard
 
         /** @var User $user */
         $user = $token->getUser();
+        if (empty($user)) {
+            return null;
+        }
+
         $user->addApiToken($token);
         
         return $user;
