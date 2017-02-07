@@ -63,7 +63,7 @@ class Notification extends AbstractEntity
     protected $action_url;
 
     /**
-     * @ORM\Column(name="`read`", type="boolean")
+     * @ORM\Column(name="`read`", type="boolean", options={"unsigned":true})
      */
     protected $read;
 
