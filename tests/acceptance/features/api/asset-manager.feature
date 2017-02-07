@@ -132,9 +132,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "1"
@@ -163,9 +163,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "4"
@@ -194,9 +194,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "1"
@@ -225,9 +225,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "4"
@@ -256,9 +256,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "1"
@@ -287,9 +287,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "4"
@@ -318,9 +318,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "1"
@@ -349,9 +349,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "4"
@@ -380,9 +380,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "1"
@@ -411,9 +411,9 @@ Feature: As an administrator or user with the correct access control
     And the response has a "isDeleted" property
     And the type of the "isDeleted" property is boolean
     And the "isDeleted" property equals "false"
-    And the response has a "userId" property
-    And the type of the "userId" property is integer
-    And the "userId" property equals "1"
+    And the response has a "ownerId" property
+    And the type of the "ownerId" property is integer
+    And the "ownerId" property equals "1"
     And the response has a "workspaceId" property
     And the type of the "workspaceId" property is integer
     And the "workspaceId" property equals "4"

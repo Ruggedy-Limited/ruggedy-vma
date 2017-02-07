@@ -133,8 +133,8 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "photo" property is string
     And the "photo" property equals "/myphoto.jpg"
     And the response has a "twoFactorAuthEnabled" property
-    And the type of the "twoFactorAuthEnabled" property is int
-    And the "twoFactorAuthEnabled" property equals "0"
+    And the type of the "twoFactorAuthEnabled" property is boolean
+    And the "twoFactorAuthEnabled" property equals "false"
 
   Scenario: I attempt to get information about a person on one of my teams, but there is no person with the given ID in
     that team
@@ -199,8 +199,8 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "emailAddress" property is string
     And the "emailAddress" property equals "garethpeter@gmail.com"
     And the response has a "twoFactorAuthEnabled" property
-    And the type of the "twoFactorAuthEnabled" property is int
-    And the "twoFactorAuthEnabled" property equals "0"
+    And the type of the "twoFactorAuthEnabled" property is boolean
+    And the "twoFactorAuthEnabled" property equals "false"
     And the response has a "createdDate" property
     And the type of the "createdDate" property is string
     And the "createdDate" property equals "2016-05-09 14:39:01"
@@ -222,8 +222,8 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "emailAddress" property is string
     And the "emailAddress" property equals "johnsmith@dispostable.com"
     And the response has a "twoFactorAuthEnabled" property
-    And the type of the "twoFactorAuthEnabled" property is integer
-    And the "twoFactorAuthEnabled" property equals "0"
+    And the type of the "twoFactorAuthEnabled" property is boolean
+    And the "twoFactorAuthEnabled" property equals "false"
     And the response has a "createdDate" property
     And the type of the "createdDate" property is string
     And the "createdDate" property equals "2016-05-09 14:39:01"
@@ -251,8 +251,8 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "photo" property is string
     And the "photo" property equals "/my/photo/url.jpg"
     And the response has a "twoFactorAuthEnabled" property
-    And the type of the "twoFactorAuthEnabled" property is integer
-    And the "twoFactorAuthEnabled" property equals "1"
+    And the type of the "twoFactorAuthEnabled" property is boolean
+    And the "twoFactorAuthEnabled" property equals "true"
     And the response has a "createdDate" property
     And the type of the "createdDate" property is string
     And the "createdDate" property equals "2016-05-09 14:39:01"
@@ -287,8 +287,8 @@ Feature: As a user of the API framework and the owner of at least one team
     And the type of the "emailAddress" property is string
     And the "emailAddress" property equals "johnsmith@dispostable.com"
     And the response has a "twoFactorAuthEnabled" property
-    And the type of the "twoFactorAuthEnabled" property is int
-    And the "twoFactorAuthEnabled" property equals "0"
+    And the type of the "twoFactorAuthEnabled" property is boolean
+    And the "twoFactorAuthEnabled" property equals "false"
     And the response has a "createdDate" property
     And the type of the "createdDate" property is string
     And the "createdDate" property equals "2016-05-09 14:39:01"
