@@ -49,6 +49,7 @@ class User extends AbstractEntity
     const COMPONENTPERMISSIONRELATEDBYUSERIDS     = 'componentPermissionRelatedByUserIds';
     const COMPONENTPERMISSIONRELATEDBYGRANTEDBIES = 'componentPermissionRelatedByGrantedBies';
     const FILES                                   = 'files';
+    const FOLDERS                                 = 'folders';
     const INVITATIONS                             = 'invitations';
     const INVOICES                                = 'invoices';
     const NOTIFICATIONRELATEDBYUSERIDS            = 'notificationRelatedByUserIds';
@@ -242,6 +243,12 @@ class User extends AbstractEntity
     protected $files;
 
     /**
+     * @ORM\OneToMany(targetEntity="Folder", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $folders;
+
+    /**
      * @ORM\OneToMany(targetEntity="Invitation", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -297,6 +304,7 @@ class User extends AbstractEntity
         $this->componentPermissionRelatedByUserIds = new ArrayCollection();
         $this->componentPermissionRelatedByGrantedBies = new ArrayCollection();
         $this->files = new ArrayCollection();
+        $this->folders = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->invoices = new ArrayCollection();
         $this->notificationRelatedByUserIds = new ArrayCollection();
@@ -1187,6 +1195,42 @@ class User extends AbstractEntity
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * Add Folder entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Folder $folder
+     * @return \App\Entities\Base\User
+     */
+    public function addFolder(Folder $folder)
+    {
+        $this->folders[] = $folder;
+
+        return $this;
+    }
+
+    /**
+     * Remove Folder entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Folder $folder
+     * @return \App\Entities\Base\User
+     */
+    public function removeFolder(Folder $folder)
+    {
+        $this->folders->removeElement($folder);
+
+        return $this;
+    }
+
+    /**
+     * Get Folder entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFolders()
+    {
+        return $this->folders;
     }
 
     /**

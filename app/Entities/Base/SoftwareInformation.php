@@ -23,7 +23,6 @@ class SoftwareInformation extends AbstractEntity
     /**
      * @ORM\Id
      * @ORM\Column(name="`id`", type="integer", options={"unsigned":true})
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 

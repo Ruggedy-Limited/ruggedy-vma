@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\File
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="files_scanner_app_fk_idx", columns={"`scanner_app_id`"})})
+ * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_apps_fk_idx", columns={"`workspace_apps_id`"})})
  */
 class File extends AbstractEntity
 {
@@ -17,18 +17,16 @@ class File extends AbstractEntity
     const TABLE_NAME = 'files';
 
     /** Column name constants */
-    const PATH           = 'path';
-    const FORMAT         = 'format';
-    const SIZE           = 'size';
-    const USER_ID        = 'user_id';
-    const WORKSPACE_ID   = 'workspace_id';
-    const SCANNER_APP_ID = 'scanner_app_id';
-    const PROCESSED      = 'processed';
-    const DELETED        = 'deleted';
-    const ASSETS         = 'assets';
-    const USER           = 'user';
-    const WORKSPACE      = 'workspace';
-    const SCANNERAPP     = 'scannerApp';
+    const PATH              = 'path';
+    const FORMAT            = 'format';
+    const SIZE              = 'size';
+    const USER_ID           = 'user_id';
+    const WORKSPACE_APPS_ID = 'workspace_apps_id';
+    const PROCESSED         = 'processed';
+    const DELETED           = 'deleted';
+    const ASSETS            = 'assets';
+    const USER              = 'user';
+    const WORKSPACEAPP      = 'workspaceApp';
 
     /**
      * @ORM\Id
@@ -58,14 +56,9 @@ class File extends AbstractEntity
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`workspace_id`", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="`workspace_apps_id`", type="integer", options={"unsigned":true})
      */
-    protected $workspace_id;
-
-    /**
-     * @ORM\Column(name="`scanner_app_id`", type="integer", options={"unsigned":true})
-     */
-    protected $scanner_app_id;
+    protected $workspace_apps_id;
 
     /**
      * @ORM\Column(name="`processed`", type="boolean", options={"unsigned":true})
@@ -100,16 +93,10 @@ class File extends AbstractEntity
     protected $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="files", cascade={"persist"})
-     * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\ManyToOne(targetEntity="WorkspaceApp", inversedBy="files", cascade={"persist"})
+     * @ORM\JoinColumn(name="`workspace_apps_id`", referencedColumnName="`id`", nullable=false)
      */
-    protected $workspace;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="ScannerApp", inversedBy="files", cascade={"persist"})
-     * @ORM\JoinColumn(name="`scanner_app_id`", referencedColumnName="`id`", nullable=false)
-     */
-    protected $scannerApp;
+    protected $workspaceApp;
 
     public function __construct()
     {
@@ -232,49 +219,26 @@ class File extends AbstractEntity
     }
 
     /**
-     * Set the value of workspace_id.
+     * Set the value of workspace_apps_id.
      *
-     * @param integer $workspace_id
+     * @param integer $workspace_apps_id
      * @return \App\Entities\Base\File
      */
-    public function setWorkspaceId($workspace_id)
+    public function setWorkspaceAppsId($workspace_apps_id)
     {
-        $this->workspace_id = $workspace_id;
+        $this->workspace_apps_id = $workspace_apps_id;
 
         return $this;
     }
 
     /**
-     * Get the value of workspace_id.
+     * Get the value of workspace_apps_id.
      *
      * @return integer
      */
-    public function getWorkspaceId()
+    public function getWorkspaceAppsId()
     {
-        return $this->workspace_id;
-    }
-
-    /**
-     * Set the value of scanner_app_id.
-     *
-     * @param integer $scanner_app_id
-     * @return \App\Entities\Base\File
-     */
-    public function setScannerAppId($scanner_app_id)
-    {
-        $this->scanner_app_id = $scanner_app_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of scanner_app_id.
-     *
-     * @return integer
-     */
-    public function getScannerAppId()
-    {
-        return $this->scanner_app_id;
+        return $this->workspace_apps_id;
     }
 
     /**
@@ -429,53 +393,30 @@ class File extends AbstractEntity
     }
 
     /**
-     * Set Workspace entity (many to one).
+     * Set WorkspaceApp entity (many to one).
      *
-     * @param \App\Entities\Base\Workspace $workspace
+     * @param \App\Entities\Base\WorkspaceApp $workspaceApp
      * @return \App\Entities\Base\File
      */
-    public function setWorkspace(Workspace $workspace = null)
+    public function setWorkspaceApp(WorkspaceApp $workspaceApp = null)
     {
-        $this->workspace = $workspace;
+        $this->workspaceApp = $workspaceApp;
 
         return $this;
     }
 
     /**
-     * Get Workspace entity (many to one).
+     * Get WorkspaceApp entity (many to one).
      *
-     * @return \App\Entities\Base\Workspace
+     * @return \App\Entities\Base\WorkspaceApp
      */
-    public function getWorkspace()
+    public function getWorkspaceApp()
     {
-        return $this->workspace;
-    }
-
-    /**
-     * Set ScannerApp entity (many to one).
-     *
-     * @param \App\Entities\Base\ScannerApp $scannerApp
-     * @return \App\Entities\Base\File
-     */
-    public function setScannerApp(ScannerApp $scannerApp = null)
-    {
-        $this->scannerApp = $scannerApp;
-
-        return $this;
-    }
-
-    /**
-     * Get ScannerApp entity (many to one).
-     *
-     * @return \App\Entities\Base\ScannerApp
-     */
-    public function getScannerApp()
-    {
-        return $this->scannerApp;
+        return $this->workspaceApp;
     }
 
     public function __sleep()
     {
-        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_id', 'scanner_app_id', 'processed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_apps_id', 'processed', 'deleted', 'created_at', 'updated_at');
     }
 }

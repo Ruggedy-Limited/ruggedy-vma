@@ -17,9 +17,10 @@ class ScannerApp extends AbstractEntity
     const TABLE_NAME = 'scanner_apps';
 
     /** Column name constants */
-    const NAME        = 'name';
-    const DESCRIPTION = 'description';
-    const FILES       = 'files';
+    const NAME          = 'name';
+    const DESCRIPTION   = 'description';
+    const LOGO          = 'logo';
+    const WORKSPACEAPPS = 'workspaceApps';
 
     /**
      * @ORM\Id
@@ -39,6 +40,11 @@ class ScannerApp extends AbstractEntity
     protected $description;
 
     /**
+     * @ORM\Column(name="`logo`", type="string", length=255, nullable=true)
+     */
+    protected $logo;
+
+    /**
      * @ORM\Column(name="`created_at`", type="datetime")
      */
     protected $created_at;
@@ -49,14 +55,14 @@ class ScannerApp extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="File", mappedBy="scannerApp", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="WorkspaceApp", mappedBy="scannerApp", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`scanner_app_id`", nullable=false)
      */
-    protected $files;
+    protected $workspaceApps;
 
     public function __construct()
     {
-        $this->files = new ArrayCollection();
+        $this->workspaceApps = new ArrayCollection();
     }
 
     /**
@@ -129,6 +135,29 @@ class ScannerApp extends AbstractEntity
     }
 
     /**
+     * Set the value of logo.
+     *
+     * @param string $logo
+     * @return \App\Entities\Base\ScannerApp
+     */
+    public function setLogo($logo)
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of logo.
+     *
+     * @return string
+     */
+    public function getLogo()
+    {
+        return $this->logo;
+    }
+
+    /**
      * Set the value of created_at.
      *
      * @param \DateTime $created_at
@@ -175,43 +204,43 @@ class ScannerApp extends AbstractEntity
     }
 
     /**
-     * Add File entity to collection (one to many).
+     * Add WorkspaceApp entity to collection (one to many).
      *
-     * @param \App\Entities\Base\File $file
+     * @param \App\Entities\Base\WorkspaceApp $workspaceApp
      * @return \App\Entities\Base\ScannerApp
      */
-    public function addFile(File $file)
+    public function addWorkspaceApp(WorkspaceApp $workspaceApp)
     {
-        $this->files[] = $file;
+        $this->workspaceApps[] = $workspaceApp;
 
         return $this;
     }
 
     /**
-     * Remove File entity from collection (one to many).
+     * Remove WorkspaceApp entity from collection (one to many).
      *
-     * @param \App\Entities\Base\File $file
+     * @param \App\Entities\Base\WorkspaceApp $workspaceApp
      * @return \App\Entities\Base\ScannerApp
      */
-    public function removeFile(File $file)
+    public function removeWorkspaceApp(WorkspaceApp $workspaceApp)
     {
-        $this->files->removeElement($file);
+        $this->workspaceApps->removeElement($workspaceApp);
 
         return $this;
     }
 
     /**
-     * Get File entity collection (one to many).
+     * Get WorkspaceApp entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFiles()
+    public function getWorkspaceApps()
     {
-        return $this->files;
+        return $this->workspaceApps;
     }
 
     public function __sleep()
     {
-        return array('id', 'name', 'description', 'created_at', 'updated_at');
+        return array('id', 'name', 'description', 'logo', 'created_at', 'updated_at');
     }
 }
