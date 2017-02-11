@@ -92,6 +92,18 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
+CREATE TABLE `folders_vulnerabilities` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `folder_id` int(10) unsigned NOT NULL,
+  `vulnerability_id` int(10) unsigned NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `folders_vulnerabilities_file_fk` FOREIGN KEY (`folder_id`)
+    REFERENCES `folders` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `folders_vulnerabilities_vulnerability_id` FOREIGN KEY (`vulnerability_id`)
+    REFERENCES `vulnerabilities` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

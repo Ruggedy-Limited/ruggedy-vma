@@ -42,7 +42,7 @@ class GetFile extends CommandHandler
             throw new FileNotFoundException("No file with the given ID was found.");
         }
 
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_VIEW, $file->getWorkspace())) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_VIEW, $file->getWorkspaceApp()->getWorkspace())) {
             throw new ActionNotPermittedException("The requesting User is not permitted to view this file.");
         }
 

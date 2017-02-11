@@ -4,6 +4,7 @@ namespace App\Handlers\Commands;
 
 use App\Commands\UploadScanOutput as UploadScanOutputCommand;
 use App\Entities\File;
+use App\Entities\WorkspaceApp;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\ScannerAppNotFoundException;
@@ -102,6 +103,14 @@ class UploadScanOutput extends CommandHandler
             throw new FileNotWritableException("Could not store uploaded file on server");
         }
 
+        $workspaceApp = new WorkspaceApp();
+        $workspaceApp
+            ->setName(WorkspaceApp::DEFAULT_NAME)
+            ->setDescription(WorkspaceApp::DEFAULT_DESCRIPTION)
+            ->setWorkspace($workspace)
+            ->setScannerApp($scannerApp);
+
+
         // Create a new File entity, persist it to the DB and return it
         $fileEntity = new File();
         $fileEntity->setPath(
@@ -110,8 +119,7 @@ class UploadScanOutput extends CommandHandler
         $fileEntity->setFormat($this->service->getFormat());
         $fileEntity->setSize($file->getClientSize());
         $fileEntity->setUser($requestingUser);
-        $fileEntity->setWorkspace($workspace);
-        $fileEntity->setScannerApp($scannerApp);
+        $fileEntity->setWorkspaceApp($workspaceApp);
         $fileEntity->setDeleted(false);
         $fileEntity->setProcessed(false);
 

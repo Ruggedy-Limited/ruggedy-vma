@@ -53,4 +53,20 @@ class User extends SparkUser
         'trial_ends_at' => 'date',
         'uses_two_factor_auth' => 'boolean',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function workspaces()
+    {
+        return $this->hasMany(Workspace::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function folders()
+    {
+        return $this->hasMany(Folder::class);
+    }
 }

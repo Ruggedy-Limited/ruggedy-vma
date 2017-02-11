@@ -12,4 +12,12 @@ class ScannerApp extends Model
      * @var string
      */
     protected $table = 'scanner_apps';
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function workspaceApps()
+    {
+        return $this->hasMany(WorkspaceApp::class);
+    }
 }

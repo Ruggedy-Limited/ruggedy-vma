@@ -21,25 +21,32 @@ class FeatureContext extends MinkContext implements Context
     protected $apiKey;
 
     protected $tablesToTruncate = [
-        'users',
-        'teams',
-        'team_users',
-        'workspaces',
-        'components',
-        'component_permissions',
         'assets',
-        'audits',
         'assets_audits',
+        'asset_software_information',
+        'assets_vulnerabilities',
+        'audits',
+        'component_permissions',
+        'components',
         'exploits',
-        'vulnerabilities_exploits',
         'files',
+        'files_audits',
+        'files_open_ports',
+        'files_software_information',
+        'files_vulnerabilities',
+        'folders',
+        'folders_vulnerabilities',
+        'open_ports',
         'scanner_apps',
         'software_information',
-        'asset_software_information',
+        'team_users',
+        'teams',
+        'users',
         'vulnerabilities',
-        'assets_vulnerabilities',
+        'vulnerabilities_exploits',
         'vulnerability_reference_codes',
-        'open_ports'
+        'workspaces',
+        'workspace_apps',
     ];
 
     /**

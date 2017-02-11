@@ -14,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
 {
+    const DEFAULT_NAME        = 'Unnamed';
+    const DEFAULT_DESCRIPTION = 'No description given. Please add a relevant description.';
+
     /**
      * @inheritdoc
      * @return User

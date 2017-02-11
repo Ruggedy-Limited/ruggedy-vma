@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use App\Contracts\SystemComponent;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -14,11 +15,47 @@ use Doctrine\ORM\Mapping as ORM;
 class Folder extends Base\Folder implements SystemComponent
 {
     /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(name="folders_vulnerabilities")
+     */
+    protected $vulnerabilities;
+
+    /**
      * @inheritdoc
      * @return Base\Workspace
      */
     public function getParent()
     {
         return $this->getWorkspace();
+    }
+
+    /**
+     * @param Vulnerability $vulnerability
+     * @return $this
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        if ($this->vulnerabilities->contains($vulnerability)) {
+            return $this;
+        }
+
+        $vulnerability->addFolder($this); // synchronously updating inverse side
+        $relationKey = $vulnerability->getId() ?? $vulnerability->getHash();
+        $this->vulnerabilities[$relationKey] = $vulnerability;
+
+        return $this;
+    }
+
+    /**
+     * @param Vulnerability $vulnerability
+     * @return $this
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $vulnerability->removeFolder($this); // synchronously updating inverse side
+        $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
     }
 }

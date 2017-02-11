@@ -29,4 +29,20 @@ class Workspace extends Model
     {
         return $this->belongsTo(Spark::userModel(), 'user_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function workspaceApps()
+    {
+        return $this->hasMany(WorkspaceApp::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function folders()
+    {
+        return $this->hasMany(Folder::class);
+    }
 }
