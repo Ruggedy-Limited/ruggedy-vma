@@ -1,12 +1,12 @@
 @extends('layouts.main')
+@section ('breadcrumb')
+    <p>Breadcrumbs / Goes / Here
+        <a data-toggle="modal" data-target="#help">
+            <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+    </p>
+@endsection
 
 @section('content')
-    <div class="animated fadeIn">
-        <h5>Breadcrumbs / Goes / Here
-            <a data-toggle="modal" data-target="#help">
-                <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
-        </h5>
-    </div>
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -40,7 +40,7 @@
                 <div class="cardheader c-white">
                 </div>
                 <div class="avatar avatar-white">
-                    <i class="fa fa-th-large fa-5x t-c-red"></i>
+                    <i class="fa fa-th-large fa-5x t-c-purple"></i>
                 </div>
                 <div class="info">
                     <div class="title h-3">

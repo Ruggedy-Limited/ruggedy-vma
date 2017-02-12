@@ -5,9 +5,12 @@ Start: Generic
 */
 
 body {
-    color: #4D545D;
+    font-family: "Source Sans Pro", sans-serif, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #58666e;
     overflow-x: hidden;
-    background-color: #eaeaea;
+    background-color: #f0f3f4;
+    font-size: 14px;
+    line-height: 1.42857143;
 }
 
 header {
@@ -18,20 +21,21 @@ header {
 .h1, .h2, .h3, h1, h2, h3 {
     margin-top: 5px;
     margin-bottom: 10px;
+    color: #58666e;
 }
 
 a {
-    color: #333333;
+    color: #58666e;
 }
 
 a:hover {
-    color: #333333;
+    color: #58666e;
     text-decoration: none;
 }
 
 a:active,
 a:focus {
-    color: #333333;
+    color: #58666e;
     text-decoration: none;
 }
 
@@ -91,8 +95,16 @@ Start: Navbar
 .nav-sm-btn {
     height: 100px;
     width: 100%;
-    padding: 35px 35px;
-    color: #e0b921;
+    padding: 35px 25px 35px 35px;
+    color: #ffffff;
+}
+
+.breadcrumb-nav {
+    height: 50px;
+    width: 100%;
+    padding: 15px 35px 15px 35px;
+    color: #58666e;
+    border-bottom: 1px solid #e0dfdf;
 }
 
 .nav-btn {
@@ -133,7 +145,7 @@ Start: Navbar
     height: 100%;
     margin-left: 0;
     overflow-y: auto;
-    background: #1d202a;
+    background: #3a3f51;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -180,8 +192,8 @@ Start: Navbar
 .sidebar-nav li a > div:hover {
     text-decoration: none;
     color: #ffffff;
-    background: black;
-    border-left: 3px solid #e0b922;
+    background: #2a2d3a;
+    border-left: 3px solid #23b7e5;
     text-indent: -3px;
 }
 
@@ -190,7 +202,7 @@ Start: Navbar
     text-decoration: none;
     color: #ffffff;
     background: black;
-    border-left: 3px solid #e0b922;
+    border-left: 3px solid #23b7e5;
     text-indent: -3px;
 }
 
@@ -198,7 +210,7 @@ Start: Navbar
     font-size: 18px;
     line-height: 100px;
     height: 100px;
-    background-color: #e0b922;
+    background-color: #23b7e5;
     color: #ffffff;
 }
 
@@ -269,13 +281,12 @@ Start: Buttons
 .primary-btn:focus {
     display: inline-block;
     margin: 15px 5px 15px 0;
-    border-radius: 6px;
+    border-radius: 0;
     font-family: inherit;
     font-size: 15px;
-    font-weight: bold;
     padding: 8px 20px;
     border: 0;
-    background: #e0b921;
+    background: #23b7e5;
     color: #FFF;
     cursor: pointer;
     outline: 0;
@@ -283,13 +294,13 @@ Start: Buttons
 }
 
 .primary-btn:hover {
-    background: #bb9b1e;
+    background: #21a6d0;
     color: #ffffff;
     text-decoration: none !important;
 }
 
 .primary-btn:active {
-    background: #bb9b1e;
+    background: #21a6d0;
     color: #ffffff;
     text-decoration: none !important;
 }
@@ -298,10 +309,9 @@ Start: Buttons
 .edit-btn:focus {
     display: inline-block;
     margin: 15px 5px 15px 0;
-    border-radius: 6px;
+    border-radius: 0;
     font-family: inherit;
     font-size: 15px;
-    font-weight: bold;
     padding: 8px 20px;
     border: 0;
     background: #5d5e63;
@@ -327,10 +337,9 @@ Start: Buttons
 .delete-btn:focus {
     display: inline-block;
     margin: 15px 5px 15px 0;
-    border-radius: 6px;
+    border-radius: 0;
     font-family: inherit;
     font-size: 15px;
-    font-weight: bold;
     padding: 8px 20px;
     border: 0;
     background: #eb4957;
@@ -356,30 +365,29 @@ Start: Buttons
 .border-btn:focus {
     display: inline-block;
     margin: 15px 5px 15px 0;
-    border-radius: 6px;
+    border-radius: 0;
     font-family: inherit;
     font-size: 15px;
-    font-weight: bold;
     padding: 5px 20px;
     background: transparent;
     color: inherit;
     cursor: pointer;
     outline: 0;
-    border: 3px solid #e0b921;
+    border: 3px solid #f9d21a;
     text-decoration: none !important;
 }
 
 .border-btn:hover {
     background: transparent;
     color: inherit;
-    border: 3px solid #bb9b1e;
+    border: 3px solid #e2c22f;
     text-decoration: none !important;
 }
 
 .border-btn:active {
     background: transparent;
     color: inherit;
-    border: 3px solid #bb9b1e;
+    border: 3px solid #e2c22f;
     text-decoration: none !important;
 }
 
@@ -467,8 +475,20 @@ Start: Colors, Text, Padding, Margins
     color: #1d202a;
 }
 
+.t-c-purple {
+    color: #6254b2;
+}
+
 .c-black {
     background-color: #1d202a;
+}
+
+.c-darkgrey {
+    background-color: #3a3f51;
+}
+
+.c-lightgrey {
+    background-color: #f7f7f7;
 }
 
 .c-white {
@@ -515,7 +535,7 @@ Start: Cards
     background: #fff;
     margin-top: 15px;
     margin-bottom: 15px;
-    border-radius: 6px;
+    border-radius: 0;
     height: 100%;
     width: 100%;
     padding: 15px;
@@ -526,7 +546,7 @@ Start: Cards
     background: #fff;
     margin-top: 15px;
     margin-bottom: 0;
-    border-radius: 6px;
+    border-radius: 0;
     height: 100%;
     width: 100%;
     padding: 15px 15px 5px;
@@ -585,7 +605,7 @@ Start: Cards
     background: #fff;
     margin-bottom: 15px;
     margin-top: 15px;
-    border-radius: 6px;
+    border-radius: 0;
     height: 275px;
     max-height: 275px;
 }
@@ -628,12 +648,12 @@ Start: Cards
 
 .card.hovercard .info .title a {
     text-decoration: none;
-    color: #333;
+    color: #58666e;
 }
 
 .card.hovercard .info .title a:hover {
     text-decoration: none;
-    color: #333;
+    color: #58666e;
 }
 
 .card.hovercard .info .desc {
@@ -769,7 +789,7 @@ Start: Forms
     color: #1d202a;
     background: transparent none;
     border: 0 solid #ccc;
-    border-bottom: 1px solid #1d202a;
+    border-bottom: 1px solid #aeb1bb;
     border-radius: 0;
 }
 
@@ -784,24 +804,10 @@ Start: Forms
     background: transparent none;
     border: 0 solid #ccc;
     border-radius: 0;
-    border-bottom: 1px solid #e0b921;
+    border-bottom: 1px solid #6c6e75;
     -webkit-transition: border-bottom ease-in-out .45s;
     -o-transition: border-bottom ease-in-out .45s;
     transition: border-bottom ease-in-out .45s;
-}
-
-.search-form-control {
-    display: block;
-    width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #ffffff;
-    background: transparent none;
-    border: 0 solid #ccc;
-    border-bottom: 1px solid #e0b921;
-    border-radius: 0;
 }
 
 textarea.red-form-control {
@@ -854,7 +860,7 @@ Start: Tabs
     display: block;
     padding: 14px 21px;
     width: 150px;
-    border-radius: 2px 2px 0 0;
+    border-radius: 0;
     font-size: 16px;
     background: transparent;
     cursor: pointer;
@@ -941,7 +947,7 @@ Start: Comments
     position: relative;
     background: #fff;
     margin-top: 5px;
-    border-radius: 6px;
+    border-radius: 0;
     height: 100%;
     padding: 15px 15px 10px;
 }
@@ -980,5 +986,46 @@ Start: Comments
 /*
 ==========================================================================
 End: Comments
+==========================================================================
+*/
+
+/*
+==========================================================================
+Start: Search
+==========================================================================
+*/
+
+#custom-search-input{
+    padding: 0;
+    border: solid 0 transparent;
+    border-radius: 0;
+    background-color: #fff;
+    margin: 0;
+}
+
+#custom-search-input input{
+    border: 0;
+    box-shadow: none;
+}
+
+#custom-search-input button{
+    margin: 0 0 0 0;
+    background: none;
+    box-shadow: none;
+    border: 0;
+    color: #666666;
+    padding: 0 8px 0 10px;
+    border-left: solid 1px #ccc;
+}
+
+#custom-search-input button:hover{
+    border: 0;
+    box-shadow: none;
+    border-left: solid 1px #ccc;
+}
+
+/*
+==========================================================================
+Start: Search
 ==========================================================================
 */

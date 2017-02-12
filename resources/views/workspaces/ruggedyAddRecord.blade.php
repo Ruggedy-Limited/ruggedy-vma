@@ -1,12 +1,13 @@
 @extends('layouts.main')
 
+@section ('breadcrumb')
+    <p>Breadcrumbs / Goes / Here
+        <a data-toggle="modal" data-target="#help">
+            <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+    </p>
+@endsection
+
 @section('content')
-    <div class="animated fadeIn">
-        <h5>Breadcrumbs / Goes / Here
-            <a data-toggle="modal" data-target="#help">
-                <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
-        </h5>
-    </div>
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
