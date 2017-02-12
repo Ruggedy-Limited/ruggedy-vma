@@ -1,13 +1,13 @@
 @extends('layouts.main')
 
-@section('content')
+@section ('breadcrumb')
+    <p>Breadcrumbs / Goes / Here
+        <a data-toggle="modal" data-target="#help">
+            <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+    </p>
+@endsection
 
-    <div class="animated fadeIn">
-        <h5>Breadcrumbs / Goes / Here
-            <a data-toggle="modal" data-target="#help">
-                <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
-        </h5>
-    </div>
+@section('content')
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -30,7 +30,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-4 animated fadeIn">
+        <div class="col-md-6 animated fadeIn">
             <h3>Add App to Workspace</h3>
             <br>
             {!! Form::open(['url' => '/foo/bar']) !!}

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('/vendor/font-awesome/css/font-awesome.css') }}">
     <link rel="stylesheet" href="{{ asset("/css/animate.min.css") }}">
     <link rel="stylesheet" href="{{ asset('/css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
 </head>
 
 <body>
@@ -56,18 +57,23 @@
         </ul>
     </div>
     <div id="page-content-wrapper">
-        <div class="c-black nav-sm-btn">
+        <div class="c-darkgrey nav-sm-btn">
             <i class="fa fa-bars fa-2x" id="menu-toggle"></i>
-            <div class="pull-right" style="width:275px;">
-                <div class="input-group custom-search-form">
-                    <input type="text" class="search-form-control">
-                    <span class="input-group-btn">
-              <button class="btn btn-default" type="button">
-              <span class="fa fa-search"></span>
-             </button>
-             </span>
-                </div><!-- /input-group -->
+            <div class="col-md-3 col-sm-6 col-xs-10 pull-right">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <input type="text" class="form-control" placeholder="Search" />
+                        <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="c-lightgrey breadcrumb-nav hidden-xs">
+            @yield('breadcrumb')
         </div>
 
         <div class="container">
