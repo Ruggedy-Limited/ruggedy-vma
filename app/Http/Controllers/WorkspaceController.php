@@ -101,5 +101,21 @@ class WorkspaceController extends Controller
     {
         return view ('workspaces.appShow');
     }
+
+    public function addFile() {
+        return view ('workspaces.addFile');
+    }
+
+    public function ruggedyIndex() {
+        return view ('workspaces.ruggedyIndex');
+    }
+
+    public function ruggedyCreate() {
+        return view ('workspaces.ruggedyCreate');
+    }
+
+    public function ruggedyShow() {
+        return view ('workspaces.ruggedyShow');
+    }
 }
 

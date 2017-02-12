@@ -33,6 +33,7 @@
         <div class="col-md-12">
             <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="#" class="primary-btn" type="button">Send to JIRA</a>
+            <a href="#" class="edit-btn" type="button">Edit</a>
             <a href="#" class="delete-btn" type="button">Delete</a>
         </div>
     </div>
@@ -41,7 +42,7 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerability</label>
+                <label for=tab1>Finding</label>
                 <div id=tab-content1 class=tab-content>
                     <div class="col-md-12">
                         <div class="list-content-card">
@@ -61,7 +62,6 @@
                                 boundary from Bash execution. NOTE: this vulnerability exists because of an incomplete
                                 fix for
                                 CVE-2014-6271, CVE-2014-7169, and CVE-2014-6277.</p>
-                            <p><i class="fa fa-thumb-tack"></i> Workspace/App/File/Asset</p>
                         </div>
                     </div>
                 </div>

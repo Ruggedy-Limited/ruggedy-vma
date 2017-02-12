@@ -63,6 +63,24 @@
                         </div>
                         </a>
                     </div>
+                    <div class="col-md-4">
+                        <a href="{{ route('workspaces.ruggedyIndex') }}">
+                            <div class="card hovercard animated pulse-hover">
+                                <div class="cardheader c-white">
+                                </div>
+                                <div class="avatar avatar-white">
+                                    <img src="/img/ruggedy-logo.png">
+                                </div>
+                                <div class="info">
+                                    <div class="title h-3">
+                                        <h4>DMZ Firewall - Pen Test</h4>
+                                    </div>
+                                    <div class="desc t-3">Security review of all DMZ Firewalls.
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </li>
             <li>

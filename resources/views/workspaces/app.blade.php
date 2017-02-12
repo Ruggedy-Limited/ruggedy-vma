@@ -29,7 +29,7 @@
     </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="#" class="primary-btn" type="button">Upload File</a>
+            <a href="{{ route('workspaces.addFile') }}" class="primary-btn" type="button">Add File</a>
         </div>
     </div>
 

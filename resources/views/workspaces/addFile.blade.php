@@ -28,31 +28,32 @@
 
         </div>
     </div>
-
-    <div class="row animated fadeIn">
-        <div class="col-md-12">
+    <br>
+    <div class="row">
+        <div class="col-md-4 animated fadeIn">
+            <h3>Add File</h3>
+            <br>
+            {!! Form::open(['url' => '/foo/bar']) !!}
+            <div class="form-group fg-line">
+                {!! Form::label('name', 'Name') !!}
+                {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
+            </div>
+            <div class="form-group fg-line">
+                {!! Form::label('description', 'Description') !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
+            </div>
+            <div class="form-group fg-line">
+                {!! Form::label('file', 'File') !!}
+                {!! Form::text('file', null, ['class' => 'black-form-control']) !!}
+            </div>
             <a href="#" class="border-btn" type="button">Cancel</a>
-            <a href="#" class="edit-btn" type="button">Edit File</a>
-            <a href="#" class="delete-btn" type="button">Delete File</a>
+            <button class="primary-btn" type="submit">Submit</button>
+            {!! Form::close() !!}
         </div>
-    </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-6 animated fadeInUp">
 
-    <div class="row animated fadeIn">
-        <ul class=tabs>
-            <li>
-                <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerabilities</label>
-                <div id=tab-content1 class=tab-content>
-                </div>
-            </li>
-            <li>
-                <input type=radio name=tabs id=tab2>
-                <label for=tab2>Assets</label>
-                <div id=tab-content2 class=tab-content>
-                </div>
-            </li>
-        </ul>
-        <br style=clear:both;>
+        </div>
     </div>
 
 @endsection
