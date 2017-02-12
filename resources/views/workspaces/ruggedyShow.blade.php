@@ -33,6 +33,7 @@
         <div class="col-md-12">
             <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="#" class="primary-btn" type="button">Send to JIRA</a>
+            <a href="#" class="primary-btn" type="button">Add to Folder</a>
             <a href="#" class="edit-btn" type="button">Edit</a>
             <a href="#" class="delete-btn" type="button">Delete</a>
         </div>
