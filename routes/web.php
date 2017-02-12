@@ -24,10 +24,14 @@ Route::get('/settings/users/edit', 'SettingsController@userEdit')->name('setting
 
 Route::get('/workspaces/app', 'WorkspaceController@app')->name('workspaces.app');
 Route::get('/workspaces/app/show', 'WorkspaceController@appShow')->name('workspaces.appShow');
+Route::get('/workspaces/addFile', 'WorkspaceController@addFile')->name('workspaces.addFile');
 Route::get('/workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
 Route::get('/workspaces/apps/create', 'WorkspaceController@appsCreate')->name('workspaces.apps.create');
 Route::get('/workspaces/', 'WorkspaceController@index')->name('workspaces.index');
 Route::get('/workspaces/create', 'WorkspaceController@create')->name('workspaces.create');
+Route::get('/workspaces/ruggedyIndex', 'WorkspaceController@ruggedyIndex')->name('workspaces.ruggedyIndex');
+Route::get('/workspaces/ruggedyCreate', 'WorkspaceController@ruggedyCreate')->name('workspaces.ruggedyCreate');
+Route::get('/workspaces/ruggedyShow', 'WorkspaceController@ruggedyShow')->name('workspaces.ruggedyShow');
 
 Route::get('/folders/index', 'FolderController@index')->name('folders.index');
 Route::get('/folders/create', 'FolderController@create')->name('folders.create');
