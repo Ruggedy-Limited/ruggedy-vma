@@ -51,7 +51,6 @@
                         clients, and other situations in which setting the environment occurs across a privilege
                         boundary from Bash execution. NOTE: this vulnerability exists because of an incomplete fix for
                         CVE-2014-6271, CVE-2014-7169, and CVE-2014-6277.</p>
-                    <p><i class="fa fa-thumb-tack"></i> Workspace/App/File/Asset</p>
                 </div>
             </a>
         </div>

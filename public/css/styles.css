@@ -1,6 +1,6 @@
 /*
 ==========================================================================
-Body and Header Start
+Start: Generic
 ==========================================================================
 */
 
@@ -35,15 +35,47 @@ a:focus {
     text-decoration: none;
 }
 
+a div i small {
+    font-family: Calibri, Helvetica, Arial, sans-serif;
+    color: #1d202a !important;
+    font-size: 14px;
+}
+
+div.container-nav {
+    padding: 15px 10px;
+}
+
+div.container {
+    padding: 15px 25px;
+}
+
+textarea:hover,
+input:hover,
+textarea:active,
+input:active,
+textarea:focus,
+input:focus,
+button:focus,
+button:active,
+button:hover,
+label:focus,
+.btn:active,
+.btn.active {
+    outline: 0 !important;
+    -webkit-appearance: none;
+}
+
 /*
 ==========================================================================
-Body and Header End
+End: Generic
 ==========================================================================
 */
 
 /*
-Navbar
- */
+==========================================================================
+Start: Navbar
+==========================================================================
+*/
 
 .container-fluid {
     padding-right: 15px;
@@ -53,7 +85,7 @@ Navbar
 }
 
 .nav-indent {
-    text-indent: 0px;
+    text-indent: 0;
 }
 
 .nav-sm-btn {
@@ -61,7 +93,6 @@ Navbar
     width: 100%;
     padding: 35px 35px;
     color: #e0b921;
-
 }
 
 .nav-btn {
@@ -97,7 +128,7 @@ Navbar
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
-    left: 0px;
+    left: 0;
     width: 0;
     height: 100%;
     margin-left: 0;
@@ -116,7 +147,7 @@ Navbar
 #page-content-wrapper {
     width: 100%;
     position: absolute;
-    padding: 0px;
+    padding: 0;
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -134,7 +165,7 @@ Navbar
 }
 
 .sidebar-nav li {
-    text-indent: 0px;
+    text-indent: 0;
     line-height: 100px;
     height: 100px;
     text-align: center;
@@ -152,7 +183,6 @@ Navbar
     background: black;
     border-left: 3px solid #e0b922;
     text-indent: -3px;
-
 }
 
 .sidebar-nav li a > div:active,
@@ -165,7 +195,6 @@ Navbar
 }
 
 .sidebar-nav > .sidebar-brand {
-    height: 65px;
     font-size: 18px;
     line-height: 100px;
     height: 100px;
@@ -180,6 +209,10 @@ Navbar
 .sidebar-nav > .sidebar-brand a:hover {
     color: #fff;
     background: none;
+}
+
+.navbar-link:active {
+    color: #ffffff;
 }
 
 @media (min-width: 768px) {
@@ -206,43 +239,21 @@ Navbar
 
     #wrapper.toggled #page-content-wrapper {
         position: relative;
-        padding: 0px;
+        padding: 0;
     }
 }
 
 /*
-Navbar End
- */
+==========================================================================
+End: Navbar
+==========================================================================
+*/
 
-div.container-nav {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-div.container {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    padding-left: 25px;
-    padding-right: 25px;
-}
-
-.avatar-white {
-    height: 100px;
-    width: 200px;
-    background-color: #ffffff;
-    display: inline-block;
-    padding-top: 15px;
-}
-
-.avatar-img {
-    height: 80px;
-    width: 200px;
-    background-color: #ffffff;
-    display: inline-block;
-    padding-top: 15px;
-}
+/*
+==========================================================================
+Start: Buttons
+==========================================================================
+*/
 
 .btn-default,
 .btn-default:focus,
@@ -250,15 +261,14 @@ div.container {
 .btn-default:active {
     background-color: transparent !important;
     border-color: transparent;
-    border-radius: 0px;
+    border-radius: 0;
     color: #e0b921 !important;
 }
 
 .primary-btn,
 .primary-btn:focus {
     display: inline-block;
-    margin: 15px 5px;
-    margin-left: 0px;
+    margin: 15px 5px 15px 0;
     border-radius: 6px;
     font-family: inherit;
     font-size: 15px;
@@ -287,8 +297,7 @@ div.container {
 .edit-btn,
 .edit-btn:focus {
     display: inline-block;
-    margin: 15px 5px;
-    margin-left: 0px;
+    margin: 15px 5px 15px 0;
     border-radius: 6px;
     font-family: inherit;
     font-size: 15px;
@@ -317,8 +326,7 @@ div.container {
 .delete-btn,
 .delete-btn:focus {
     display: inline-block;
-    margin: 15px 5px;
-    margin-left: 0px;
+    margin: 15px 5px 15px 0;
     border-radius: 6px;
     font-family: inherit;
     font-size: 15px;
@@ -347,14 +355,12 @@ div.container {
 .border-btn,
 .border-btn:focus {
     display: inline-block;
-    margin: 15px 5px;
-    margin-left: 0px;
+    margin: 15px 5px 15px 0;
     border-radius: 6px;
     font-family: inherit;
     font-size: 15px;
     font-weight: bold;
     padding: 5px 20px;
-    border: 0;
     background: transparent;
     color: inherit;
     cursor: pointer;
@@ -366,7 +372,6 @@ div.container {
 .border-btn:hover {
     background: transparent;
     color: inherit;
-    text-decoration: none;
     border: 3px solid #bb9b1e;
     text-decoration: none !important;
 }
@@ -374,299 +379,19 @@ div.container {
 .border-btn:active {
     background: transparent;
     color: inherit;
-    text-decoration: none;
-    border-: 3px solid #bb9b1e;
+    border: 3px solid #bb9b1e;
     text-decoration: none !important;
 }
 
-.t-c-red {
-    color: #eb4957;
-}
-
-.t-c-white {
-    color: #ffffff;
-}
-
-.t-c-yellow {
-    color: #e0b921;
-}
-
-.t-c-black {
-    color: #1d202a;
-}
-
-.c-black {
-    background-color: #1d202a;
-}
-
-.c-white {
-    background-color: #ffffff;
-}
-
-.c-yellow {
-    background-color: #e0b921;
-}
-
-.navbar-link:active {
-    color: #ffffff;
-}
-
-a div i small {
-    font-family: Calibri, Helvetica, Arial, sans-serif;
-    color: #1d202a !important;
-    font-size: 14px;
-}
-
 /*
 ==========================================================================
-Cards Start
+End: Buttons
 ==========================================================================
 */
 
-.content-card {
-    position: relative;
-    background: #fff;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    height: 100%;
-    width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.list-content-card {
-    position: relative;
-    background: #fff;
-    margin-top: 15px;
-    margin-bottom: 0px;
-    border-radius: 6px;
-    height: 100%;
-    width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
-    padding-bottom: 5px;
-}
-
-.black-content-card {
-    position: relative;
-    background: #2f2f2f;
-    color: #ffffff;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-radius: 0px;
-    height: 100%;
-    width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.clear-content-card {
-    position: relative;
-    background: transparent;
-    color: inherit;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-radius: 0px;
-    height: 100%;
-    width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.white-content-card {
-    position: relative;
-    background: #ffffff;
-    color: inherit;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-radius: 0px;
-    height: 100%;
-    width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.content-card-header {
-    position: relative;
-    background: transparent;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-radius: 0px;
-    height: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 5px;
-}
-
-.card {
-    position: relative;
-    background: #fff;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    border-radius: 6px;
-    height: 275px;
-    max-height: 275px;
-}
-
-.card.hovercard {
-    position: relative;
-    padding-top: 0;
-    overflow: hidden;
-    text-align: center;
-    background-color: #ffffff;
-}
-
-.card.hovercard .cardheader {
-    background-size: cover;
-    height: 65px;
-}
-
-.card.hovercard .avatar {
-    position: relative;
-    top: -45px;
-    margin-bottom: -50px;
-}
-
-.card.hovercard .avatar img {
-    margin-bottom: 60px;
-}
-
-.card.hovercard .info {
-    padding: 0px 8px 10px;
-    margin-top: -40px;
-}
-
-.card.hovercard .info .title {
-    margin-bottom: 4px;
-    margin-top: 4.5px;
-    font-size: 24px;
-    line-height: 1;
-    vertical-align: middle;
-}
-
-.card.hovercard .info .title a {
-    text-decoration: none;
-    color: #333;
-}
-
-.card.hovercard .info .title a:hover {
-    text-decoration: none;
-    color: #333;
-}
-
-.card.hovercard .info .desc {
-    overflow: hidden;
-    font-size: 14px;
-    line-height: 20px;
-    text-overflow: ellipsis;
-}
-
-.adm-card {
-    position: relative;
-    background: #fff;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    border-radius: 0px;
-    height: 230px;
-    max-height: 230px;
-}
-
-.card .card-header {
-    position: relative;
-    display: block;
-    padding: 15px 15px;
-    border-radius: 0px 0px 0 0;
-}
-
-.card-body.card-padding {
-    position: relative;
-    padding-right: 15px;
-    padding-left: 15px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.card-heading {
-    display: block;
-    width: 100%;
-    height: 110px;
-    max-height: 110px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
-    color: #ffffff;
-}
-
-.card-heading-img {
-    display: block;
-    width: 100%;
-    height: 100px;
-    max-height: 100px;
-    padding-left: 0px;
-    padding-right: 15px;
-    padding-top: 0px;
-    color: #4D545D;
-}
-
-.img-card {
-    position: relative;
-    background: #fff;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    border-radius: 0px;
-    height: 280px;
-    max-height: 280px;
-}
-
-.adm-img-card {
-    position: relative;
-    background: #fff;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    border-radius: 0px;
-    height: 310px;
-    max-height: 310px;
-}
-
-.video-card {
-    position: relative;
-    background: #fff;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    padding-top: 10px;
-    height: 100%;
-    width: 100%;
-}
-
-.img-card-footer {
-    padding: 4px 10px;
-}
-
-.video-card-footer {
-    padding: 4px 10px;
-}
-
-.adm-card-footer {
-    position: relative;
-    padding: 4px 15px;
-    width: 100%;
-    background-color: #ffffff;
-    margin-top: 10px;
-}
-
 /*
 ==========================================================================
-Cards End
+Start: Colors, Text, Padding, Margins
 ==========================================================================
 */
 
@@ -726,14 +451,299 @@ Cards End
     -webkit-box-orient: vertical;
 }
 
+.t-c-red {
+    color: #eb4957;
+}
+
+.t-c-white {
+    color: #ffffff;
+}
+
+.t-c-yellow {
+    color: #e0b921;
+}
+
+.t-c-black {
+    color: #1d202a;
+}
+
+.c-black {
+    background-color: #1d202a;
+}
+
+.c-white {
+    background-color: #ffffff;
+}
+
+.c-yellow {
+    background-color: #e0b921;
+}
+
 .p-l-8 {
     padding-left: 8px;
 }
+
+/*
+==========================================================================
+Start: Cards
+==========================================================================
+*/
 
 .pulse-hover:hover {
     -webkit-animation-name: pulse;
     animation-name: pulse;
 }
+
+.avatar-white {
+    height: 100px;
+    width: 200px;
+    background-color: #ffffff;
+    display: inline-block;
+    padding-top: 15px;
+}
+
+.avatar-img {
+    height: 80px;
+    width: 200px;
+    background-color: #ffffff;
+    display: inline-block;
+    padding-top: 15px;
+}
+
+.content-card {
+    position: relative;
+    background: #fff;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+}
+
+.list-content-card {
+    position: relative;
+    background: #fff;
+    margin-top: 15px;
+    margin-bottom: 0;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    padding: 15px 15px 5px;
+}
+
+.black-content-card {
+    position: relative;
+    background: #2f2f2f;
+    color: #ffffff;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+}
+
+.clear-content-card {
+    position: relative;
+    background: transparent;
+    color: inherit;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+}
+
+.white-content-card {
+    position: relative;
+    background: #ffffff;
+    color: inherit;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+}
+
+.content-card-header {
+    position: relative;
+    background: transparent;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0;
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+}
+
+.card {
+    position: relative;
+    background: #fff;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    border-radius: 6px;
+    height: 275px;
+    max-height: 275px;
+}
+
+.card.hovercard {
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    text-align: center;
+    background-color: #ffffff;
+}
+
+.card.hovercard .cardheader {
+    background-size: cover;
+    height: 65px;
+}
+
+.card.hovercard .avatar {
+    position: relative;
+    top: -45px;
+    margin-bottom: -50px;
+}
+
+.card.hovercard .avatar img {
+    margin-bottom: 60px;
+}
+
+.card.hovercard .info {
+    padding: 0 8px 10px;
+    margin-top: -40px;
+}
+
+.card.hovercard .info .title {
+    margin-bottom: 4px;
+    margin-top: 5px;
+    font-size: 24px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.card.hovercard .info .title a {
+    text-decoration: none;
+    color: #333;
+}
+
+.card.hovercard .info .title a:hover {
+    text-decoration: none;
+    color: #333;
+}
+
+.card.hovercard .info .desc {
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+}
+
+.adm-card {
+    position: relative;
+    background: #fff;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    border-radius: 0;
+    height: 230px;
+    max-height: 230px;
+}
+
+.card .card-header {
+    position: relative;
+    display: block;
+    padding: 15px 15px;
+    border-radius: 0 0 0 0;
+}
+
+.card-body.card-padding {
+    position: relative;
+    padding: 15px;
+}
+
+.card-heading {
+    display: block;
+    width: 100%;
+    height: 110px;
+    max-height: 110px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    color: #ffffff;
+}
+
+.card-heading-img {
+    display: block;
+    width: 100%;
+    height: 100px;
+    max-height: 100px;
+    padding-left: 0;
+    padding-right: 15px;
+    padding-top: 0;
+    color: #4D545D;
+}
+
+.img-card {
+    position: relative;
+    background: #fff;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    border-radius: 0;
+    height: 280px;
+    max-height: 280px;
+}
+
+.adm-img-card {
+    position: relative;
+    background: #fff;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    border-radius: 0;
+    height: 310px;
+    max-height: 310px;
+}
+
+.video-card {
+    position: relative;
+    background: #fff;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 10px;
+    height: 100%;
+    width: 100%;
+}
+
+.img-card-footer {
+    padding: 4px 10px;
+}
+
+.video-card-footer {
+    padding: 4px 10px;
+}
+
+.adm-card-footer {
+    position: relative;
+    padding: 4px 15px;
+    width: 100%;
+    background-color: #ffffff;
+    margin-top: 10px;
+}
+
+/*
+==========================================================================
+End: Cards
+==========================================================================
+*/
+
+/*
+==========================================================================
+Start: Forms
+==========================================================================
+*/
 
 .red-form-control {
     display: block;
@@ -743,11 +753,10 @@ Cards End
     font-size: 14px;
     line-height: 1.42857143;
     color: #1d202a;
-    background-color: transparent;
-    background-image: none;
-    border: 0px solid #ccc;
+    background: transparent none;
+    border: 0 solid #ccc;
     border-bottom: 1px solid #eb4957;
-    border-radius: 0px;
+    border-radius: 0;
 }
 
 .black-form-control {
@@ -758,11 +767,10 @@ Cards End
     font-size: 14px;
     line-height: 1.42857143;
     color: #1d202a;
-    background-color: transparent;
-    background-image: none;
-    border: 0px solid #ccc;
+    background: transparent none;
+    border: 0 solid #ccc;
     border-bottom: 1px solid #1d202a;
-    border-radius: 0px;
+    border-radius: 0;
 }
 
 .black-form-control:focus {
@@ -773,10 +781,9 @@ Cards End
     font-size: 14px;
     line-height: 1.42857143;
     color: #1d202a;
-    background-color: transparent;
-    background-image: none;
-    border: 0px solid #ccc;
-    border-radius: 0px;
+    background: transparent none;
+    border: 0 solid #ccc;
+    border-radius: 0;
     border-bottom: 1px solid #e0b921;
     -webkit-transition: border-bottom ease-in-out .45s;
     -o-transition: border-bottom ease-in-out .45s;
@@ -791,20 +798,10 @@ Cards End
     font-size: 14px;
     line-height: 1.42857143;
     color: #ffffff;
-    background-color: transparent;
-    background-image: none;
-    border: 0px solid #ccc;
+    background: transparent none;
+    border: 0 solid #ccc;
     border-bottom: 1px solid #e0b921;
-    border-radius: 0px;
-}
-
-.tabs-label {
-    display: inline-block;
-    max-width: 100%;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-style: inherit;
-
+    border-radius: 0;
 }
 
 textarea.red-form-control {
@@ -819,32 +816,18 @@ textarea.black-form-control:focus {
     height: auto;
 }
 
-textarea:hover,
-input:hover,
-textarea:active,
-input:active,
-textarea:focus,
-input:focus,
-button:focus,
-button:active,
-button:hover,
-label:focus,
-.btn:active,
-.btn.active {
-    outline: 0px !important;
-    -webkit-appearance: none;
-}
-
 /*
-Tabs
- */
+==========================================================================
+Start: Tabs
+==========================================================================
+*/
 
 .tabs {
     width: 100%;
     float: none;
     list-style: none;
     position: relative;
-    margin: 15px 0 0 0px;
+    margin: 15px 0 0 0;
 }
 
 .tabs li {
@@ -856,6 +839,15 @@ Tabs
     position: absolute;
     top: -9999px;
     left: -9999px;
+}
+
+.tabs-label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-style: inherit;
+
 }
 
 .tabs label {
@@ -919,12 +911,14 @@ Tabs
 }
 
 /*
-Tabs End
- */
+==========================================================================
+End: Tabs
+==========================================================================
+*/
 
 /*
 ==========================================================================
-Comments Start
+Start: Comments
 ==========================================================================
 */
 
@@ -932,54 +926,44 @@ Comments Start
     position: relative;
     background: transparent;
     margin-bottom: 30px;
-    border-radius: 0px;
+    border-radius: 0;
 }
 
-.chat
-{
+.chat {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.chat li
-{
+.chat li {
     margin-bottom: 5px;
-    padding-bottom: 10px;
     width: 100%;
     position: relative;
     background: #fff;
     margin-top: 5px;
     border-radius: 6px;
     height: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
+    padding: 15px 15px 10px;
 }
 
-.chat li.left .chat-body
-{
+.chat li.left .chat-body {
     margin-left: 60px;
 }
 
-.chat li.right .chat-body
-{
+.chat li.right .chat-body {
     margin-right: 60px;
 }
 
-.chat li .chat-body p
-{
+.chat li .chat-body p {
     margin: 0;
     color: #777777;
 }
 
-.panel .slidedown .glyphicon, .chat .glyphicon
-{
+.panel .slidedown .glyphicon, .chat .glyphicon {
     margin-right: 5px;
 }
 
-.body-panel
-{
+.body-panel {
     overflow-y: scroll;
     height: auto;
     max-height: 250px;
@@ -988,13 +972,13 @@ Comments Start
 .chat-footer {
     position: relative;
     background: transparent;
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 60px;
-    border-radius: 0px;
+    border-radius: 0;
 }
 
 /*
 ==========================================================================
-Comments End
+End: Comments
 ==========================================================================
 */
