@@ -2,8 +2,15 @@
 
 @section ('breadcrumb')
     <p>Breadcrumbs / Goes / Here
-        <a data-toggle="modal" data-target="#help">
-            <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn round-btn pull-right c-red">
+            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
     </p>
 @endsection
 
@@ -46,9 +53,7 @@
                 {!! Form::label('password', 'Password') !!}
                 {!! Form::text('password', null, ['class' => 'black-form-control']) !!}
             </div>
-            <a href="#" class="border-btn" type="button">Cancel</a>
             <button class="primary-btn" type="submit">Submit</button>
-            <button class="delete-btn" type="submit">Delete User</button>
             {!! Form::close() !!}
         </div>
         <div class="col-md-2"></div>

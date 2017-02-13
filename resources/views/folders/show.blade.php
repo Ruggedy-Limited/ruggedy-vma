@@ -2,8 +2,15 @@
 
 @section ('breadcrumb')
     <p>Breadcrumbs / Goes / Here
-        <a data-toggle="modal" data-target="#help">
-            <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn round-btn pull-right c-red">
+            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
     </p>
 @endsection
 
@@ -31,9 +38,7 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="#" class="primary-btn" type="button">Send to JIRA</a>
-            <a href="#" class="delete-btn" type="button">Delete</a>
         </div>
     </div>
 
