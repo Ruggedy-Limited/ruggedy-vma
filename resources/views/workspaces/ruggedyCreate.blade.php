@@ -34,7 +34,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-6 animated fadeIn">
+        <div class="col-md-4 animated fadeIn">
             <h3>Add Finding</h3>
             <br>
             {!! Form::open(['url' => '/foo/bar']) !!}
@@ -54,6 +54,13 @@
                 {!! Form::label('description', 'Proof of Concept') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
+            <button class="primary-btn" type="submit">Submit</button>
+        </div>
+        <div class="col-md-2 animated fadeIn"></div>
+        <div class="col-md-4 animated fadeIn">
+            <br>
+            <br>
+            <br>
             <div class="form-group fg-line">
                 {!! Form::label('vuln_desc.', 'Status (Open, In Progress, Close)') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
@@ -66,12 +73,6 @@
                 {!! Form::label('vuln_desc.', 'CVSS Score') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
-            <button class="primary-btn" type="submit">Submit</button>
-        </div>
-        <div class="col-md-6 animated fadeIn">
-            <br>
-            <br>
-            <br>
             <div class="form-group fg-line">
                 {!! Form::label('vuln_desc.', 'Screenshot 1 Upload') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}

@@ -37,7 +37,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-6 animated fadeIn">
+        <div class="col-md-4 animated fadeIn">
             <h3>Edit User</h3>
             <br>
             {!! Form::open(['url' => '/foo/bar']) !!}
