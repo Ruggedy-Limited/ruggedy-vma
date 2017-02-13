@@ -884,6 +884,7 @@ Start: Tabs
 
 .tabs-label {
     display: inline-block;
+    margin-left: -20px;
     max-width: 100%;
     margin-bottom: 5px;
     font-weight: bold;
@@ -893,8 +894,7 @@ Start: Tabs
 
 .tabs label {
     display: block;
-    padding: 14px 21px;
-    width: 150px;
+    padding: 8px 20px;
     border-radius: 0;
     font-size: 16px;
     background: transparent;
@@ -908,8 +908,6 @@ Start: Tabs
 }
 
 .tabs-label {
-    margin-left: -20px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px !important;
     line-height: 1.42857143;
     color: #333
@@ -937,14 +935,15 @@ Start: Tabs
     line-height: 25px;
     padding: 25px;
     position: absolute;
-    top: 53px;
+    top: 30px;
     left: 0;
-    background: #e2e2e2;
+    background: transparent;
     margin-bottom: 15px;
 }
 
 .tabs [id^="tab"]:checked + label {
-    background: #e2e2e2;
+    background: #51576f;
+    color: #ffffff;
 }
 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
