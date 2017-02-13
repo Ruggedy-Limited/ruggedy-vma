@@ -43,18 +43,6 @@
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Status (Open, In Progress, Close)') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
-            </div>
-            <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Risk Rating') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
-            </div>
-            <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'CVSS Score') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
-            </div>
-            <div class="form-group fg-line">
                 {!! Form::label('description', 'Vulnerability Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
@@ -67,18 +55,35 @@
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
             <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Screenshot 1') !!}
+                {!! Form::label('vuln_desc.', 'Status (Open, In Progress, Close)') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Screenshot 2') !!}
+                {!! Form::label('vuln_desc.', 'Risk Rating') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Screenshot 3') !!}
+                {!! Form::label('vuln_desc.', 'CVSS Score') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
             <button class="primary-btn" type="submit">Submit</button>
+        </div>
+        <div class="col-md-6 animated fadeIn">
+            <br>
+            <br>
+            <br>
+            <div class="form-group fg-line">
+                {!! Form::label('vuln_desc.', 'Screenshot 1 Upload') !!}
+                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+            </div>
+            <div class="form-group fg-line">
+                {!! Form::label('vuln_desc.', 'Screenshot 2 Upload') !!}
+                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+            </div>
+            <div class="form-group fg-line">
+                {!! Form::label('vuln_desc.', 'Screenshot 3 Upload') !!}
+                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+            </div>
             {!! Form::close() !!}
         </div>
         <div class="col-md-2"></div>
