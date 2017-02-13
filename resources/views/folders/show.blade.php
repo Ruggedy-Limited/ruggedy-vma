@@ -87,15 +87,16 @@
                 <input type=radio name=tabs id=tab3>
                 <label for=tab3>Comments</label>
                 <div id=tab-content3 class=tab-content>
+                    <br>
                     <div class="col-md-12">
-                        <div class="chat-footer">
+                        <div>
                             <textarea class="black-form-control" rows="1"></textarea>
                             <span class="pull-left">
                                 <button class="primary-btn" id="btn-chat">Post</button>
                                 </span>
                         </div>
                         <div class="chat-card">
-                            <div class="panel-body body-panel">
+                            <div>
                                 <ul class="chat">
                                     <li>
                                         <div class="chat-body">
