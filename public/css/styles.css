@@ -102,7 +102,7 @@ Start: Navbar
 .breadcrumb-nav {
     height: 50px;
     width: 100%;
-    padding: 15px 35px 15px 35px;
+    padding: 10px 40px 15px 35px;
     color: #58666e;
     border-bottom: 1px solid #e0dfdf;
 }
@@ -277,6 +277,22 @@ Start: Buttons
     color: #e0b921 !important;
 }
 
+.round-btn,
+.round-btn:focus,
+.round-btn:hover,
+.round-btn:active {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    margin-right: 5px;
+    font-size: 11px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+    color: #ffffff;
+}
+
 .primary-btn,
 .primary-btn:focus {
     display: inline-block;
@@ -293,12 +309,7 @@ Start: Buttons
     text-decoration: none !important;
 }
 
-.primary-btn:hover {
-    background: #21a6d0;
-    color: #ffffff;
-    text-decoration: none !important;
-}
-
+.primary-btn:hover,
 .primary-btn:active {
     background: #21a6d0;
     color: #ffffff;
@@ -480,7 +491,11 @@ Start: Colors, Text, Padding, Margins
 }
 
 .c-black {
-    background-color: #1d202a;
+    background-color: #3a3f51;
+}
+
+.c-grey {
+    background-color: #51576f;
 }
 
 .c-darkgrey {
@@ -496,7 +511,15 @@ Start: Colors, Text, Padding, Margins
 }
 
 .c-yellow {
-    background-color: #e0b921;
+    background-color: #f9d21a;
+}
+
+.c-red {
+    background-color: #ee3939;
+}
+
+.c-purple {
+    background-color: #6254b2;
 }
 
 .p-l-8 {
@@ -539,6 +562,8 @@ Start: Cards
     height: 100%;
     width: 100%;
     padding: 15px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .list-content-card {
@@ -550,6 +575,8 @@ Start: Cards
     height: 100%;
     width: 100%;
     padding: 15px 15px 5px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .black-content-card {
@@ -562,6 +589,8 @@ Start: Cards
     height: 100%;
     width: 100%;
     padding: 15px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .clear-content-card {
@@ -586,6 +615,8 @@ Start: Cards
     height: 100%;
     width: 100%;
     padding: 15px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .content-card-header {
@@ -608,6 +639,8 @@ Start: Cards
     border-radius: 0;
     height: 275px;
     max-height: 275px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .card.hovercard {
@@ -616,6 +649,8 @@ Start: Cards
     overflow: hidden;
     text-align: center;
     background-color: #ffffff;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 
 .card.hovercard .cardheader {

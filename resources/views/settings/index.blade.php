@@ -2,8 +2,12 @@
 
 @section ('breadcrumb')
     <p>Breadcrumbs / Goes / Here
-        <a data-toggle="modal" data-target="#help">
-            <i class="fa fa-question-circle fa-2x pull-right" aria-hidden="true"></i></a>
+        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
     </p>
 @endsection
 
@@ -31,7 +35,6 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="#" class="border-btn" type="button">Cancel</a>
             <a href="{{ route('settings.users.create') }}" class="primary-btn" type="button">Add User</a>
         </div>
     </div>
