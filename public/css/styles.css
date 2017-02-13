@@ -69,6 +69,24 @@ label:focus,
     -webkit-appearance: none;
 }
 
+@media (min-width: 1200px) {
+    .container {
+        width: 90% !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        width: 90% !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        width: 90% !important;
+    }
+}
+
 /*
 ==========================================================================
 End: Generic
