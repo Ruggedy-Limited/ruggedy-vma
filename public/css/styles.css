@@ -923,6 +923,7 @@ Start: Tabs
     -o-transition: all 0.2s ease-in-out;
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
+    border: 3px solid transparent;
 }
 
 .tabs-label {
@@ -954,14 +955,14 @@ Start: Tabs
     padding: 25px;
     position: absolute;
     top: 30px;
-    left: 0;
+    left: 0px;
     background: transparent;
     margin-bottom: 15px;
 }
 
 .tabs [id^="tab"]:checked + label {
-    background: #51576f;
-    color: #ffffff;
+    border: 3px solid #51576f;
+    color: inherit;
 }
 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
