@@ -1244,12 +1244,12 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return $entity->getHash();
         })->search($entity->getHash(), true);
 
-        // Check if we got a key back and if not return the entity as is
+        // Check if we got a key back and if not return null
         if ($keyOfExisting === false) {
             return null;
         }
 
-        // Found a matching entity in the scheduled insertions, return that instance to prevent duplicates
+        // Found a matching entity in the Doctrine UnitOfWork, return that instance to prevent duplicates
         return $ouwEntities->get($keyOfExisting);
     }
 
@@ -1403,7 +1403,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     }
 
     /**
-     * Check if the value is base
+     * Check if the value is base64 encoded
      *
      * @return bool
      */

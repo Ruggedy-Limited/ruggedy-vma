@@ -34,13 +34,13 @@ ADD CONSTRAINT `files_workspace_apps_fk`
   ON UPDATE NO ACTION;
 
 ALTER TABLE `vulnerabilities` 
-CHANGE COLUMN `id` `id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
+CHANGE COLUMN `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '' ;
 
 ALTER TABLE `scanner_apps` 
 ADD COLUMN `logo` VARCHAR(255) NULL DEFAULT NULL COMMENT '' AFTER `description`;
 
 ALTER TABLE `software_information` 
-CHANGE COLUMN `id` `id` INT(10) UNSIGNED NOT NULL COMMENT '' ;
+CHANGE COLUMN `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '' ;
 
 CREATE TABLE IF NOT EXISTS `workspace_apps` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
@@ -93,9 +93,9 @@ DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
 CREATE TABLE `folders_vulnerabilities` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `folder_id` int(10) unsigned NOT NULL,
-  `vulnerability_id` int(10) unsigned NOT NULL,
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `folder_id` INT(10) UNSIGNED NOT NULL,
+  `vulnerability_id` INT(10) UNSIGNED NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
   PRIMARY KEY (`id`),
   CONSTRAINT `folders_vulnerabilities_file_fk` FOREIGN KEY (`folder_id`)
