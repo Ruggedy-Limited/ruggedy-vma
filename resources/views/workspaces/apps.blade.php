@@ -39,6 +39,7 @@
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>XML Apps</label>
                 <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-4">
                         <a href="{{ route('workspaces.apps.create') }}">
                             <div class="card hovercard animated pulse-hover">
@@ -183,6 +184,7 @@
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>API Apps</label>
                 <div id=tab-content2 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-4">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>

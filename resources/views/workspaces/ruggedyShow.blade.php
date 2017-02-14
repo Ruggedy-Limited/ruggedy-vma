@@ -52,6 +52,7 @@
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>Finding</label>
                 <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
                             <span class="label label-danger">High Risk</span>
@@ -78,6 +79,7 @@
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>Solution</label>
                 <div id=tab-content2 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
                             <p>Use your operating system's package manager to upgrade GNU bash to the latest
@@ -90,10 +92,11 @@
                 <input type=radio name=tabs id=tab3>
                 <label for=tab3>Comments</label>
                 <div id=tab-content3 class=tab-content>
+                    <div class="dash-line"></div>
                     <br>
                     <div class="col-md-12">
                         <div>
-                            <textarea class="black-form-control" rows="1"></textarea>
+                            <textarea class="post-form-control" rows="1" placeholder="Type your comment here..."></textarea>
                             <span class="pull-left">
                                 <button class="primary-btn" id="btn-chat">Post</button>
                                 </span>
