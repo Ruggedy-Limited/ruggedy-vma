@@ -44,12 +44,14 @@
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>Vulnerabilities</label>
                 <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
                 </div>
             </li>
             <li>
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>Assets</label>
                 <div id=tab-content2 class=tab-content>
+                    <div class="dash-line"></div>
                 </div>
             </li>
         </ul>

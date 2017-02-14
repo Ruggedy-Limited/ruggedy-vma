@@ -45,6 +45,7 @@
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>Settings</label>
                 <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-4">
                         <br>
                         {!! Form::open(['url' => '/foo/bar']) !!}
@@ -65,6 +66,7 @@
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>Users</label>
                 <div id=tab-content2 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-4 col-sm-4">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">

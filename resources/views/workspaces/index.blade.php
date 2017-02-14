@@ -51,7 +51,8 @@
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>Apps</label>
-                <div id=tab-content1 class=tab-content>
+                <div id="tab-content1" class="tab-content">
+                    <div class="dash-line"></div>
                     <div class="col-md-4 col-sm-4">
                         <a href="{{ route('workspaces.app') }}">
                         <div class="card hovercard animated pulse-hover">
@@ -94,6 +95,7 @@
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>Folders</label>
                 <div id=tab-content2 class=tab-content>
+                    <div class="dash-line"></div>
                     <div class="col-md-4 col-sm-4">
                         <a href="{{ route('folders.index') }}">
                         <div class="card hovercard animated pulse-hover">
