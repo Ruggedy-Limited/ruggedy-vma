@@ -42,6 +42,7 @@ class AssetRepository extends EntityRepository
             Asset::IP_ADDRESS_V4 => null,
             Asset::FILE_ID       => null,
         ]));
+
         if (empty($asset)) {
             return $this->createNewAssetEntity($data);
         }

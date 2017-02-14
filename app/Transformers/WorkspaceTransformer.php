@@ -2,8 +2,8 @@
 
 namespace App\Transformers;
 
-use App\Entities\File;
 use App\Entities\Workspace;
+use App\Entities\WorkspaceApp;
 use League\Fractal\TransformerAbstract;
 
 class WorkspaceTransformer extends TransformerAbstract
@@ -46,9 +46,9 @@ class WorkspaceTransformer extends TransformerAbstract
     public function includeApps(Workspace $workspace)
     {
         $apps = collect(
-            $workspace->getFiles()->map(function ($file) {
-                /** @var File $file */
-                return $file->getScannerApp();
+            $workspace->getWorkspaceApps()->map(function ($workspaceApp) {
+                /** @var WorkspaceApp $workspaceApp */
+                return $workspaceApp->getScannerApp();
             })->toArray()
         )->unique();
 
@@ -74,6 +74,11 @@ class WorkspaceTransformer extends TransformerAbstract
      */
     public function includeFiles(Workspace $workspace)
     {
-        return $this->collection($workspace->getFiles(), new FileTransformer());
+        $files = collect($workspace->getWorkspaceApps()->toArray())->flatMap(function ($workspaceApps) {
+            /** @var WorkspaceApp $workspaceApps */
+            return collect($workspaceApps->getFiles()->toArray());
+        });
+
+        return $this->collection($files, new FileTransformer());
     }
 }

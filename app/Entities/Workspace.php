@@ -37,18 +37,21 @@ class Workspace extends Base\Workspace implements SystemComponent
      */
     public function getAssets()
     {
-        return collect($this->getFiles()->toArray())
+
+        return collect($this->getWorkspaceApps()->toArray())->flatMap(function ($workspaceApps) {
+            /** @var WorkspaceApp $workspaceApps */
+            return collect($workspaceApps->getFiles()->toArray());
+        })->reduce(function ($assets, $file) {
             // Merge the Assets related to each file into a single Collection of Assets for the Workspace
-            ->reduce(function ($assets, $file) {
-                /** @var File $file */
-                /** @var Collection $assets */
-                return $assets->merge($file->getAssets()->toArray());
-            }, new Collection())
-            // Filter out any suppressed or deleted Assets
-            ->filter(function($asset) {
-                /** @var $asset Asset */
-                // Exclude deleted Assets
-                return $asset->getDeleted() !== true && $asset->getSuppressed() !== true;
+            /** @var File $file */
+            /** @var Collection $assets */
+            return $assets->merge($file->getAssets()->toArray());
+        }, new Collection())
+        // Filter out any suppressed or deleted Assets
+        ->filter(function($asset) {
+            /** @var $asset Asset */
+            // Exclude deleted Assets
+            return $asset->getDeleted() !== true && $asset->getSuppressed() !== true;
         });
     }
 }

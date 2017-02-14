@@ -216,7 +216,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         $this->file = $file;
-        $this->entities->put(Workspace::class, $file->getWorkspace());
+        $this->entities->put(Workspace::class, $file->getWorkspaceApp()->getWorkspace());
 
         // Attempt to parse the XML and catch any exceptions
         try {
@@ -231,7 +231,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->logger->log(Logger::ERROR, "Failed to parse XML file.", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceId(),
+                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
                 'exception' => $e->getMessage(),
                 'trace'     => $this->logger->getTraceAsArrayOfLines($e),
             ]);
@@ -551,7 +551,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->logger->log(Logger::ERROR, "Failed to create directory for processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceId(),
+                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
             return false;
         }
@@ -561,7 +561,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->logger->log(Logger::ERROR, "Could not move processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceId(),
+                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
             return false;
         }
@@ -1244,12 +1244,12 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return $entity->getHash();
         })->search($entity->getHash(), true);
 
-        // Check if we got a key back and if not return the entity as is
+        // Check if we got a key back and if not return null
         if ($keyOfExisting === false) {
             return null;
         }
 
-        // Found a matching entity in the scheduled insertions, return that instance to prevent duplicates
+        // Found a matching entity in the Doctrine UnitOfWork, return that instance to prevent duplicates
         return $ouwEntities->get($keyOfExisting);
     }
 
@@ -1310,7 +1310,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         $entity->setUser(
-            $this->file->getWorkspace()->getUser()
+            $this->file->getWorkspaceApp()->getWorkspace()->getUser()
         );
     }
 
@@ -1403,7 +1403,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     }
 
     /**
-     * Check if the value is base
+     * Check if the value is base64 encoded
      *
      * @return bool
      */

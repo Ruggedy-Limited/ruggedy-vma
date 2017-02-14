@@ -222,7 +222,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function getParent()
     {
-        return $this->file->getWorkspace();
+        return $this->file->getWorkspaceApp()->getWorkspace();
     }
 
     /**

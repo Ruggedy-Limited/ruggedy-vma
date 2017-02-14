@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Parsers;
+
 use App\Entities\Asset;
 use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
@@ -16,6 +17,18 @@ use XMLReader;
 
 class NetsparkerXmlParserService extends AbstractXmlParserService
 {
+    /**
+     * NetsparkerXmlParserService constructor.
+     *
+     * @param XMLReader $parser
+     * @param Filesystem $fileSystem
+     * @param Factory $validatorFactory
+     * @param AssetRepository $assetRepository
+     * @param FileRepository $fileRepository
+     * @param EntityManager $em
+     * @param JsonLogService $logger
+     * @param CommandBus $commandBus
+     */
     public function __construct(
         XMLReader $parser, Filesystem $fileSystem, Factory $validatorFactory, AssetRepository $assetRepository,
         FileRepository $fileRepository, EntityManager $em, JsonLogService $logger, CommandBus $commandBus
