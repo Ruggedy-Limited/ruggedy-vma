@@ -34,7 +34,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-4 animated fadeIn">
+        <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Add Finding</h3>
             <br>
             {!! Form::open(['url' => '/foo/bar']) !!}
@@ -56,8 +56,8 @@
             </div>
             <button class="primary-btn" type="submit">Submit</button>
         </div>
-        <div class="col-md-2 animated fadeIn"></div>
-        <div class="col-md-4 animated fadeIn">
+        <div class="col-md-2 col-sm-2 animated fadeIn"></div>
+        <div class="col-md-4 col-sm-4 animated fadeIn">
             <br>
             <br>
             <br>

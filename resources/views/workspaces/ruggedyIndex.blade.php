@@ -48,7 +48,7 @@
         <div class="col-md-12">
             <a href="{{ route('workspaces.ruggedyShow') }}">
                 <div class="list-content-card">
-                    <i class="fa fa-comments fa-lg pull-right t-c-yellow">
+                    <i class="fa fa-comments fa-lg pull-right t-c-blue">
                         <small>189</small>
                     </i>
                     <span class="label label-danger">High Risk</span>
