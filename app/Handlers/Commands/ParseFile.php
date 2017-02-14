@@ -39,7 +39,7 @@ class ParseFile extends CommandHandler implements CustomLogging
         try {
             // Get the relevant parser service based on the name of the scanner
             /** @var AbstractXmlParserService $service */
-            $service = XmlParserFactoryService::getParserService($file->getScannerApp()->getName());
+            $service = XmlParserFactoryService::getParserService($file->getWorkspaceApp()->getScannerApp()->getName());
 
             // Process the file
             $service->processXmlFile($file);

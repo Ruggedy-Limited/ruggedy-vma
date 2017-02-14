@@ -77,7 +77,7 @@ class CreateAsset extends CommandHandler
         }
 
         // Make sure the authenticated User has permission to add an Asset to this Workspace
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $file->getWorkspace())) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $file->getWorkspaceApp()->getWorkspace())) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to create an Asset on the given Workspace"
             );

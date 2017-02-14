@@ -216,7 +216,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         $this->file = $file;
-        $this->entities->put(Workspace::class, $file->getWorkspace());
+        $this->entities->put(Workspace::class, $file->getWorkspaceApp()->getWorkspace());
 
         // Attempt to parse the XML and catch any exceptions
         try {
@@ -231,7 +231,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->logger->log(Logger::ERROR, "Failed to parse XML file.", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceId(),
+                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
                 'exception' => $e->getMessage(),
                 'trace'     => $this->logger->getTraceAsArrayOfLines($e),
             ]);
@@ -551,7 +551,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->logger->log(Logger::ERROR, "Failed to create directory for processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceId(),
+                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
             return false;
         }
@@ -561,7 +561,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $this->logger->log(Logger::ERROR, "Could not move processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceId(),
+                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
             return false;
         }
@@ -1310,7 +1310,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         $entity->setUser(
-            $this->file->getWorkspace()->getUser()
+            $this->file->getWorkspaceApp()->getWorkspace()->getUser()
         );
     }
 
