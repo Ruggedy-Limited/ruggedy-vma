@@ -42,7 +42,7 @@
         <div class="col-md-12">
             <a href="{{ route('folders.show') }}">
                 <div class="list-content-card">
-                    <i class="fa fa-comments fa-lg pull-right t-c-yellow">
+                    <i class="fa fa-comments fa-lg pull-right t-c-blue">
                         <small>189</small>
                     </i>
                     <span class="label label-danger">High Risk</span>
@@ -63,7 +63,7 @@
         <div class="col-md-12">
             <a href="#">
                 <div class="list-content-card">
-                    <i class="fa fa-comments fa-lg pull-right t-c-yellow">
+                    <i class="fa fa-comments fa-lg pull-right t-c-blue">
                         <small>189</small>
                     </i>
                     <span class="label label-warning">Medium Risk</span>
@@ -77,7 +77,7 @@
         <div class="col-md-12">
             <a href="#">
                 <div class="list-content-card">
-                    <i class="fa fa-comments fa-lg pull-right t-c-yellow">
+                    <i class="fa fa-comments fa-lg pull-right t-c-blue">
                         <small>189</small>
                     </i>
                     <span class="label label-success">Low Risk</span>
@@ -91,7 +91,7 @@
         <div class="col-md-12">
             <a href="#">
                 <div class="list-content-card">
-                    <i class="fa fa-comments fa-lg pull-right t-c-yellow">
+                    <i class="fa fa-comments fa-lg pull-right t-c-blue">
                         <small>189</small>
                     </i>
                     <span class="label label-primary">Info</span>

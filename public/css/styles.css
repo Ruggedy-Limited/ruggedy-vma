@@ -40,7 +40,7 @@ a:focus {
 }
 
 a div i small {
-    font-family: Calibri, Helvetica, Arial, sans-serif;
+    font-family: "Source Sans Pro", sans-serif, "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #1d202a !important;
     font-size: 14px;
 }
@@ -420,6 +420,10 @@ Start: Buttons
     text-decoration: none !important;
 }
 
+.label-primary {
+    background-color: #23b7e5;
+}
+
 /*
 ==========================================================================
 End: Buttons
@@ -508,6 +512,10 @@ Start: Colors, Text, Padding, Margins
     color: #6254b2;
 }
 
+.t-c-blue {
+    color: #23b7e5;
+}
+
 .c-black {
     background-color: #3a3f51;
 }
@@ -534,6 +542,10 @@ Start: Colors, Text, Padding, Margins
 
 .c-red {
     background-color: #ee3939;
+}
+
+.c-blue {
+    background-color: #23b7e5;
 }
 
 .c-purple {
