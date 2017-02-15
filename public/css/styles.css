@@ -460,6 +460,14 @@ Start: Colors, Text, Padding, Margins
     -webkit-box-orient: vertical;
 }
 
+.h-5-1 {
+    height: 16px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
 .t-1-small {
     height: 18px;
     overflow: hidden;
@@ -970,10 +978,6 @@ Start: Tabs
     cursor: pointer;
     position: relative;
     top: 4px;
-    -moz-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    -webkit-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
     border: 3px solid transparent;
 }
 
@@ -985,10 +989,6 @@ Start: Tabs
 
 .tabs [id^="tab"]:checked {
     color: inherit;
-    -moz-transition: all 2.2s ease-in-out;
-    -o-transition: all 2.2s ease-in-out;
-    -webkit-transition: all 2.2s ease-in-out;
-    transition: all 2.2s ease-in-out;
     padding: 25px;
 }
 

@@ -24,6 +24,7 @@ Route::get('/settings/users/edit', 'SettingsController@userEdit')->name('setting
 
 Route::get('/workspaces/app', 'WorkspaceController@app')->name('workspaces.app');
 Route::get('/workspaces/app/show', 'WorkspaceController@appShow')->name('workspaces.appShow');
+Route::get('/workspaces/app/showRecord', 'WorkspaceController@appShowRecord')->name('workspaces.appShowRecord');
 Route::get('/workspaces/addFile', 'WorkspaceController@addFile')->name('workspaces.addFile');
 Route::get('/workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
 Route::get('/workspaces/apps/create', 'WorkspaceController@appsCreate')->name('workspaces.apps.create');
