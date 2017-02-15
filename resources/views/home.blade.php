@@ -38,7 +38,7 @@
     </div>
 
     <div class="row animated fadeIn">
-        <div class="col-md-4 col-sm-4">
+        <div class="col-md-4 col-sm-6">
             <a href="{{ route('workspaces.index') }}">
             <div class="card hovercard animated pulse-hover">
                 <div class="cardheader c-white">

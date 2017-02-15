@@ -67,7 +67,7 @@
                 <label for=tab2>Users</label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">
                                 <h4 class="h-4-1"><i class="fa fa-user"></i> User Name</h4>
@@ -75,7 +75,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">
                                 <h4 class="h-4-1"><i class="fa fa-user"></i> User Name</h4>
@@ -83,7 +83,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">
                                 <h4 class="h-4-1"><i class="fa fa-user"></i> User Name</h4>

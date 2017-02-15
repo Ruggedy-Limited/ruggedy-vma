@@ -40,7 +40,7 @@
                 <label for=tab1>XML Apps</label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
                             <div class="card hovercard animated pulse-hover">
                                 <div class="cardheader c-white">
@@ -63,7 +63,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
@@ -86,7 +86,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
@@ -109,7 +109,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
@@ -132,7 +132,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
@@ -155,7 +155,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
@@ -185,7 +185,7 @@
                 <label for=tab2>API Apps</label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-6">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
                             <div class="avatar avatar-white">

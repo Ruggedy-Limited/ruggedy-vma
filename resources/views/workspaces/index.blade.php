@@ -53,7 +53,7 @@
                 <label for=tab1>Apps</label>
                 <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.app') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
@@ -71,7 +71,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.ruggedyIndex') }}">
                             <div class="card hovercard animated pulse-hover">
                                 <div class="cardheader c-white">
@@ -96,7 +96,7 @@
                 <label for=tab2>Folders</label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-4 col-sm-4">
+                    <div class="col-md-4 col-sm-6">
                         <a href="{{ route('folders.index') }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
