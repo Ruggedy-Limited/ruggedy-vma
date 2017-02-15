@@ -211,7 +211,7 @@ Start: Navbar
     text-decoration: none;
     color: #ffffff;
     background: #2a2d3a;
-    border-left: 3px solid #23b7e5;
+    border-left: 3px solid #6254b2;
     text-indent: -3px;
 }
 
@@ -220,7 +220,7 @@ Start: Navbar
     text-decoration: none;
     color: #ffffff;
     background: black;
-    border-left: 3px solid #23b7e5;
+    border-left: 3px solid #6254b2;
     text-indent: -3px;
 }
 
@@ -228,7 +228,7 @@ Start: Navbar
     font-size: 18px;
     line-height: 100px;
     height: 100px;
-    background-color: #23b7e5;
+    background-color: #6254b2;
     color: #ffffff;
 }
 

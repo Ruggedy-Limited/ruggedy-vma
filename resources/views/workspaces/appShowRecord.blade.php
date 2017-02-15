@@ -90,7 +90,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab3>
-                <label for=tab3>Vulnerable Assets</label>
+                <label for=tab3>Vulnerable Assets <span class="badge c-purple">5</span></label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-3">
@@ -99,6 +99,7 @@
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
+                                <span class="label label-info">10</span>
                                 <h4 class="h-4-1">Host Name</h4>
                                 <h5>IP Address</h5>
                             </div>
@@ -110,6 +111,7 @@
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
+                                <span class="label label-info">10</span>
                                 <h4 class="h-4-1">Host Name</h4>
                                 <h5>IP Address</h5>
                             </div>
@@ -121,6 +123,7 @@
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
+                                <span class="label label-info">10</span>
                                 <h4 class="h-4-1">Host Name</h4>
                                 <h5>IP Address</h5>
                             </div>
