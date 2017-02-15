@@ -102,6 +102,11 @@ class WorkspaceController extends Controller
         return view ('workspaces.appShow');
     }
 
+    public function appShowRecord()
+    {
+        return view ('workspaces.appShowRecord');
+    }
+
     public function addFile() {
         return view ('workspaces.addFile');
     }
