@@ -42,14 +42,15 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerabilities</label>
+                <label for=tab1>Vulnerabilities <span class="badge c-purple">48</span></label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <a href="{{ route('workspaces.appShowRecord') }}">
                             <div class="list-content-card">
                                 <p><span class="label label-danger" style="font-size: 10px;">High Risk</span>
-                                    &nbsp; CVE-2014-6278 bash: code execution via specially crafted environment variables
+                                    <span class="badge c-purple">5</span>
+                                    &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
                                 </p>
                             </div>
                         </a>
@@ -58,7 +59,8 @@
                         <a href="{{ route('workspaces.appShowRecord') }}">
                             <div class="list-content-card">
                                 <p><span class="label label-danger" style="font-size: 10px;">High Risk</span>
-                                    &nbsp; CVE-2014-6278 bash: code execution via specially crafted environment variables
+                                    <span class="badge c-purple">5</span>
+                                    &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
                                 </p>
                             </div>
                         </a>
@@ -67,7 +69,8 @@
                         <a href="{{ route('workspaces.appShowRecord') }}">
                             <div class="list-content-card">
                                 <p><span class="label label-danger" style="font-size: 10px;">High Risk</span>
-                                    &nbsp; CVE-2014-6278 bash: code execution via specially crafted environment variables
+                                    <span class="badge c-purple">5</span>
+                                    &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
                                 </p>
                             </div>
                         </a>
@@ -76,7 +79,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>Assets</label>
+                <label for=tab2>Assets <span class="badge c-purple">3</span></label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-3">
@@ -85,6 +88,7 @@
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
+                                <span class="label label-info">10</span>
                                 <h4 class="h-4-1">Host Name</h4>
                                 <p>IP Address</p>
                             </div>
@@ -96,6 +100,7 @@
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
+                                <span class="label label-info">10</span>
                                 <h4 class="h-4-1">Host Name</h4>
                                 <p>IP Address</p>
                             </div>
@@ -107,6 +112,7 @@
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
+                                <span class="label label-info">10</span>
                                 <h4 class="h-4-1">Host Name</h4>
                                 <p>IP Address</p>
                             </div>
