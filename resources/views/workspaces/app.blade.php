@@ -39,7 +39,7 @@
     </div>
 
     <div class="row animated fadeIn">
-        <div class="col-md-4">
+        <div class="col-md-4 animated pulse-hover">
             <a href="{{ route('workspaces.appShow') }}">
                 <div class="content-card">
                     <h4 class="h-4-1">DMZ scan data</h4>

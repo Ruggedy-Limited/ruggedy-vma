@@ -95,7 +95,7 @@
                     <div class="dash-line"></div>
                     <div class="col-md-3">
                         <a href="#">
-                            <div class="list-content-card">
+                            <div class="list-content-card animated pulse-hover">
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="col-md-3">
                         <a href="#">
-                            <div class="list-content-card">
+                            <div class="list-content-card animated pulse-hover">
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
@@ -117,7 +117,7 @@
                     </div>
                     <div class="col-md-3">
                         <a href="#">
-                            <div class="list-content-card">
+                            <div class="list-content-card animated pulse-hover">
                                 <span class="label label-danger">12</span>
                                 <span class="label label-warning">24</span>
                                 <span class="label label-success">3</span>
