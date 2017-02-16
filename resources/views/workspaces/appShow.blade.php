@@ -48,7 +48,7 @@
                     <div class="col-md-12">
                         <a href="{{ route('workspaces.appShowRecord') }}">
                             <div class="list-content-card">
-                                <p><span class="label label-danger" style="font-size: 10px;">High Risk</span>
+                                <p><span class="label label-danger t-s-10">High Risk</span>
                                     <span class="badge c-purple">5</span>
                                     &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
                                 </p>
