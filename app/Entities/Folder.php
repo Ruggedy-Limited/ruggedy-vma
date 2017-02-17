@@ -17,7 +17,11 @@ class Folder extends Base\Folder implements SystemComponent
     /**
      * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="folders_vulnerabilities")
+     * @ORM\JoinTable(
+     *     name="folders_vulnerabilities",
+     *     joinColumns={@ORM\JoinColumn(name="folder_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")})
+     * )
      */
     protected $vulnerabilities;
 
@@ -57,5 +61,13 @@ class Folder extends Base\Folder implements SystemComponent
         $this->vulnerabilities->removeElement($vulnerability);
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
     }
 }

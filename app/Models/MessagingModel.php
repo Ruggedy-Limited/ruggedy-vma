@@ -4,15 +4,19 @@ namespace App\Models;
 
 use App\Commands\Command;
 use App\Commands\CreateAsset;
+use App\Commands\CreateFolder;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteAsset;
+use App\Commands\DeleteFolder;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditAsset;
+use App\Commands\EditFolder;
 use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
 use App\Commands\GetFile;
+use App\Commands\GetFolder;
 use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersWorkspaces;
@@ -24,6 +28,7 @@ use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\FileNotFoundException;
+use App\Exceptions\FolderNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
@@ -55,6 +60,13 @@ class MessagingModel
     /** API File Management */
     const ERROR_FILE_DOES_NOT_EXIST  = 'error_file_does_not_exist';
     const ERROR_FILE_VIEW_PERMISSION = 'error_file_view_permission';
+
+    /** API Folder Management */
+    const ERROR_FOLDER_DOES_NOT_EXIST    = 'error_folder_does_not_exist';
+    const ERROR_FOLDER_VIEW_PERMISSION   = 'error_folder_view_permission';
+    const ERROR_FOLDER_CREATE_PERMISSION = 'error_folder_create_permission';
+    const ERROR_FOLDER_EDIT_PERMISSION   = 'error_folder_edit_permission';
+    const ERROR_FOLDER_DELETE_PERMISSION = 'error_folder_delete_permission';
 
     /** API Workspace Management */
     const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
@@ -115,6 +127,10 @@ class MessagingModel
             RevokePermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             GetListOfPermissions::class     => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
             GetFile::class                  => static::ERROR_FILE_VIEW_PERMISSION,
+            GetFolder::class                => static::ERROR_FOLDER_VIEW_PERMISSION,
+            CreateFolder::class             => static::ERROR_FOLDER_CREATE_PERMISSION,
+            EditFolder::class               => static::ERROR_FOLDER_EDIT_PERMISSION,
+            DeleteFolder::class             => static::ERROR_FOLDER_DELETE_PERMISSION,
         ]);
 
         $fileNotFoundMap = new Collection([
@@ -135,6 +151,7 @@ class MessagingModel
             AssetNotFoundException::class      => static::ERROR_ASSET_DOES_NOT_EXIST,
             ComponentNotFoundException::class  => static::ERROR_COMPONENT_DOES_NOT_EXIST,
             InvalidPermissionException::class  => static::ERROR_PERMISSION_DOES_NOT_EXIST,
+            FolderNotFoundException::class     => static::ERROR_FOLDER_DOES_NOT_EXIST,
         ]);
     }
 
