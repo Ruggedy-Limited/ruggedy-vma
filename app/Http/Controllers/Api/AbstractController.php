@@ -2,7 +2,6 @@
 
 namespace app\Http\Controllers\Api;
 
-use App;
 use App\Entities\Base\AbstractEntity;
 use App\Http\Controllers\Controller;
 use App\Commands\Command;
