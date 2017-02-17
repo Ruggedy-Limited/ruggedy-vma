@@ -48,6 +48,7 @@
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
+                            <p><i class="fa fa-thumb-tack t-c-blue"></i> Workspace/App/File/Asset</p>
                             <span class="label label-danger">High Risk</span>
                             <span></span>
                             <h4 class="h-4-1">CVE-2014-6278 bash: code execution via specially crafted environment
@@ -64,7 +65,6 @@
                                 boundary from Bash execution. NOTE: this vulnerability exists because of an incomplete
                                 fix for
                                 CVE-2014-6271, CVE-2014-7169, and CVE-2014-6277.</p>
-                            <p><i class="fa fa-thumb-tack"></i> Workspace/App/File/Asset</p>
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab3>
-                <label for=tab3>Comments</label>
+                <label for=tab3>Comments <span class="badge c-purple">3</span></label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
                     <br>

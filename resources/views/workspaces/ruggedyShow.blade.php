@@ -18,6 +18,7 @@
 @endsection
 
 @section('content')
+
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -35,11 +36,74 @@
 
         </div>
     </div>
+    <!-- JIRA -->
+    <div id="jira" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Send to JIRA</h4>
+                </div>
+                <div class="modal-body">
+                    {!! Form::open(['url' => '/foo/bar']) !!}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {!! Form::label('name', 'User Name') !!}
+                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('name', 'Password') !!}
+                            {!! Form::password('name', null, ['class' => 'black-form-control']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {!! Form::label('name', 'JIRA Project ID') !!}
+                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('name', 'Host') !!}
+                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('name', 'Port') !!}
+                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
+                        </div>
+                    </div>
+                    <button class="primary-btn" type="submit">Submit</button>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Folder -->
+    <div id="folder" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add to Folder</h4>
+                </div>
+                <div class="modal-body">
+                    {!! Form::open(['url' => '/foo/bar']) !!}
+                    <div class="form-group col-md-12">
+                        {!! Form::select('folder', ['1' => 'Folder One', '2' => 'Folder Two']) !!}
+                    </div>
+                    <button class="primary-btn" type="submit">Submit</button>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+
+        </div>
+    </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="#" class="primary-btn" type="button">Send to JIRA</a>
-            <a href="#" class="primary-btn" type="button">Add to Folder</a>
+            <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#jira">Send to JIRA</a>
+            <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">Add to Folder</a>
         </div>
     </div>
 
@@ -52,8 +116,7 @@
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
-                            <span class="label label-danger">High Risk</span>
-                            <span></span>
+                            <span class="label label-danger t-s-10">High Risk</span>
                             <h4 class="h-4-1">CVE-2014-6278 bash: code execution via specially crafted environment
                                 variables</h4>
                             <p>GNU Bash through 4.3 bash43-026 does not properly parse function definitions in the
@@ -87,7 +150,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab3>
-                <label for=tab3>Comments</label>
+                <label for=tab3>Comments <span class="badge c-purple">3</span></label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
                     <br>

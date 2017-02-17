@@ -51,6 +51,10 @@
                 {!! Form::label('description', 'Proof of Concept') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
+            <div class="form-group">
+                {!! Form::label('description', 'Assets') !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
+            </div>
             <button class="primary-btn" type="submit">Submit</button>
         </div>
         <div class="col-md-2 col-sm-2 animated fadeIn"></div>
@@ -59,12 +63,9 @@
             <br>
             <br>
             <div class="form-group">
-                {!! Form::label('vuln_desc.', 'Status (Open, In Progress, Close)') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
-            </div>
-            <div class="form-group">
-                {!! Form::label('vuln_desc.', 'Risk Rating') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+                {!! Form::label('vuln_desc.', 'Risk Score') !!}
+                {!! Form::select('folder', ['1' => 'High Risk', '2' => 'Medium Risk',
+                '3' => 'Low Risk', '4' => 'Information']) !!}
             </div>
             <div class="form-group">
                 {!! Form::label('vuln_desc.', 'CVSS Score') !!}

@@ -83,7 +83,7 @@
                 </div>
                 <div class="modal-body">
                     {!! Form::open(['url' => '/foo/bar']) !!}
-                        <div class="form-groupcol-md-12">
+                        <div class="form-group col-md-12">
                             {!! Form::select('folder', ['1' => 'Folder One', '2' => 'Folder Two']) !!}
                         </div>
                     <button class="primary-btn" type="submit">Submit</button>
@@ -181,6 +181,118 @@
                                 <h5>IP Address</h5>
                             </div>
                         </a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <input type=radio name=tabs id=tab4>
+                <label for=tab4>Comments <span class="badge c-purple">3</span></label>
+                <div id=tab-content4 class=tab-content>
+                    <div class="dash-line"></div>
+                    <br>
+                    <div class="col-md-12">
+                        <div>
+                            <textarea class="post-form-control" rows="1" placeholder="Type your comment here..."></textarea>
+                            <span class="pull-left">
+                                <button class="primary-btn" id="btn-chat">Post</button>
+                                </span>
+                        </div>
+                        <div class="chat-card">
+                            <div>
+                                <ul class="chat">
+                                    <li>
+                                        <div class="chat-body">
+                                            <div class="header">
+                                                <strong class="primary-font">User Name</strong>
+                                                <p class="text-muted">
+                                                    <small class=" text-muted"><span class="fa fa-clock-o"></span>13
+                                                        mins
+                                                        ago
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+                                                bibendum ornare
+                                                dolor, quis ullamcorper ligula sodales. aasdfs fdsfsd fs dfdsfds hgjgjgjjghjgjgj
+                                            </p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="chat-body">
+                                            <div class="header">
+                                                <strong class="primary-font">User Name</strong>
+                                                <p class="text-muted">
+                                                    <small class=" text-muted"><span class="fa fa-clock-o"></span>13
+                                                        mins
+                                                        ago
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+                                                bibendum ornare
+                                                dolor, quis ullamcorper ligula sodales. aasdfs fdsfsd fs dfdsfds hgjgjgjjghjgjgj
+                                            </p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="chat-body">
+                                            <div class="header">
+                                                <strong class="primary-font">User Name</strong>
+                                                <p class="text-muted">
+                                                    <small class=" text-muted"><span class="fa fa-clock-o"></span>13
+                                                        mins
+                                                        ago
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+                                                bibendum ornare
+                                                dolor, quis ullamcorper ligula sodales. aasdfs fdsfsd fs dfdsfds hgjgjgjjghjgjgj
+                                            </p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="chat-body">
+                                            <div class="header">
+                                                <strong class="primary-font">User Name</strong>
+                                                <p class="text-muted">
+                                                    <small class=" text-muted"><span class="fa fa-clock-o"></span>13
+                                                        mins
+                                                        ago
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+                                                bibendum ornare
+                                                dolor, quis ullamcorper ligula sodales. aasdfs fdsfsd fs dfdsfds hgjgjgjjghjgjgj
+                                            </p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="chat-body">
+                                            <div class="header">
+                                                <strong class="primary-font">User Name</strong>
+                                                <p class="text-muted">
+                                                    <small class=" text-muted"><span class="fa fa-clock-o"></span>13
+                                                        mins
+                                                        ago
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+                                                bibendum ornare
+                                                dolor, quis ullamcorper ligula sodales. aasdfs fdsfsd fs dfdsfds hgjgjgjjghjgjgj
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </li>
