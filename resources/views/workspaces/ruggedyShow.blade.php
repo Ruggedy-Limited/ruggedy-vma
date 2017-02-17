@@ -31,9 +31,6 @@
                 <div class="modal-body">
                     <p>Help text goes here.</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
-                </div>
             </div>
 
         </div>
@@ -50,7 +47,7 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Finding</label>
+                <label for=tab1>Vulnerability</label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-12">

@@ -5,12 +5,6 @@
         <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
             <i class="fa fa-question fa-lg" aria-hidden="true"></i>
         </button>
-        <button type="button" class="btn round-btn pull-right c-red">
-            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-purple">
-            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-        </button>
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
@@ -31,9 +25,6 @@
                 <div class="modal-body">
                     <p>Help text goes here.</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
-                </div>
             </div>
 
         </div>
@@ -51,34 +42,31 @@
                 <div class="modal-body">
                     {!! Form::open(['url' => '/foo/bar']) !!}
                     <div class="col-md-6">
-                    <div class="form-group fg-line">
+                    <div class="form-group">
                         {!! Form::label('name', 'User Name') !!}
                         {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                     </div>
-                        <div class="form-group fg-line">
+                        <div class="form-group">
                             {!! Form::label('name', 'Password') !!}
                             {!! Form::password('name', null, ['class' => 'black-form-control']) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group fg-line">
+                        <div class="form-group">
                             {!! Form::label('name', 'JIRA Project ID') !!}
                             {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                         </div>
-                        <div class="form-group fg-line">
+                        <div class="form-group">
                             {!! Form::label('name', 'Host') !!}
                             {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                         </div>
-                        <div class="form-group fg-line">
+                        <div class="form-group">
                             {!! Form::label('name', 'Port') !!}
                             {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
                         </div>
                     </div>
                     <button class="primary-btn" type="submit">Submit</button>
                     {!! Form::close() !!}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
                 </div>
             </div>
 
@@ -95,14 +83,11 @@
                 </div>
                 <div class="modal-body">
                     {!! Form::open(['url' => '/foo/bar']) !!}
-                        <div class="form-group fg-line col-md-12">
+                        <div class="form-groupcol-md-12">
                             {!! Form::select('folder', ['1' => 'Folder One', '2' => 'Folder Two']) !!}
                         </div>
                     <button class="primary-btn" type="submit">Submit</button>
                     {!! Form::close() !!}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
                 </div>
             </div>
 

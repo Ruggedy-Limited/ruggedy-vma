@@ -5,6 +5,12 @@
         <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
             <i class="fa fa-question fa-lg" aria-hidden="true"></i>
         </button>
+        <button type="button" class="btn round-btn pull-right c-red">
+            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn round-btn pull-right c-purple">
+            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+        </button>
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
@@ -24,9 +30,6 @@
                 </div>
                 <div class="modal-body">
                     <p>Help text goes here.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
                 </div>
             </div>
 

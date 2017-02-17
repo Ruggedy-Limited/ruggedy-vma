@@ -25,9 +25,6 @@
                 <div class="modal-body">
                     <p>Help text goes here.</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
-                </div>
             </div>
 
         </div>
@@ -70,7 +67,7 @@
                     <div class="col-md-4 col-sm-6">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">
-                                <h4 class="h-4-1"><i class="fa fa-user"></i> User Name</h4>
+                                <h4>User Name</h4>
                                 <p>email@address.com</p>
                             </div>
                         </a>
@@ -78,7 +75,7 @@
                     <div class="col-md-4 col-sm-6">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">
-                                <h4 class="h-4-1"><i class="fa fa-user"></i> User Name</h4>
+                                <h4>User Name</h4>
                                 <p>email@address.com</p>
                             </div>
                         </a>
@@ -86,7 +83,7 @@
                     <div class="col-md-4 col-sm-6">
                         <a href="{{ route('settings.users.edit') }}">
                             <div class="content-card animated pulse-hover">
-                                <h4 class="h-4-1"><i class="fa fa-user"></i> User Name</h4>
+                                <h4>User Name</h4>
                                 <p>email@address.com</p>
                             </div>
                         </a>

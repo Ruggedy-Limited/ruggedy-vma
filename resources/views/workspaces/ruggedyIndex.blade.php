@@ -31,16 +31,13 @@
                 <div class="modal-body">
                     <p>Help text goes here.</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
-                </div>
             </div>
 
         </div>
     </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="{{ route('workspaces.ruggedyCreate') }}" class="primary-btn" type="button">Add Finding</a>
+            <a href="{{ route('workspaces.ruggedyCreate') }}" class="primary-btn" type="button">Add Vulnerability</a>
         </div>
     </div>
 
