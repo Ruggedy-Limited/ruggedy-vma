@@ -991,6 +991,15 @@ Start: Tabs
 ==========================================================================
 */
 
+div ul li label {
+    display: inline-block;
+    max-width: 150%;
+    margin-bottom: 5px;
+    margin-right: 20px;
+    font-weight: bold;
+    margin-left: -20px;
+}
+
 .tabs {
     width: 100%;
     float: none;
@@ -1008,16 +1017,6 @@ Start: Tabs
     position: absolute;
     top: -9999px;
     left: -9999px;
-}
-
-.tabs-label {
-    display: inline-block;
-    margin-left: -20px;
-    max-width: 100%;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-style: inherit;
-
 }
 
 .tabs label {
