@@ -4,7 +4,6 @@ namespace App\Entities;
 
 use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\HasIdColumn;
-use App\Contracts\RelatesToFiles;
 use App\Contracts\SystemComponent;
 use App\Entities\Base\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
