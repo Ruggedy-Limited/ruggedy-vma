@@ -82,7 +82,7 @@ class File extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="Asset", mappedBy="file", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false)
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
      */
     protected $assets;
 
@@ -94,7 +94,7 @@ class File extends AbstractEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="WorkspaceApp", inversedBy="files", cascade={"persist"})
-     * @ORM\JoinColumn(name="`workspace_apps_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\JoinColumn(name="`workspace_apps_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
      */
     protected $workspaceApp;
 

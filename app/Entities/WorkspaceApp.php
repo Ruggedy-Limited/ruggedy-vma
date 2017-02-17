@@ -18,6 +18,12 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     const DEFAULT_DESCRIPTION = 'No description given. Please add a relevant description.';
 
     /**
+     * @ORM\OneToMany(targetEntity="File", mappedBy="workspaceApp", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_apps_id`", nullable=false)
+     */
+    protected $files;
+
+    /**
      * @inheritdoc
      * @return User
      */

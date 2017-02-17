@@ -20,7 +20,7 @@ class Folder extends Base\Folder implements SystemComponent
      * @ORM\JoinTable(
      *     name="folders_vulnerabilities",
      *     joinColumns={@ORM\JoinColumn(name="folder_id", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")})
+     *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")}
      * )
      */
     protected $vulnerabilities;

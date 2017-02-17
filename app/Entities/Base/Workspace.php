@@ -70,7 +70,7 @@ class Workspace extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="WorkspaceApp", mappedBy="workspace", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_id`", nullable=false)
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_id`", nullable=false, onDelete="CASCADE")
      */
     protected $workspaceApps;
 
