@@ -28,11 +28,7 @@
                 <div class="modal-body">
                     <p>Help text goes here.</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
-                </div>
             </div>
-
         </div>
     </div>
     <br>
@@ -41,17 +37,17 @@
             <h3>Edit User</h3>
             <br>
             {!! Form::open(['url' => '/foo/bar']) !!}
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('email', 'Email') !!}
                 {!! Form::email('email', null, ['class' => 'black-form-control']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('password', 'Password') !!}
-                {!! Form::text('password', null, ['class' => 'black-form-control']) !!}
+                {!! Form::password('password', null, ['class' => 'black-form-control']) !!}
             </div>
             <button class="primary-btn" type="submit">Submit</button>
             {!! Form::close() !!}

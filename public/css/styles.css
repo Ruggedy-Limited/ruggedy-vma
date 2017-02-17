@@ -982,6 +982,7 @@ select {
     border: 0 solid #ccc;
     border-bottom: 1px solid #aeb1bb;
     border-radius: 0;
+    -webkit-appearance: inherit;
 }
 
 /*

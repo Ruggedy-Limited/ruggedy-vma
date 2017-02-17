@@ -25,9 +25,6 @@
                 <div class="modal-body">
                     <p>Help text goes here.</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="primary-btn" data-dismiss="modal">Close</button>
-                </div>
             </div>
 
         </div>
@@ -37,20 +34,20 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Add Finding</h3>
             <br>
-            {!! Form::open(['url' => '/foo/bar']) !!}
-            <div class="form-group fg-line">
+            {!! Form::open(['url' => '/foo/bar'], ['files' => 'true']) !!}
+            <div class="form-group">
                 {!! Form::label('vuln_desc.', 'Vulnerability Title') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('description', 'Vulnerability Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('description', 'Vulnerability Solution') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('description', 'Proof of Concept') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
@@ -61,29 +58,29 @@
             <br>
             <br>
             <br>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('vuln_desc.', 'Status (Open, In Progress, Close)') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('vuln_desc.', 'Risk Rating') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
-            <div class="form-group fg-line">
+            <div class="form-group">
                 {!! Form::label('vuln_desc.', 'CVSS Score') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
-            <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Screenshot 1 Upload') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+            <div class="form-group">
+                {!! Form::label('file', 'Screenshot 1', ['class' => '']) !!}
+                {!! Form::file('file') !!}
             </div>
-            <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Screenshot 2 Upload') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+            <div class="form-group">
+                {!! Form::label('file', 'Screenshot 2', ['class' => '']) !!}
+                {!! Form::file('file') !!}
             </div>
-            <div class="form-group fg-line">
-                {!! Form::label('vuln_desc.', 'Screenshot 3 Upload') !!}
-                {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
+            <div class="form-group">
+                {!! Form::label('file', 'Screenshot 3', ['class' => '']) !!}
+                {!! Form::file('file') !!}
             </div>
             {!! Form::close() !!}
         </div>
