@@ -37,7 +37,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="{{ route('settings.users.profile') }}">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
                         </h4>
