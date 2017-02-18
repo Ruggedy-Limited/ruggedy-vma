@@ -91,4 +91,9 @@ class SettingsController extends Controller
     {
         return view ('settings.usersEdit');
     }
+
+    public function userProfile()
+    {
+        return view ('settings.profileEdit');
+    }
 }

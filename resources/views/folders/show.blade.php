@@ -48,8 +48,8 @@
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
-                            <p><i class="fa fa-thumb-tack t-c-blue"></i> Workspace/App/File/Asset</p>
-                            <span class="label label-danger">High Risk</span>
+                            <span class="label label-danger">High Risk</span>&nbsp;&nbsp;
+                            <span><i class="fa fa-thumb-tack t-c-blue"></i> Workspace/App/File/Asset</span>
                             <span></span>
                             <h4 class="h-4-1">CVE-2014-6278 bash: code execution via specially crafted environment
                                 variables</h4>
