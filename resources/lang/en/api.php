@@ -74,4 +74,11 @@ return [
         . "problem with the related file.",
     MessagingModel::ERROR_FILE_DOES_NOT_EXIST               => "Sorry, that file does not exist.",
     MessagingModel::ERROR_FILE_VIEW_PERMISSION              => "Sorry, you don't have permission to view that file.",
+    MessagingModel::ERROR_FOLDER_DOES_NOT_EXIST             => "Sorry, that folder does not exist.",
+    MessagingModel::ERROR_FOLDER_CREATE_PERMISSION          => "Sorry, you do not have permission to create folders on "
+        . "that Workspace.",
+    MessagingModel::ERROR_FOLDER_DELETE_PERMISSION          => "Sorry, you do not have permission to delete that "
+        . "folder.",
+    MessagingModel::ERROR_FOLDER_EDIT_PERMISSION            => "Sorry, you do not have permission to edit that folder.",
+    MessagingModel::ERROR_FOLDER_VIEW_PERMISSION            => "Sorry, you do not have permission to view that folder.",
 ];
