@@ -17,7 +17,7 @@ use App\Transformers\WorkspaceAppTransformer;
 class WorkspaceAppController extends AbstractController
 {
     /**
-     * Get a single Workspace and various related data by using optional Fractal Transformer includes
+     * Get a single WorkspaceApp and various related data by using optional Fractal Transformer includes
      *
      * @GET("/workspace/app/{workspaceAppId}", as="workspace.app.get", where={"folderId":"[0-9]+"})
      *
@@ -33,7 +33,8 @@ class WorkspaceAppController extends AbstractController
     /**
      * Create a new WorkspaceApp
      *
-     * @POST("/workspace/app/create/{workspaceId}/{scannerAppId}", as="workspace.app.create", where={"workspaceId":"[0-9]+", "scannerAppId":"[0-9]+"})
+     * @POST("/workspace/app/create/{workspaceId}/{scannerAppId}", as="workspace.app.create",
+     *     where={"workspaceId":"[0-9]+", "scannerAppId":"[0-9]+"})
      *
      * @param $workspaceId
      * @param $scannerAppId
@@ -78,7 +79,8 @@ class WorkspaceAppController extends AbstractController
     /**
      * Move a File to a different WorkspaceApp
      *
-     * @PUT("/workspace/app/{workspaceAppId}/{fileId}", as="workspace.app.add.vulnerability", where={"workspaceAppId":"[0-9]+", "fileId":"[0-9]+"})
+     * @PUT("/workspace/app/{workspaceAppId}/{fileId}", as="workspace.app.add.vulnerability",
+     *     where={"workspaceAppId":"[0-9]+", "fileId":"[0-9]+"})
      *
      * @param $workspaceAppId
      * @param $fileId

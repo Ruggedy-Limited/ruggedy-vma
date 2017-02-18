@@ -29,7 +29,7 @@ class DeleteWorkspaceApp extends CommandHandler
     public function __construct(WorkspaceAppRepository $workspaceAppRepository, EntityManager $em)
     {
         $this->workspaceAppRepository = $workspaceAppRepository;
-        $this->em                  = $em;
+        $this->em                     = $em;
     }
 
     /**
@@ -47,15 +47,15 @@ class DeleteWorkspaceApp extends CommandHandler
         // Get the authenticated user
         $requestingUser = $this->authenticate();
 
-        // Make sure that all the required members are set on the command
         $workspaceAppId = $command->getId();
+        // Make sure that all the required members are set on the command
         if (!isset($workspaceAppId)) {
             throw new InvalidInputException("The required ID member is not set on the command object");
         }
 
-        // Check that the WorkspaceApp exists
         /** @var WorkspaceApp $workspaceApp */
         $workspaceApp = $this->workspaceAppRepository->find($workspaceAppId);
+        // Check that the WorkspaceApp exists
         if (empty($workspaceApp)) {
             throw new WorkspaceAppNotFoundException("A WorkspaceApp with the given ID was not found");
         }

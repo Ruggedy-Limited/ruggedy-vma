@@ -26,7 +26,7 @@ class MoveFileToWorkspaceApp extends CommandHandler
     protected $em;
 
     /**
-     * AddFileToWorkspaceApp constructor.
+     * MoveFileToWorkspaceApp constructor.
      *
      * @param WorkspaceAppRepository $workspaceAppRepository
      * @param FileRepository $fileRepository
@@ -42,7 +42,7 @@ class MoveFileToWorkspaceApp extends CommandHandler
     }
 
     /**
-     * Process the AddFileToWorkspaceAppCommand.
+     * Process the MoveFileToWorkspaceApp command.
      *
      * @param MoveFileToWorkspaceAppCommand $command
      * @return WorkspaceApp
@@ -57,22 +57,26 @@ class MoveFileToWorkspaceApp extends CommandHandler
 
         $workspaceAppId = $command->getWorkspaceAppId();
         $fileId         = $command->getFileId();
+        // Check that we have everything we need to process the command
         if (!isset($workspaceAppId, $fileId)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
         /** @var WorkspaceApp $workspaceApp */
         $workspaceApp = $this->workspaceAppRepository->find($workspaceAppId);
+        // Make sure the WorkspaceApp exists
         if (empty($workspaceApp)) {
             throw new WorkspaceAppNotFoundException("A WorkspaceApp with the given ID does not exist");
         }
 
         /** @var File $file */
         $file = $this->fileRepository->find($fileId);
+        // Make sure the file exists
         if (empty($file)) {
             throw new FileNotFoundException("A File with the given ID does not exist");
         }
 
+        // Make sure the requesting User has permission to perform this action
         if ($requestingUser->cannot(ComponentPolicy::ACTION_EDIT, $workspaceApp)) {
             throw new ActionNotPermittedException(
                 "The requesting User does not have permission to add Vulnerabilities to the given WorkspaceApp"

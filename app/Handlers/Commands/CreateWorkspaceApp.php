@@ -25,7 +25,7 @@ class CreateWorkspaceApp extends CommandHandler
     protected $em;
 
     /**
-     * CreateFolder constructor.
+     * CreateWorkspaceApp constructor.
      *
      * @param WorkspaceRepository $workspaceRepository
      * @param ScannerAppRepository $scannerAppRepository
@@ -41,7 +41,7 @@ class CreateWorkspaceApp extends CommandHandler
     }
 
     /**
-     * Process the CreateFolder command.
+     * Process the CreateWorkspaceApp command.
      *
      * @param CreateWorkspaceAppCommand $command
      * @return WorkspaceApp
@@ -71,6 +71,7 @@ class CreateWorkspaceApp extends CommandHandler
         }
 
         $scannerApp = $this->scannerAppRepository->find($scannerAppId);
+        // Make sure the relevant ScannerApp exists
         if (empty($scannerApp)) {
             throw new ScannerAppNotFoundException("No Scanner App with the given ID was found.");
         }
@@ -82,7 +83,7 @@ class CreateWorkspaceApp extends CommandHandler
             );
         }
 
-        // Set the Workspace and the User on the Folder
+        // Set the Workspace, ScannerApp and User on the WorkspaceApp
         $workspaceApp->setWorkspace($workspace);
         $workspaceApp->setScannerApp($scannerApp);
         $workspaceApp->setUser($requestingUser);

@@ -34,14 +34,17 @@ class GetWorkspaceApp extends CommandHandler
      */
     public function handle(GetWorkspaceAppCommand $command)
     {
+        // Get the authenticated User
         $requestingUser = $this->authenticate();
 
         /** @var WorkspaceApp $workspaceApp */
         $workspaceApp = $this->workspaceAppRepository->find($command->getId());
+        // Make sure the WorkspaceApp exists
         if (empty($workspaceApp)) {
             throw new WorkspaceAppNotFoundException("No WorkspaceApp with the given ID was found.");
         }
 
+        // Make sure the User has permission to perform this action
         if ($requestingUser->cannot(ComponentPolicy::ACTION_VIEW, $workspaceApp->getWorkspace())) {
             throw new ActionNotPermittedException("The requesting User is not permitted to view this WorkspaceApp.");
         }

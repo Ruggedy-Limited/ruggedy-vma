@@ -11,7 +11,7 @@ class MoveFileToWorkspaceApp extends Command
     protected $fileId;
 
     /**
-     * AddFileToWorkspaceApp constructor.
+     * MoveFileToWorkspaceApp constructor.
      *
      * @param int $workspaceAppId
      * @param int $fileId

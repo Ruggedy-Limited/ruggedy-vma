@@ -20,7 +20,7 @@ class EditWorkspaceApp extends CommandHandler
     protected $em;
 
     /**
-     * CreateWorkspaceApp constructor.
+     * EditWorkspaceApp constructor.
      *
      * @param WorkspaceAppRepository $workspaceAppRepository
      * @param EntityManager $em
@@ -28,11 +28,11 @@ class EditWorkspaceApp extends CommandHandler
     public function __construct(WorkspaceAppRepository $workspaceAppRepository, EntityManager $em)
     {
         $this->workspaceAppRepository = $workspaceAppRepository;
-        $this->em               = $em;
+        $this->em                     = $em;
     }
 
     /**
-     * Process the CreateWorkspaceApp command.
+     * Process the EditWorkspaceApp command.
      *
      * @param EditWorkspaceAppCommand $command
      * @return WorkspaceApp
@@ -42,6 +42,7 @@ class EditWorkspaceApp extends CommandHandler
      */
     public function handle(EditWorkspaceAppCommand $command)
     {
+        // Get the authenticated User
         $requestingUser = $this->authenticate();
 
         $workspaceAppId      = $command->getId();
@@ -51,9 +52,9 @@ class EditWorkspaceApp extends CommandHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Make sure the relevant Workspace exists
         /** @var WorkspaceApp $workspaceApp */
         $workspaceApp = $this->workspaceAppRepository->find($workspaceAppId);
+        // Make sure the relevant Workspace exists
         if (empty($workspaceApp)) {
             throw new WorkspaceAppNotFoundException("No WorkspaceApp with the given ID was found.");
         }

@@ -48,7 +48,7 @@ class WorkspaceAppTransformer extends TransformerAbstract
     }
 
     /**
-     * Optional include for Vulnerabilities
+     * Optional include for ScannerApp
      *
      * @param WorkspaceApp $workspaceApp
      * @return \League\Fractal\Resource\Item
