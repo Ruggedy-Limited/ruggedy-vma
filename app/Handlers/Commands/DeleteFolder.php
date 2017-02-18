@@ -29,7 +29,7 @@ class DeleteFolder extends CommandHandler
     public function __construct(FolderRepository $folderRepository, EntityManager $em)
     {
         $this->folderRepository = $folderRepository;
-        $this->em                  = $em;
+        $this->em               = $em;
     }
 
     /**

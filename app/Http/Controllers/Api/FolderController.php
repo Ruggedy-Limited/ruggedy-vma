@@ -17,7 +17,7 @@ use App\Transformers\FolderTransformer;
 class FolderController extends AbstractController
 {
     /**
-     * Get a single Workspace and various related data by using optional Fractal Transformer includes
+     * Get a single Folder and various related data by using optional Fractal Transformer includes
      *
      * @GET("/folder/{folderId}", as="folder.get", where={"folderId":"[0-9]+"})
      *

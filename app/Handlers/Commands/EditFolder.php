@@ -20,7 +20,7 @@ class EditFolder extends CommandHandler
     protected $em;
 
     /**
-     * CreateFolder constructor.
+     * EditFolder constructor.
      *
      * @param FolderRepository $folderRepository
      * @param EntityManager $em
@@ -32,7 +32,7 @@ class EditFolder extends CommandHandler
     }
 
     /**
-     * Process the CreateFolder command.
+     * Process the EditFolder command.
      *
      * @param EditFolderCommand $command
      * @return Folder
@@ -44,8 +44,8 @@ class EditFolder extends CommandHandler
     {
         $requestingUser = $this->authenticate();
 
-        $folderId   = $command->getId();
         /** @var Folder $folder */
+        $folderId      = $command->getId();
         $folderDetails = $command->getRequestedChanges();
 
         // Make sure we have everything we need to process the command
@@ -53,7 +53,7 @@ class EditFolder extends CommandHandler
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Make sure the relevant Workspace exists
+        // Make sure the relevant Folder exists
         $folder = $this->folderRepository->find($folderId);
         if (empty($folder)) {
             throw new FolderNotFoundException("No Folder with the given ID was found.");
