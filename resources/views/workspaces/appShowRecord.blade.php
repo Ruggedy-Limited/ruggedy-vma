@@ -192,7 +192,13 @@
                     <br>
                     <div class="col-md-12">
                         <div>
-                            <textarea class="post-form-control" rows="1" placeholder="Type your comment here..."></textarea>
+                            <textarea class="post-form-control" name="comment" rows="1" placeholder="Type your comment here..."></textarea>
+                            <script>
+                                CKEDITOR.replace( 'comment', {
+                                    customConfig: '/js/ckeditor_config.js',
+                                    height: 100
+                                });
+                            </script>
                             <span class="pull-left">
                                 <button class="primary-btn" id="btn-chat">Post</button>
                                 </span>

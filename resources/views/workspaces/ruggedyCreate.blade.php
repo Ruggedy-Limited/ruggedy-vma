@@ -31,37 +31,58 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-4 col-sm-4 animated fadeIn">
-            <h3>Add Finding</h3>
-            <br>
+        <div class="col-md-6 col-sm-6 animated fadeIn">
+            <h3>Add Vulnerability</h3>
             {!! Form::open(['url' => '/foo/bar'], ['files' => 'true']) !!}
+            <button class="primary-btn" type="submit">Submit</button>
             <div class="form-group">
                 {!! Form::label('vuln_desc.', 'Vulnerability Title') !!}
                 {!! Form::text('vuln_desc', null, ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group">
                 {!! Form::label('description', 'Vulnerability Description') !!}
-                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3', 'name' => 'description' ]) !!}
+                <script>
+                    CKEDITOR.replace( 'description', {
+                        customConfig: '/js/ckeditor_config.js',
+                        height: 100
+                    });
+                </script>
             </div>
             <div class="form-group">
                 {!! Form::label('description', 'Vulnerability Solution') !!}
-                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3', 'name' => 'solution']) !!}
+                <script>
+                    CKEDITOR.replace( 'solution', {
+                        customConfig: '/js/ckeditor_config.js',
+                        height: 100
+                    });
+                </script>
             </div>
             <div class="form-group">
                 {!! Form::label('description', 'Proof of Concept') !!}
-                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3', 'name' => 'poc']) !!}
+                <script>
+                    CKEDITOR.replace( 'poc', {
+                        customConfig: '/js/ckeditor_config.js',
+                        height: 100
+                    });
+                </script>
             </div>
             <div class="form-group">
                 {!! Form::label('description', 'Assets') !!}
-                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
+                {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3', 'name' => 'assets']) !!}
+                <script>
+                    CKEDITOR.replace( 'assets', {
+                        customConfig: '/js/ckeditor_config.js',
+                        height: 100
+                    });
+                </script>
             </div>
-            <button class="primary-btn" type="submit">Submit</button>
         </div>
-        <div class="col-md-2 col-sm-2 animated fadeIn"></div>
+        <div class="col-md-1 col-sm-1 animated fadeIn"></div>
         <div class="col-md-4 col-sm-4 animated fadeIn">
-            <br>
-            <br>
-            <br>
+            <br><br><br><br><br>
             <div class="form-group">
                 {!! Form::label('vuln_desc.', 'Risk Score') !!}
                 {!! Form::select('folder', ['1' => 'High Risk', '2' => 'Medium Risk',
