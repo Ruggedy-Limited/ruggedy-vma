@@ -146,7 +146,7 @@
                 <label for=tab3>Vulnerable Assets <span class="badge c-purple">5</span></label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-4">
                         <a href="#">
                             <div class="list-content-card animated pulse-hover">
                                 <span class="label label-danger">12</span>
@@ -158,7 +158,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-4">
                         <a href="#">
                             <div class="list-content-card animated pulse-hover">
                                 <span class="label label-danger">12</span>
@@ -170,7 +170,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-4">
                         <a href="#">
                             <div class="list-content-card animated pulse-hover">
                                 <span class="label label-danger">12</span>

@@ -842,6 +842,11 @@ Start: Forms
 ==========================================================================
 */
 
+label {
+    color: #3b3f52 !important;
+    font-size: 15px !important;
+}
+
 .red-form-control {
     display: block;
     width: 100%;
@@ -863,7 +868,7 @@ Start: Forms
     padding: 6px 12px;
     font-size: 14px;
     line-height: 1.42857143;
-    color: #1d202a;
+    color: #292c3a;
     background: transparent none;
     border: 0 solid #ccc;
     border-bottom: 1px solid #aeb1bb;
@@ -877,11 +882,11 @@ Start: Forms
     padding: 6px 12px;
     font-size: 14px;
     line-height: 1.42857143;
-    color: #1d202a;
+    color: #292c3a;
     background: transparent none;
     border: 0 solid #ccc;
     border-radius: 0;
-    border-bottom: 1px solid #6c6e75;
+    border-bottom: 1px solid #21a6d0;
     -webkit-transition: border-bottom ease-in-out .45s;
     -o-transition: border-bottom ease-in-out .45s;
     transition: border-bottom ease-in-out .45s;
@@ -946,7 +951,7 @@ input[type="password"] {
     padding: 6px 12px;
     font-size: 14px;
     line-height: 1.42857143;
-    color: #1d202a;
+    color: #292c3a;
     background: transparent none;
     border: 0 solid #ccc;
     border-bottom: 1px solid #aeb1bb;
@@ -960,11 +965,11 @@ input[type="password"]:focus {
     padding: 6px 12px;
     font-size: 14px;
     line-height: 1.42857143;
-    color: #1d202a;
+    color: #292c3a;
     background: transparent none;
     border: 0 solid #ccc;
     border-radius: 0;
-    border-bottom: 1px solid #6c6e75;
+    border-bottom: 1px solid #21a6d0;
     -webkit-transition: border-bottom ease-in-out .45s;
     -o-transition: border-bottom ease-in-out .45s;
     transition: border-bottom ease-in-out .45s;
@@ -977,7 +982,7 @@ select {
     padding: 6px 12px;
     font-size: 14px;
     line-height: 1.42857143;
-    color: #1d202a;
+    color: #292c3a;
     background: transparent none;
     border: 0 solid #ccc;
     border-bottom: 1px solid #aeb1bb;
@@ -1186,6 +1191,39 @@ Start: Search
 
 /*
 ==========================================================================
-Start: Search
+End: Search
 ==========================================================================
 */
+
+/*
+==========================================================================
+Start: CKEditor
+==========================================================================
+*/
+
+.cke_chrome {
+    display: block;
+    border: 0 solid transparent !important;
+    padding: 0;
+}
+
+.cke_top {
+    border-bottom: 1px solid #e0dfdf !important;
+    background: #f7f7f7 !important;
+    padding: 6px 8px 2px;
+    white-space: normal;
+}
+
+.cke_bottom {
+    padding: 6px 8px 2px;
+    position: relative;
+    border-top: 0 solid transparent !important;
+    background: #ffffff !important;
+}
+
+/*
+==========================================================================
+End: CKEditor
+==========================================================================
+*/
+
