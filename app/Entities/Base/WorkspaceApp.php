@@ -64,7 +64,7 @@ class WorkspaceApp extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="File", mappedBy="workspaceApp", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_apps_id`", nullable=false)
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_apps_id`", nullable=false, onDelete="CASCADE")
      */
     protected $files;
 
@@ -76,7 +76,7 @@ class WorkspaceApp extends AbstractEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="workspaceApps", cascade={"persist"})
-     * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
      */
     protected $workspace;
 
@@ -254,6 +254,7 @@ class WorkspaceApp extends AbstractEntity
      */
     public function addFile(File $file)
     {
+        $file->setWorkspaceApp($this);
         $this->files[] = $file;
 
         return $this;
