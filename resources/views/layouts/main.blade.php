@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset("/css/animate.min.css") }}">
     <link rel="stylesheet" href="{{ asset('/css/styles.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <script src="{{ asset('/vendor/ckeditor/ckeditor.js') }}"></script>
 </head>
 
 <body>
