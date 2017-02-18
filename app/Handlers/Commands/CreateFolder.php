@@ -44,10 +44,9 @@ class CreateFolder extends CommandHandler
     {
         $requestingUser = $this->authenticate();
 
-        $workspaceId = $command->getId();
         /** @var Folder $folder */
+        $workspaceId = $command->getId();
         $folder      = $command->getEntity();
-
         // Make sure we have everything we need to process the command
         if (!isset($workspaceId, $folder)) {
             throw new InvalidInputException("One or more required members are not set on the command");

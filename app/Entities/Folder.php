@@ -16,7 +16,8 @@ class Folder extends Base\Folder implements SystemComponent
 {
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", cascade={"persist", "remove"},
+     *     fetch="EXTRA_LAZY")
      * @ORM\JoinTable(
      *     name="folders_vulnerabilities",
      *     joinColumns={@ORM\JoinColumn(name="folder_id", referencedColumnName="id", onDelete="CASCADE")},
