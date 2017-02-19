@@ -18,6 +18,9 @@
 @endsection
 
 @section('content')
+
+    @include('layouts.formError')
+
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
