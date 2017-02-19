@@ -505,27 +505,27 @@ Start: Colors, Text, Padding, Margins
 }
 
 .t-c-red {
-    color: #eb4957;
+    color: #eb4957 !important;
 }
 
 .t-c-white {
-    color: #ffffff;
+    color: #ffffff !important;
 }
 
 .t-c-yellow {
-    color: #e0b921;
+    color: #e0b921 !important;
 }
 
 .t-c-black {
-    color: #1d202a;
+    color: #1d202a !important;
 }
 
 .t-c-purple {
-    color: #6254b2;
+    color: #6254b2 !important;
 }
 
 .t-c-blue {
-    color: #23b7e5;
+    color: #23b7e5 !important;
 }
 
 .c-black {
