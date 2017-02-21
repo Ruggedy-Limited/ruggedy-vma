@@ -2,9 +2,19 @@
 
 namespace App\Repositories;
 
-use Doctrine\ORM\EntityRepository;
+use App\Contracts\Searchable;
+use App\Entities\Workspace;
+use Illuminate\Support\Collection;
 
-
-class WorkspaceRepository extends EntityRepository
+class WorkspaceRepository extends AbstractSearchableRepository implements Searchable
 {
+    /**
+     * @inheritdoc
+     *
+     * @return Collection
+     */
+    protected function getSearchableFields(): Collection
+    {
+        return collect([Workspace::NAME, Workspace::DESCRIPTION]);
+    }
 }
