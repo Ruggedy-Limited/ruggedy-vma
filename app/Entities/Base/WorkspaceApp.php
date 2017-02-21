@@ -254,7 +254,6 @@ class WorkspaceApp extends AbstractEntity
      */
     public function addFile(File $file)
     {
-        $file->setWorkspaceApp($this);
         $this->files[] = $file;
 
         return $this;
