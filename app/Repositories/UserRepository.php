@@ -2,11 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Contracts\Searchable;
 use App\Entities\User;
-use Doctrine\ORM\EntityRepository;
+use Illuminate\Support\Collection;
 
 
-class UserRepository extends EntityRepository
+class UserRepository extends AbstractSearchableRepository implements Searchable
 {
     /**
      * Find a user by their ID and remember me token
@@ -40,5 +41,15 @@ class UserRepository extends EntityRepository
         }
 
         return $this->findOneBy($credentials);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return Collection
+     */
+    protected function getSearchableFields(): Collection
+    {
+        return collect([User::NAME, User::EMAIL]);
     }
 }
