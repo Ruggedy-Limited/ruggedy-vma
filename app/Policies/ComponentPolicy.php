@@ -39,7 +39,7 @@ class ComponentPolicy
      */
     protected function hasPermission(User $user, SystemComponent $component, Collection $requiredPermission)
     {
-        if ($user->getId() === $component->getUser()->getId()) {
+        if (!empty($component->getUser()) && $user->getId() === $component->getUser()->getId()) {
             return true;
         }
 
