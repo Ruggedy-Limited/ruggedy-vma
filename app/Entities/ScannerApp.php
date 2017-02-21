@@ -17,4 +17,5 @@ class ScannerApp extends Base\ScannerApp
     const SCANNER_NEXPOSE    = 'nexpose';
     const SCANNER_NETSPARKER = 'netsparker';
     const SCANNER_NESSUS     = 'nessus';
+    const SCANNER_RUGGEDY    = 'ruggedy';
 }
