@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 interface Searchable
 {
     /**
-     * Get a Criteria object to use in constructing the search query
+     * Search for matching entities
      *
      * @param string $searchTerm
      * @return Collection

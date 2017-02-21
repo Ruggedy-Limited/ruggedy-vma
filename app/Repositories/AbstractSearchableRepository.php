@@ -35,6 +35,7 @@ abstract class AbstractSearchableRepository extends EntityRepository
         self::SEARCH_TYPE_USER          => User::class,
     ];
 
+    /** @var array */
     protected static $searchTypeTransformerMap = [
         self::SEARCH_TYPE_WORKSPACE     => WorkspaceTransformer::class,
         self::SEARCH_TYPE_WORKSPACE_APP => WorkspaceAppTransformer::class,

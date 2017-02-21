@@ -48,7 +48,7 @@ class Search extends CommandHandler
         }
 
         // Make sure we have a valid search type
-        if (!$this->isValidSearchType($searchType)) {
+        if (!AbstractSearchableRepository::isValidSearchType($searchType)) {
             throw new UnsupportedSearchTypeException("The given search type is not supported");
         }
 
@@ -67,21 +67,4 @@ class Search extends CommandHandler
             return $requestingUser->can(ComponentPolicy::ACTION_VIEW, $entity);
         });
     }
-
-    /**
-     * Check if a given search type is valid
-     *
-     * @param $searchType
-     * @return bool
-     */
-    protected function isValidSearchType($searchType): bool
-    {
-        if (!AbstractSearchableRepository::getValidSearchTypes()->get($searchType, false)) {
-            return false;
-        }
-
-        return true;
-    }
-
-
 }
