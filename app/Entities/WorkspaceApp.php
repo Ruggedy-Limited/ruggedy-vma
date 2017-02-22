@@ -3,7 +3,10 @@
 namespace App\Entities;
 
 use App\Contracts\SystemComponent;
+use App\Entities\Base\File;
 use App\Entities\Base\User;
+use App\Entities\Base\Vulnerability;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -49,5 +52,25 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     public function getParent()
     {
         return $this->getWorkspace();
+    }
+
+    /**
+     * @param File $file
+     * @return Base\WorkspaceApp
+     */
+    public function addFile(File $file)
+    {
+        $file->setWorkspaceApp($this);
+        return parent::addFile($file);
+    }
+
+    /**
+     * @param Vulnerability $vulnerability
+     * @return Base\WorkspaceApp
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $vulnerability->setWorkspaceApp($this);
+        return parent::addVulnerability($vulnerability);
     }
 }
