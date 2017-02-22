@@ -17,13 +17,14 @@ class WorkspaceApp extends AbstractEntity
     const TABLE_NAME = 'workspace_apps';
 
     /** Column name constants */
-    const NAME           = 'name';
-    const DESCRIPTION    = 'description';
-    const SCANNER_APP_ID = 'scanner_app_id';
-    const WORKSPACE_ID   = 'workspace_id';
-    const FILES          = 'files';
-    const SCANNERAPP     = 'scannerApp';
-    const WORKSPACE      = 'workspace';
+    const NAME            = 'name';
+    const DESCRIPTION     = 'description';
+    const SCANNER_APP_ID  = 'scanner_app_id';
+    const WORKSPACE_ID    = 'workspace_id';
+    const FILES           = 'files';
+    const VULNERABILITIES = 'vulnerabilities';
+    const SCANNERAPP      = 'scannerApp';
+    const WORKSPACE       = 'workspace';
 
     /**
      * @ORM\Id
@@ -69,6 +70,12 @@ class WorkspaceApp extends AbstractEntity
     protected $files;
 
     /**
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="workspaceApp", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_app_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\ManyToOne(targetEntity="ScannerApp", inversedBy="workspaceApps", cascade={"persist"})
      * @ORM\JoinColumn(name="`scanner_app_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -83,6 +90,7 @@ class WorkspaceApp extends AbstractEntity
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->vulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -280,6 +288,42 @@ class WorkspaceApp extends AbstractEntity
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * Add Vulnerability entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\WorkspaceApp
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities[] = $vulnerability;
+
+        return $this;
+    }
+
+    /**
+     * Remove Vulnerability entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\WorkspaceApp
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
+    }
+
+    /**
+     * Get Vulnerability entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Commands\CreateVulnerability;
+use App\Commands\DeleteVulnerability;
+use App\Commands\EditVulnerability;
 use App\Commands\MoveFileToWorkspaceApp;
 use App\Commands\CreateWorkspaceApp;
 use App\Commands\DeleteWorkspaceApp;
@@ -98,7 +100,7 @@ class WorkspaceAppController extends AbstractController
     /**
      * Create a new Vulnerability in a Ruggedy WorkspaceApp
      *
-     * @PoST("/workspace/app/vulnerability/create/{workspaceAppId}", as="workspace.app.create.vulnerability",
+     * @POST("/workspace/app/vulnerability/create/{workspaceAppId}", as="workspace.app.create.vulnerability",
      *     where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
@@ -110,8 +112,43 @@ class WorkspaceAppController extends AbstractController
         $vulnerability->setFromArray($this->request->json('vulnerability'));
 
         $assetIds = $this->request->json('assetIds');
-        $command  = new CreateVulnerability($workspaceAppId, $vulnerability, $assetIds);
+        $command  = new CreateVulnerability(intval($workspaceAppId), $vulnerability, $assetIds);
 
+        return $this->sendCommandToBusHelper($command, new VulnerabilityTransformer());
+    }
+
+    /**
+     * Edit a Vulnerability that has been created in a Ruggedy App
+     *
+     * @PUT("/workspace/app/vulnerability/{vulnerabilityId}", as="workspace.app.edit.vulnerability",
+     *     where={"vulnerabilityId":"[0-9]+"})
+     *
+     * @param $vulnerabilityId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function editRuggedyAppVulnerability($vulnerabilityId)
+    {
+        $command = new EditVulnerability(
+            $vulnerabilityId,
+            $this->request->json('vulnerability'),
+            $this->request->json('assetIds')
+        );
+
+        return $this->sendCommandToBusHelper($command, new VulnerabilityTransformer());
+    }
+
+    /**
+     * Edit a Vulnerability that has been created in a Ruggedy App
+     *
+     * @DELETE("/workspace/app/vulnerability/{vulnerabilityId}", as="workspace.app.delete.vulnerability",
+     *     where={"vulnerabilityId":"[0-9]+"})
+     *
+     * @param $vulnerabilityId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse
+     */
+    public function deleteRuggedyAppVulnerability($vulnerabilityId)
+    {
+        $command = new DeleteVulnerability(intval($vulnerabilityId), true);
         return $this->sendCommandToBusHelper($command, new VulnerabilityTransformer());
     }
 

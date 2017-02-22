@@ -5,6 +5,7 @@ namespace App\Entities;
 use App\Contracts\SystemComponent;
 use App\Entities\Base\File;
 use App\Entities\Base\User;
+use App\Entities\Base\Vulnerability;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,15 +25,6 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_apps_id`", nullable=false)
      */
     protected $files;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="workspace_apps", cascade={"persist"}, fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="workspace_apps_vulnerabilities",
-     *     joinColumns={@ORM\JoinColumn(name="workspace_app_id", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")}
-     * )
-     */
-    protected $vulnerabilities;
 
     /**
      * WorkspaceApp constructor.
@@ -83,31 +75,11 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
 
     /**
      * @param Vulnerability $vulnerability
-     * @return $this
+     * @return Base\WorkspaceApp
      */
     public function addVulnerability(Vulnerability $vulnerability)
     {
-        if ($this->vulnerabilities->contains($vulnerability)) {
-            return $this;
-        }
-
-        $vulnerability->addWorkspaceApp($this);
-
-        $vulnerabilityKey = $vulnerability->getId() ?? $vulnerability->getHash();
-        $this->vulnerabilities[$vulnerabilityKey] = $vulnerability;
-
-        return $this;
-    }
-
-    /**
-     * @param Vulnerability $vulnerability
-     * @return $this
-     */
-    public function removeVulnerability(Vulnerability $vulnerability)
-    {
-        $vulnerability->removeWorkspaceApp($this);
-        $this->vulnerabilities->removeElement($vulnerability);
-
-        return $this;
+        $vulnerability->setWorkspaceApp($this);
+        return parent::addVulnerability($vulnerability);
     }
 }
