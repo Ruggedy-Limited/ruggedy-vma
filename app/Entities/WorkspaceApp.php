@@ -27,15 +27,6 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     protected $files;
 
     /**
-     * WorkspaceApp constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->vulnerabilities = new ArrayCollection();
-    }
-
-    /**
      * @inheritdoc
      * @return User
      */

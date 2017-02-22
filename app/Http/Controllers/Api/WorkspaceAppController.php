@@ -100,7 +100,7 @@ class WorkspaceAppController extends AbstractController
     /**
      * Create a new Vulnerability in a Ruggedy WorkspaceApp
      *
-     * @POST("/workspace/app/vulnerability/create/{workspaceAppId}", as="workspace.app.create.vulnerability",
+     * @POST("/workspace/app/vulnerability/create/{workspaceAppId}", as="workspace.app.vulnerability.create",
      *     where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
@@ -120,7 +120,7 @@ class WorkspaceAppController extends AbstractController
     /**
      * Edit a Vulnerability that has been created in a Ruggedy App
      *
-     * @PUT("/workspace/app/vulnerability/{vulnerabilityId}", as="workspace.app.edit.vulnerability",
+     * @PUT("/workspace/app/vulnerability/{vulnerabilityId}", as="workspace.app.vulnerability.edit",
      *     where={"vulnerabilityId":"[0-9]+"})
      *
      * @param $vulnerabilityId
@@ -140,7 +140,7 @@ class WorkspaceAppController extends AbstractController
     /**
      * Edit a Vulnerability that has been created in a Ruggedy App
      *
-     * @DELETE("/workspace/app/vulnerability/{vulnerabilityId}", as="workspace.app.delete.vulnerability",
+     * @DELETE("/workspace/app/vulnerability/{vulnerabilityId}", as="workspace.app.vulnerability.delete",
      *     where={"vulnerabilityId":"[0-9]+"})
      *
      * @param $vulnerabilityId
