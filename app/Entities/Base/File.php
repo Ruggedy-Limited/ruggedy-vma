@@ -87,6 +87,12 @@ class File extends AbstractEntity
     protected $assets;
 
     /**
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="file", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $comments;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -101,6 +107,7 @@ class File extends AbstractEntity
     public function __construct()
     {
         $this->assets = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     /**
@@ -367,6 +374,42 @@ class File extends AbstractEntity
     public function getAssets()
     {
         return $this->assets;
+    }
+
+    /**
+     * Add Comment entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Comment $comment
+     * @return \App\Entities\Base\File
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Remove Comment entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Comment $comment
+     * @return \App\Entities\Base\File
+     */
+    public function removeComment(Comment $comment)
+    {
+        $this->comments->removeElement($comment);
+
+        return $this;
+    }
+
+    /**
+     * Get Comment entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 
     /**
