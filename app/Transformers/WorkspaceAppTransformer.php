@@ -15,6 +15,7 @@ class WorkspaceAppTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'files',
         'scannerApp',
+        'vulnerabilities',
         'workspace',
     ];
 
@@ -56,6 +57,17 @@ class WorkspaceAppTransformer extends TransformerAbstract
     public function includeScannerApp(WorkspaceApp $workspaceApp)
     {
         return $this->item($workspaceApp->getScannerApp(), new ScannerAppTransformer());
+    }
+
+    /**
+     * Optional include for Vulnerabilities
+     *
+     * @param WorkspaceApp $workspaceApp
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeVulnerabilities(WorkspaceApp $workspaceApp)
+    {
+        return $this->collection($workspaceApp->getVulnerabilities(), new VulnerabilityTransformer());
     }
 
     /**
