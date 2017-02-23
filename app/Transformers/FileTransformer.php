@@ -16,6 +16,7 @@ class FileTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'assets',
         'audits',
+        'comments',
         'exploits',
         'openPorts',
         'softwareInformation',
@@ -66,6 +67,17 @@ class FileTransformer extends TransformerAbstract
     public function includeAudits(File $file)
     {
         return $this->collection($file->getAudits(), new AuditTransformer());
+    }
+
+    /**
+     * Optional include for Comments
+     *
+     * @param File $file
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeComments(File $file)
+    {
+        return $this->collection($file->getComments(), new CommentTransformer());
     }
 
     /**

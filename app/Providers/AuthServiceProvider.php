@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Auth\RuggedyTokenGuard;
 use App\Entities\Asset;
+use App\Entities\Comment;
+use App\Entities\File;
 use App\Entities\Folder;
 use App\Entities\ScannerApp;
 use App\Entities\OpenPort;
@@ -15,6 +17,8 @@ use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
 use App\Policies\ComponentPolicy;
 use DoctrineProxies\__CG__\App\Entities\Asset as AssetProxy;
+use DoctrineProxies\__CG__\App\Entities\Comment as CommentProxy;
+use DoctrineProxies\__CG__\App\Entities\File as FileProxy;
 use DoctrineProxies\__CG__\App\Entities\Vulnerability as VulnerabilityProxy;
 use DoctrineProxies\__CG__\App\Entities\VulnerabilityReferenceCode as VulnerabilityReferenceCodeProxy;
 use DoctrineProxies\__CG__\App\Entities\OpenPort as OpenPortProxy;
@@ -55,6 +59,10 @@ class AuthServiceProvider extends ServiceProvider
         WorkspaceAppProxy::class               => ComponentPolicy::class,
         Folder::class                          => ComponentPolicy::class,
         FolderProxy::class                     => ComponentPolicy::class,
+        Comment::class                         => ComponentPolicy::class,
+        CommentProxy::class                    => ComponentPolicy::class,
+        File::class                            => ComponentPolicy::class,
+        FileProxy::class                       => ComponentPolicy::class,
     ];
 
     /**

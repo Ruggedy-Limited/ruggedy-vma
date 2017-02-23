@@ -225,6 +225,12 @@ class User extends AbstractEntity
     protected $assets;
 
     /**
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
+     */
+    protected $comments;
+
+    /**
      * @ORM\OneToMany(targetEntity="ComponentPermission", mappedBy="userRelatedByUserId", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -301,6 +307,7 @@ class User extends AbstractEntity
         $this->announcements = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
         $this->assets = new ArrayCollection();
+        $this->comments = new ArrayCollection();
         $this->componentPermissionRelatedByUserIds = new ArrayCollection();
         $this->componentPermissionRelatedByGrantedBies = new ArrayCollection();
         $this->files = new ArrayCollection();
@@ -1087,6 +1094,42 @@ class User extends AbstractEntity
     public function getAssets()
     {
         return $this->assets;
+    }
+
+    /**
+     * Add Comment entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Comment $comment
+     * @return \App\Entities\Base\User
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Remove Comment entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Comment $comment
+     * @return \App\Entities\Base\User
+     */
+    public function removeComment(Comment $comment)
+    {
+        $this->comments->removeElement($comment);
+
+        return $this;
+    }
+
+    /**
+     * Get Comment entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 
     /**
