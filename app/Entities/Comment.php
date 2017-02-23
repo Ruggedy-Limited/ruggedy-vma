@@ -14,11 +14,17 @@ use Doctrine\ORM\Mapping as ORM;
 class Comment extends Base\Comment implements SystemComponent
 {
     /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="comments", cascade={"persist"}, fetch="EAGER")
+     * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
+     */
+    protected $user;
+
+    /**
      * @inheritdoc
-     * @return Base\User
+     * @return Base\File
      */
     public function getParent()
     {
-        return $this->getUser();
+        return $this->file;
     }
 }
