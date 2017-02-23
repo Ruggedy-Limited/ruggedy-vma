@@ -34,7 +34,7 @@ class CreateComment extends CommandHandler
     protected $em;
 
     /**
-     * CreateAsset constructor.
+     * CreateComment constructor.
      *
      * @param VulnerabilityRepository $assetRepository
      * @param CommentRepository $commentRepository
@@ -97,6 +97,7 @@ class CreateComment extends CommandHandler
             );
         }
 
+        // Set all the relate entities and the status
         $comment->setUser($requestingUser)
             ->setFile($file)
             ->setVulnerability($vulnerability)
