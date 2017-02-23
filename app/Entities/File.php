@@ -106,11 +106,11 @@ class File extends Base\File implements SystemComponent
 
     /**
      * @inheritdoc
-     * @return Base\User
+     * @return Base\WorkspaceApp
      */
     public function getParent()
     {
-        return $this->getUser();
+        return $this->workspaceApp;
     }
 
     /**
