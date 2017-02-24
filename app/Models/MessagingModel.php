@@ -3,15 +3,20 @@
 namespace App\Models;
 
 use App\Commands\Command;
+use App\Commands\CreateAsset;
+use App\Commands\CreateFolder;
 use App\Commands\CreateWorkspace;
 use App\Commands\DeleteAsset;
+use App\Commands\DeleteFolder;
 use App\Commands\DeleteWorkspace;
 use App\Commands\EditAsset;
+use App\Commands\EditFolder;
 use App\Commands\EditUserAccount;
 use App\Commands\EditWorkspace;
 use App\Commands\GetAssetsInWorkspace;
 use App\Commands\GetAssetsMasterList;
-use App\Commands\GetListOfAppsInWorkspace;
+use App\Commands\GetFile;
+use App\Commands\GetFolder;
 use App\Commands\GetListOfPermissions;
 use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersWorkspaces;
@@ -23,6 +28,7 @@ use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\ComponentNotFoundException;
 use App\Exceptions\FileNotFoundException;
+use App\Exceptions\FolderNotFoundException;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
@@ -33,7 +39,6 @@ use App\Exceptions\WorkspaceNotFoundException;
 use Doctrine\ORM\ORMException;
 use Illuminate\Support\Collection;
 use Exception;
-
 
 class MessagingModel
 {
@@ -51,6 +56,17 @@ class MessagingModel
     const ERROR_CANNOT_EDIT_ACCOUNT               = "error_cannot_edit_account";
     const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = "error_account_with_email_already_exists";
     const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
+
+    /** API File Management */
+    const ERROR_FILE_DOES_NOT_EXIST  = 'error_file_does_not_exist';
+    const ERROR_FILE_VIEW_PERMISSION = 'error_file_view_permission';
+
+    /** API Folder Management */
+    const ERROR_FOLDER_DOES_NOT_EXIST    = 'error_folder_does_not_exist';
+    const ERROR_FOLDER_VIEW_PERMISSION   = 'error_folder_view_permission';
+    const ERROR_FOLDER_CREATE_PERMISSION = 'error_folder_create_permission';
+    const ERROR_FOLDER_EDIT_PERMISSION   = 'error_folder_edit_permission';
+    const ERROR_FOLDER_DELETE_PERMISSION = 'error_folder_delete_permission';
 
     /** API Workspace Management */
     const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
@@ -102,7 +118,6 @@ class MessagingModel
             DeleteWorkspace::class          => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class            => static::ERROR_EDIT_WORKSPACE_PERMISSION,
             GetListOfUsersWorkspaces::class => static::ERROR_LIST_WORKSPACES_PERMISSION,
-            GetListOfAppsInWorkspace::class => static::ERROR_VIEW_WORKSPACE_PERMISSION,
             GetWorkspace::class             => static::ERROR_VIEW_WORKSPACE_PERMISSION,
             EditAsset::class                => static::ERROR_EDIT_ASSET_PERMISSION,
             DeleteAsset::class              => static::ERROR_DELETE_ASSET_PERMISSION,
@@ -111,6 +126,16 @@ class MessagingModel
             UpsertPermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             RevokePermission::class         => static::ERROR_AUTH_USER_NOT_OWNER,
             GetListOfPermissions::class     => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
+            GetFile::class                  => static::ERROR_FILE_VIEW_PERMISSION,
+            GetFolder::class                => static::ERROR_FOLDER_VIEW_PERMISSION,
+            CreateFolder::class             => static::ERROR_FOLDER_CREATE_PERMISSION,
+            EditFolder::class               => static::ERROR_FOLDER_EDIT_PERMISSION,
+            DeleteFolder::class             => static::ERROR_FOLDER_DELETE_PERMISSION,
+        ]);
+
+        $fileNotFoundMap = new Collection([
+            CreateAsset::class => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
+            GetFile::class     => static::ERROR_FILE_DOES_NOT_EXIST,
         ]);
 
         static::$commandMessageMap = new Collection([
@@ -121,11 +146,12 @@ class MessagingModel
             UserNotFoundException::class       => static::ERROR_USER_DOES_NOT_EXIST,
             UserNotInTeamException::class      => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
-            FileNotFoundException::class       => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
+            FileNotFoundException::class       => $fileNotFoundMap,
             WorkspaceNotFoundException::class  => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
             AssetNotFoundException::class      => static::ERROR_ASSET_DOES_NOT_EXIST,
             ComponentNotFoundException::class  => static::ERROR_COMPONENT_DOES_NOT_EXIST,
             InvalidPermissionException::class  => static::ERROR_PERMISSION_DOES_NOT_EXIST,
+            FolderNotFoundException::class     => static::ERROR_FOLDER_DOES_NOT_EXIST,
         ]);
     }
 

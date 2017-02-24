@@ -17,11 +17,13 @@ class Workspace extends AbstractEntity
     const TABLE_NAME = 'workspaces';
 
     /** Column name constants */
-    const NAME       = 'name';
-    const USER_ID    = 'user_id';
-    const DELETED    = 'deleted';
-    const FILES      = 'files';
-    const USER       = 'user';
+    const NAME          = 'name';
+    const DESCRIPTION   = 'description';
+    const USER_ID       = 'user_id';
+    const DELETED       = 'deleted';
+    const FOLDERS       = 'folders';
+    const WORKSPACEAPPS = 'workspaceApps';
+    const USER          = 'user';
 
     /**
      * @ORM\Id
@@ -34,6 +36,11 @@ class Workspace extends AbstractEntity
      * @ORM\Column(name="`name`", type="string", length=255)
      */
     protected $name;
+
+    /**
+     * @ORM\Column(name="`description`", type="text", nullable=true)
+     */
+    protected $description;
 
     /**
      * @ORM\Column(name="`user_id`", type="integer", options={"unsigned":true})
@@ -56,10 +63,16 @@ class Workspace extends AbstractEntity
     protected $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="File", mappedBy="workspace", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Folder", mappedBy="workspace", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_id`", nullable=false)
      */
-    protected $files;
+    protected $folders;
+
+    /**
+     * @ORM\OneToMany(targetEntity="WorkspaceApp", mappedBy="workspace", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $workspaceApps;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="workspaces", cascade={"persist"})
@@ -69,7 +82,8 @@ class Workspace extends AbstractEntity
 
     public function __construct()
     {
-        $this->files = new ArrayCollection();
+        $this->folders = new ArrayCollection();
+        $this->workspaceApps = new ArrayCollection();
     }
 
     /**
@@ -116,6 +130,29 @@ class Workspace extends AbstractEntity
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set the value of description.
+     *
+     * @param string $description
+     * @return \App\Entities\Base\Workspace
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
@@ -211,39 +248,75 @@ class Workspace extends AbstractEntity
     }
 
     /**
-     * Add File entity to collection (one to many).
+     * Add Folder entity to collection (one to many).
      *
-     * @param \App\Entities\Base\File $file
+     * @param \App\Entities\Base\Folder $folder
      * @return \App\Entities\Base\Workspace
      */
-    public function addFile(File $file)
+    public function addFolder(Folder $folder)
     {
-        $this->files[] = $file;
+        $this->folders[] = $folder;
 
         return $this;
     }
 
     /**
-     * Remove File entity from collection (one to many).
+     * Remove Folder entity from collection (one to many).
      *
-     * @param \App\Entities\Base\File $file
+     * @param \App\Entities\Base\Folder $folder
      * @return \App\Entities\Base\Workspace
      */
-    public function removeFile(File $file)
+    public function removeFolder(Folder $folder)
     {
-        $this->files->removeElement($file);
+        $this->folders->removeElement($folder);
 
         return $this;
     }
 
     /**
-     * Get File entity collection (one to many).
+     * Get Folder entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFiles()
+    public function getFolders()
     {
-        return $this->files;
+        return $this->folders;
+    }
+
+    /**
+     * Add WorkspaceApp entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\WorkspaceApp $workspaceApp
+     * @return \App\Entities\Base\Workspace
+     */
+    public function addWorkspaceApp(WorkspaceApp $workspaceApp)
+    {
+        $this->workspaceApps[] = $workspaceApp;
+
+        return $this;
+    }
+
+    /**
+     * Remove WorkspaceApp entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\WorkspaceApp $workspaceApp
+     * @return \App\Entities\Base\Workspace
+     */
+    public function removeWorkspaceApp(WorkspaceApp $workspaceApp)
+    {
+        $this->workspaceApps->removeElement($workspaceApp);
+
+        return $this;
+    }
+
+    /**
+     * Get WorkspaceApp entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getWorkspaceApps()
+    {
+        return $this->workspaceApps;
     }
 
     /**
@@ -271,6 +344,6 @@ class Workspace extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'user_id', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'description', 'user_id', 'deleted', 'created_at', 'updated_at');
     }
 }

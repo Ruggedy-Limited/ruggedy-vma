@@ -71,6 +71,7 @@ class EditWorkspace extends CommandHandler
         $workspace->setFromArray($requestedChanges);
         $this->em->persist($workspace);
         $this->em->flush($workspace);
+        $this->em->refresh($workspace);
 
         return $workspace;
     }

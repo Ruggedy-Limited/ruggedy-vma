@@ -28,14 +28,22 @@ Feature: As an account or team owner
       | 1  | John's Workspace    | 1        | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
       | 2  | Someone's Workspace | 2        | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
       | 3  | Another Workspace   | 3        | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
+    And the following existing WorkspaceApps:
+      | id | name                  | description                          | scanner_app_id | workspace_id | created_at          | updated_at          |
+      | 1  | NMAP Scan (DMZ)       | NMAP port scan of the DMZ            | 1              | 1            | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
+      | 2  | Burp Scan (DMZ)       | Burp Scan of the DMZ                 | 2              | 1            | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
+      | 3  | Netsparker Scan (DMZ) | Netsparker Scan of the DMZ           | 3              | 1            | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
+      | 4  | Nexpose Scan (DMZ)    | Nexpose Scan of the DMZ              | 4              | 1            | 2016-05-13 11:06:00 | 2016-05-13 11:06:00 |
+      | 5  | Nessus Scan (Corp)    | Nessus Scan of the Corporate network | 5              | 2            | 2016-05-13 10:06:00 | 2016-05-13 10:06:00 |
+      | 6  | Nessus Scan (DMZ)     | Nessus Scan of the DMZ               | 5              | 1            | 2016-05-13 09:06:00 | 2016-05-13 09:06:00 |
     And the following existing Files:
-      | id | path                                              | format | size    | user_id | workspace_id | scanner_app_id | processed | deleted | created_at          | updated_at          |
-      | 1  | scans/xml/nmap/1/nmap-adv-multiple-node-dns.xml   | xml    | 18646   | 1       | 1            | 1              | 1         | 0       | 2016-10-10 06:51:18 | 2016-11-14 15:00:19 |
-      | 2  | scans/xml/burp/1/burp-multiple-auth-dns+ip.xml    | xml    | 4660178 | 1       | 1            | 2              | 1         | 0       | 2016-10-10 06:51:35 | 2016-11-14 15:00:19 |
-      | 3  | scans/xml/nexpose/1/full-multiple-dns.xml         | xml    | 3662061 | 1       | 1            | 3              | 1         | 0       | 2016-10-10 06:51:53 | 2016-11-14 15:00:19 |
-      | 4  | scans/xml/netsparker/1/single-dns.xml             | xml    | 568818  | 1       | 1            | 4              | 1         | 0       | 2016-10-17 19:25:33 | 2016-11-14 15:00:19 |
-      | 5  | scans/xml/nessus/1/full-multiple-dns.nessus       | xml    | 1841174 | 2       | 2            | 5              | 1         | 0       | 2016-10-24 07:26:59 | 2016-11-14 16:58:45 |
-      | 6  | scans/xml/nessus/1/full-audit-multiple-dns.nessus | xml    | 2664096 | 1       | 1            | 5              | 1         | 0       | 2016-11-07 07:22:00 | 2016-11-14 15:00:19 |
+      | id | path                                              | format | size    | user_id | workspace_apps_id | processed | deleted | created_at          | updated_at          |
+      | 1  | scans/xml/nmap/1/nmap-adv-multiple-node-dns.xml   | xml    | 18646   | 1       | 1                 | 1         | 0       | 2016-10-10 06:51:18 | 2016-11-14 15:00:19 |
+      | 2  | scans/xml/burp/1/burp-multiple-auth-dns+ip.xml    | xml    | 4660178 | 1       | 2                 | 1         | 0       | 2016-10-10 06:51:35 | 2016-11-14 15:00:19 |
+      | 3  | scans/xml/nexpose/1/full-multiple-dns.xml         | xml    | 3662061 | 1       | 3                 | 1         | 0       | 2016-10-10 06:51:53 | 2016-11-14 15:00:19 |
+      | 4  | scans/xml/netsparker/1/single-dns.xml             | xml    | 568818  | 1       | 4                 | 1         | 0       | 2016-10-17 19:25:33 | 2016-11-14 15:00:19 |
+      | 5  | scans/xml/nessus/1/full-multiple-dns.nessus       | xml    | 1841174 | 2       | 5                 | 1         | 0       | 2016-10-24 07:26:59 | 2016-11-14 16:58:45 |
+      | 6  | scans/xml/nessus/1/full-audit-multiple-dns.nessus | xml    | 2664096 | 1       | 6                 | 1         | 0       | 2016-11-07 07:22:00 | 2016-11-14 15:00:19 |
     And the following existing ScannerApps:
       | id | name       | description                      | created_at          | updated_at          |
       | 1  | nmap       | NMAP Port Scanner Utility        | 2016-07-28 23:17:04 | 2016-07-28 23:17:04 |

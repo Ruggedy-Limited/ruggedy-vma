@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 class OpenPort extends Base\OpenPort implements HasIdColumn, RelatesToFiles, GeneratesUniqueHash
 {
     /**
-     * @ORM\ManyToMany(targetEntity="File", mappedBy="open_ports", indexBy="id")
+     * @ORM\ManyToMany(targetEntity="File", mappedBy="open_ports")
      */
     protected $files;
 

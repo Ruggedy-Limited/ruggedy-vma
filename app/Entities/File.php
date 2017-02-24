@@ -29,32 +29,40 @@ class File extends Base\File implements SystemComponent
     protected $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Workspace", inversedBy="files", cascade={"persist"}, fetch="EAGER")
-     * @ORM\JoinColumn(name="`workspace_id`", referencedColumnName="`id`", nullable=false)
-     */
-    protected $workspace;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="files_vulnerabilities")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(
+     *     name="files_vulnerabilities",
+     *     joinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")}
+     * )
      */
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", indexBy="number", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="files_open_ports")
+     * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(name="files_open_ports",
+     *     joinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="open_port_id", referencedColumnName="id", onDelete="CASCADE")}
+     * )
      */
     protected $openPorts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", indexBy="name", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="files_software_information")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="files", fetch="EXTRA_LAZY")
+     * @ORM\JoinTable(name="files_software_information",
+     *     joinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="software_information_id", referencedColumnName="id",
+     *     onDelete="CASCADE")}
+     * )
      */
     protected $softwareInformation;
 
     /**
      * @ORM\ManyToMany(targetEntity="Audit", inversedBy="files", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="files_audits")
+     * @ORM\JoinTable(name="files_audits",
+     *     joinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="audit_id", referencedColumnName="id", onDelete="CASCADE")}
+     * )
      */
     protected $audits;
 
@@ -98,11 +106,11 @@ class File extends Base\File implements SystemComponent
 
     /**
      * @inheritdoc
-     * @return Base\User
+     * @return Base\WorkspaceApp
      */
     public function getParent()
     {
-        return $this->getUser();
+        return $this->workspaceApp;
     }
 
     /**

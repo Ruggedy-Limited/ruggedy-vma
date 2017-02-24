@@ -2,12 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Contracts\Searchable;
 use App\Entities\Asset;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Collection;
 
-class AssetRepository extends EntityRepository
+class AssetRepository extends AbstractSearchableRepository implements Searchable
 {
     /**
      * Attempt to find an existing Asset by the given criteria, but if not found create a new Asset populated with
@@ -42,6 +42,7 @@ class AssetRepository extends EntityRepository
             Asset::IP_ADDRESS_V4 => null,
             Asset::FILE_ID       => null,
         ]));
+
         if (empty($asset)) {
             return $this->createNewAssetEntity($data);
         }
@@ -123,5 +124,15 @@ class AssetRepository extends EntityRepository
         $queryBuilder->setMaxResults(1);
 
         return $queryBuilder;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return Collection
+     */
+    protected function getSearchableFields(): Collection
+    {
+        return collect([Asset::NAME, Asset::HOSTNAME, Asset::IP_ADDRESS_V4]);
     }
 }

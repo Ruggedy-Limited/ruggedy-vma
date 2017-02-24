@@ -91,7 +91,7 @@ class OpenPort extends AbstractEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="Asset", inversedBy="openPorts", cascade={"persist"})
-     * @ORM\JoinColumn(name="`asset_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\JoinColumn(name="`asset_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
      */
     protected $asset;
 

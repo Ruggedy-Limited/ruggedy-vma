@@ -11,8 +11,6 @@ use App\Policies\ComponentPolicy;
 use App\Repositories\WorkspaceRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
-use stdClass;
-
 
 class DeleteWorkspace extends CommandHandler
 {
@@ -38,7 +36,7 @@ class DeleteWorkspace extends CommandHandler
      * Process the DeleteWorkspace command
      *
      * @param DeleteWorkspaceCommand $command
-     * @return stdClass
+     * @return Workspace
      * @throws ActionNotPermittedException
      * @throws Exception
      * @throws InvalidInputException

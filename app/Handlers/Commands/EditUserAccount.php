@@ -61,6 +61,7 @@ class EditUserAccount extends CommandHandler
         // Save the changes
         $this->em->persist($requestingUser);
         $this->em->flush($requestingUser);
+        $this->em->refresh($requestingUser);
 
         return $requestingUser;
     }

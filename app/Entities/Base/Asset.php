@@ -136,13 +136,13 @@ class Asset extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="OpenPort", mappedBy="asset", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false)
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`asset_id`", nullable=false, onDelete="CASCADE")
      */
     protected $openPorts;
 
     /**
      * @ORM\ManyToOne(targetEntity="File", inversedBy="assets", cascade={"persist"})
-     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false)
+     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
      */
     protected $file;
 

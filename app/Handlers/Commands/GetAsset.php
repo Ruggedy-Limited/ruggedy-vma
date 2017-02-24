@@ -41,7 +41,7 @@ class GetAsset extends CommandHandler
         }
 
         if ($requestingUser->cannot(ComponentPolicy::ACTION_VIEW, $asset)) {
-            throw new ActionNotPermittedException("Requesting User not permiited to view this Asset");
+            throw new ActionNotPermittedException("Requesting User not permitted to view this Asset");
         }
 
         return $asset;
