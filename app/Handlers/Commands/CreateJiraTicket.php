@@ -11,7 +11,6 @@ use App\Exceptions\InvalidInputException;
 use App\Exceptions\JiraApiException;
 use App\Exceptions\VulnerabilityNotFoundException;
 use App\Repositories\FileRepository;
-use App\Repositories\JiraIssueRepository;
 use App\Repositories\VulnerabilityRepository;
 use App\Services\JiraService;
 use Doctrine\ORM\EntityManager;
@@ -24,9 +23,6 @@ class CreateJiraTicket extends CommandHandler
     /** @var VulnerabilityRepository */
     protected $vulnerabilityRepository;
 
-    /** @var JiraIssueRepository */
-    protected $jiraIssueRepository;
-
     /** @var EntityManager */
     protected $em;
 
@@ -38,18 +34,16 @@ class CreateJiraTicket extends CommandHandler
      *
      * @param FileRepository $fileRepository
      * @param VulnerabilityRepository $vulnerabilityRepository
-     * @param JiraIssueRepository $jiraIssueRepository
      * @param EntityManager $em
      * @param JiraService $service
      */
     public function __construct(
         FileRepository $fileRepository, VulnerabilityRepository $vulnerabilityRepository,
-        JiraIssueRepository $jiraIssueRepository, EntityManager $em, JiraService $service
+        EntityManager $em, JiraService $service
     )
     {
         $this->fileRepository          = $fileRepository;
         $this->vulnerabilityRepository = $vulnerabilityRepository;
-        $this->jiraIssueRepository     = $jiraIssueRepository;
         $this->service                 = $service;
         $this->em                      = $em;
     }
@@ -125,11 +119,11 @@ class CreateJiraTicket extends CommandHandler
             throw new InvalidInputException("A username, password, hostname and port are required");
         }
 
-        $jira = $this->service->createJiraIssue($jiraIssue);
-        if ($jira->isErrorResponse()) {
+        $this->service->createJiraIssue($jiraIssue);
+        if ($this->service->getJira()->isErrorResponse()) {
             // Set the failure reason and status and exit early
             $jiraIssue
-                ->setFailureReason($jira->getErrorCollection())
+                ->setFailureReason($this->service->getJira()->getErrorCollection())
                 ->setRequestStatus(JiraIssue::REQUEST_STATUS_FAILED);
 
             return $jiraIssue;
@@ -138,8 +132,8 @@ class CreateJiraTicket extends CommandHandler
         // Update issue details
         $jiraIssue
             ->setRequestStatus(JiraIssue::REQUEST_STATUS_SUCCESS)
-            ->setIssueId($jira->getResponseField('id'))
-            ->setIssueKey($jira->getResponseField('key'));
+            ->setIssueId($this->service->getJira()->getResponseField('id'))
+            ->setIssueKey($this->service->getJira()->getResponseField('key'));
 
         // Persist success status issue ID and issue key
         $this->em->persist($jiraIssue);

@@ -52,12 +52,12 @@ class JiraService
      * Create a Jira issue via the Jira REST API
      *
      * @param JiraIssue $jiraIssue
-     * @return Jira
+     * @return mixed
      */
-    public function createJiraIssue(JiraIssue $jiraIssue): Jira
+    public function createJiraIssue(JiraIssue $jiraIssue)
     {
         // Send the Issue to JIRA
-        $this->jira->create([
+        return $this->jira->create([
             'project'     => [
                 'key' => $jiraIssue->getProjectKey()
             ],
@@ -67,8 +67,6 @@ class JiraService
                 'name' => $jiraIssue->getIssueType()
             ]
         ]);
-
-        return $this->jira;
     }
 
     /**
@@ -192,5 +190,13 @@ class JiraService
         }
 
         return $vulnerabilityReferences;
+    }
+
+    /**
+     * @return Jira
+     */
+    public function getJira(): Jira
+    {
+        return $this->jira;
     }
 }
