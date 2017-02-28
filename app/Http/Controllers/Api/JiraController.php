@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Commands\CreateJiraTicket;
+use App\Entities\JiraIssue;
+use App\Transformers\JiraIssueTransformer;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
+
 /**
  * @Controller(prefix="api")
  * @Middleware("auth:api")
@@ -13,12 +19,11 @@ class JiraController extends AbstractController
      *
      * @POST("/jira/search/{searchPhrase}", as="jira.search", where={"searchPhrase":"[0-9A-Za-z\s\-_]+"})
      *
-     * @param $workspaceId
      * @return ResponseFactory|JsonResponse
      */
     public function searchJiraTickets()
     {
-
+        //TODO: Implement the search controller
     }
 
     /**
@@ -26,12 +31,30 @@ class JiraController extends AbstractController
      *
      * @POST("/jira/create/{fileId}/{vulnerabilityId}", as="jira.create", where={"fileId":"[0-9]+", "vulnerabilityId":"[0-9]+"})
      *
-     * @param $workspaceId
+     * @param $fileId
+     * @param $vulnerabilityId
      * @return ResponseFactory|JsonResponse
      */
-    public function createJiraTicket()
+    public function createJiraTicket($fileId, $vulnerabilityId)
     {
+        $jiraIssue = new JiraIssue();
+        $jiraIssue
+            ->setRequestType(JiraIssue::REQUEST_TYPE_CREATE)
+            ->setRequestStatus(JiraIssue::REQUEST_STATUS_PENDING)
+            ->setHost($this->request->get('jira-hostname'))
+            ->setPort($this->request->get('jira-port'))
+            ->setIssueType($this->request->get('jira-issue-type', 'Bug'))
+            ->setProjectKey($this->request->get('jira-project-key'));
 
+        $command = new CreateJiraTicket(
+            $fileId,
+            $vulnerabilityId,
+            $this->request->get('jira-username'),
+            $this->request->get('jira-password'),
+            $jiraIssue
+        );
+
+        return $this->sendCommandToBusHelper($command, new JiraIssueTransformer());
     }
 
     /**
@@ -39,12 +62,11 @@ class JiraController extends AbstractController
      *
      * @POST("/jira/edit/{jiraId}", as="jira.edit", where={"jiraId":"[0-9]+"})
      *
-     * @param $workspaceId
      * @return ResponseFactory|JsonResponse
      */
     public function editJiraTicket()
     {
-
+        //TODO: Implement the update controller
     }
 
     /**
@@ -53,7 +75,12 @@ class JiraController extends AbstractController
      */
     protected function getValidationRules(): array
     {
-        return [];
+        return [
+            'jira-username' => 'bail|filled',
+            'jira-password' => 'bail|filled',
+            'jira-hostname' => 'bail|filled|url',
+            'jira-port'     => 'bail|filled|int',
+        ];
     }
 
 }
