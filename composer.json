@@ -23,7 +23,8 @@
         "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": "^3.0",
         "mysql-workbench-schema-exporter/doctrine2-exporter": "^3.0",
         "madewithlove/tactician-laravel": "^1.0",
-        "spatie/laravel-fractal": "~1.9"
+        "spatie/laravel-fractal": "~1.9",
+        "univerze/laravel-jira": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.6.0",
@@ -36,7 +37,7 @@
         "behat/mink-extension": "~2.2",
         "laracasts/behat-laravel-extension": "~1.0",
         "behat-extension/doctrine-data-fixtures-extension": "~4.0.0",
-        "barryvdh/laravel-ide-helper": "~2.2.1",
+        "barryvdh/laravel-ide-helper": "~2.3.2",
         "barryvdh/laravel-debugbar": "~2.3.0",
         "filp/whoops": "~2.1.2"
     },
@@ -81,6 +82,10 @@
         {
             "type": "path",
             "url": "./spark"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Ruggedy-Limited/laravel-jira"
         }
     ]
 }
