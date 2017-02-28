@@ -173,6 +173,7 @@ return [
         Laracasts\Flash\FlashServiceProvider::class,
         Madewithlove\Tactician\ServiceProvider::class,
         Spatie\Fractal\FractalServiceProvider::class,
+        Univerze\Jira\JiraServiceProvider::class,
     ],
 
     /*
@@ -206,6 +207,7 @@ return [
         'Gate'          => Illuminate\Support\Facades\Gate::class,
         'Hash'          => Illuminate\Support\Facades\Hash::class,
         'Html'          => Collective\Html\HtmlFacade::class,
+        'Jira'          => Univerze\Jira\Facade\JiraFacade::class,
         'Lang'          => Illuminate\Support\Facades\Lang::class,
         'Log'           => Illuminate\Support\Facades\Log::class,
         'Mail'          => Illuminate\Support\Facades\Mail::class,
