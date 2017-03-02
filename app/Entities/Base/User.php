@@ -46,6 +46,7 @@ class User extends AbstractEntity
     const ANNOUNCEMENTS                           = 'announcements';
     const APITOKENS                               = 'apiTokens';
     const ASSETS                                  = 'assets';
+    const COMMENTS                                = 'comments';
     const COMPONENTPERMISSIONRELATEDBYUSERIDS     = 'componentPermissionRelatedByUserIds';
     const COMPONENTPERMISSIONRELATEDBYGRANTEDBIES = 'componentPermissionRelatedByGrantedBies';
     const FILES                                   = 'files';

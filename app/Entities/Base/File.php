@@ -25,6 +25,8 @@ class File extends AbstractEntity
     const PROCESSED         = 'processed';
     const DELETED           = 'deleted';
     const ASSETS            = 'assets';
+    const COMMENTS          = 'comments';
+    const JIRAISSUES        = 'jiraIssues';
     const USER              = 'user';
     const WORKSPACEAPP      = 'workspaceApp';
 
@@ -93,6 +95,12 @@ class File extends AbstractEntity
     protected $comments;
 
     /**
+     * @ORM\OneToMany(targetEntity="JiraIssue", mappedBy="file", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $jiraIssues;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"})
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
@@ -108,6 +116,7 @@ class File extends AbstractEntity
     {
         $this->assets = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->jiraIssues = new ArrayCollection();
     }
 
     /**
@@ -410,6 +419,42 @@ class File extends AbstractEntity
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Add JiraIssue entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\JiraIssue $jiraIssue
+     * @return \App\Entities\Base\File
+     */
+    public function addJiraIssue(JiraIssue $jiraIssue)
+    {
+        $this->jiraIssues[] = $jiraIssue;
+
+        return $this;
+    }
+
+    /**
+     * Remove JiraIssue entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\JiraIssue $jiraIssue
+     * @return \App\Entities\Base\File
+     */
+    public function removeJiraIssue(JiraIssue $jiraIssue)
+    {
+        $this->jiraIssues->removeElement($jiraIssue);
+
+        return $this;
+    }
+
+    /**
+     * Get JiraIssue entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getJiraIssues()
+    {
+        return $this->jiraIssues;
     }
 
     /**
