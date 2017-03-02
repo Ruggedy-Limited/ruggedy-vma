@@ -24,6 +24,8 @@ class JiraIssueTransformer extends TransformerAbstract
             'issueSummary'     => $jiraIssue->getSummary(),
             'issueDescription' => $jiraIssue->getDescription(),
             'projectKey'       => $jiraIssue->getProjectKey(),
+            'jiraHost'         => $jiraIssue->getHost(),
+            'jiraPort'         => $jiraIssue->getPort(),
             'apiRequestStatus' => $jiraIssue->getRequestStatus(),
             'apiRequestType'   => $jiraIssue->getRequestType(),
             'failureReason'    => $jiraIssue->getFailureReason(),
