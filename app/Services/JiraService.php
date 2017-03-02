@@ -8,6 +8,7 @@ use App\Entities\File;
 use App\Entities\JiraIssue;
 use App\Entities\Vulnerability;
 use App\Entities\VulnerabilityReferenceCode;
+use Illuminate\Support\Collection;
 use Univerze\Jira\Jira;
 
 class JiraService
@@ -102,19 +103,19 @@ class JiraService
      */
     public function getIssueDescriptionText(Vulnerability $vulnerability, File $file, JiraIssue $jiraIssue): string
     {
-        return $jiraIssue->getDescription() . PHP_EOL . PHP_EOL
-            . "*Vulnerability Name:*" . PHP_EOL . $vulnerability->getName() . PHP_EOL . PHP_EOL
-            . "*Vulnerability Description:*" . PHP_EOL . strip_tags($vulnerability->getDescription()) . PHP_EOL . PHP_EOL
-            . "*Vulnerability Severity:*" . PHP_EOL . $vulnerability->getSeverityText() . PHP_EOL . PHP_EOL
-            . "*Vulnerability References:*" . PHP_EOL
-                . $this->getVulnerabilityReferencesText($vulnerability) . PHP_EOL . PHP_EOL
-            . "*CVSS Score:*" . PHP_EOL . $vulnerability->getCvssScore() . PHP_EOL . PHP_EOL
-            . "*Resolution:*" . PHP_EOL . strip_tags($vulnerability->getSolution()) . PHP_EOL . PHP_EOL
-            . "*Vulnerable Assets:*" . PHP_EOL . $this->getVulnerableAssetsText($vulnerability) . PHP_EOL . PHP_EOL
-            . "*Exploits:*" . PHP_EOL . $this->getExploitsText($vulnerability) . PHP_EOL . PHP_EOL
-            . "*Found in File:*" . PHP_EOL . basename($file->getPath()) . PHP_EOL . PHP_EOL
-            . "*Scanner App:*" . PHP_EOL . ucwords($file->getWorkspaceApp()->getScannerApp()->getName())
-            . PHP_EOL . PHP_EOL;
+        return $this->addMarkdownAndOtherFormattingForJira(collect([
+            ''                               => $jiraIssue->getDescription(),
+            'Vulnerability Name'             => $vulnerability->getName(),
+            'Vulnerability Description'      => $vulnerability->getDescription(),
+            'Vulnerability Severity'         => $vulnerability->getSeverityText(),
+            'Vulnerability Reference Codes'  => $this->getVulnerabilityReferencesText($vulnerability),
+            'CVSS Score'                     => $vulnerability->getCvssScore(),
+            'Resolution'                     => $vulnerability->getSolution(),
+            'Vulnerable Assets'              => $this->getVulnerableAssetsText($vulnerability),
+            'Exploits'                       => $this->getExploitsText($vulnerability),
+            'Found in File'                  => basename($file->getPath()),
+            'Scanner App'                    => ucwords($file->getWorkspaceApp()->getScannerApp()->getName()),
+        ]));
     }
 
     /**
@@ -128,7 +129,7 @@ class JiraService
         $vulnerableAssets = collect($vulnerability->getAssets()->toArray())
             ->map(function ($asset) {
                 /** @var Asset $asset */
-                return $asset->getName();
+                return " - " . $asset->getName();
             })
             ->unique()
             ->implode(PHP_EOL);
@@ -156,7 +157,7 @@ class JiraService
                     $skillLevel = "({$exploit->getSkillLevel()})";
                 }
 
-                return $exploit->getTitle() . $skillLevel . PHP_EOL
+                return " - " . $exploit->getTitle() . $skillLevel . PHP_EOL
                     . $exploit->getUrlReference();
             })
             ->unique()
@@ -190,6 +191,29 @@ class JiraService
         }
 
         return $vulnerabilityReferences;
+    }
+
+    /**
+     * Clean and format a string with markdown for Jira
+     *
+     * @param Collection $titlesAndContent
+     * @return string
+     */
+    protected function addMarkdownAndOtherFormattingForJira(Collection $titlesAndContent): string
+    {
+        // Defensiveness
+        if ($titlesAndContent->isEmpty()) {
+            return '';
+        }
+
+        // Return the formatted string, stripped of tags and trimmed with markdown and newlines
+        return $titlesAndContent->map(function ($content, $title) {
+            if (empty($title) || is_int($title)) {
+                return $content;
+            }
+
+            return sprintf("*%s:*" . PHP_EOL . "%s" . PHP_EOL . PHP_EOL, $title, trim(strip_tags($content)));
+        })->implode(PHP_EOL . PHP_EOL);
     }
 
     /**
