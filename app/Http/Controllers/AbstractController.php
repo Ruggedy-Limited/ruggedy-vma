@@ -24,7 +24,7 @@ use Monolog\Logger;
 abstract class AbstractController extends Controller implements GivesUserFeedback, CustomLogging
 {
     /** Namespace for the translator */
-    const TRANSLATOR_NAMESPACE = 'api';
+    const TRANSLATOR_NAMESPACE = 'web';
 
     const HTTP_METHOD_POST = 'POST';
     const HTTP_METHOD_PUT  = 'PUT';
