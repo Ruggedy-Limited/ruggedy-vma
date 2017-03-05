@@ -1,0 +1,9 @@
+<?php
+
+namespace DummyNamespace;
+
+use Doctrine\ORM\EntityRepository;
+
+class DummyClass extends EntityRepository
+{
+}
