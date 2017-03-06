@@ -27,7 +27,6 @@ class User extends AbstractEntity
     const COUNTRY_CODE                            = 'country_code';
     const PHONE                                   = 'phone';
     const TWO_FACTOR_RESET_CODE                   = 'two_factor_reset_code';
-    const CURRENT_TEAM_ID                         = 'current_team_id';
     const STRIPE_ID                               = 'stripe_id';
     const CURRENT_BILLING_PLAN                    = 'current_billing_plan';
     const CARD_BRAND                              = 'card_brand';
@@ -58,7 +57,6 @@ class User extends AbstractEntity
     const SUBSCRIPTIONS                           = 'subscriptions';
     const TEAMS                                   = 'teams';
     const WORKSPACES                              = 'workspaces';
-    const TEAM                                    = 'team';
 
     /**
      * @ORM\Id
@@ -116,11 +114,6 @@ class User extends AbstractEntity
      * @ORM\Column(name="`two_factor_reset_code`", type="string", length=100, nullable=true)
      */
     protected $two_factor_reset_code;
-
-    /**
-     * @ORM\Column(name="`current_team_id`", type="integer", options={"unsigned":true})
-     */
-    protected $current_team_id;
 
     /**
      * @ORM\Column(name="`stripe_id`", type="string", length=255, nullable=true)
@@ -286,22 +279,10 @@ class User extends AbstractEntity
     protected $subscriptions;
 
     /**
-     * @ORM\OneToMany(targetEntity="Team", mappedBy="user", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`owner_id`", nullable=false)
-     */
-    protected $teams;
-
-    /**
      * @ORM\OneToMany(targetEntity="Workspace", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
     protected $workspaces;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="users", cascade={"persist"})
-     * @ORM\JoinColumn(name="`current_team_id`", referencedColumnName="`id`", nullable=false)
-     */
-    protected $team;
 
     public function __construct()
     {
@@ -318,7 +299,6 @@ class User extends AbstractEntity
         $this->notificationRelatedByUserIds = new ArrayCollection();
         $this->notificationRelatedByCreatedBies = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
-        $this->teams = new ArrayCollection();
         $this->workspaces = new ArrayCollection();
     }
 
@@ -573,29 +553,6 @@ class User extends AbstractEntity
     public function getTwoFactorResetCode()
     {
         return $this->two_factor_reset_code;
-    }
-
-    /**
-     * Set the value of current_team_id.
-     *
-     * @param integer $current_team_id
-     * @return \App\Entities\Base\User
-     */
-    public function setCurrentTeamId($current_team_id)
-    {
-        $this->current_team_id = $current_team_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of current_team_id.
-     *
-     * @return integer
-     */
-    public function getCurrentTeamId()
-    {
-        return $this->current_team_id;
     }
 
     /**
@@ -1458,42 +1415,6 @@ class User extends AbstractEntity
     }
 
     /**
-     * Add Team entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Team $team
-     * @return \App\Entities\Base\User
-     */
-    public function addTeam(Team $team)
-    {
-        $this->teams[] = $team;
-
-        return $this;
-    }
-
-    /**
-     * Remove Team entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Team $team
-     * @return \App\Entities\Base\User
-     */
-    public function removeTeam(Team $team)
-    {
-        $this->teams->removeElement($team);
-
-        return $this;
-    }
-
-    /**
-     * Get Team entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getTeams()
-    {
-        return $this->teams;
-    }
-
-    /**
      * Add Workspace entity to collection (one to many).
      *
      * @param \App\Entities\Base\Workspace $workspace
@@ -1529,31 +1450,8 @@ class User extends AbstractEntity
         return $this->workspaces;
     }
 
-    /**
-     * Set Team entity (many to one).
-     *
-     * @param \App\Entities\Base\Team $team
-     * @return \App\Entities\Base\User
-     */
-    public function setTeam(Team $team = null)
-    {
-        $this->team = $team;
-
-        return $this;
-    }
-
-    /**
-     * Get Team entity (many to one).
-     *
-     * @return \App\Entities\Base\Team
-     */
-    public function getTeam()
-    {
-        return $this->team;
-    }
-
     public function __sleep()
     {
-        return array('id', 'name', 'email', 'password', 'remember_token', 'photo_url', 'uses_two_factor_auth', 'authy_id', 'country_code', 'phone', 'two_factor_reset_code', 'current_team_id', 'stripe_id', 'current_billing_plan', 'card_brand', 'card_last_four', 'card_country', 'billing_address', 'billing_address_line_2', 'billing_city', 'billing_state', 'billing_zip', 'billing_country', 'vat_id', 'extra_billing_information', 'trial_ends_at', 'last_read_announcements_at', 'created_at', 'updated_at');
+        return array('id', 'name', 'email', 'password', 'remember_token', 'photo_url', 'uses_two_factor_auth', 'authy_id', 'country_code', 'phone', 'two_factor_reset_code', 'stripe_id', 'current_billing_plan', 'card_brand', 'card_last_four', 'card_country', 'billing_address', 'billing_address_line_2', 'billing_city', 'billing_state', 'billing_zip', 'billing_country', 'vat_id', 'extra_billing_information', 'trial_ends_at', 'last_read_announcements_at', 'created_at', 'updated_at');
     }
 }

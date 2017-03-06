@@ -22,23 +22,6 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     use Authorizable;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="users", cascade={"persist"}, fetch="EAGER")
-     * @ORM\JoinColumn(name="`current_team_id`", referencedColumnName="`id`")
-     */
-    protected $team;
-    
-    /**
-     * Check if a User owns a team
-     *
-     * @param Team $team
-     * @return bool
-     */
-    public function ownsTeam(Team $team)
-    {
-        return $this->teams->contains($team);
-    }
-
-    /**
      * Override the AbstractEntity method, just to provide a default set of attributes to include when coercing to
      * stdClass for JSON
      *
@@ -68,16 +51,6 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     }
 
     /**
-     * Aliasing the parent method
-     *
-     * @return Base\Team
-     */
-    public function getTeam()
-    {
-        return parent::getTeam();
-    }
-
-    /**
      * Returns itself when authorising changes to this User account
      * 
      * @return $this
@@ -101,11 +74,11 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     /**
      * Get the parent Entity of this Entity
      *
-     * @return Team
+     * @return User
      */
     public function getParent()
     {
-        return $this->team;
+        return $this;
     }
 
     /**
