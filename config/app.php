@@ -187,6 +187,7 @@ return [
         LaravelDoctrine\Extensions\GedmoExtensionsServiceProvider::class,
         LaravelDoctrine\Extensions\BeberleiExtensionsServiceProvider::class,
         LaravelDoctrine\Migrations\MigrationsServiceProvider::class,
+        Somnambulist\EntityValidation\ValidationServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         Madewithlove\Tactician\ServiceProvider::class,
         Univerze\Jira\JiraServiceProvider::class,
