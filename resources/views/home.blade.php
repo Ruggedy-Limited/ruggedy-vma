@@ -32,27 +32,33 @@
     </div>
 
     <div class="row animated fadeIn">
-        <div class="col-md-4 col-sm-6">
-            <a href="{{ route('workspaces.index') }}">
-            <div class="card hovercard animated pulse-hover">
-                <div class="cardheader c-white">
-                </div>
-                <div class="avatar avatar-white">
-                    <i class="fa fa-th-large fa-5x t-c-purple"></i>
-                </div>
-                <div class="info">
-                    <div class="title h-3">
-                        <h4>Workspace Card</h4>
-                    </div>
-                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus. In hendrerit
-                        lorem nisl,
-                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis est s,
-                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                    </div>
-                </div>
+        @if (empty($workspaces))
+            <div class="col-sm-12">
+                There aren't any workspaces, it's very quiet in here.
+                <a href="{{ route('workspaces.create') }}">Add a Workspace</a>
             </div>
-            </a>
-        </div>
+        @else
+            @foreach ($workspaces as $workspace)
+                <div class="col-md-4 col-sm-6">
+                    <a href="{{ route('workspaces.index') }}">
+                        <div class="card hovercard animated pulse-hover">
+                            <div class="cardheader c-white">
+                            </div>
+                            <div class="avatar avatar-white">
+                                <i class="fa fa-th-large fa-5x t-c-purple"></i>
+                            </div>
+                            <div class="info">
+                                <div class="title h-3">
+                                    <h4>{{ $workspace->getName() }}</h4>
+                                </div>
+                                <div class="desc t-3">
+                                    {{ $workspace->getDescription() }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        @endif
     </div>
-
 @endsection
