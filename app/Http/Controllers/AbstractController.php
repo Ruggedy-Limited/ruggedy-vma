@@ -1,9 +1,8 @@
 <?php
 
-namespace app\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Entities\Base\AbstractEntity;
-use App\Http\Controllers\Controller;
 use App\Commands\Command;
 use App\Contracts\CustomLogging;
 use App\Contracts\GivesUserFeedback;
@@ -11,12 +10,11 @@ use App\Http\Responses\ErrorResponse;
 use App\Models\MessagingModel;
 use App\Services\JsonLogService;
 use Exception;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Translation\Translator;
+use Laracasts\Flash\FlashNotifier;
 use League\Fractal\TransformerAbstract;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
@@ -32,6 +30,8 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     /** @var  JsonLogService */
     protected $logger;
 
+    protected $flashMessenger;
+
     /** @var  CommandBus */
     protected $bus;
 
@@ -41,34 +41,35 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      * @param Request $request
      * @param Translator $translator
      * @param JsonLogService $logger
+     * @param FlashNotifier $flashMessenger
      * @param CommandBus $bus
      */
-    public function __construct(Request $request, Translator $translator, JsonLogService $logger, CommandBus $bus)
+    public function __construct(
+        Request $request, Translator $translator, JsonLogService $logger, FlashNotifier $flashMessenger, CommandBus $bus
+    )
     {
         parent::__construct($request, $translator);
 
-        // Validate the request
-        if (!empty($this->getValidationRules())
-            && $this->getMethodsRequiringValidation()->contains($request->getMethod())) {
+        // Add the auth middleware everywhere
+        $this->middleware(['auth']);
 
-            $this->validate($this->getRequest(), $this->getValidationRules());
-        }
-
+        // Set a context for the logger
         $this->setLoggerContext($logger);
 
-        $this->logger = $logger;
-        $this->bus    = $bus;
+        // Set all the protected members
+        $this->logger         = $logger;
+        $this->bus            = $bus;
+        $this->flashMessenger = $flashMessenger;
     }
 
     /**
      * Send a command over the command bus and handle exceptions
      *
      * @param Command $command
-     * @param TransformerAbstract $transformer
      * @param null $closure
-     * @return ResponseFactory|JsonResponse
+     * @return mixed
      */
-    protected function sendCommandToBusHelper(Command $command, TransformerAbstract $transformer, $closure = null)
+    protected function sendCommandToBusHelper(Command $command, $closure = null)
     {
         try {
             $result = $this->getBus()->handle($command);
@@ -77,9 +78,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
                 $result = $closure($result);
             }
 
-            // Tranform the result and return the response
-            $result = $this->transformResult($result, $transformer);
-            return response()->json()->setContent($result);
+            return $result;
         } catch (Exception $e) {
             $this->getLogger()->log(Logger::ERROR, "Error processing command", [
                 'requestUri'        => $this->getRequest()->getUri(),
@@ -116,14 +115,14 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      * Generate an error response to return to the customer
      *
      * @param string $messageKey
-     * @return ResponseFactory|JsonResponse
+     * @return ErrorResponse
      */
     protected function generateErrorResponse($messageKey = '')
     {
         $translatorNamespace = null;
         $errorResponse = new ErrorResponse(MessagingModel::ERROR_DEFAULT);
         if (!method_exists($this, 'getTranslatorNamespace')) {
-            return response()->json($errorResponse);
+            return $errorResponse;
         }
 
         $translatorNamespace = $this->getTranslatorNamespace();
@@ -135,7 +134,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
         }
 
         $errorResponse->setMessage($message);
-        return response()->json($errorResponse);
+        return $errorResponse;
     }
 
     /**
@@ -144,7 +143,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      * @return string
      */
     public function getTranslatorNamespace(): string {
-        return 'api';
+        return 'web';
     }
 
     /**
@@ -164,7 +163,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      */
     public function getLogContext(): string
     {
-        return 'api';
+        return 'web';
     }
 
     /**
@@ -172,7 +171,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      */
     public function getLogFilename(): string
     {
-        return 'api-controller.json.log';
+        return 'web-controller.json.log';
     }
 
     /**
@@ -182,6 +181,14 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
      * @return array
      */
     protected abstract function getValidationRules(): array;
+
+    /**
+     * Get the validation messages to be returned by this controller if any validation rules fail to pass. Can return an
+     * empty array for no validation to be done on the requests
+     *
+     * @return array
+     */
+    protected abstract function getValidationMessages(): array;
 
     /**
      * @return JsonLogService

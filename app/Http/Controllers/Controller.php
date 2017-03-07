@@ -9,13 +9,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Translation\Translator;
 use Illuminate\Http\Request;
 
-
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /** @var  Translator */
     protected $translator;
+
     /** @var  Request */
     protected $request;
 

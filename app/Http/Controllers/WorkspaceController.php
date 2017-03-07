@@ -2,21 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Commands\CreateWorkspace;
+use App\Entities\Workspace;
+use App\Http\Responses\ErrorResponse;
+use Auth;
 use Illuminate\Http\Request;
 
-class WorkspaceController extends Controller
+class WorkspaceController extends AbstractController
 {
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +17,7 @@ class WorkspaceController extends Controller
      */
     public function index()
     {
-       return view('workspaces.index');
+        return view('workspaces.index');
     }
 
     /**
@@ -34,18 +27,32 @@ class WorkspaceController extends Controller
      */
     public function create()
     {
-        return view ('workspaces.create');
+        return view('workspaces.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
+
+        $userId = Auth::user() ? Auth::user()->getId() : 0;
+
+        $entity = new Workspace();
+        $entity->setName($this->request->get('name'));
+        $entity->setDescription($this->request->get('description'));
+
+        $command = new CreateWorkspace($userId, $entity);
+        $response = $this->sendCommandToBusHelper($command);
+
+        if ($response instanceof ErrorResponse) {
+            $this->flashMessenger->error($response->getMessage());
+        }
+
+        return redirect()->route('home');
     }
 
     /**
@@ -132,6 +139,32 @@ class WorkspaceController extends Controller
 
     public function ruggedyShow() {
         return view ('workspaces.ruggedyShow');
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return array
+     */
+    protected function getValidationRules(): array
+    {
+        return [
+            Workspace::NAME        => 'bail|filled',
+            Workspace::DESCRIPTION => 'bail|filled',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return array
+     */
+    protected function getValidationMessages(): array
+    {
+        return [
+            Workspace::NAME        => 'You must give the Workspace a name',
+            Workspace::DESCRIPTION => 'You must give the Workspace a description',
+        ];
     }
 }
 
