@@ -8,6 +8,7 @@ use App\Repositories\WorkspaceRepository;
 
 class GetListOfWorkspaces extends CommandHandler
 {
+    /** @var WorkspaceRepository */
     protected $workspaceRepository;
 
     /**
@@ -21,7 +22,7 @@ class GetListOfWorkspaces extends CommandHandler
     }
 
     /**
-     * Get all Workspaces
+     * Process the GetListOfWorkspaces command.
      *
      * @param GetListOfWorkspacesCommand $command
      * @return array
