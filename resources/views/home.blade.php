@@ -27,7 +27,7 @@
     </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href={{ route('workspaces.create') }} class="primary-btn" type="button">Add Workspace</a>
+            <a href="{{ route('workspace.create') }}" class="primary-btn" type="button">Add Workspace</a>
         </div>
     </div>
 
@@ -40,7 +40,7 @@
         @else
             @foreach ($workspaces as $workspace)
                 <div class="col-md-4 col-sm-6">
-                    <a href="{{ route('workspaces.index') }}">
+                    <a href="{{ route('workspace.show', ['workspaceId' => $workspace->getId()]) }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
                             </div>
