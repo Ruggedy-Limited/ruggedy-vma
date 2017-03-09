@@ -29,9 +29,6 @@ Route::get('/workspaces/app/showRecord', 'WorkspaceController@appShowRecord')->n
 Route::get('/workspaces/addFile', 'WorkspaceController@addFile')->name('workspaces.addFile');
 Route::get('/workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
 Route::get('/workspaces/apps/create', 'WorkspaceController@appsCreate')->name('workspaces.apps.create');
-Route::get('/workspaces/', 'WorkspaceController@index')->name('workspaces.index');
-Route::get('/workspaces/create', 'WorkspaceController@create')->name('workspaces.create');
-Route::post('/workspace/store', 'WorkspaceController@store')->name('workspaces.store');
 Route::get('/workspaces/ruggedyIndex', 'WorkspaceController@ruggedyIndex')->name('workspaces.ruggedyIndex');
 Route::get('/workspaces/ruggedyCreate', 'WorkspaceController@ruggedyCreate')->name('workspaces.ruggedyCreate');
 Route::get('/workspaces/ruggedyShow', 'WorkspaceController@ruggedyShow')->name('workspaces.ruggedyShow');

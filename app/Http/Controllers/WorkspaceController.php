@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateWorkspace;
+use App\Commands\GetWorkspace;
 use App\Entities\Workspace;
 use App\Http\Responses\ErrorResponse;
 use Auth;
 use Illuminate\Http\Request;
 
+/**
+ * @Middleware("web")
+ */
 class WorkspaceController extends AbstractController
 {
     /**
@@ -23,6 +27,8 @@ class WorkspaceController extends AbstractController
     /**
      * Show the form for creating a new resource.
      *
+     * @GET("/workspace/create", as="workspace.create")
+     *
      * @return \Illuminate\Http\Response
      */
     public function create()
@@ -33,37 +39,58 @@ class WorkspaceController extends AbstractController
     /**
      * Store a newly created resource in storage.
      *
+     * @POST("/workspace/store", as="workspace.store")
+     *
      * @return \Illuminate\Http\Response
      */
     public function store()
     {
+        // Validate the request
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
+        // Get the authenticated User ID
         $userId = Auth::user() ? Auth::user()->getId() : 0;
 
+        // Create a new Workspace entity and populate the name & description from the request
         $entity = new Workspace();
         $entity->setName($this->request->get('name'));
         $entity->setDescription($this->request->get('description'));
 
+        // Create a command and send it over the bus to the handler
         $command = new CreateWorkspace($userId, $entity);
         $response = $this->sendCommandToBusHelper($command);
 
+        // Handle error responses from the handler
         if ($response instanceof ErrorResponse) {
             $this->flashMessenger->error($response->getMessage());
         }
 
+        // Redirect back to the Workspace listing
         return redirect()->route('home');
     }
 
     /**
      * Display the specified resource.
      *
+     * @GET("/workspace/{workspaceId}", as="workspace.show", where={"workspaceId":"[0-9]+"})
+     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        // Create a command and send it over the bus to the handler
+        $command = new GetWorkspace(intval($id));
+        $response = $this->sendCommandToBusHelper($command);
+
+        // Handle error responses from the handler and redirect back
+        if ($response instanceof ErrorResponse) {
+            $this->flashMessenger->error($response->getMessage());
+            return redirect()->back();
+        }
+
+        // Redirect back to the Workspace listing
+        return view('workspaces.view', ['workspace' => $response]);
     }
 
     /**
