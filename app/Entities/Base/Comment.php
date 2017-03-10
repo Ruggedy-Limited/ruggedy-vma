@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\Comment
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`comments`", indexes={@ORM\Index(name="comments_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="comments_file_fk_idx", columns={"`file_id`"}), @ORM\Index(name="comments_vulnerability_fk_idx", columns={"`vulnerability_id`"})})
+ * @ORM\Table(name="`comments`", indexes={@ORM\Index(name="comments_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="comments_vulnerability_fk_idx", columns={"`vulnerability_id`"}), @ORM\Index(name="comments_file_fk_idx", columns={"`file_id`"})})
  */
 class Comment extends AbstractEntity
 {
