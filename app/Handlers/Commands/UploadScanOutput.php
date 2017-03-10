@@ -7,11 +7,11 @@ use App\Entities\File;
 use App\Entities\WorkspaceApp;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
-use App\Exceptions\ScannerAppNotFoundException;
+use App\Exceptions\WorkspaceAppNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\ScannerAppRepository;
-use App\Repositories\WorkspaceRepository;
+use App\Repositories\WorkspaceAppRepository;
 use App\Services\ScanIdentificationService;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -22,8 +22,8 @@ class UploadScanOutput extends CommandHandler
 {
     const MIME_TYPE_XML = 'application/xml';
 
-    /** @var WorkspaceRepository */
-    protected $workspaceRepository;
+    /** @var WorkspaceAppRepository */
+    protected $workspaceAppRepository;
 
     /** @var ScannerAppRepository */
     protected $scannerAppRepository;
@@ -37,21 +37,21 @@ class UploadScanOutput extends CommandHandler
     /**
      * UploadScanOutput constructor.
      *
-     * @param WorkspaceRepository $workspaceRepository
+     * @param WorkspaceAppRepository $workspaceAppRepository
      * @param ScannerAppRepository $scannerAppRepository
      * @param EntityManager $em
      * @param ScanIdentificationService $service
      * @internal param Filesystem $fileSystem
      */
     public function __construct(
-        WorkspaceRepository $workspaceRepository, ScannerAppRepository $scannerAppRepository,
+        WorkspaceAppRepository $workspaceAppRepository, ScannerAppRepository $scannerAppRepository,
         EntityManager $em, ScanIdentificationService $service
     )
     {
-        $this->workspaceRepository  = $workspaceRepository;
-        $this->scannerAppRepository = $scannerAppRepository;
-        $this->service              = $service;
-        $this->em                   = $em;
+        $this->workspaceAppRepository = $workspaceAppRepository;
+        $this->scannerAppRepository   = $scannerAppRepository;
+        $this->service                = $service;
+        $this->em                     = $em;
     }
 
     /**
@@ -68,56 +68,52 @@ class UploadScanOutput extends CommandHandler
         $requestingUser = $this->authenticate();
 
         // Check that all the required members are set on the command
-        $workspaceId = $command->getId();
-        $file        = $command->getFile();
+        $workspaceAppId  = $command->getId();
+        $uploadedFile    = $command->getUploadedFile();
+        $fileEntity      = $command->getFile();
 
-        if (!isset($workspaceId, $file)) {
+        if (!isset($workspaceAppId, $uploadedFile)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
         // Check that the given Workspace exists
-        $workspace = $this->workspaceRepository->find($workspaceId);
-        if (empty($workspace)) {
-            throw new WorkspaceNotFoundException("There was no existing Workspace with the given ID");
+        /** @var WorkspaceApp $workspaceApp */
+        $workspaceApp = $this->workspaceAppRepository->find($workspaceAppId);
+        if (empty($workspaceApp)) {
+            throw new WorkspaceAppNotFoundException("There was no existing WorkspaceApp with the given ID");
         }
 
         // Check the authenticated User's permission
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $workspaceApp)) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to create new Assets on the given Workspace"
             );
         }
 
-        if (!$this->service->initialise($file)) {
+        // Intialise the scanner identification service and make sure the file is recognisable
+        if (!$this->service->initialise($uploadedFile)) {
             throw new FileException("Could not match the file to any supported scanner output");
         }
 
+        // Make sure the file is from the same scanner that is related to the WorkspaceApp
         $scanner = $this->service->getScanner();
-
-        $scannerApp = $this->scannerAppRepository->findByName($scanner);
-        if (empty($scannerApp)) {
-            throw new ScannerAppNotFoundException("No scanner app with the given name was found");
+        if ($scanner !== $workspaceApp->getScannerApp()->getName()) {
+            throw new FileException(
+                "The given file is not from the expected scanner app: {$workspaceApp->getScannerApp()->getName()}"
+            );
         }
 
-        if (!$this->service->storeUploadedFile($workspaceId)) {
+        // Store the file
+        if (!$this->service->storeUploadedFile($workspaceAppId)) {
             throw new FileNotWritableException("Could not store uploaded file on server");
         }
 
-        $workspaceApp = new WorkspaceApp();
-        $workspaceApp
-            ->setName(WorkspaceApp::DEFAULT_NAME)
-            ->setDescription(WorkspaceApp::DEFAULT_DESCRIPTION)
-            ->setWorkspace($workspace)
-            ->setScannerApp($scannerApp);
-
-
-        // Create a new File entity, persist it to the DB and return it
-        $fileEntity = new File();
+        // Set the rest of the details on the File entity, persist it to the DB and return it
         $fileEntity->setPath(
-            $this->service->getProvisionalStoragePath($workspaceId) . $file->getClientOriginalName()
+            $this->service->getProvisionalStoragePath($workspaceAppId) . $uploadedFile->getClientOriginalName()
         );
         $fileEntity->setFormat($this->service->getFormat());
-        $fileEntity->setSize($file->getClientSize());
+        $fileEntity->setSize($uploadedFile->getClientSize());
         $fileEntity->setUser($requestingUser);
         $fileEntity->setWorkspaceApp($workspaceApp);
         $fileEntity->setDeleted(false);
@@ -137,37 +133,5 @@ class UploadScanOutput extends CommandHandler
     protected function getScanFileStorageBasePath(): string
     {
         return storage_path('scans') . DIRECTORY_SEPARATOR;
-    }
-
-    /**
-     * @return WorkspaceRepository
-     */
-    public function getWorkspaceRepository()
-    {
-        return $this->workspaceRepository;
-    }
-
-    /**
-     * @return ScannerAppRepository
-     */
-    public function getScannerAppRepository(): ScannerAppRepository
-    {
-        return $this->scannerAppRepository;
-    }
-
-    /**
-     * @return ScanIdentificationService
-     */
-    public function getService(): ScanIdentificationService
-    {
-        return $this->service;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    public function getEm()
-    {
-        return $this->em;
     }
 }
