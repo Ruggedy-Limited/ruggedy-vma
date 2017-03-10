@@ -38,8 +38,10 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="{{ route('workspaces.apps') }}" class="primary-btn" type="button">Add Application</a>
-            <a href="{{ route('folders.create') }}" class="primary-btn" type="button">Add Folder</a>
+            <a href="{{ route('workspace.apps', ['workspaceId' => $workspace->getId()]) }}"
+               class="primary-btn" type="button">Add Application</a>
+            <a href="{{ route('folders.create', ['workspaceId' => $workspace->getId()]) }}"
+               class="primary-btn" type="button">Add Folder</a>
         </div>
     </div>
 
@@ -58,7 +60,9 @@
                     @else
                         @foreach ($workspace->getWorkspaceApps() as $workspaceApp)
                             <div class="col-md-4 col-sm-6">
-                                <a href="{{ route('workspaces.app') }}">
+                                <a href="{{
+                                    route('workspace.app.view', ['workspaceAppId' => $workspaceApp->getId()])
+                                }}">
                                 <div class="card hovercard animated pulse-hover">
                                     <div class="cardheader c-white">
                                     </div>
