@@ -15,6 +15,9 @@ use Illuminate\Support\Collection;
  */
 class File extends Base\File implements SystemComponent
 {
+    /** Association name constants */
+    const VULNERABILITIES = 'vulnerabilities';
+
     const FILE_TYPE_XML    = 'xml';
     const FILE_TYPE_CSV    = 'csv';
     const FILE_TYPE_JSON   = 'json';

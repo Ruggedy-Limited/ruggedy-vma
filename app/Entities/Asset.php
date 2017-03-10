@@ -18,6 +18,9 @@ use Illuminate\Support\Collection;
  */
 class Asset extends Base\Asset implements SystemComponent, HasIdColumn, GeneratesUniqueHash
 {
+    /** Association name constants */
+    const VULNERABILITIES = 'vulnerabilities';
+
     /** Regular expressions used for validating the relevant Asset data fields */
     const REGEX_CPE         = '~(cpe:(\d)?(\.\d)?(/[aho])(([:]{1,3})([\pL\pN\pS_])+)*)~i';
     const REGEX_MAC_ADDRESS = '/^([0-9A-Fa-f]{2}[:-]{1}){5}([0-9A-Fa-f]{2})$/';
@@ -325,6 +328,68 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     public function getVulnerabilities()
     {
         return $this->vulnerabilities;
+    }
+
+    /**
+     * Get a list of information Vulnerabilities
+     *
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
+    public function getInformationalVulnerabilities()
+    {
+        return $this->getVulnerabilitiesOfLevel(Vulnerability::SEVERITY_INFORMATION);
+    }
+
+    /**
+     * Get a list of low severity Vulnerabilities
+     *
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
+    public function getLowSeverityVulnerabilities()
+    {
+        return $this->getVulnerabilitiesOfLevel(Vulnerability::SEVERITY_LOW);
+    }
+
+    /**
+     * Get a list of medium severity Vulnerabilities
+     *
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
+    public function getMediumSeverityVulnerabilities()
+    {
+        return $this->getVulnerabilitiesOfLevel(Vulnerability::SEVERITY_MEDIUM);
+    }
+
+    /**
+     * Get a list of high severity Vulnerabilities
+     *
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
+    public function getHighSeverityVulnerabilities()
+    {
+        return $this->getVulnerabilitiesOfLevel(Vulnerability::SEVERITY_HIGH);
+    }
+
+    /**
+     * Get a list of critical severity Vulnerabilities
+     *
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
+    public function getCriticalSeverityVulnerabilities()
+    {
+        return $this->getVulnerabilitiesOfLevel(Vulnerability::SEVERITY_CRITICAL);
+    }
+
+    /**
+     * @param string $level
+     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
+     */
+    public function getVulnerabilitiesOfLevel(string $level)
+    {
+        return $this->vulnerabilities->filter(function ($vulnerability) use ($level) {
+            /** @var Vulnerability $vulnerability */
+            return $vulnerability->getSeverityText() === $level;
+        });
     }
 
     /**
