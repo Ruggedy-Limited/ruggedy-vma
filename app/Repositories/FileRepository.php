@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Entities\Asset;
+use App\Entities\Base\AbstractEntity;
 use App\Entities\File;
 use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
@@ -35,5 +37,25 @@ class FileRepository extends EntityRepository
         }
 
         return new Collection($result);
+    }
+
+    /**
+     * Find a WorkspaceApp and fetch any associated Files, Vulnerabilities and Assets
+     *
+     * @param int $id
+     * @return AbstractEntity
+     */
+    public function findOneForFileView(int $id)
+    {
+        return $this->_em->createQueryBuilder()
+            ->select('f', 'a', 'v')
+            ->from(File::class, 'f')
+            ->leftJoin('f.' . File::ASSETS, 'a')
+            ->leftJoin('a.' . Asset::VULNERABILITIES, 'v')
+            ->leftJoin('f.' . File::VULNERABILITIES, 'v')
+            ->where('f.' . File::ID . ' = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

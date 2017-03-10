@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Contracts\Searchable;
+use App\Entities\Base\AbstractEntity;
 use App\Entities\ScannerApp;
 use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
@@ -14,7 +15,7 @@ class WorkspaceRepository extends AbstractSearchableRepository implements Search
      * Find a Workspace and fetch any associated WorkspaceApps, ScannerApps and Folders
      *
      * @param int $id
-     * @return array
+     * @return AbstractEntity
      */
     public function findOneForWorkspaceView(int $id)
     {
