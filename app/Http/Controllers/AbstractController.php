@@ -24,16 +24,29 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     /** Namespace for the translator */
     const TRANSLATOR_NAMESPACE = 'web';
 
+    /** Request type constants */
     const HTTP_METHOD_POST = 'POST';
     const HTTP_METHOD_PUT  = 'PUT';
+
+    /** Flash messenger message type constants */
+    const MESSAGE_TYPE_INFO      = 'info';
+    const MESSAGE_TYPE_SUCCESS   = 'success';
+    const MESSAGE_TYPE_ERROR     = 'error';
+    const MESSAGE_TYPE_WARNING   = 'warning';
+    const MESSAGE_TYPE_OVERLAY   = 'overlay';
+    const MESSAGE_TYPE_IMPORTANT = 'important';
 
     /** @var  JsonLogService */
     protected $logger;
 
+    /** @var FlashNotifier */
     protected $flashMessenger;
 
     /** @var  CommandBus */
     protected $bus;
+
+    /** @var Collection */
+    protected $messages;
 
     /**
      * AbstractController constructor.
@@ -60,6 +73,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
         $this->logger         = $logger;
         $this->bus            = $bus;
         $this->flashMessenger = $flashMessenger;
+        $this->messages = collect();
     }
 
     /**
@@ -92,6 +106,46 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
                 MessagingModel::getMessageKeyByExceptionAndCommand($e, $command)
             );
         }
+    }
+
+    /**
+     * Abstract the creation of a Controller response to avoid a lot of duplication
+     *
+     * @param $response
+     * @param string $viewOrRoute
+     * @param array $parameters
+     * @param bool $isRedirect
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    protected function controllerResponseHelper(
+        $response, string $viewOrRoute, array $parameters = [], bool $isRedirect = false
+    )
+    {
+        // Handle error responses from the bus
+        if ($response instanceof ErrorResponse) {
+            $this->flashMessenger->error($response->getMessage());
+            return redirect()->back()->withInput();
+        }
+
+        // Flash messages to the session
+        if (!$this->messages->isEmpty()) {
+            $this->messages->each(function ($messages, $messageType) {
+                /** @var Collection $messages */
+                $messages
+                    ->unique()
+                    ->each(function ($message) use ($messageType) {
+                        $this->flashMessenger->$messageType($message);
+                    });
+            });
+        }
+
+        // Redirect when necessary
+        if ($isRedirect) {
+            redirect()->route($viewOrRoute, $parameters);
+        }
+
+        // Return a view when necessary
+        return view($viewOrRoute, $parameters);
     }
 
     /**
@@ -135,6 +189,54 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
 
         $errorResponse->setMessage($message);
         return $errorResponse;
+    }
+
+    /**
+     * Add a message to be flashed to the session
+     *
+     * @param string $message
+     * @param string $messageType
+     */
+    protected function addMessage(string $message, string $messageType)
+    {
+        if (empty($message) || !$this->isValidMessageType($messageType)) {
+            return;
+        }
+
+        if ($this->messages->get($messageType, false) === false) {
+            $this->messages->put($messageType, collect([$message]));
+            return;
+        }
+
+        $this->messages->get($messageType)->push($message);
+    }
+
+    /**
+     * Get a Collection of valid message types
+     *
+     * @return Collection
+     */
+    protected function getValidMessageTypes(): Collection
+    {
+        return collect([
+            self::MESSAGE_TYPE_INFO,
+            self::MESSAGE_TYPE_SUCCESS,
+            self::MESSAGE_TYPE_ERROR,
+            self::MESSAGE_TYPE_WARNING,
+            self::MESSAGE_TYPE_OVERLAY,
+            self::MESSAGE_TYPE_IMPORTANT,
+        ]);
+    }
+
+    /**
+     * Check if the given type is a valid message type
+     *
+     * @param string $type
+     * @return bool
+     */
+    protected function isValidMessageType(string $type): bool
+    {
+        return $this->getValidMessageTypes()->contains($type);
     }
 
     /**
