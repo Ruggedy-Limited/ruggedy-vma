@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\User
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`users`", indexes={@ORM\Index(name="users_current_team_fk", columns={"`current_team_id`"})}, uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
+ * @ORM\Table(name="`users`", uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique", columns={"`email`"})})
  */
 class User extends AbstractEntity
 {
@@ -279,6 +279,12 @@ class User extends AbstractEntity
     protected $subscriptions;
 
     /**
+     * @ORM\OneToMany(targetEntity="Team", mappedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`owner_id`", nullable=false)
+     */
+    protected $teams;
+
+    /**
      * @ORM\OneToMany(targetEntity="Workspace", mappedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`user_id`", nullable=false)
      */
@@ -299,6 +305,7 @@ class User extends AbstractEntity
         $this->notificationRelatedByUserIds = new ArrayCollection();
         $this->notificationRelatedByCreatedBies = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
+        $this->teams = new ArrayCollection();
         $this->workspaces = new ArrayCollection();
     }
 
@@ -1412,6 +1419,42 @@ class User extends AbstractEntity
     public function getSubscriptions()
     {
         return $this->subscriptions;
+    }
+
+    /**
+     * Add Team entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\User
+     */
+    public function addTeam(Team $team)
+    {
+        $this->teams[] = $team;
+
+        return $this;
+    }
+
+    /**
+     * Remove Team entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Team $team
+     * @return \App\Entities\Base\User
+     */
+    public function removeTeam(Team $team)
+    {
+        $this->teams->removeElement($team);
+
+        return $this;
+    }
+
+    /**
+     * Get Team entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTeams()
+    {
+        return $this->teams;
     }
 
     /**
