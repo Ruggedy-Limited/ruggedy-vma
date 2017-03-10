@@ -595,6 +595,11 @@ Start: Cards
     padding-top: 15px;
 }
 
+.img-secondary {
+    margin: 10px 0;
+    opacity: 0.2;
+}
+
 .content-card {
     position: relative;
     background: #fff;
