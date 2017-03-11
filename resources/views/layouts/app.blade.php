@@ -39,7 +39,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand t-c-white" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        <img src="/img/logo-small.png" height="30">
                     </a>
                 </div>
 
