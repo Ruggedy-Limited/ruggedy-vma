@@ -35,12 +35,12 @@
         @if (empty($workspaces))
             <div class="col-sm-12">
                 There aren't any workspaces, it's very quiet in here.
-                <a href="{{ route('workspaces.create') }}">Add a Workspace</a>
+                <a href="{{ route('workspace.create') }}">Add a Workspace</a>
             </div>
         @else
             @foreach ($workspaces as $workspace)
                 <div class="col-md-4 col-sm-6">
-                    <a href="{{ route('workspace.show', ['workspaceId' => $workspace->getId()]) }}">
+                    <a href="{{ route('workspace.view', ['workspaceId' => $workspace->getId()]) }}">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white">
                             </div>
