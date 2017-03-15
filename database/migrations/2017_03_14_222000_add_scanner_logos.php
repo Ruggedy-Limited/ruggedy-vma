@@ -2,10 +2,11 @@
 
 use App\Utils\RawMigration;
 
-class ChangeVulnerabilityReferenceCodeTypeToVarchar extends RawMigration
+class AddScannerLogos extends RawMigration
 {
     /**
      * @inheritdoc
+     *
      * @return string
      */
     public function getRawSqlMigration()
@@ -15,13 +16,15 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-ALTER TABLE `vulnerability_reference_codes` 
-CHANGE COLUMN `reference_type` `reference_type` VARCHAR(50) NOT NULL DEFAULT 'online_other' COMMENT '' ;
+UPDATE `scanner_apps` SET `logo` = '/img/burp-logo.png' WHERE `name` = 'burp';
+UPDATE `scanner_apps` SET `logo` = '/img/nessus-logo.png' WHERE `name` = 'nessus';
+UPDATE `scanner_apps` SET `logo` = '/img/netsparker-logo.png' WHERE `name` = 'netsparker';
+UPDATE `scanner_apps` SET `logo` = '/img/nmap-logo.png' WHERE `name` = 'nmap';
+UPDATE `scanner_apps` SET `logo` = '/img/ruggedy-logo.png' WHERE `name` = 'ruggedy';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 SQL;
-
     }
 }

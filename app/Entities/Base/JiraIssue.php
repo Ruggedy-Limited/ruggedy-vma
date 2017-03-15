@@ -97,7 +97,7 @@ class JiraIssue extends AbstractEntity
     protected $port;
 
     /**
-     * @ORM\Column(name="`retries`", type="boolean")
+     * @ORM\Column(name="`retries`", type="integer")
      */
     protected $retries;
 
