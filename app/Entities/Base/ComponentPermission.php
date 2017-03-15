@@ -20,11 +20,9 @@ class ComponentPermission extends AbstractEntity
     const INSTANCE_ID            = 'instance_id';
     const PERMISSION             = 'permission';
     const USER_ID                = 'user_id';
-    const TEAM_ID                = 'team_id';
     const GRANTED_BY             = 'granted_by';
     const COMPONENT              = 'component';
     const USERRELATEDBYUSERID    = 'userRelatedByUserId';
-    const TEAM                   = 'team';
     const USERRELATEDBYGRANTEDBY = 'userRelatedByGrantedBy';
 
     /**
@@ -57,11 +55,6 @@ class ComponentPermission extends AbstractEntity
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`team_id`", type="integer", nullable=true, options={"unsigned":true})
-     */
-    protected $team_id;
-
-    /**
      * @ORM\Column(name="`granted_by`", type="integer", options={"unsigned":true})
      */
     protected $granted_by;
@@ -87,12 +80,6 @@ class ComponentPermission extends AbstractEntity
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`")
      */
     protected $userRelatedByUserId;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="componentPermissions", cascade={"persist"})
-     * @ORM\JoinColumn(name="`team_id`", referencedColumnName="`id`")
-     */
-    protected $team;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="componentPermissionRelatedByGrantedBies", cascade={"persist"})

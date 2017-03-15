@@ -59,7 +59,7 @@ class Audit extends AbstractEntity
     protected $actual_value;
 
     /**
-     * @ORM\Column(name="`policy_value`", type="string", length=45, nullable=true)
+     * @ORM\Column(name="`policy_value`", type="text", nullable=true)
      */
     protected $policy_value;
 
