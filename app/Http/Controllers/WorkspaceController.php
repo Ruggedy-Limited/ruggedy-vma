@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Commands\CreateWorkspace;
 use App\Commands\CreateWorkspaceApp;
 use App\Commands\DeleteWorkspace;
+use App\Commands\DeleteWorkspaceApp;
 use App\Commands\EditWorkspace;
 use App\Commands\GetFile;
 use App\Commands\GetListOfScannerApps;
 use App\Commands\GetScannerApp;
+use App\Commands\GetVulnerability;
 use App\Commands\GetWorkspace;
 use App\Commands\GetWorkspaceApp;
 use App\Commands\UploadScanOutput;
@@ -227,10 +229,44 @@ class WorkspaceController extends AbstractController
         return $this->controllerResponseHelper($response, 'workspaces.app', ['workspaceApp' => $response]);
     }
 
-    public function appShowRecord()
+    /**
+     * Delete WorkspaceApp and all related data
+     *
+     * @GET("/workspace/app/delete/{workspaceId}/{workspaceAppId}", as="workspace.app.delete",
+     *     where={"workspaceId":"[0-9]+","workspaceAppId":"[0-9]+"})
+     *
+     * @param $workspaceAppId
+     * @param $workspaceId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function deleteWorkspaceApp($workspaceAppId, $workspaceId)
     {
-        //$command = new GetVulnernability();
-        return view ('workspaces.appShowRecord');
+        $command  = new DeleteWorkspaceApp($workspaceAppId, true);
+        $response = $this->sendCommandToBusHelper($command);
+
+        $this->addMessage("Workspace App deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
+        return $this->controllerResponseHelper($response, 'workspace.view', ['workspaceId' => $workspaceId], true);
+    }
+
+    /**
+     * Get a single Vulnerability record related to a specific file
+     *
+     * @GET("/file/vulnerability/{fileId}/{vulnerabilityID}", as="file.vulnerability.view",
+     *     where={"fileId":"[0-9]+","vulnerabilityId":"[0-9]+"})
+     *
+     * @param $fileId
+     * @param $vulnerabilityId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function appShowRecord($fileId, $vulnerabilityId)
+    {
+        $command  = new GetVulnerability($vulnerabilityId, $fileId);
+        $response = $this->sendCommandToBusHelper($command);
+        return $this->controllerResponseHelper(
+            $response,
+            'workspaces.appShowRecord',
+            ['vulnerability' => $response, 'assets' => $response->getAssets()]
+        );
     }
 
     /**
@@ -245,7 +281,11 @@ class WorkspaceController extends AbstractController
     {
         $command  = new GetFile($fileId);
         $response = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($response, 'workspaces.app-show', ['file' => $response]);
+        return $this->controllerResponseHelper(
+            $response,
+            'workspaces.app-show',
+            ['file' => $response, 'assets' => $response->getAssets()]
+        );
     }
 
     /**
@@ -286,7 +326,7 @@ class WorkspaceController extends AbstractController
         return $this->controllerResponseHelper(
             $response,
             'workspace.app.view',
-            ['workspaceApp' => $file->getWorkspaceApp()],
+            ['workspaceApp' => $file->getWorkspaceApp()->getId()],
             true
         );
     }

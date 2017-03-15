@@ -141,7 +141,7 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
 
         // Redirect when necessary
         if ($isRedirect) {
-            redirect()->route($viewOrRoute, $parameters);
+            return redirect()->route($viewOrRoute, $parameters);
         }
 
         // Return a view when necessary

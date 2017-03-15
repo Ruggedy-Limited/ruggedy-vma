@@ -38,7 +38,7 @@ class GetFile extends CommandHandler
         $requestingUser = $this->authenticate();
 
         /** @var File $file */
-        $file = $this->fileRepository->findOneForFileView($command->getId());
+        $file = $this->fileRepository->find($command->getId());
         if (empty($file)) {
             throw new FileNotFoundException("No file with the given ID was found.");
         }
@@ -48,7 +48,7 @@ class GetFile extends CommandHandler
         }
 
         $fileVulnerabilities = collect($file->getVulnerabilities()->toArray());
-        $file->getAssets()->map(function ($asset) use ($fileVulnerabilities) {
+        $file->getAssets()->forAll(function ($_, $asset) use ($fileVulnerabilities) {
             /** @var Asset $asset */
             collect($asset->getVulnerabilities()->toArray())
                 ->diff($fileVulnerabilities)
@@ -56,7 +56,7 @@ class GetFile extends CommandHandler
                     $asset->removeVulnerability($vulnerability);
                 });
 
-            return $asset;
+            return true;
         });
 
         return $file;
