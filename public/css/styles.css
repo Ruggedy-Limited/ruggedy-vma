@@ -1018,7 +1018,7 @@ div ul li label {
     margin: 15px 0 0 0;
 }
 
-.tabs li {
+.tabs > li {
     float: left;
     display: block;
 }
