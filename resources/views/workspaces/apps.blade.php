@@ -85,25 +85,25 @@
                     </div>
                     <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/nmap-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>NMAP Scanner</h4>
+                            <div class="card hovercard animated pulse-hover">
+                                <div class="cardheader c-white">
                                 </div>
-                                <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                    In hendrerit
-                                    lorem nisl,
-                                    ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                    est s,
-                                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                                <div class="avatar avatar-img">
+                                    <img src="/img/nexpose-logo.png">
+                                </div>
+                                <div class="info">
+                                    <div class="title h-3">
+                                        <h4>Nexpose Scanner</h4>
+                                    </div>
+                                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
+                                        In hendrerit
+                                        lorem nisl,
+                                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
+                                        est s,
+                                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         </a>
                     </div>
                     <div class="col-md-4 col-sm-6">
@@ -154,25 +154,25 @@
                     </div>
                     <div class="col-md-4 col-sm-6">
                         <a href="{{ route('workspaces.apps.create') }}">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/nexpose-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>Nexpose Scanner</h4>
+                            <div class="card hovercard animated pulse-hover">
+                                <div class="cardheader c-white">
                                 </div>
-                                <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                    In hendrerit
-                                    lorem nisl,
-                                    ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                    est s,
-                                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                                <div class="avatar avatar-img">
+                                    <img src="/img/nmap-logo.png">
+                                </div>
+                                <div class="info">
+                                    <div class="title h-3">
+                                        <h4>NMAP Scanner</h4>
+                                    </div>
+                                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
+                                        In hendrerit
+                                        lorem nisl,
+                                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
+                                        est s,
+                                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         </a>
                     </div>
                 </div>

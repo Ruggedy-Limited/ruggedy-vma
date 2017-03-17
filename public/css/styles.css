@@ -99,6 +99,14 @@ Start: Navbar
 ==========================================================================
 */
 
+.navbar-brand {
+    float: left;
+    height: 50px;
+    padding: 10px 15px;
+    font-size: 18px;
+    line-height: 20px;
+}
+
 .container-fluid {
     padding-right: 15px;
     padding-left: 15px;
@@ -226,7 +234,7 @@ Start: Navbar
 
 .sidebar-nav > .sidebar-brand {
     font-size: 18px;
-    line-height: 100px;
+    line-height: 90px;
     height: 100px;
     background-color: #23b7e5;
     color: #ffffff;
@@ -263,12 +271,10 @@ Start: Navbar
     }
 
     #page-content-wrapper {
-        position: relative;
         margin-right: 0;
     }
 
     #wrapper.toggled #page-content-wrapper {
-        position: relative;
         padding: 0;
     }
 }
@@ -588,8 +594,9 @@ Start: Cards
 }
 
 .avatar-img {
-    height: 80px;
+    resize: both;
     width: 200px;
+    height: 72px;
     background-color: #ffffff;
     display: inline-block;
     padding-top: 15px;
