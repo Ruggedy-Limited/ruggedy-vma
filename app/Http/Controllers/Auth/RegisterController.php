@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Entities\User as UserEntity;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Somnambulist\EntityValidation\Factories\EntityValidationFactory;
 
 class RegisterController extends Controller
 {
@@ -20,7 +24,7 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RedirectsUsers;
 
     /**
      * Where to redirect users after registration.
@@ -29,29 +33,79 @@ class RegisterController extends Controller
      */
     protected $redirectTo = '/home';
 
+    protected $validationFactory;
+
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param EntityValidationFactory $entityValidationFactory
      */
-    public function __construct()
+    public function __construct(EntityValidationFactory $entityValidationFactory)
     {
         $this->middleware('guest');
+        $this->validationFactory = $entityValidationFactory;
     }
 
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @return EntityValidationFactory
      */
-    protected function validator(array $data)
+    protected function validator()
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
-        ]);
+        return $this->validationFactory;
+    }
+
+    /**
+     * Show the application registration form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $user = new UserEntity();
+        $user->setFromArray($request->all());
+        $this->validator()->validate($user);
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
+    }
+
+    /**
+     * Get the guard to be used during registration.
+     *
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered(Request $request, $user)
+    {
+        //
     }
 
     /**

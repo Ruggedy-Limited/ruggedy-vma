@@ -1,7 +1,7 @@
 /node_modules
 /public/storage
 /public/vendor
-/storage/*.key
+storage/
 /vendor
 .idea
 .DS_Store
@@ -9,6 +9,10 @@
 Homestead.json
 Homestead.yaml
 .env
+.env.behat
 composer.phar
 .phpstorm.meta.php
 _ide_helper.php
+Homestead.yaml
+Homestead.json
+resources/views/vendor
