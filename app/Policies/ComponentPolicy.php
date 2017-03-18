@@ -49,7 +49,7 @@ class ComponentPolicy
             }
         );
 
-        if (empty($user->getTeam()) || $userHasPermission) {
+        if (!method_exists($user, 'getTeam') || empty($user->getTeam()) || $userHasPermission) {
             return $userHasPermission;
         }
 

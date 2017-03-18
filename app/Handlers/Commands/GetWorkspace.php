@@ -46,7 +46,7 @@ class GetWorkspace extends CommandHandler
 
         // Check that Workspace exists
         /** @var Workspace $workspace */
-        $workspace = $this->workspaceRepository->find($workspaceId);
+        $workspace = $this->workspaceRepository->findOneForWorkspaceView($workspaceId);
         if (empty($workspace)) {
             throw new WorkspaceNotFoundException("A Workspace with the given ID was not found");
         }

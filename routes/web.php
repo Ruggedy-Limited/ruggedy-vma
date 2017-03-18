@@ -23,14 +23,7 @@ Route::get('/settings/users/create', 'SettingsController@userCreate')->name('set
 Route::get('/settings/users/edit', 'SettingsController@userEdit')->name('settings.users.edit');
 Route::get('/settings/users/profile', 'SettingsController@userProfile')->name('settings.users.profile');
 
-Route::get('/workspaces/app', 'WorkspaceController@app')->name('workspaces.app');
-Route::get('/workspaces/app/show', 'WorkspaceController@appShow')->name('workspaces.appShow');
 Route::get('/workspaces/app/showRecord', 'WorkspaceController@appShowRecord')->name('workspaces.appShowRecord');
-Route::get('/workspaces/addFile', 'WorkspaceController@addFile')->name('workspaces.addFile');
-Route::get('/workspaces/apps', 'WorkspaceController@apps')->name('workspaces.apps');
-Route::get('/workspaces/apps/create', 'WorkspaceController@appsCreate')->name('workspaces.apps.create');
-Route::get('/workspaces/', 'WorkspaceController@index')->name('workspaces.index');
-Route::get('/workspaces/create', 'WorkspaceController@create')->name('workspaces.create');
 Route::get('/workspaces/ruggedyIndex', 'WorkspaceController@ruggedyIndex')->name('workspaces.ruggedyIndex');
 Route::get('/workspaces/ruggedyCreate', 'WorkspaceController@ruggedyCreate')->name('workspaces.ruggedyCreate');
 Route::get('/workspaces/ruggedyShow', 'WorkspaceController@ruggedyShow')->name('workspaces.ruggedyShow');

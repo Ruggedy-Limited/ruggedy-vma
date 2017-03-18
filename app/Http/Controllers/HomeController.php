@@ -2,20 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Commands\GetListOfWorkspaces;
 
-class HomeController extends Controller
+class HomeController extends AbstractController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Show the application dashboard.
      *
@@ -23,11 +13,33 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $command = new GetListOfWorkspaces(0);
+        $workspaces = $this->sendCommandToBusHelper($command);
+        return view('home', ['workspaces' => $workspaces]);
     }
 
     public function theme()
     {
         return view('theme');
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return array
+     */
+    protected function getValidationRules(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return array
+     */
+    protected function getValidationMessages(): array
+    {
+        return [];
     }
 }

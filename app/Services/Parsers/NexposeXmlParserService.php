@@ -465,8 +465,8 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
     private function getXmlTagReplacements(): array
     {
         return [
-            '<div class="container">',
-            '</div>',
+            '',
+            '',
             '<p>',
             '<p>',
             '</p>',

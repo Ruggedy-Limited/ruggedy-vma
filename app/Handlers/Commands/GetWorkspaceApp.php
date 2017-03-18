@@ -38,7 +38,7 @@ class GetWorkspaceApp extends CommandHandler
         $requestingUser = $this->authenticate();
 
         /** @var WorkspaceApp $workspaceApp */
-        $workspaceApp = $this->workspaceAppRepository->find($command->getId());
+        $workspaceApp = $this->workspaceAppRepository->findOneForWorkspaceAppView($command->getId());
         // Make sure the WorkspaceApp exists
         if (empty($workspaceApp)) {
             throw new WorkspaceAppNotFoundException("No WorkspaceApp with the given ID was found.");

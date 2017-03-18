@@ -37,144 +37,41 @@
                 <label for=tab1>XML Apps</label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-4 col-sm-6">
-                        <a href="{{ route('workspaces.apps.create') }}">
-                            <div class="card hovercard animated pulse-hover">
-                                <div class="cardheader c-white">
-                                </div>
-                                <div class="avatar avatar-img">
-                                    <img src="/img/ruggedy-logo.png">
-                                </div>
-                                <div class="info">
-                                    <div class="title h-3">
-                                        <h4>Ruggedy Security Review</h4>
-                                    </div>
-                                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                        In hendrerit
-                                        lorem nisl,
-                                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                        est s,
-                                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <a href="{{ route('workspaces.apps.create') }}">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/nessus-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>Nessus Scanner</h4>
-                                </div>
-                                <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                    In hendrerit
-                                    lorem nisl,
-                                    ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                    est s,
-                                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                                </div>
+                    @if (empty($scannerApps))
+                        <div class="container">
+                            <div class="col-xs-12">
+                                <p>
+                                    No apps were found in this context.<br>
+                                    This is unusual, so you should probably contact your support provider for help.
+                                </p>
                             </div>
                         </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <a href="{{ route('workspaces.apps.create') }}">
-                            <div class="card hovercard animated pulse-hover">
-                                <div class="cardheader c-white">
-                                </div>
-                                <div class="avatar avatar-img">
-                                    <img src="/img/nexpose-logo.png">
-                                </div>
-                                <div class="info">
-                                    <div class="title h-3">
-                                        <h4>Nexpose Scanner</h4>
+                    @else
+                        @foreach ($scannerApps as $scannerApp)
+                            <div class="col-md-4 col-sm-6">
+                                <a href="{{ route(
+                                    'workspace.app.create',
+                                    ['workspaceId' => $workspaceId, 'scannerAppId' => $scannerApp->getId()]
+                                ) }}">
+                                    <div class="card hovercard animated pulse-hover">
+                                        <div class="cardheader c-white">
+                                        </div>
+                                        <div class="avatar avatar-img">
+                                            <img src="{{ $scannerApp->getLogo() }}">
+                                        </div>
+                                        <div class="info">
+                                            <div class="title h-3">
+                                                <h4>{{ ucwords($scannerApp->getName()) }}</h4>
+                                            </div>
+                                            <div class="desc t-3">
+                                                {{ $scannerApp->getDescription() }}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                        In hendrerit
-                                        lorem nisl,
-                                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                        est s,
-                                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                                    </div>
-                                </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <a href="{{ route('workspaces.apps.create') }}">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/burp-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>Burp Scanner</h4>
-                                </div>
-                                <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                    In hendrerit
-                                    lorem nisl,
-                                    ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                    est s,
-                                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                                </div>
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <a href="{{ route('workspaces.apps.create') }}">
-                        <div class="card hovercard animated pulse-hover">
-                            <div class="cardheader c-white">
-                            </div>
-                            <div class="avatar avatar-img">
-                                <img src="/img/netsparker-logo.png">
-                            </div>
-                            <div class="info">
-                                <div class="title h-3">
-                                    <h4>Netsparker Scanner</h4>
-                                </div>
-                                <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                    In hendrerit
-                                    lorem nisl,
-                                    ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                    est s,
-                                    rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                                </div>
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4 col-sm-6">
-                        <a href="{{ route('workspaces.apps.create') }}">
-                            <div class="card hovercard animated pulse-hover">
-                                <div class="cardheader c-white">
-                                </div>
-                                <div class="avatar avatar-img">
-                                    <img src="/img/nmap-logo.png">
-                                </div>
-                                <div class="info">
-                                    <div class="title h-3">
-                                        <h4>NMAP Scanner</h4>
-                                    </div>
-                                    <div class="desc t-3">Pellentesque lacinia sagittis libero. Praesent vitae justo purus.
-                                        In hendrerit
-                                        lorem nisl,
-                                        ac lacinia urna aliquet non. Quisque nisi tellus, rhoncus quis est s, rhoncus quis
-                                        est s,
-                                        rhoncus quis est s, rhoncus quis est s, rhoncus quis est s, rhoncus quis est
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                        @endforeach
+                    @endif
                 </div>
             </li>
             <li>
@@ -202,5 +99,4 @@
         </ul>
         <br style=clear:both;>
     </div>
-
 @endsection
