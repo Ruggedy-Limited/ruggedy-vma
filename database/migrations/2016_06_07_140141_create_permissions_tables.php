@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS `component_permissions` (
   `instance_id` INT(10) UNSIGNED NOT NULL COMMENT 'The id of the instance of the relevant component',
   `permission` ENUM('r', 'rw') NOT NULL DEFAULT 'r' COMMENT '',
   `user_id` INT(10) UNSIGNED COMMENT '',
-  `team_id` INT(10) UNSIGNED COMMENT '',
   `granted_by` INT(10) UNSIGNED NOT NULL COMMENT '',
   `created_at` DATETIME NOT NULL COMMENT '',
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '',
@@ -51,11 +50,6 @@ CREATE TABLE IF NOT EXISTS `component_permissions` (
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `component_permissions_team_fk`
-    FOREIGN KEY (`team_id`)
-    REFERENCES `teams` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `component_permissions_user_granted_fk`
     FOREIGN KEY (`granted_by`)
     REFERENCES `users` (`id`)
@@ -67,9 +61,10 @@ COLLATE = utf8_general_ci;
 
 INSERT INTO `components` (`name`, `class_name`, `created_at`, `updated_at`) VALUES
 ('User Account', 'User', NOW(), NOW()),
-('Team', 'Team', NOW(), NOW()),
 ('Project', 'Project', NOW(), NOW()),
 ('Workspace', 'Workspace', NOW(), NOW()),
+('Workspace App', 'WorkspaceApp', NOW(), NOW()),
+('File', 'File', NOW(), NOW()),
 ('Asset', 'Asset', NOW(), NOW()),
 ('Scanner App', 'ScannerApp', NOW(), NOW()),
 ('Event', 'Event', NOW(), NOW()),

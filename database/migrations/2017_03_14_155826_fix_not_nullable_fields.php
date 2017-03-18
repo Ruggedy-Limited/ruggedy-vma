@@ -2,12 +2,8 @@
 
 use App\Utils\RawMigration;
 
-class ChangeVulnerabilityReferenceCodeTypeToVarchar extends RawMigration
+class FixNotNullableFields extends RawMigration
 {
-    /**
-     * @inheritdoc
-     * @return string
-     */
     public function getRawSqlMigration()
     {
         return <<<SQL
@@ -15,8 +11,11 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-ALTER TABLE `vulnerability_reference_codes` 
-CHANGE COLUMN `reference_type` `reference_type` VARCHAR(50) NOT NULL DEFAULT 'online_other' COMMENT '' ;
+ALTER TABLE `assets`
+  CHANGE `updated_at` `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '';
+  
+ALTER TABLE `open_ports`
+  CHANGE `number` `number` INT(6) NOT NULL COMMENT '';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

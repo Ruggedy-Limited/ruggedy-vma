@@ -112,21 +112,9 @@
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
-                            <span class="label label-danger t-s-10">High Risk</span>
-                            <h4 class="h-4-1">CVE-2014-6278 bash: code execution via specially crafted environment
-                                variables</h4>
-                            <p>GNU Bash through 4.3 bash43-026 does not properly parse function definitions in the
-                                values of
-                                environment variables, which allows remote attackers to execute arbitrary commands via a
-                                crafted
-                                environment, as demonstrated by vectors involving the ForceCommand feature in OpenSSH
-                                sshd, the
-                                mod_cgi and mod_cgid modules in the Apache HTTP Server, scripts executed by unspecified
-                                DHCP
-                                clients, and other situations in which setting the environment occurs across a privilege
-                                boundary from Bash execution. NOTE: this vulnerability exists because of an incomplete
-                                fix for
-                                CVE-2014-6271, CVE-2014-7169, and CVE-2014-6277.</p>
+                            <span class="label label-danger t-s-10">{{ $vulnerability->getSeverityText() }} Risk</span>
+                            <h4 class="h-4-1">{{ $vulnerability->getName() }}</h4>
+                            {!! $vulnerability->getDescription() !!}
                         </div>
                     </div>
                 </div>
@@ -137,54 +125,18 @@
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-12">
-                        <div class="list-content-card">
-                            <p>Use your operating system's package manager to upgrade GNU bash to the latest
-                                version.</p>
+                        <div class="content-card">
+                            {!! $vulnerability->getSolution() ?? '<p>No solution available at present.</p>' !!}
                         </div>
                     </div>
                 </div>
             </li>
             <li>
                 <input type=radio name=tabs id=tab3>
-                <label for=tab3>Vulnerable Assets <span class="badge c-purple">5</span></label>
+                <label for=tab3>Vulnerable Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-3 col-sm-4">
-                        <a href="#">
-                            <div class="list-content-card animated pulse-hover">
-                                <span class="label label-danger">12</span>
-                                <span class="label label-warning">24</span>
-                                <span class="label label-success">3</span>
-                                <span class="label label-info">10</span>
-                                <h4 class="h-4-1">Host Name</h4>
-                                <h5>IP Address</h5>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-4">
-                        <a href="#">
-                            <div class="list-content-card animated pulse-hover">
-                                <span class="label label-danger">12</span>
-                                <span class="label label-warning">24</span>
-                                <span class="label label-success">3</span>
-                                <span class="label label-info">10</span>
-                                <h4 class="h-4-1">Host Name</h4>
-                                <h5>IP Address</h5>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-4">
-                        <a href="#">
-                            <div class="list-content-card animated pulse-hover">
-                                <span class="label label-danger">12</span>
-                                <span class="label label-warning">24</span>
-                                <span class="label label-success">3</span>
-                                <span class="label label-info">10</span>
-                                <h4 class="h-4-1">Host Name</h4>
-                                <h5>IP Address</h5>
-                            </div>
-                        </a>
-                    </div>
+                    @include('partials.assets')
                 </div>
             </li>
             <li>
