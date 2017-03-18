@@ -6,8 +6,8 @@ use App\Contracts\SystemComponent;
 use App\Entities\Base\File;
 use App\Entities\Base\User;
 use App\Entities\Base\Vulnerability;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Illuminate\Support\Collection;
 
 /**
  * App\Entities\WorkspaceApp
@@ -72,5 +72,18 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     {
         $vulnerability->setWorkspaceApp($this);
         return parent::addVulnerability($vulnerability);
+    }
+
+    /**
+     * Get a unique list of Assets
+     *
+     * @return Collection
+     */
+    public function getAssets()
+    {
+        return collect($this->getVulnerabilities()->toArray())->flatMap(function ($vulnerability) {
+            /** @var \App\Entities\Vulnerability $vulnerability */
+            return $vulnerability->getAssets();
+        })->unique();
     }
 }

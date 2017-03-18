@@ -65,7 +65,7 @@ class WorkspaceApp extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="File", mappedBy="workspaceApp", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_apps_id`", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_app_id`", nullable=false, onDelete="CASCADE")
      */
     protected $files;
 

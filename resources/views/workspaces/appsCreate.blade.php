@@ -35,9 +35,16 @@
     <br>
     <div class="row">
         <div class="col-md-4 col-sm-4 animated fadeIn">
-            <h3>Add App to Workspace</h3>
+            <h3>
+                Add {{
+                    $scannerApp instanceof App\Entities\ScannerApp ? ucwords($scannerApp->getName()) : ''
+                }} App to Workspace
+            </h3>
+            <p><img src="{{ $scannerApp->getLogo() }}" class="img-secondary"></p>
             <br>
-            {!! Form::open(['url' => '/foo/bar']) !!}
+            {!! Form::open([
+                'url' => route('workspace.app.store',['workspaceId' => $workspaceId, 'scannerAppId' => $scannerAppId])
+            ]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}

@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\File
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_apps_fk_idx", columns={"`workspace_apps_id`"})})
+ * @ORM\Table(name="`files`", indexes={@ORM\Index(name="files_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="files_workspace_apps_fk_idx", columns={"`workspace_app_id`"})})
  */
 class File extends AbstractEntity
 {
@@ -17,18 +17,20 @@ class File extends AbstractEntity
     const TABLE_NAME = 'files';
 
     /** Column name constants */
-    const PATH              = 'path';
-    const FORMAT            = 'format';
-    const SIZE              = 'size';
-    const USER_ID           = 'user_id';
-    const WORKSPACE_APPS_ID = 'workspace_apps_id';
-    const PROCESSED         = 'processed';
-    const DELETED           = 'deleted';
-    const ASSETS            = 'assets';
-    const COMMENTS          = 'comments';
-    const JIRAISSUES        = 'jiraIssues';
-    const USER              = 'user';
-    const WORKSPACEAPP      = 'workspaceApp';
+    const NAME             = 'name';
+    const DESCRIPTION      = 'description';
+    const PATH             = 'path';
+    const FORMAT           = 'format';
+    const SIZE             = 'size';
+    const USER_ID          = 'user_id';
+    const WORKSPACE_APP_ID = 'workspace_app_id';
+    const PROCESSED        = 'processed';
+    const DELETED          = 'deleted';
+    const ASSETS           = 'assets';
+    const COMMENTS         = 'comments';
+    const JIRAISSUES       = 'jiraIssues';
+    const USER             = 'user';
+    const WORKSPACEAPP     = 'workspaceApp';
 
     /**
      * @ORM\Id
@@ -36,6 +38,16 @@ class File extends AbstractEntity
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\Column(name="`name`", type="string", length=255)
+     */
+    protected $name;
+
+    /**
+     * @ORM\Column(name="`description`", type="text", nullable=true)
+     */
+    protected $description;
 
     /**
      * @ORM\Column(name="`path`", type="string", length=255)
@@ -58,9 +70,9 @@ class File extends AbstractEntity
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`workspace_apps_id`", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="`workspace_app_id`", type="integer", options={"unsigned":true})
      */
-    protected $workspace_apps_id;
+    protected $workspace_app_id;
 
     /**
      * @ORM\Column(name="`processed`", type="boolean", options={"unsigned":true})
@@ -108,7 +120,7 @@ class File extends AbstractEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="WorkspaceApp", inversedBy="files", cascade={"persist"})
-     * @ORM\JoinColumn(name="`workspace_apps_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="`workspace_app_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
      */
     protected $workspaceApp;
 
@@ -140,6 +152,52 @@ class File extends AbstractEntity
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set the value of name.
+     *
+     * @param string $name
+     * @return \App\Entities\Base\File
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set the value of description.
+     *
+     * @param string $description
+     * @return \App\Entities\Base\File
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
@@ -235,26 +293,26 @@ class File extends AbstractEntity
     }
 
     /**
-     * Set the value of workspace_apps_id.
+     * Set the value of workspace_app_id.
      *
-     * @param integer $workspace_apps_id
+     * @param integer $workspace_app_id
      * @return \App\Entities\Base\File
      */
-    public function setWorkspaceAppsId($workspace_apps_id)
+    public function setWorkspaceAppId($workspace_app_id)
     {
-        $this->workspace_apps_id = $workspace_apps_id;
+        $this->workspace_app_id = $workspace_app_id;
 
         return $this;
     }
 
     /**
-     * Get the value of workspace_apps_id.
+     * Get the value of workspace_app_id.
      *
      * @return integer
      */
-    public function getWorkspaceAppsId()
+    public function getWorkspaceAppId()
     {
-        return $this->workspace_apps_id;
+        return $this->workspace_app_id;
     }
 
     /**
@@ -505,6 +563,6 @@ class File extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'path', 'format', 'size', 'user_id', 'workspace_apps_id', 'processed', 'deleted', 'created_at', 'updated_at');
+        return array('id', 'name', 'description', 'path', 'format', 'size', 'user_id', 'workspace_app_id', 'processed', 'deleted', 'created_at', 'updated_at');
     }
 }

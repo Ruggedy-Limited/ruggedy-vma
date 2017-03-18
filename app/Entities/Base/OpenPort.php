@@ -55,7 +55,7 @@ class OpenPort extends AbstractEntity
     protected $service_product;
 
     /**
-     * @ORM\Column(name="`service_extra_info`", type="string", length=255, nullable=true)
+     * @ORM\Column(name="`service_extra_info`", type="text", nullable=true)
      */
     protected $service_extra_info;
 

@@ -130,7 +130,7 @@ class Asset extends AbstractEntity
     protected $created_at;
 
     /**
-     * @ORM\Column(name="`updated_at`", type="datetime", nullable=true)
+     * @ORM\Column(name="`updated_at`", type="datetime")
      */
     protected $updated_at;
 
