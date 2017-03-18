@@ -35,13 +35,9 @@
     <br>
     <div class="row">
         <div class="col-md-4 col-sm-4 animated fadeIn">
-            <h3>Add a {{ ucwords($workspaceApp->getScannerApp()->getName()) }} File</h3>
+            <h3>Add Workspace</h3>
             <br>
-            {!! Form::open([
-                'url' => route('workspace.app.file.upload',
-                ['workspaceAppId' => $workspaceApp->getId()]),
-                'files' => 'true'
-            ]) !!}
+            {!! Form::open(['url' => route('workspaces.store')]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
@@ -49,10 +45,6 @@
             <div class="form-group">
                 {!! Form::label('description', 'Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
-            </div>
-            <div class="form-group">
-                {!! Form::label('file', 'Upload File', ['class' => '']) !!}
-                {!! Form::file('file') !!}
             </div>
             <button class="primary-btn" type="submit">Submit</button>
             {!! Form::close() !!}

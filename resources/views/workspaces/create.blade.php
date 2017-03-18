@@ -37,7 +37,7 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Add Workspace</h3>
             <br>
-            {!! Form::open(['url' => '/foo/bar']) !!}
+            {!! Form::open(['url' => route('workspace.store')]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}

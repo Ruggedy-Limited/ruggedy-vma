@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetFile as GetFileCommand;
+use App\Entities\Asset;
 use App\Entities\File;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\FileNotFoundException;
@@ -45,6 +46,18 @@ class GetFile extends CommandHandler
         if ($requestingUser->cannot(ComponentPolicy::ACTION_VIEW, $file->getWorkspaceApp()->getWorkspace())) {
             throw new ActionNotPermittedException("The requesting User is not permitted to view this file.");
         }
+
+        $fileVulnerabilities = collect($file->getVulnerabilities()->toArray());
+        $file->getAssets()->forAll(function ($_, $asset) use ($fileVulnerabilities) {
+            /** @var Asset $asset */
+            collect($asset->getVulnerabilities()->toArray())
+                ->diff($fileVulnerabilities)
+                ->each(function ($vulnerability) use ($asset) {
+                    $asset->removeVulnerability($vulnerability);
+                });
+
+            return true;
+        });
 
         return $file;
     }
