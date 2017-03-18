@@ -60,7 +60,7 @@ class Asset extends AbstractEntity
     protected $vendor;
 
     /**
-     * @ORM\Column(name="`ip_address_v4`", type="string", length=12, nullable=true)
+     * @ORM\Column(name="`ip_address_v4`", type="string", length=15, nullable=true)
      */
     protected $ip_address_v4;
 
