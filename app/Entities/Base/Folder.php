@@ -2,13 +2,17 @@
 
 namespace App\Entities\Base;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * App\Entities\Base\Folder
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`folders`", indexes={@ORM\Index(name="folder_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="folder_user_fk_idx", columns={"`user_id`"})})
+ * @ORM\Table(name="`folders`", indexes={
+ *     @ORM\Index(name="folder_workspace_fk_idx", columns={"`workspace_id`"}),
+ *     @ORM\Index(name="folder_user_fk_idx", columns={"`user_id`"})
+ * })
  */
 class Folder extends AbstractEntity
 {
@@ -16,12 +20,14 @@ class Folder extends AbstractEntity
     const TABLE_NAME = 'folders';
 
     /** Column name constants */
-    const NAME         = 'name';
-    const DESCRIPTION  = 'description';
-    const WORKSPACE_ID = 'workspace_id';
-    const USER_ID      = 'user_id';
-    const WORKSPACE    = 'workspace';
-    const USER         = 'user';
+    const NAME                   = 'name';
+    const DESCRIPTION            = 'description';
+    const WORKSPACE_ID           = 'workspace_id';
+    const FILE_ID                = 'file_id';
+    const USER_ID                = 'user_id';
+    const WORKSPACE              = 'workspace';
+    const USER                   = 'user';
+    const FOLDERSVULNERABILITIES = 'foldersVulnerabilities';
 
     /**
      * @ORM\Id
@@ -72,8 +78,14 @@ class Folder extends AbstractEntity
      */
     protected $user;
 
+    /**
+     * @@ORM\OneToMany(targetEntity="FoldersVulnerabilities", mappedBy="folder")
+     */
+    protected $foldersVulnerabilities;
+
     public function __construct()
     {
+        $this->foldersVulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -261,6 +273,27 @@ class Folder extends AbstractEntity
     }
 
     /**
+     * Add Folders Vulnerabilities Files relation
+     *
+     * @param FoldersVulnerabilities $foldersVulnerabilities
+     * @return $this
+     */
+    public function addFoldersVulnerabilities(FoldersVulnerabilities $foldersVulnerabilities)
+    {
+        $this->foldersVulnerabilities[] = $foldersVulnerabilities;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getFoldersVulnerabilities()
+    {
+        return $this->foldersVulnerabilities;
+    }
+
+    /**
      * Set User entity (many to one).
      *
      * @param \App\Entities\Base\User $user
@@ -285,6 +318,6 @@ class Folder extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'name', 'description', 'workspace_id', 'user_id', 'created_at', 'updated_at');
+        return array('id', 'name', 'description', 'workspace_id', 'file_id', 'user_id', 'created_at', 'updated_at');
     }
 }

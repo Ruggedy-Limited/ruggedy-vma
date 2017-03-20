@@ -17,20 +17,21 @@ class File extends AbstractEntity
     const TABLE_NAME = 'files';
 
     /** Column name constants */
-    const NAME             = 'name';
-    const DESCRIPTION      = 'description';
-    const PATH             = 'path';
-    const FORMAT           = 'format';
-    const SIZE             = 'size';
-    const USER_ID          = 'user_id';
-    const WORKSPACE_APP_ID = 'workspace_app_id';
-    const PROCESSED        = 'processed';
-    const DELETED          = 'deleted';
-    const ASSETS           = 'assets';
-    const COMMENTS         = 'comments';
-    const JIRAISSUES       = 'jiraIssues';
-    const USER             = 'user';
-    const WORKSPACEAPP     = 'workspaceApp';
+    const NAME                   = 'name';
+    const DESCRIPTION            = 'description';
+    const PATH                   = 'path';
+    const FORMAT                 = 'format';
+    const SIZE                   = 'size';
+    const USER_ID                = 'user_id';
+    const WORKSPACE_APP_ID       = 'workspace_app_id';
+    const PROCESSED              = 'processed';
+    const DELETED                = 'deleted';
+    const ASSETS                 = 'assets';
+    const COMMENTS               = 'comments';
+    const JIRAISSUES             = 'jiraIssues';
+    const USER                   = 'user';
+    const WORKSPACEAPP           = 'workspaceApp';
+    const FOLDERSVULNERABILITIES = 'foldersVulnerabilities';
 
     /**
      * @ORM\Id
@@ -124,11 +125,17 @@ class File extends AbstractEntity
      */
     protected $workspaceApp;
 
+    /**
+     * @ORM\OneToMany(targetEntity="FoldersVulnerabilities", mappedBy="file")
+     */
+    protected $foldersVulnerabilities;
+
     public function __construct()
     {
         $this->assets = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->jiraIssues = new ArrayCollection();
+        $this->foldersVulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -559,6 +566,27 @@ class File extends AbstractEntity
     public function getWorkspaceApp()
     {
         return $this->workspaceApp;
+    }
+
+    /**
+     * Add Folders Vulnerabilities Files relation
+     *
+     * @param FoldersVulnerabilities $foldersVulnerabilities
+     * @return $this
+     */
+    public function addFoldersVulnerabilities(FoldersVulnerabilities $foldersVulnerabilities)
+    {
+        $this->foldersVulnerabilities[] = $foldersVulnerabilities;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getFoldersVulnerabilities()
+    {
+        return $this->foldersVulnerabilities;
     }
 
     public function __sleep()
