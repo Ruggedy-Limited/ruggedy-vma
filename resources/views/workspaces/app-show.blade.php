@@ -26,7 +26,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
+                    <h4 class="modal-title">Help Title</h4>
                 </div>
                 <div class="modal-body">
                     <p>Help text goes here.</p>
@@ -39,37 +39,10 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerabilities <span class="badge c-purple">{{ $file->getVulnerabilities()->count() }}</span></label>
+                <label for=tab1>Vulnerabilities <span class="badge c-purple">{{ $vulnerabilities->count() }}</span></label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    @if ($file->getVulnerabilities()->isEmpty())
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="content-card">
-                                    <p>No Vulnerabilities here yet. The file is probably still in the queue for
-                                        processing.</p>
-                                    <p>If nothing appears within the next 20-30 minutes, something is probably wrong and
-                                        you should contact technical support.</p>
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        @foreach ($file->getVulnerabilities() as $vulnerability)
-                            <div class="col-md-12">
-                                <a href="{{ route('file.vulnerability.view', [
-                                    'fileId' => $file->getId(),
-                                    'vulnerabilityId' => $vulnerability->getId()
-                                ]) }}">
-                                    <div class="list-content-card">
-                                        <p><span class="label label-danger t-s-10">{{ $vulnerability->getSeverityText() }}</span>
-                                            <span class="badge c-purple">{{ $vulnerability->getAssets()->count() }}</span>
-                                            {{ $vulnerability->getName() }}
-                                        </p>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    @endif
+                    @include('partials.vulnerabilities')
                 </div>
             </li>
             <li>
