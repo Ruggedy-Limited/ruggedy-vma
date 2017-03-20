@@ -90,7 +90,7 @@ class Asset extends AbstractEntity
     protected $os_version;
 
     /**
-     * @ORM\Column(name="`netbios`", type="string", length=16, nullable=true)
+     * @ORM\Column(name="`netbios`", type="string", length=255, nullable=true)
      */
     protected $netbios;
 
