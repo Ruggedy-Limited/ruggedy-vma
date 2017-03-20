@@ -60,7 +60,7 @@ class Asset extends AbstractEntity
     protected $vendor;
 
     /**
-     * @ORM\Column(name="`ip_address_v4`", type="string", length=12, nullable=true)
+     * @ORM\Column(name="`ip_address_v4`", type="string", length=15, nullable=true)
      */
     protected $ip_address_v4;
 
@@ -90,7 +90,7 @@ class Asset extends AbstractEntity
     protected $os_version;
 
     /**
-     * @ORM\Column(name="`netbios`", type="string", length=16, nullable=true)
+     * @ORM\Column(name="`netbios`", type="string", length=255, nullable=true)
      */
     protected $netbios;
 

@@ -18,7 +18,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand">
-                Ruggedy
+                <img src="/img/logo-small.png" height="30">
             </li>
             <li>
                 <a href="{{ route('home') }}">
