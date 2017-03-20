@@ -40,7 +40,7 @@
         <div class="col-md-12">
             <a href="{{ route('workspace.apps', ['workspaceId' => $workspace->getId()]) }}"
                class="primary-btn" type="button">Add Application</a>
-            <a href="{{ route('folders.create', ['workspaceId' => $workspace->getId()]) }}"
+            <a href="{{ route('workspace.folder.create', ['workspaceId' => $workspace->getId()]) }}"
                class="primary-btn" type="button">Add Folder</a>
         </div>
     </div>

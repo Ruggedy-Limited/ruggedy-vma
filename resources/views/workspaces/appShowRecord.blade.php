@@ -87,7 +87,7 @@
                 <div class="modal-body">
                     {!! Form::open(['url' => '/foo/bar']) !!}
                         <div class="form-group col-md-12">
-                            {!! Form::select('folder', ['1' => 'Folder One', '2' => 'Folder Two']) !!}
+                            {!! Form::select('folder', $folders) !!}
                         </div>
                     <button class="primary-btn" type="submit">Submit</button>
                     {!! Form::close() !!}

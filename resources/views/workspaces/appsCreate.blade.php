@@ -36,10 +36,9 @@
     <div class="row">
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>
-                Add {{
-                    $scannerApp instanceof App\Entities\ScannerApp ? ucwords($scannerApp->getName()) : ''
-                }} App to Workspace
+                Add {{ ucwords($scannerApp->getName()) }} App to Workspace
             </h3>
+
             <p><img src="{{ $scannerApp->getLogo() }}" class="img-secondary"></p>
             <br>
             {!! Form::open([
