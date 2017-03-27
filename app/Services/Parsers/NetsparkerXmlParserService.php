@@ -142,6 +142,7 @@ class NetsparkerXmlParserService extends AbstractXmlParserService
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
+                        Vulnerability::FILE_ID         => null,
                     ],
                     Asset::class,
                 ]),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Commands\AddRemoveVulnerabilityToFromFolder;
 use App\Commands\CreateFolder;
 use App\Commands\DeleteFolder;
 use App\Commands\EditFolder;

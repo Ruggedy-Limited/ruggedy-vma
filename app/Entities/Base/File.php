@@ -27,11 +27,11 @@ class File extends AbstractEntity
     const PROCESSED              = 'processed';
     const DELETED                = 'deleted';
     const ASSETS                 = 'assets';
+    const VULNERABILITIES        = 'vulnerabilities';
     const COMMENTS               = 'comments';
     const JIRAISSUES             = 'jiraIssues';
     const USER                   = 'user';
     const WORKSPACEAPP           = 'workspaceApp';
-    const FOLDERSVULNERABILITIES = 'foldersVulnerabilities';
 
     /**
      * @ORM\Id
@@ -102,6 +102,12 @@ class File extends AbstractEntity
     protected $assets;
 
     /**
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="file", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
      */
@@ -125,17 +131,12 @@ class File extends AbstractEntity
      */
     protected $workspaceApp;
 
-    /**
-     * @ORM\OneToMany(targetEntity="FoldersVulnerabilities", mappedBy="file")
-     */
-    protected $foldersVulnerabilities;
-
     public function __construct()
     {
         $this->assets = new ArrayCollection();
+        $this->vulnerabilities = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->jiraIssues = new ArrayCollection();
-        $this->foldersVulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -451,6 +452,42 @@ class File extends AbstractEntity
     }
 
     /**
+     * Add Vulnerability entity to collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\File
+     */
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities[] = $vulnerability->setFile($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove Vulnerability entity from collection (one to many).
+     *
+     * @param \App\Entities\Base\Vulnerability $vulnerability
+     * @return \App\Entities\Base\File
+     */
+    public function removeVulnerability(Vulnerability $vulnerability)
+    {
+        $this->vulnerabilities->removeElement($vulnerability);
+
+        return $this;
+    }
+
+    /**
+     * Get Vulnerability entity collection (one to many).
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVulnerabilities()
+    {
+        return $this->vulnerabilities;
+    }
+
+    /**
      * Add Comment entity to collection (one to many).
      *
      * @param \App\Entities\Base\Comment $comment
@@ -566,27 +603,6 @@ class File extends AbstractEntity
     public function getWorkspaceApp()
     {
         return $this->workspaceApp;
-    }
-
-    /**
-     * Add Folders Vulnerabilities Files relation
-     *
-     * @param FoldersVulnerabilities $foldersVulnerabilities
-     * @return $this
-     */
-    public function addFoldersVulnerabilities(FoldersVulnerabilities $foldersVulnerabilities)
-    {
-        $this->foldersVulnerabilities[] = $foldersVulnerabilities;
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getFoldersVulnerabilities()
-    {
-        return $this->foldersVulnerabilities;
     }
 
     public function __sleep()

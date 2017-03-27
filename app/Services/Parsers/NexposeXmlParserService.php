@@ -40,6 +40,9 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
     /** @var Collection */
     protected $genericOutput;
 
+    /** @var Collection */
+    protected $assetsVulnerabilities;
+
     /**
      * NexposeXmlParserService constructor.
      *
@@ -318,7 +321,8 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                 ]),
             ]),
             'test'        => collect([
-                'storeTemporaryRawData' => collect(['id', 'genericOutput']),
+                'storeTemporaryRawData'   => collect(['id', 'genericOutput']),
+                'storeAssetVulnerability' => collect(['id']),
             ]),
             'vulnerability' => collect([
                 'initialiseNewEntity' => $vulnerabilityPreProcessing,
@@ -376,11 +380,13 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     'genericOutput',
                     'setGenericOutput'
                 ]),
+                'addRelatedAssetsToVulnerability',
                 'persistPopulatedEntity' => collect([
                     Vulnerability::class,
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
+                        Vulnerability::FILE_ID         => null,
                     ],
                     Asset::class,
                 ]),
@@ -413,7 +419,8 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             ]),
         ]);
 
-        $this->genericOutput = new Collection();
+        $this->genericOutput         = new Collection();
+        $this->assetsVulnerabilities = new Collection();
     }
 
     /**
@@ -518,6 +525,53 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
             $this->parser->getAttribute($attributeNameForKey),
             $this->formatXmlContentMeantForHtml($currentValueAtKey)
         );
+    }
+
+    /**
+     * Store a Collection of Assets related to a Vulnerability
+     *
+     * @param string $attributeNameForKey
+     */
+    protected function storeAssetVulnerability(string $attributeNameForKey)
+    {
+        $asset    = $this->entities->get(Asset::class);
+        $keyValue = $this->parser->getAttribute($attributeNameForKey);
+        if (!isset($asset, $keyValue) || !($asset instanceof Asset)) {
+            return;
+        }
+
+        if ($this->assetsVulnerabilities->get($keyValue, false) === false) {
+            $vulnerableAssets = collect([$asset->getId() => $asset]);
+            $this->assetsVulnerabilities->put($keyValue, $vulnerableAssets);
+
+            return;
+        }
+
+        $this->assetsVulnerabilities->get($keyValue)->put($asset->getId(), $asset);
+    }
+
+    /**
+     * Add all related Assets to the current Vulnerability
+     */
+    protected function addRelatedAssetsToVulnerability()
+    {
+        /** @var Vulnerability $vulnerability */
+        $vulnerability = $this->entities->get(Vulnerability::class);
+        if (!$this->isValidEntity($vulnerability, Vulnerability::class)) {
+            return;
+        }
+
+        if ($this->assetsVulnerabilities->isEmpty()
+            || $this->assetsVulnerabilities->get($vulnerability->getIdFromScanner())->isEmpty()) {
+            return;
+        }
+
+        $this->assetsVulnerabilities->get($vulnerability->getIdFromScanner())
+            ->each(function ($asset) use ($vulnerability) {
+                /** @var Asset $asset */
+                $asset->addVulnerability($vulnerability);
+                return true;
+            });
     }
 
     /**
