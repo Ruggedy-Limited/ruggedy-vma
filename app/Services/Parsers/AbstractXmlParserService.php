@@ -978,7 +978,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         if (!($this->$propertyName instanceof Collection)) {
             $this->logger->log(Logger::ERROR, "Invalid temporary storage property", [
                 'expectingClass' => Collection::class,
-                'gotClass'       => is_object($this->$propertyName) ? get_class($this->$propertyName) : 'Not an onject',
+                'gotClass'       => is_object($this->$propertyName) ? get_class($this->$propertyName) : 'Not an object',
             ]);
 
             return;
