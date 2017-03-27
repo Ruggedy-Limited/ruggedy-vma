@@ -296,30 +296,26 @@ class WorkspaceController extends AbstractController
     /**
      * Get a single Vulnerability record related to a specific file
      *
-     * @GET("/file/vulnerability/{fileId}/{vulnerabilityID}", as="file.vulnerability.view",
+     * @GET("/vulnerability/{vulnerabilityID}", as="vulnerability.view",
      *     where={"fileId":"[0-9]+","vulnerabilityId":"[0-9]+"})
      *
-     * @param $fileId
      * @param $vulnerabilityId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function appShowRecord($fileId, $vulnerabilityId)
+    public function appShowRecord($vulnerabilityId)
     {
-        $command  = new GetVulnerability(intval($vulnerabilityId), $fileId);
+        $command  = new GetVulnerability(intval($vulnerabilityId));
         $response = $this->sendCommandToBusHelper($command);
-
-        /** @var File $file */
-        $fileCommand = new GetFile($fileId);
-        $file        = $this->sendCommandToBusHelper($fileCommand);
 
         return $this->controllerResponseHelper(
             $response,
             'workspaces.appShowRecord',
             [
                 'vulnerability' => $response,
-                'folders' => $this->getFoldersForSelect($file->getWorkspaceApp()->getWorkspace()->getFolders()),
-                'assets' => $response->getAssets(),
-                'fileId' => $fileId
+                'folders'       => $this->getFoldersForSelect(
+                    $response->getFile()->getWorkspaceApp()->getWorkspace()->getFolders()
+                ),
+                'assets'        => $response->getAssets(),
             ]
         );
     }

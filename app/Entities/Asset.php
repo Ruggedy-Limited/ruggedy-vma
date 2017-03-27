@@ -373,16 +373,6 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     }
 
     /**
-     * Get a list of critical severity Vulnerabilities
-     *
-     * @return ArrayCollection|\Doctrine\Common\Collections\Collection
-     */
-    public function getCriticalSeverityVulnerabilities()
-    {
-        return $this->getVulnerabilitiesOfLevel(Vulnerability::SEVERITY_CRITICAL);
-    }
-
-    /**
      * @param string $level
      * @return ArrayCollection|\Doctrine\Common\Collections\Collection
      */
@@ -390,6 +380,11 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     {
         return $this->vulnerabilities->filter(function ($vulnerability) use ($level) {
             /** @var Vulnerability $vulnerability */
+            if ($level == Vulnerability::SEVERITY_HIGH) {
+                return $vulnerability->getSeverityText() === $level
+                    || $vulnerability->getSeverityText() === Vulnerability::SEVERITY_CRITICAL;
+            }
+
             return $vulnerability->getSeverityText() === $level;
         });
     }

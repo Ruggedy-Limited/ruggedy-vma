@@ -1,4 +1,4 @@
-@if ($vulnerabilities->isEmpty())
+@if (empty($vulnerabilities) || $vulnerabilities->isEmpty())
     <div class="row">
         <div class="col-xs-12">
             <div class="content-card">
@@ -11,18 +11,6 @@
     </div>
 @else
     @foreach ($vulnerabilities as $vulnerability)
-        <div class="col-md-12">
-            <a href="{{ route('file.vulnerability.view', [
-                                    'fileId' => $file->getId(),
-                                    'vulnerabilityId' => $vulnerability->getId()
-                                ]) }}">
-                <div class="list-content-card">
-                    <p><span class="label label-danger t-s-10">{{ $vulnerability->getSeverityText() }}</span>
-                        <span class="badge c-purple">{{ $vulnerability->getAssets()->count() }}</span>
-                        {{ $vulnerability->getName() }}
-                    </p>
-                </div>
-            </a>
-        </div>
+        @include('partials.vulnerability')
     @endforeach
 @endif
