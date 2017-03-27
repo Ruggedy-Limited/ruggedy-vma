@@ -51,7 +51,7 @@
                     </div>
                         <div class="form-group">
                             {!! Form::label('name', 'Password') !!}
-                            {!! Form::password('name', null, ['class' => 'black-form-control']) !!}
+                            {!! Form::password('name', ['class' => 'black-form-control']) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
