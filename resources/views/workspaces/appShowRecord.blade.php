@@ -116,7 +116,9 @@
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="list-content-card">
-                            <span class="label label-danger t-s-10">{{ $vulnerability->getSeverityText() }} Risk</span>
+                            <span class="label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
+                                {{ $vulnerability->getSeverityText() }} Risk
+                            </span>
                             <h4 class="h-4-1">{{ $vulnerability->getName() }}</h4>
                             {!! $vulnerability->getDescription() !!}
                         </div>
