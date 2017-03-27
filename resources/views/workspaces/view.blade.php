@@ -97,7 +97,7 @@
                     @else
                         @foreach ($workspace->getFolders() as $folder)
                             <div class="col-md-4 col-sm-6">
-                                <a href="{{ route('folders.index') }}">
+                                <a href="{{ route('workspace.folder.view', ['folderId' => $folder->getId()]) }}">
                                     <div class="card hovercard animated pulse-hover">
                                         <div class="cardheader c-white"></div>
                                         <div class="avatar avatar-white">

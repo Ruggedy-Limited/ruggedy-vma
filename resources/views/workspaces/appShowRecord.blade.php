@@ -85,11 +85,15 @@
                     <h4 class="modal-title">Add to Folder</h4>
                 </div>
                 <div class="modal-body">
-                    {!! Form::open(['url' => '/foo/bar']) !!}
+                    {!! Form::open([
+                        'url' => route('vulnerability.folder.add', [
+                            'vulnerabilityId' => $vulnerability->getId()
+                        ])
+                    ]) !!}
                         <div class="form-group col-md-12">
-                            {!! Form::select('folder', $folders) !!}
+                            {!! Form::select('folder-id', $folders) !!}
                         </div>
-                    <button class="primary-btn" type="submit">Submit</button>
+                        <button class="primary-btn" type="submit">Add to Folder</button>
                     {!! Form::close() !!}
                 </div>
             </div>

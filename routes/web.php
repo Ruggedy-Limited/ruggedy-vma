@@ -27,7 +27,3 @@ Route::get('/workspaces/app/showRecord', 'WorkspaceController@appShowRecord')->n
 Route::get('/workspaces/ruggedyIndex', 'WorkspaceController@ruggedyIndex')->name('workspaces.ruggedyIndex');
 Route::get('/workspaces/ruggedyCreate', 'WorkspaceController@ruggedyCreate')->name('workspaces.ruggedyCreate');
 Route::get('/workspaces/ruggedyShow', 'WorkspaceController@ruggedyShow')->name('workspaces.ruggedyShow');
-
-Route::get('/folders/index', 'FolderController@index')->name('folders.index');
-Route::get('/folders/create', 'FolderController@create')->name('folders.create');
-Route::get('/folders/show', 'FolderController@show')->name('folders.show');
