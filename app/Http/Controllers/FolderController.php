@@ -74,13 +74,16 @@ class FolderController extends AbstractController
         $command  = new GetFolder(intval($folderId));
         $response = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'folders.show', ['folder' => $response]);
+        return $this->controllerResponseHelper($response, 'folders.index', [
+            'folder'          => $response,
+            'vulnerabilities' => $response->getVulnerabilities(),
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @GET("/workspace/folder/{folderId}", as="workspace.folder.view", where={"folderId":"[0-9]+"})
+     * @GET("/workspace/folder/edit/{folderId}", as="workspace.folder.edit", where={"folderId":"[0-9]+"})
      *
      * @param $folderId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -96,7 +99,7 @@ class FolderController extends AbstractController
     /**
      * Update the specified resource in storage.
      *
-     * @POST("/workspace/folder/update/{folderId}", as="workspace.folder.view", where={"folderId":"[0-9]+"})
+     * @POST("/workspace/folder/update/{folderId}", as="workspace.folder.update", where={"folderId":"[0-9]+"})
      *
      * @param  int  $folderId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -131,6 +134,30 @@ class FolderController extends AbstractController
     }
 
     /**
+     * Add a Vulnerability referenced in a particular File to a Folder
+     *
+     * @POST("/vulnerability/folder/add/{vulnerabilityId}", as="vulnerability.folder.add",
+     *     where={"vulnerabilityId":"[0-9]+","folderId":"[0-9]+"})
+     *
+     * @param $vulnerabilityId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function addVulnerabilityToFolder($vulnerabilityId)
+    {
+        $folderId = $this->request->get('folder-id', 0);
+        $command  = new AddRemoveVulnerabilityToFromFolder(intval($folderId), intval($vulnerabilityId));
+        $response = $this->sendCommandToBusHelper($command);
+
+        $this->addMessage("Vulnerability successfully added to folder.", AbstractController::MESSAGE_TYPE_SUCCESS);
+        return $this->controllerResponseHelper(
+            $response,
+            'vulnerability.view',
+            ['vulnerabilityId' => $vulnerabilityId],
+            true
+        );
+    }
+
+    /**
      * @inheritdoc
      *
      * @return array
@@ -140,6 +167,7 @@ class FolderController extends AbstractController
         return [
             Folder::NAME        => 'bail|filled',
             Folder::DESCRIPTION => 'bail|filled',
+            'folder-id'         => 'bail|filled|int',
         ];
     }
 
@@ -153,6 +181,7 @@ class FolderController extends AbstractController
         return [
             Folder::NAME        => 'You must enter a name for the folder.',
             Folder::DESCRIPTION => 'You must enter a description for the folder.',
+            'folder-id'         => 'You must select which Folder to add the Vulnerability to.',
         ];
     }
 }
