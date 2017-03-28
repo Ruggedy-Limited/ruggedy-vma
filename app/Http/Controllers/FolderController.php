@@ -16,16 +16,6 @@ use Illuminate\Http\Request;
 class FolderController extends AbstractController
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return view('folders.index');
-    }
-
-    /**
      * Show the form for creating a folder.
      *
      * @GET("/workspace/folder/create/{workspaceId}", as="workspace.folder.create", where={"workspaceId":"[0-9]+"})
@@ -134,7 +124,7 @@ class FolderController extends AbstractController
     }
 
     /**
-     * Add a Vulnerability referenced in a particular File to a Folder
+     * Add a Vulnerability to a Folder
      *
      * @POST("/vulnerability/folder/add/{vulnerabilityId}", as="vulnerability.folder.add",
      *     where={"vulnerabilityId":"[0-9]+","folderId":"[0-9]+"})
@@ -155,6 +145,27 @@ class FolderController extends AbstractController
             ['vulnerabilityId' => $vulnerabilityId],
             true
         );
+    }
+
+    /**
+     * Remove a Vulnerability from a Folder
+     *
+     * @GET("/vulnerability/folder/remove/{vulnerabilityId}/{folderId}", as="vulnerability.folder.remove",
+     *     where={"vulnerabilityId":"[0-9]+","folderId":"[0-9]+"})
+     *
+     * @param $vulnerabilityId
+     * @param $folderId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function removeVulnerabilityToFolder($vulnerabilityId, $folderId)
+    {
+        $command  = new AddRemoveVulnerabilityToFromFolder(intval($folderId), intval($vulnerabilityId), true);
+        $response = $this->sendCommandToBusHelper($command);
+
+        $this->addMessage("Vulnerability successfully removed from folder.", AbstractController::MESSAGE_TYPE_SUCCESS);
+        return $this->controllerResponseHelper($response, 'workspace.folder.view', [
+            'folderId' => $folderId,
+        ], true);
     }
 
     /**
