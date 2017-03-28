@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Commands\CreateUser;
+use App\Commands\GetAllUsers;
+use App\Entities\User;
 use Illuminate\Http\Request;
 
-class SettingsController extends Controller
+/**
+ * @Middleware("web")
+ */
+class SettingsController extends AbstractController
 {
-
     /**
-     * Create a new controller instance.
+     * Display a listing of all Users in the system
      *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
-     * Display a listing of the resource.
+     * @GET("/settings", as="settings.view")
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function index()
     {
-        return view ('settings.index');
+        $command = new GetAllUsers(0);
+        $users   = $this->sendCommandToBusHelper($command);
+        return $this->controllerResponseHelper($users, 'settings.index', ['users' => $users]);
     }
 
     /**

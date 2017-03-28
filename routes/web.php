@@ -18,7 +18,6 @@ Route::get('/theme', 'HomeController@theme'); //Temporary route to theme.
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index');
 
-Route::get('/settings/', 'SettingsController@index')->name('settings.index');
 Route::get('/settings/users/create', 'SettingsController@userCreate')->name('settings.users.create');
 Route::get('/settings/users/edit', 'SettingsController@userEdit')->name('settings.users.edit');
 Route::get('/settings/users/profile', 'SettingsController@userProfile')->name('settings.users.profile');

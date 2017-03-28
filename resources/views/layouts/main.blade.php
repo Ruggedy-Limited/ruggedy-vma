@@ -30,7 +30,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('settings.index') }}">
+                <a href="{{ route('settings.view') }}">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
                         <p class="nav-btn-text">Settings</p>
