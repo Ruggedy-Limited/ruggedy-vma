@@ -40,20 +40,25 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Edit User</h3>
             <br>
-            {!! Form::open(['url' => '/foo/bar']) !!}
+            {!! Form::open(['url' => route('settings.user.update', ['userId' => $user->getId()])]) !!}
+            {{ csrf_field() }}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
-                {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
+                {!! Form::text('name', $user->getName(), ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group">
                 {!! Form::label('email', 'Email') !!}
-                {!! Form::email('email', null, ['class' => 'black-form-control']) !!}
+                {!! Form::email('email', $user->getEmail(), ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group">
                 {!! Form::label('password', 'Password') !!}
-                {!! Form::password('password', null, ['class' => 'black-form-control']) !!}
+                {!! Form::password('password', ['class' => 'black-form-control']) !!}
             </div>
-            <button class="primary-btn" type="submit">Submit</button>
+            <div class="form-group">
+                {!! Form::label('password-confirm', 'Confirm Password') !!}
+                {!! Form::password('password-confirm', ['class' => 'black-form-control']) !!}
+            </div>
+            <button class="primary-btn" type="submit">Save Changes</button>
             {!! Form::close() !!}
         </div>
         <div class="col-md-2"></div>
