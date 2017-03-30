@@ -16,9 +16,9 @@ class UserRules extends AbstractEntityRules
     protected function buildRules($entity)
     {
         return [
-            'name'     => 'required|min:1',
-            'email'    => 'required|email|unique:'. User::class .',email,' . ($entity->getId() ?: 'null'),
-            'username' => 'required|alphanum|unique:' . User::class . ',username,' . ($entity->getId() ?: 'null'),
+            'name'     => 'bail|required|min:1',
+            'email'    => 'bail|required|email|unique:'. User::class .',email',
+            'password' => 'required|min:8',
         ];
     }
 
