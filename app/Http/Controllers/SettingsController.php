@@ -7,6 +7,7 @@ use App\Commands\EditUserAccount;
 use App\Commands\GetAllUsers;
 use App\Commands\GetUser;
 use App\Entities\User;
+use App\Http\Responses\ErrorResponse;
 use App\Services\JsonLogService;
 use Auth;
 use Illuminate\Auth\Events\Registered;
@@ -80,11 +81,11 @@ class SettingsController extends AbstractController
         $user = new User();
         $user->setFromArray($this->request->all());
         if ($this->validator()->validate($user) === false) {
-            $this->addMessage(
-                $this->validator()->getValidatorFor($user)->messages()->first(),
-                parent::MESSAGE_TYPE_ERROR
+            $response = new ErrorResponse(
+                $this->validator()->getValidatorFor($user)->messages()->first()
             );
-            return $this->controllerResponseHelper(null,'settings.user.edit', ['userId' => $id], true);
+
+            return $this->controllerResponseHelper($response,'settings.user.create', [],true);
         }
 
         event(new Registered($user));
@@ -190,8 +191,6 @@ class SettingsController extends AbstractController
     {
         return $this->validator;
     }
-
-    portected
 
     /**
      * @inheritdoc
