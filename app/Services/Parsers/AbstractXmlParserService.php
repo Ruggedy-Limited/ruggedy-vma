@@ -1391,6 +1391,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
+        $value = utf8_encode($value);
+
         // When the append flag is not set, set the heading and node contents
         if (!$append) {
             $entity->$setter($heading . $value);
