@@ -26,12 +26,14 @@ class ParseFile extends CommandHandler implements CustomLogging
         $this->logger = $logger;
     }
 
-    /**
-     * Handle the ParseFileCommand
-     *
-     * @param ParseFileCommand $command
-     * @return bool
-     */
+	/**
+	 * Handle the ParseFileCommand
+	 *
+	 * @param ParseFileCommand $command
+	 *
+	 * @return bool
+	 * @throws FileNotFoundException
+	 */
     public function handle(ParseFileCommand $command)
     {
         $file = $command->getFile();
@@ -46,10 +48,10 @@ class ParseFile extends CommandHandler implements CustomLogging
         } catch (FileNotFoundException $e) {
             $this->logger->log(Logger::ERROR, 'Could not find file to process', [
                 'filePath'    => $file->getPath(),
-                'scannerName' => $file->getScannerApp()->getName(),
+                'scannerName' => $file->getWorkspaceApp()->getScannerApp()->getName(),
             ]);
 
-            return false;
+            throw $e;
         }
 
         return true;
