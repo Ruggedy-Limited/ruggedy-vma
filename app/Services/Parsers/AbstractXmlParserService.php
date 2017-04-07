@@ -532,9 +532,18 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function moveFileToProcessed(File $file)
     {
         // Empty or non-existent file
-        if (empty($file) || !$this->fileSystem->exists($file->getPath())) {
+        if (empty($file)) {
             return false;
         }
+
+	    // Mark the file as processed and persist to the DB
+	    $file->setProcessed(true);
+	    $this->em->persist($file);
+	    $this->em->flush($file);
+
+	    if (!$this->fileSystem->exists($file->getPath())) {
+	    	return true;
+	    }
 
         // Get the path where processed files should be moved to
         $processedFilePath = str_replace('scans/', 'scans/processed/', $file->getPath());
@@ -565,11 +574,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             ]);
             return false;
         }
-
-        // Mark the file as processed and persist to the DB
-        $file->setProcessed(true);
-        $this->em->persist($file);
-        $this->em->flush($file);
 
         return true;
     }
