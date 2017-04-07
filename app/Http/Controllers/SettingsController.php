@@ -203,7 +203,7 @@ class SettingsController extends AbstractController
             User::NAME         => 'bail|filled',
             User::EMAIL        => 'bail|filled|email',
             User::PASSWORD     => 'bail|present',
-            'password-confirm' => 'bail|present|same:password',
+            'password-confirm' => 'bail|required_with:' . User::PASSWORD . '|same:' . User::PASSWORD,
         ];
     }
 
