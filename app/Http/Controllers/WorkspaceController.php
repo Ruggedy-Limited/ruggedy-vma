@@ -316,6 +316,7 @@ class WorkspaceController extends AbstractController
                     $response->getFile()->getWorkspaceApp()->getWorkspace()->getFolders()
                 ),
                 'assets'        => $response->getAssets(),
+                'comments'      => $response->getComments(),
             ]
         );
     }

@@ -33,15 +33,14 @@ class GetComments extends CommandHandler
      */
     public function handle(GetCommentsCommand $command)
     {
-        $fileId          = $command->getId();
-        $vulnerabilityId = $command->getVulnerabilityId();
-        if (!isset($fileId, $vulnerabilityId)) {
+        $vulnerabilityId = $command->getId();
+        if (!isset($vulnerabilityId)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
         /** @var array $comments */
         $comments = $this->commentRepository->findBy([
-            Comment::FILE_ID => $fileId, Comment::VULNERABILITY_ID => $vulnerabilityId
+            Comment::VULNERABILITY_ID => $vulnerabilityId
         ]);
 
         return $comments;

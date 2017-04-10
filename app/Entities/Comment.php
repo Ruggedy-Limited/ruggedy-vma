@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use App\Contracts\SystemComponent;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +26,11 @@ class Comment extends Base\Comment implements SystemComponent
      */
     public function getParent()
     {
-        return $this->file;
+        return $this->vulnerability->getFile();
+    }
+
+    public function getTimeSinceComment()
+    {
+    	return Carbon::instance($this->created_at)->diffForHumans();
     }
 }
