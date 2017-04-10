@@ -24,6 +24,6 @@
     "jquery-mask-plugin": "igorescobar/jQuery-Mask-Plugin#^1.14.0",
     "sweetalert2": "^5.0.7",
     "font-awesome": "^4.7.0",
-    "ckeditor": "4"
+    "ckeditor": "full/4.6.2"
   }
 }

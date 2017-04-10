@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('/css/styles.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
     <script src="{{ asset('/vendor/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
 </head>
 
 <body>
@@ -90,8 +91,6 @@
         </div>
     </div>
 </div>
-
-    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
     <script src="{{ asset('/vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
 </body>
