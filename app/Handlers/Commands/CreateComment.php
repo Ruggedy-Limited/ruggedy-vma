@@ -69,7 +69,7 @@ class CreateComment extends CommandHandler
         $vulnerabilityId = $command->getId();
         $comment         = $command->getEntity();
         // Check that all the required fields were set on the command
-        if (!isset($fileId, $comment)) {
+        if (!isset($vulnerabilityId, $comment)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
@@ -81,7 +81,7 @@ class CreateComment extends CommandHandler
         }
 
         // Make sure the User has permission to create a Comment
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $file)) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $vulnerability->getFile())) {
             throw new ActionNotPermittedException(
                 "The requesting User does not have permission to create new Comments"
             );

@@ -2,20 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Commands\CreateComment;
 use App\Commands\CreateWorkspace;
 use App\Commands\CreateWorkspaceApp;
+use App\Commands\DeleteComment;
 use App\Commands\DeleteWorkspace;
 use App\Commands\DeleteWorkspaceApp;
+use App\Commands\EditComment;
 use App\Commands\EditFile;
 use App\Commands\EditWorkspace;
 use App\Commands\EditWorkspaceApp;
 use App\Commands\GetFile;
 use App\Commands\GetListOfScannerApps;
+use App\Commands\GetNewComments;
 use App\Commands\GetScannerApp;
 use App\Commands\GetVulnerability;
 use App\Commands\GetWorkspace;
 use App\Commands\GetWorkspaceApp;
 use App\Commands\UploadScanOutput;
+use App\Entities\Comment;
 use App\Entities\File;
 use App\Entities\Folder;
 use App\Entities\Workspace;
@@ -296,8 +301,7 @@ class WorkspaceController extends AbstractController
     /**
      * Get a single Vulnerability record related to a specific file
      *
-     * @GET("/vulnerability/{vulnerabilityID}", as="vulnerability.view",
-     *     where={"fileId":"[0-9]+","vulnerabilityId":"[0-9]+"})
+     * @GET("/vulnerability/{vulnerabilityID}", as="vulnerability.view", where={"vulnerabilityId":"[0-9]+"})
      *
      * @param $vulnerabilityId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -420,6 +424,85 @@ class WorkspaceController extends AbstractController
         $response = $this->sendCommandToBusHelper($command);
 
         return $this->controllerResponseHelper($response, 'workspace.app.file.view', ['fileId' => $fileId], true);
+    }
+
+	/**
+	 * Create a new comment
+	 *
+	 * @POST("/comment/create/{vulnerabilityId}", as="comment.create", where={"vulnerabilityId":"[0-9]+"})
+	 *
+	 * @param $vulnerabilityId
+	 *
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+	 */
+    public function createComment($vulnerabilityId)
+    {
+    	$comment = new Comment();
+    	$comment->setContent($this->request->get('comment'));
+
+    	$command = new CreateComment(intval($vulnerabilityId), $comment);
+    	$comment = $this->sendCommandToBusHelper($command);
+
+    	$this->addMessage("A new comment was posted successfully.", parent::MESSAGE_TYPE_SUCCESS);
+    	return $this->controllerResponseHelper(
+    		$comment,
+			'vulnerability.view',
+		    ['vulnerabilityId' => $vulnerabilityId],
+		    true
+	    );
+    }
+
+	/**
+	 * Edit an existing comment
+	 *
+	 * @POST("/comment/edit/{commentId}", as="comment.edit", where={"commentId":"[0-9]+"})
+	 *
+	 * @param $commentId
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+	 */
+    public function editComment($commentId)
+    {
+    	$command = new EditComment(intval($commentId), [
+    		Comment::CONTENT => $this->request->get('comment-' . $commentId)
+	    ]);
+
+    	$comment = $this->sendCommandToBusHelper($command);
+    	$this->addMessage("Comment updated successfully.", parent::MESSAGE_TYPE_SUCCESS);
+    	return $this->controllerResponseHelper($comment, '', [], true);
+    }
+
+	/**
+	 * Delete an existing comment
+	 *
+	 * @GET("/comment/delete/{commentId}", as="comment.remove", where={"commentId":"[0-9]+"})
+	 *
+	 * @param $commentId
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+	 */
+    public function deleteComment($commentId)
+    {
+    	$command = new DeleteComment($commentId, true);
+    	$comment = $this->sendCommandToBusHelper($command);
+    	$this->addMessage("Comment deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
+    	return $this->controllerResponseHelper($comment, '', [], true);
+    }
+
+    /**
+     * Get new comments
+     *
+     * @POST("/comments/updated/{vulnerabilityId}", as="comments.get.updated", where={"vulnerabilityId":"[0-9]+"})
+     *
+     * @param $vulnerabilityId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function getNewComments($vulnerabilityId)
+    {
+        $command = new GetNewComments(
+            $vulnerabilityId,
+            $this->request->get('newer-than', '0000-00-00 00:00:00')
+        );
+        $comments = $this->sendCommandToBusHelper($command);
+        return $this->controllerResponseHelper($comments, '', [], false, true);
     }
 
     public function ruggedyIndex() {

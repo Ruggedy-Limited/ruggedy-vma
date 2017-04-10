@@ -1142,6 +1142,10 @@ Start: Comments
     color: #777777;
 }
 
+.comment-editor {
+    display: none;
+}
+
 .panel .slidedown .glyphicon, .chat .glyphicon {
     margin-right: 5px;
 }

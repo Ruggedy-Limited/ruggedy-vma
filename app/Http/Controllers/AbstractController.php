@@ -108,17 +108,19 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
         }
     }
 
-    /**
-     * Abstract the creation of a Controller response to avoid a lot of duplication
-     *
-     * @param $response
-     * @param string $viewOrRoute
-     * @param array $parameters
-     * @param bool $isRedirect
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
+	/**
+	 * Abstract the creation of a Controller response to avoid a lot of duplication
+	 *
+	 * @param $response
+	 * @param string $viewOrRoute
+	 * @param array $parameters
+	 * @param bool $isRedirect
+	 * @param bool $isJson
+	 *
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+	 */
     protected function controllerResponseHelper(
-        $response, string $viewOrRoute, array $parameters = [], bool $isRedirect = false
+        $response, string $viewOrRoute, array $parameters = [], bool $isRedirect = false, $isJson = false
     )
     {
         // Handle error responses from the bus
@@ -139,7 +141,16 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
             });
         }
 
-        // Redirect when necessary
+        if ($isJson) {
+        	return response()->json($response);
+        }
+
+        // Redirect back when necessary
+	    if ($isRedirect && empty($viewOrRoute)) {
+        	return redirect()->back();
+	    }
+
+	    // Redirect when necessary
         if ($isRedirect) {
             return redirect()->route($viewOrRoute, $parameters);
         }
