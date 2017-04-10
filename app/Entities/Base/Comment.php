@@ -2,13 +2,14 @@
 
 namespace App\Entities\Base;
 
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * App\Entities\Base\Comment
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`comments`", indexes={@ORM\Index(name="comments_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="comments_vulnerability_fk_idx", columns={"`vulnerability_id`"}), @ORM\Index(name="comments_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`comments`", indexes={@ORM\Index(name="comments_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="comments_vulnerability_fk_idx", columns={"`vulnerability_id`"})})
  */
 class Comment extends AbstractEntity
 {
@@ -19,10 +20,8 @@ class Comment extends AbstractEntity
     const CONTENT          = 'content';
     const STATUS           = 'status';
     const USER_ID          = 'user_id';
-    const FILE_ID          = 'file_id';
     const VULNERABILITY_ID = 'vulnerability_id';
     const USER             = 'user';
-    const FILE             = 'file';
     const VULNERABILITY    = 'vulnerability';
 
     /**
@@ -48,11 +47,6 @@ class Comment extends AbstractEntity
     protected $user_id;
 
     /**
-     * @ORM\Column(name="`file_id`", type="integer", options={"unsigned":true})
-     */
-    protected $file_id;
-
-    /**
      * @ORM\Column(name="`vulnerability_id`", type="integer", nullable=true, options={"unsigned":true})
      */
     protected $vulnerability_id;
@@ -72,12 +66,6 @@ class Comment extends AbstractEntity
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $user;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="File", inversedBy="comments", cascade={"persist"})
-     * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
-     */
-    protected $file;
 
     /**
      * @ORM\ManyToOne(targetEntity="Vulnerability", inversedBy="comments", cascade={"persist"})
@@ -182,29 +170,6 @@ class Comment extends AbstractEntity
     }
 
     /**
-     * Set the value of file_id.
-     *
-     * @param integer $file_id
-     * @return \App\Entities\Base\Comment
-     */
-    public function setFileId($file_id)
-    {
-        $this->file_id = $file_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of file_id.
-     *
-     * @return integer
-     */
-    public function getFileId()
-    {
-        return $this->file_id;
-    }
-
-    /**
      * Set the value of vulnerability_id.
      *
      * @param integer $vulnerability_id
@@ -297,29 +262,6 @@ class Comment extends AbstractEntity
     }
 
     /**
-     * Set File entity (many to one).
-     *
-     * @param \App\Entities\Base\File $file
-     * @return \App\Entities\Base\Comment
-     */
-    public function setFile(File $file = null)
-    {
-        $this->file = $file;
-
-        return $this;
-    }
-
-    /**
-     * Get File entity (many to one).
-     *
-     * @return \App\Entities\Base\File
-     */
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    /**
      * Set Vulnerability entity (many to one).
      *
      * @param \App\Entities\Base\Vulnerability $vulnerability
@@ -344,6 +286,6 @@ class Comment extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'content', 'status', 'user_id', 'file_id', 'vulnerability_id', 'created_at', 'updated_at');
+        return array('id', 'content', 'status', 'user_id', 'vulnerability_id', 'created_at', 'updated_at');
     }
 }
