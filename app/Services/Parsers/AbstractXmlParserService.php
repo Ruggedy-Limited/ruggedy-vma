@@ -1389,18 +1389,13 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
-        // Check if we need to decode a base64 encoded string
-        $value = $this->parser->value;
-        if ($isBase64) {
-            $value = base64_decode($this->parser->value);
-        }
+        // Check if we need to base64 encode the raw request or response string
+        $value = $this->encodeRawHttpRequestOrResponse($setter, $isBase64, $this->parser->value);
 
         // If we have an empty value then exit early
         if (empty($value)) {
             return;
         }
-
-        $value = utf8_encode($value);
 
         // When the append flag is not set, set the heading and node contents
         if (!$append) {
@@ -1421,6 +1416,24 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function checkForBase64Encoding(): bool
     {
         return $this->parser->getAttribute('base64') === 'true';
+    }
+
+    /**
+     * Ensure Base64 encoding and set the raw request/response on the Vulnerability entity
+     */
+    /**
+     * @param string $setter
+     * @param bool $isBase64
+     * @param $value
+     * @return string
+     */
+    protected function encodeRawHttpRequestOrResponse(string $setter, bool $isBase64, $value)
+    {
+        if (!in_array($setter, ['setHttpRawRequest', 'setHttpRawResponse']) || $isBase64) {
+            return $value;
+        }
+
+        return base64_encode($value);
     }
 
     /**
