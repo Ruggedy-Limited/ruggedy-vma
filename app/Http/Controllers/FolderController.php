@@ -64,10 +64,7 @@ class FolderController extends AbstractController
         $command  = new GetFolder(intval($folderId));
         $response = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'folders.index', [
-            'folder'          => $response,
-            'vulnerabilities' => $response->getVulnerabilities(),
-        ]);
+        return $this->controllerResponseHelper($response, 'folders.index', $response);
     }
 
     /**
