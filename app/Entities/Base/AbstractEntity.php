@@ -278,6 +278,14 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getHash()
+    {
+        return '';
+    }
+
+    /**
      * @return Collection
      */
     protected function getExcludedFields()
