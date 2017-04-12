@@ -23,11 +23,9 @@ class Folder extends AbstractEntity
     const NAME                   = 'name';
     const DESCRIPTION            = 'description';
     const WORKSPACE_ID           = 'workspace_id';
-    const FILE_ID                = 'file_id';
     const USER_ID                = 'user_id';
     const WORKSPACE              = 'workspace';
     const USER                   = 'user';
-    const FOLDERSVULNERABILITIES = 'foldersVulnerabilities';
 
     /**
      * @ORM\Id
@@ -78,14 +76,8 @@ class Folder extends AbstractEntity
      */
     protected $user;
 
-    /**
-     * @@ORM\OneToMany(targetEntity="FoldersVulnerabilities", mappedBy="folder")
-     */
-    protected $foldersVulnerabilities;
-
     public function __construct()
     {
-        $this->foldersVulnerabilities = new ArrayCollection();
     }
 
     /**
@@ -270,27 +262,6 @@ class Folder extends AbstractEntity
     public function getWorkspace()
     {
         return $this->workspace;
-    }
-
-    /**
-     * Add Folders Vulnerabilities Files relation
-     *
-     * @param FoldersVulnerabilities $foldersVulnerabilities
-     * @return $this
-     */
-    public function addFoldersVulnerabilities(FoldersVulnerabilities $foldersVulnerabilities)
-    {
-        $this->foldersVulnerabilities[] = $foldersVulnerabilities;
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getFoldersVulnerabilities()
-    {
-        return $this->foldersVulnerabilities;
     }
 
     /**
