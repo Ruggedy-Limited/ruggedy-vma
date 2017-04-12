@@ -23,6 +23,13 @@ class File extends Base\File implements SystemComponent
     const FILE_EXTENSION_NESSUS = 'nessus';
 
     /**
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @ORM\OrderBy({"severity" = "DESC"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */

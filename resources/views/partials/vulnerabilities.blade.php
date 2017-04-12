@@ -13,4 +13,5 @@
     @foreach ($vulnerabilities as $vulnerability)
         @include('partials.vulnerability')
     @endforeach
+    {{ $vulnerabilities->links() }}
 @endif
