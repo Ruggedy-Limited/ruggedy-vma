@@ -69,6 +69,16 @@ label:focus,
     -webkit-appearance: none;
 }
 
+.label-high {
+    background: #ff5500;
+}
+
+.badge {
+    padding: 3px 7px 4px 6px;
+    margin: 0 3px;
+    border-radius: 50%;
+}
+
 @media (min-width: 1200px) {
     .container {
         width: 90% !important;
