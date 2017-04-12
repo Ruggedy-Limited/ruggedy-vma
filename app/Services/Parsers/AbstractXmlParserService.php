@@ -640,6 +640,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $parentEntity = $this->getParentEntityFromLocalCollection($parentEntityClass);
         }
 
+        if ($entity instanceof Vulnerability) {
+            // Add the file relation to Vulnerabilities
+            $this->addFileRelation($entity, $entityClass, true);
+        }
+
         // Populate a criteria array with the values from the entity instance
         $findOneByCriteria = $this->getPopulatedCriteria($entity, $findOneByCriteria, $parentEntity);
 
