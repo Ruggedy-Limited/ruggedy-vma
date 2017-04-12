@@ -386,7 +386,7 @@ class NexposeXmlParserService extends AbstractXmlParserService implements Parses
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
-                        Vulnerability::FILE_ID         => null,
+                        Vulnerability::FILE            => null,
                     ],
                     Asset::class,
                 ]),
