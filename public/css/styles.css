@@ -621,6 +621,7 @@ Start: Cards
 }
 
 .list-content-card {
+    word-wrap: break-word;
     position: relative;
     background: #fff;
     margin-top: 15px;
