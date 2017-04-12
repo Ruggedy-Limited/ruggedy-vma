@@ -4,11 +4,15 @@ namespace App\Repositories;
 
 use App\Contracts\Searchable;
 use App\Entities\Asset;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Collection;
+use LaravelDoctrine\ORM\Pagination\PaginatesFromRequest;
 
 class AssetRepository extends AbstractSearchableRepository implements Searchable
 {
+    use PaginatesFromRequest;
+
     /**
      * Attempt to find an existing Asset by the given criteria, but if not found create a new Asset populated with
      * the given $criteria array
@@ -124,6 +128,31 @@ class AssetRepository extends AbstractSearchableRepository implements Searchable
         $queryBuilder->setMaxResults(1);
 
         return $queryBuilder;
+    }
+
+    /**
+     * @param int $fileId
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function findByFileQuery(int $fileId = 0)
+    {
+        if (!isset($fileId)) {
+            $fileId = 0;
+        }
+
+        return $this->paginate(
+            $this->createQueryBuilder('a')
+                ->addCriteria(
+                    Criteria::create()->where(
+                        Criteria::expr()->eq(Asset::FILE_ID, $fileId)
+                    )
+                )
+                ->orderBy('a.name', Criteria::ASC)
+                ->getQuery(),
+            10,
+            'page',
+            false
+        );
     }
 
     /**

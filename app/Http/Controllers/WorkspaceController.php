@@ -336,15 +336,17 @@ class WorkspaceController extends AbstractController
     public function viewFile($fileId)
     {
         $command  = new GetFile(intval($fileId));
-        $response = $this->sendCommandToBusHelper($command);
+        $result = $this->sendCommandToBusHelper($command);
+
+        if ($result instanceof ErrorResponse) {
+            $this->flashMessenger->error($result->getMessage());
+            return redirect()->back();
+        }
+
         return $this->controllerResponseHelper(
-            $response,
+            $result,
             'workspaces.app-show',
-            [
-                'file'            => $response,
-                'assets'          => $response->getAssets(),
-                'vulnerabilities' => $response->getVulnerabilities(),
-            ]
+            $result
         );
     }
 
