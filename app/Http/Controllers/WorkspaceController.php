@@ -504,7 +504,7 @@ class WorkspaceController extends AbstractController
             $this->request->get('newer-than', '0000-00-00 00:00:00')
         );
         $comments = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($comments, '', [], false, true);
+        return $this->controllerResponseHelper($comments, 'partials.comment', ['comments' => $comments]);
     }
 
     public function ruggedyIndex() {

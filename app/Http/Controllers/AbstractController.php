@@ -124,13 +124,13 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     )
     {
         // Handle error responses from the bus
-        if ($response instanceof ErrorResponse) {
+        if ($response instanceof ErrorResponse && !$this->request->ajax()) {
             $this->flashMessenger->error($response->getMessage());
             return redirect()->back()->withInput();
         }
 
         // Flash messages to the session
-        if (!$this->messages->isEmpty()) {
+        if (!$this->messages->isEmpty() && !$this->request->ajax()) {
             $this->messages->each(function ($messages, $messageType) {
                 /** @var Collection $messages */
                 $messages
@@ -146,12 +146,12 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
         }
 
         // Redirect back when necessary
-	    if ($isRedirect && empty($viewOrRoute)) {
+	    if ($isRedirect && empty($viewOrRoute) && !$this->request->ajax()) {
         	return redirect()->back();
 	    }
 
 	    // Redirect when necessary
-        if ($isRedirect) {
+        if ($isRedirect && !$this->request->ajax()) {
             return redirect()->route($viewOrRoute, $parameters);
         }
 

@@ -147,7 +147,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab4>
-                <label for=tab4>Comments <span class="badge c-purple">{{ $comments->count() }}</span></label>
+                <label for=tab4>Comments <span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></label>
                 <div id=tab-content4 class=tab-content>
                     <div class="dash-line"></div>
                     <br>

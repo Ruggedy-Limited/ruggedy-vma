@@ -39,7 +39,7 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerabilities <span class="badge c-purple">{{ $vulnerabilities->count() }}</span></label>
+                <label for=tab1>Vulnerabilities <span class="badge c-purple">{{ $vulnerabilities->total() }}</span></label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     @include('partials.vulnerabilities')
@@ -47,7 +47,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>Assets <span class="badge c-purple">{{ $file->getAssets()->count() }}</span></label>
+                <label for=tab2>Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
                     @include('partials.assets')
