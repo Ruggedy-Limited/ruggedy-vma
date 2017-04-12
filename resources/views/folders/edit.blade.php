@@ -37,7 +37,7 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Edit Folder: {{ $folder->getName() }}</h3>
             <br>
-            {!! Form::open(['url' => route('workspace.folder.update', ['workspaceId' => $workspaceId])]) !!}
+            {!! Form::open(['url' => route('workspace.folder.update', ['workspaceId' => $folder->getWorkspace()->getId() ])]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', $folder->getName(), ['class' => 'black-form-control']) !!}
