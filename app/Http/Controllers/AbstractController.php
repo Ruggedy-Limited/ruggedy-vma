@@ -108,29 +108,32 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
         }
     }
 
-	/**
-	 * Abstract the creation of a Controller response to avoid a lot of duplication
-	 *
-	 * @param $response
-	 * @param string $viewOrRoute
-	 * @param array $parameters
-	 * @param bool $isRedirect
-	 * @param bool $isJson
-	 *
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-	 */
-    protected function controllerResponseHelper(
-        $response, string $viewOrRoute, array $parameters = [], bool $isRedirect = false, $isJson = false
-    )
+    /**
+     * Handle errors processing a command
+     *
+     * @param $response
+     * @return bool
+     */
+    protected function isCommandError($response): bool
     {
         // Handle error responses from the bus
-        if ($response instanceof ErrorResponse && !$this->request->ajax()) {
-            $this->flashMessenger->error($response->getMessage());
-            return redirect()->back()->withInput();
+        if (!($response instanceof ErrorResponse)) {
+            return false;
         }
 
+        $this->flashMessenger->error($response->getMessage());
+        return true;
+    }
+
+    /**
+     * Abstract the creation of a Controller response to avoid a lot of duplication
+     *
+     * @return void
+     */
+    protected function flashMessagesToSession()
+    {
         // Flash messages to the session
-        if (!$this->messages->isEmpty() && !$this->request->ajax()) {
+        if (!$this->messages->isEmpty()) {
             $this->messages->each(function ($messages, $messageType) {
                 /** @var Collection $messages */
                 $messages
@@ -140,23 +143,6 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
                     });
             });
         }
-
-        if ($isJson) {
-        	return response()->json($response);
-        }
-
-        // Redirect back when necessary
-	    if ($isRedirect && empty($viewOrRoute) && !$this->request->ajax()) {
-        	return redirect()->back();
-	    }
-
-	    // Redirect when necessary
-        if ($isRedirect && !$this->request->ajax()) {
-            return redirect()->route($viewOrRoute, $parameters);
-        }
-
-        // Return a view when necessary
-        return view($viewOrRoute, $parameters);
     }
 
     /**

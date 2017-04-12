@@ -7,7 +7,6 @@ use App\Commands\EditUserAccount;
 use App\Commands\GetAllUsers;
 use App\Commands\GetUser;
 use App\Entities\User;
-use App\Http\Responses\ErrorResponse;
 use App\Services\JsonLogService;
 use Auth;
 use Illuminate\Auth\Events\Registered;
@@ -54,7 +53,12 @@ class SettingsController extends AbstractController
     {
         $command = new GetAllUsers(0);
         $users   = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($users, 'settings.index', ['users' => $users]);
+
+        if ($this->isCommandError($users)) {
+            return redirect()->back();
+        }
+
+        return view('settings.index', ['users' => $users]);
     }
 
     /**
@@ -81,11 +85,11 @@ class SettingsController extends AbstractController
         $user = new User();
         $user->setFromArray($this->request->all());
         if ($this->validator()->validate($user) === false) {
-            $response = new ErrorResponse(
+            $this->flashMessenger->error(
                 $this->validator()->getValidatorFor($user)->messages()->first()
             );
 
-            return $this->controllerResponseHelper($response,'settings.user.create', [],true);
+            return redirect()->back()->withInput();
         }
 
         event(new Registered($user));
@@ -97,7 +101,12 @@ class SettingsController extends AbstractController
         );
 
         $user = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($user, 'settings.view', [], true);
+
+        if ($this->isCommandError($user)) {
+            return redirect()->back()->withInput();
+        }
+
+        return redirect()->route($user, 'settings.view');
     }
 
     /**
@@ -124,7 +133,11 @@ class SettingsController extends AbstractController
         $command = new GetUser(intval($id));
         $user    = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($user, 'settings.usersEdit', ['user' => $user]);
+        if ($this->isCommandError($user)) {
+            return redirect()->back();
+        }
+
+        return view('settings.usersEdit', ['user' => $user]);
     }
 
     /**
@@ -142,18 +155,23 @@ class SettingsController extends AbstractController
         $user = new User();
         $user->setFromArray($this->request->all());
         if ($this->validator()->validate($user) === false) {
-            $this->addMessage(
-                $this->validator()->getValidatorFor($user)->messages()->first(),
-                    parent::MESSAGE_TYPE_ERROR
+            $this->flashMessenger->error(
+                $this->validator()->getValidatorFor($user)->messages()->first()
             );
-            return $this->controllerResponseHelper(null,'settings.user.edit', ['userId' => $id], true);
+
+            return redirect()->back()->withInput();
         }
 
         $command = new EditUserAccount(intval($id), $this->request->all());
         $user    = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("User details updated successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($user, 'settings.user.edit', ['userId' => $id], true);
+        if ($this->isCommandError($user)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("User details updated successfully.");
+        return redirect()->route('settings.user.edit', ['userId' => $id]);
+
     }
 
     /**
@@ -166,7 +184,7 @@ class SettingsController extends AbstractController
      */
     public function destroy($id)
     {
-        return $this->controllerResponseHelper(null, 'settings.view', [], true);
+        //
     }
 
     /**
@@ -179,7 +197,7 @@ class SettingsController extends AbstractController
     public function userProfile()
     {
         $user = Auth::user();
-        return $this->controllerResponseHelper($user, 'settings.usersEdit', ['user' => $user]);
+        return view('settings.usersEdit', ['user' => $user]);
     }
 
     /**

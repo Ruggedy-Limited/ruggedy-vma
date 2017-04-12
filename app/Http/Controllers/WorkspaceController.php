@@ -25,9 +25,9 @@ use App\Entities\File;
 use App\Entities\Folder;
 use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
-use App\Http\Responses\ErrorResponse;
 use Auth;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 
 /**
  * @Middleware("web")
@@ -78,10 +78,14 @@ class WorkspaceController extends AbstractController
 
         // Create a command and send it over the bus to the handler
         $command = new CreateWorkspace(intval($userId), $entity);
-        $response = $this->sendCommandToBusHelper($command);
+        $workspace = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Workspace created successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'home', [], true);
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("Workspace created successfully.");
+        return redirect()->route('home');
     }
 
     /**
@@ -96,9 +100,13 @@ class WorkspaceController extends AbstractController
     {
         // Create a command and send it over the bus to the handler
         $command = new GetWorkspace(intval($workspaceId));
-        $response = $this->sendCommandToBusHelper($command);
+        $workspace = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspaces.view', ['workspace' => $response]);
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back()->withInput();
+        }
+
+        return view('workspaces.view', ['workspace' => $workspace]);
     }
 
     /**
@@ -112,9 +120,13 @@ class WorkspaceController extends AbstractController
     public function edit($workspaceId)
     {
         $command = new GetWorkspace(intval($workspaceId));
-        $response = $this->sendCommandToBusHelper($command);
+        $workspace = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspaces.create', ['workspace' => $response]);
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back()->withInput();
+        }
+
+        return view('workspaces.create', ['workspace' => $workspace]);
     }
 
     /**
@@ -131,11 +143,15 @@ class WorkspaceController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         // Create a command and send it over the bus to the handler
-        $command = new EditWorkspace(intval($workspaceId), $this->request->all());
-        $response = $this->sendCommandToBusHelper($command);
+        $command   = new EditWorkspace(intval($workspaceId), $this->request->all());
+        $workspace = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Workspace updated successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'home', [], true);
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("Workspace updated successfully.");
+        return redirect()->route('home');
     }
 
     /**
@@ -149,12 +165,16 @@ class WorkspaceController extends AbstractController
     public function destroy($workspaceId)
     {
         // Create a new command and send it over the bus
-        $command  = new DeleteWorkspace(intval($workspaceId), true);
-        $response = $this->sendCommandToBusHelper($command);
+        $command   = new DeleteWorkspace(intval($workspaceId), true);
+        $workspace = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back();
+        }
 
         // Add a success message and then generate a response for the Controller
-        $this->addMessage("Workspace deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'home', [], true);
+        $this->flashMessenger->success("Workspace deleted successfully.");
+        return redirect()->route('home');
     }
 
     /**
@@ -170,7 +190,11 @@ class WorkspaceController extends AbstractController
         $command     = new GetListOfScannerApps(0);
         $scannerApps = $this->sendCommandToBusHelper($command);
 
-	    return $this->controllerResponseHelper(null, 'workspaces.apps', [
+        if ($this->isCommandError($scannerApps)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.apps', [
             'scannerApps' => $scannerApps,
             'workspaceId' => $workspaceId,
         ]);
@@ -191,7 +215,11 @@ class WorkspaceController extends AbstractController
         $command    = new GetScannerApp(intval($scannerAppId));
         $scannerApp = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($scannerApp, 'workspaces.appsCreate', [
+        if ($this->isCommandError($scannerApp)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.appsCreate', [
             'workspaceId'  => $workspaceId,
             'scannerAppId' => $scannerAppId,
             'scannerApp'   => $scannerApp,
@@ -208,10 +236,14 @@ class WorkspaceController extends AbstractController
      */
     public function editWorkspaceApp($workspaceAppId)
     {
-        $command  = new GetWorkspaceApp(intval($workspaceAppId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command      = new GetWorkspaceApp(intval($workspaceAppId));
+        $workspaceApp = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspaces.app-edit', ['workspaceApp' => $response]);
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.app-edit', ['workspaceApp' => $workspaceApp]);
     }
 
     /**
@@ -222,7 +254,7 @@ class WorkspaceController extends AbstractController
      *
      * @param $workspaceId
      * @param $scannerAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function storeWorkspaceApp($workspaceId, $scannerAppId)
     {
@@ -232,11 +264,15 @@ class WorkspaceController extends AbstractController
         $workspaceApp->setName($this->request->get('name'))
             ->setDescription($this->request->get('description'));
 
-        $command = new CreateWorkspaceApp(intval($workspaceId), intval($scannerAppId), $workspaceApp);
-        $response = $this->sendCommandToBusHelper($command);
+        $command      = new CreateWorkspaceApp(intval($workspaceId), intval($scannerAppId), $workspaceApp);
+        $workspaceApp = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("New Workspace App created successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'workspace.view', ['workspaceId' => $workspaceId], true);
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("New Workspace App created successfully.");
+        return redirect()->route('workspace.view', ['workspaceId' => $workspaceId]);
     }
 
     /**
@@ -246,22 +282,21 @@ class WorkspaceController extends AbstractController
      *     where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function updateWorkspaceApp($workspaceAppId)
     {
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
-        $command = new EditWorkspaceApp(intval($workspaceAppId), $this->request->all());
-        $response = $this->sendCommandToBusHelper($command);
+        $command      = new EditWorkspaceApp(intval($workspaceAppId), $this->request->all());
+        $workspaceApp = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Workspace App updated successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper(
-            $response,
-            'workspace.view',
-            ['workspaceId' => $response->getWorkspaceId()],
-            true
-        );
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("Workspace App updated successfully.");
+        return redirect()->route('workspace.view', ['workspaceId' => $workspaceApp->getWorkspaceId()]);
     }
 
     /**
@@ -274,10 +309,14 @@ class WorkspaceController extends AbstractController
      */
     public function viewWorkspaceApp($workspaceAppId)
     {
-        $command  = new GetWorkspaceApp(intval($workspaceAppId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command      = new GetWorkspaceApp(intval($workspaceAppId));
+        $workspaceApp = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspaces.app', ['workspaceApp' => $response]);
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.app', ['workspaceApp' => $workspaceApp]);
     }
 
     /**
@@ -292,11 +331,15 @@ class WorkspaceController extends AbstractController
      */
     public function deleteWorkspaceApp($workspaceAppId, $workspaceId)
     {
-        $command  = new DeleteWorkspaceApp(intval($workspaceAppId), true);
-        $response = $this->sendCommandToBusHelper($command);
+        $command      = new DeleteWorkspaceApp(intval($workspaceAppId), true);
+        $workspaceApp = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Workspace App deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'workspace.view', ['workspaceId' => $workspaceId], true);
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        $this->flashMessenger->success("Workspace App deleted successfully.");
+        return redirect()->route('workspace.view', ['workspaceId' => $workspaceId]);
     }
 
     /**
@@ -309,21 +352,21 @@ class WorkspaceController extends AbstractController
      */
     public function appShowRecord($vulnerabilityId)
     {
-        $command  = new GetVulnerability(intval($vulnerabilityId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command       = new GetVulnerability(intval($vulnerabilityId));
+        $vulnerability = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper(
-            $response,
-            'workspaces.appShowRecord',
-            [
-                'vulnerability' => $response,
-                'folders'       => $this->getFoldersForSelect(
-                    $response->getFile()->getWorkspaceApp()->getWorkspace()->getFolders()
-                ),
-                'assets'        => $response->getAssets(),
-                'comments'      => $response->getComments(),
-            ]
-        );
+        if ($this->isCommandError($vulnerability)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.appShowRecord', [
+            'vulnerability' => $vulnerability,
+            'folders'       => $this->getFoldersForSelect(
+                $vulnerability->getFile()->getWorkspaceApp()->getWorkspace()->getFolders()
+            ),
+            'assets'        => $vulnerability->getAssets(),
+            'comments'      => $vulnerability->getComments(),
+        ]);
     }
 
     /**
@@ -337,18 +380,13 @@ class WorkspaceController extends AbstractController
     public function viewFile($fileId)
     {
         $command  = new GetFile(intval($fileId));
-        $result = $this->sendCommandToBusHelper($command);
+        $fileInfo = $this->sendCommandToBusHelper($command);
 
-        if ($result instanceof ErrorResponse) {
-            $this->flashMessenger->error($result->getMessage());
+        if ($this->isCommandError($fileInfo)) {
             return redirect()->back();
         }
 
-        return $this->controllerResponseHelper(
-            $result,
-            'workspaces.app-show',
-            $result
-        );
+        return view('workspaces.app-show', $fileInfo);
     }
 
     /**
@@ -364,7 +402,12 @@ class WorkspaceController extends AbstractController
     {
         $command      = new GetWorkspaceApp(intval($workspaceAppId));
         $workspaceApp = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($workspaceApp, 'workspaces.addFile', ['workspaceApp' => $workspaceApp]);
+
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.addFile', ['workspaceApp' => $workspaceApp]);
     }
 
     /**
@@ -385,14 +428,13 @@ class WorkspaceController extends AbstractController
 
         // Create and send the command to upload the scanner output file
         $command  = new UploadScanOutput(intval($workspaceAppId), $this->request->file('file'), $file);
-        $response = $this->sendCommandToBusHelper($command);
+        $file     = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper(
-            $response,
-            'workspace.app.view',
-            ['workspaceApp' => $file->getWorkspaceApp()->getId()],
-            true
-        );
+        if ($this->isCommandError($file)) {
+            return redirect()->back()->withInput();
+        }
+
+        return redirect()->route('workspace.app.view', ['workspaceApp' => $file->getWorkspaceApp()->getId()]);
     }
 
     /**
@@ -406,9 +448,13 @@ class WorkspaceController extends AbstractController
     public function editFile($fileId)
     {
         $command = new GetFile(intval($fileId));
-        $response = $this->sendCommandToBusHelper($command);
+        $file    = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspaces.edit-file', ['file' => $response]);
+        if ($this->isCommandError($file)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.edit-file', ['file' => $file]);
     }
 
     /**
@@ -424,9 +470,13 @@ class WorkspaceController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         $command  = new EditFile($fileId, $this->request->all());
-        $response = $this->sendCommandToBusHelper($command);
+        $file     = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspace.app.file.view', ['fileId' => $fileId], true);
+        if ($this->isCommandError($file)) {
+            return redirect()->back()->withInput();
+        }
+
+        return redirect()->route('workspace.app.file.view', ['fileId' => $fileId]);
     }
 
 	/**
@@ -446,13 +496,12 @@ class WorkspaceController extends AbstractController
     	$command = new CreateComment(intval($vulnerabilityId), $comment);
     	$comment = $this->sendCommandToBusHelper($command);
 
-    	$this->addMessage("A new comment was posted successfully.", parent::MESSAGE_TYPE_SUCCESS);
-    	return $this->controllerResponseHelper(
-    		$comment,
-			'vulnerability.view',
-		    ['vulnerabilityId' => $vulnerabilityId],
-		    true
-	    );
+        if ($this->isCommandError($comment)) {
+            return redirect()->back()->withInput();
+        }
+
+    	$this->flashMessenger->success("A new comment was posted successfully.");
+        return redirect()->route('vulnerability.view', ['vulnerabilityId' => $vulnerabilityId]);
     }
 
 	/**
@@ -470,8 +519,13 @@ class WorkspaceController extends AbstractController
 	    ]);
 
     	$comment = $this->sendCommandToBusHelper($command);
-    	$this->addMessage("Comment updated successfully.", parent::MESSAGE_TYPE_SUCCESS);
-    	return $this->controllerResponseHelper($comment, '', [], true);
+
+        if ($this->isCommandError($comment)) {
+            return redirect()->back()->withInput();
+        }
+
+    	$this->flashMessenger->success("Comment updated successfully.");
+    	return redirect()->back();
     }
 
 	/**
@@ -486,8 +540,13 @@ class WorkspaceController extends AbstractController
     {
     	$command = new DeleteComment($commentId, true);
     	$comment = $this->sendCommandToBusHelper($command);
-    	$this->addMessage("Comment deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
-    	return $this->controllerResponseHelper($comment, '', [], true);
+
+        if ($this->isCommandError($comment)) {
+            return redirect()->back();
+        }
+
+    	$this->flashMessenger->success("Comment deleted successfully.");
+        return redirect()->back();
     }
 
     /**
@@ -497,6 +556,7 @@ class WorkspaceController extends AbstractController
      *
      * @param $vulnerabilityId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws Exception
      */
     public function getNewComments($vulnerabilityId)
     {
@@ -504,8 +564,14 @@ class WorkspaceController extends AbstractController
             $vulnerabilityId,
             $this->request->get('newer-than', '0000-00-00 00:00:00')
         );
+
         $comments = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($comments, 'partials.comment', ['comments' => $comments]);
+
+        if ($this->isCommandError($comments)) {
+            throw new Exception($comments->getMessage());
+        }
+
+        return view('partials.comment', ['comments' => $comments]);
     }
 
     public function ruggedyIndex() {
