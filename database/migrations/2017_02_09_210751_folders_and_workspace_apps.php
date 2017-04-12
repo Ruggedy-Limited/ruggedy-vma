@@ -80,12 +80,12 @@ CREATE TABLE IF NOT EXISTS `folders` (
   INDEX `folder_user_fk_idx` (`user_id` ASC)  COMMENT '',
   CONSTRAINT `folder_workspace_fk`
     FOREIGN KEY (`workspace_id`)
-    REFERENCES `ruggedy`.`workspaces` (`id`)
+    REFERENCES `workspaces` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `folder_user_fk`
     FOREIGN KEY (`user_id`)
-    REFERENCES `ruggedy`.`users` (`id`)
+    REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -98,7 +98,7 @@ CREATE TABLE `folders_vulnerabilities` (
   `vulnerability_id` INT(10) UNSIGNED NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '',
   PRIMARY KEY (`id`),
-  CONSTRAINT `folders_vulnerabilities_file_fk` FOREIGN KEY (`folder_id`)
+  CONSTRAINT `folders_vulnerabilities_folder_fk` FOREIGN KEY (`folder_id`)
     REFERENCES `folders` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `folders_vulnerabilities_vulnerability_id` FOREIGN KEY (`vulnerability_id`)
     REFERENCES `vulnerabilities` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION

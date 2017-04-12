@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('/css/styles.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
     <script src="{{ asset('/vendor/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
 </head>
 
 <body>
@@ -30,7 +31,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('settings.index') }}">
+                <a href="{{ route('settings.view') }}">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
                         <p class="nav-btn-text">Settings</p>
@@ -38,7 +39,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('settings.users.profile') }}">
+                <a href="{{ route('settings.user.profile') }}">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
                         </h4>
@@ -90,8 +91,6 @@
         </div>
     </div>
 </div>
-
-    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
     <script src="{{ asset('/vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
 </body>

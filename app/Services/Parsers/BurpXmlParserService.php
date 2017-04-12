@@ -168,6 +168,7 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
+                        Vulnerability::FILE            => null,
                     ],
                     Asset::class,
                 ]),

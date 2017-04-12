@@ -26,7 +26,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
+                    <h4 class="modal-title">Help Title</h4>
                 </div>
                 <div class="modal-body">
                     <p>Help text goes here.</p>
@@ -36,33 +36,7 @@
         </div>
     </div>
     <div class="row animated fadeIn">
-        <div class="col-md-12">
-            <a href="{{ route('folders.show') }}">
-                <div class="list-content-card">
-                    <p><span class="label label-danger t-s-10">High Risk</span>
-                        &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
-                    </p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-12">
-            <a href="{{ route('folders.show') }}">
-                <div class="list-content-card">
-                    <p><span class="label label-danger" style="font-size: 10px;">High Risk</span>
-                        &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
-                    </p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-12">
-            <a href="{{ route('folders.show') }}">
-                <div class="list-content-card">
-                    <p><span class="label label-danger" style="font-size: 10px;">High Risk</span>
-                        &nbsp;CVE-2014-6278 bash: code execution via specially crafted environment variables
-                    </p>
-                </div>
-            </a>
-        </div>
+        @include('partials.vulnerabilities')
     </div>
 
 @endsection

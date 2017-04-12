@@ -3,33 +3,48 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetFile as GetFileCommand;
-use App\Entities\Asset;
 use App\Entities\File;
+use App\Entities\Vulnerability;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\FileNotFoundException;
 use App\Policies\ComponentPolicy;
+use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
+use App\Repositories\VulnerabilityRepository;
 
 class GetFile extends CommandHandler
 {
     /** @var FileRepository */
     protected $fileRepository;
 
+    /** @var VulnerabilityRepository */
+    protected $vulnerabilityRepository;
+
+    /** @var AssetRepository */
+    protected $assetRepository;
+
     /**
      * GetFile constructor.
      *
      * @param FileRepository $fileRepository
+     * @param VulnerabilityRepository $vulnerabilityRepository
+     * @param AssetRepository $assetRepository
      */
-    public function __construct(FileRepository $fileRepository)
+    public function __construct(
+        FileRepository $fileRepository, VulnerabilityRepository $vulnerabilityRepository,
+        AssetRepository $assetRepository
+    )
     {
-        $this->fileRepository = $fileRepository;
+        $this->fileRepository          = $fileRepository;
+        $this->vulnerabilityRepository = $vulnerabilityRepository;
+        $this->assetRepository         = $assetRepository;
     }
 
     /**
      * Process the GetFile command.
      *
      * @param GetFileCommand $command
-     * @return File
+     * @return array
      * @throws ActionNotPermittedException
      * @throws FileNotFoundException
      */
@@ -47,18 +62,12 @@ class GetFile extends CommandHandler
             throw new ActionNotPermittedException("The requesting User is not permitted to view this file.");
         }
 
-        $fileVulnerabilities = collect($file->getVulnerabilities()->toArray());
-        $file->getAssets()->forAll(function ($_, $asset) use ($fileVulnerabilities) {
-            /** @var Asset $asset */
-            collect($asset->getVulnerabilities()->toArray())
-                ->diff($fileVulnerabilities)
-                ->each(function ($vulnerability) use ($asset) {
-                    $asset->removeVulnerability($vulnerability);
-                });
+        $vulnerabilities = $this->vulnerabilityRepository->findByFileQuery($command->getId());
 
-            return true;
-        });
-
-        return $file;
+        return [
+            Vulnerability::FILE   => $file,
+            File::ASSETS          => $file->getAssets(),
+            File::VULNERABILITIES => $vulnerabilities,
+        ];
     }
 }
