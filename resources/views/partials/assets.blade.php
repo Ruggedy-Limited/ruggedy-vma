@@ -14,6 +14,9 @@
             <a href="#">
                 <div class="list-content-card animated pulse-hover">
                     <span class="label label-danger">
+                        {{ $asset->getCriticalSeverityVulnerabilities()->count() }}
+                    </span>
+                    <span class="label label-high">
                         {{ $asset->getHighSeverityVulnerabilities()->count() }}
                     </span>
                     <span class="label label-warning">
