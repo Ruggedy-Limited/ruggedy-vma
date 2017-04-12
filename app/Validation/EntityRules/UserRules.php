@@ -16,9 +16,21 @@ class UserRules extends AbstractEntityRules
     protected function buildRules($entity)
     {
         return [
-            'name'     => 'required|min:1',
-            'email'    => 'required|email|unique:'. User::class .',email,' . ($entity->getId() ?: 'null'),
-            'username' => 'required|alphanum|unique:' . User::class . ',username,' . ($entity->getId() ?: 'null'),
+            'name'     => 'bail|required|min:2',
+            'email'    => 'bail|required|email',
+            'password' => 'present',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'name'     => 'Name must be at least two characters long.',
+            'email'    => 'A person with that email address is already registered.',
+            'password' => 'Your password should be at least 8 characters long.',
         ];
     }
 

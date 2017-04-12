@@ -26,19 +26,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'authy_id',
-        'country_code',
         'phone',
-        'card_brand',
-        'card_last_four',
-        'card_country',
-        'billing_address',
-        'billing_address_line_2',
-        'billing_city',
-        'billing_zip',
-        'billing_country',
-        'extra_billing_information',
-        'tax_rate',
     ];
 
     /**

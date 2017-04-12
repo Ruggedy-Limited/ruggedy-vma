@@ -46,7 +46,7 @@
                 {!! Form::label('description', 'Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
-            <button class="primary-btn" type="submit">Submit</button>
+            <button class="primary-btn" type="submit">Create Workspace</button>
             {!! Form::close() !!}
         </div>
         <div class="col-md-2"></div>

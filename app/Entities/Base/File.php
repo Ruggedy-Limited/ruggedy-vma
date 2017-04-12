@@ -17,20 +17,20 @@ class File extends AbstractEntity
     const TABLE_NAME = 'files';
 
     /** Column name constants */
-    const NAME             = 'name';
-    const DESCRIPTION      = 'description';
-    const PATH             = 'path';
-    const FORMAT           = 'format';
-    const SIZE             = 'size';
-    const USER_ID          = 'user_id';
-    const WORKSPACE_APP_ID = 'workspace_app_id';
-    const PROCESSED        = 'processed';
-    const DELETED          = 'deleted';
-    const ASSETS           = 'assets';
-    const COMMENTS         = 'comments';
-    const JIRAISSUES       = 'jiraIssues';
-    const USER             = 'user';
-    const WORKSPACEAPP     = 'workspaceApp';
+    const NAME                   = 'name';
+    const DESCRIPTION            = 'description';
+    const PATH                   = 'path';
+    const FORMAT                 = 'format';
+    const SIZE                   = 'size';
+    const USER_ID                = 'user_id';
+    const WORKSPACE_APP_ID       = 'workspace_app_id';
+    const PROCESSED              = 'processed';
+    const DELETED                = 'deleted';
+    const ASSETS                 = 'assets';
+    const VULNERABILITIES        = 'vulnerabilities';
+    const JIRAISSUES             = 'jiraIssues';
+    const USER                   = 'user';
+    const WORKSPACEAPP           = 'workspaceApp';
 
     /**
      * @ORM\Id
@@ -101,10 +101,10 @@ class File extends AbstractEntity
     protected $assets;
 
     /**
-     * @ORM\OneToMany(targetEntity="Comment", mappedBy="file", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
      */
-    protected $comments;
+    protected $vulnerabilities;
 
     /**
      * @ORM\OneToMany(targetEntity="JiraIssue", mappedBy="file", cascade={"persist"})
@@ -127,7 +127,7 @@ class File extends AbstractEntity
     public function __construct()
     {
         $this->assets = new ArrayCollection();
-        $this->comments = new ArrayCollection();
+        $this->vulnerabilities = new ArrayCollection();
         $this->jiraIssues = new ArrayCollection();
     }
 
@@ -444,39 +444,39 @@ class File extends AbstractEntity
     }
 
     /**
-     * Add Comment entity to collection (one to many).
+     * Add Vulnerability entity to collection (one to many).
      *
-     * @param \App\Entities\Base\Comment $comment
+     * @param \App\Entities\Base\Vulnerability $vulnerability
      * @return \App\Entities\Base\File
      */
-    public function addComment(Comment $comment)
+    public function addVulnerability(Vulnerability $vulnerability)
     {
-        $this->comments[] = $comment;
+        $this->vulnerabilities[] = $vulnerability->setFile($this);
 
         return $this;
     }
 
     /**
-     * Remove Comment entity from collection (one to many).
+     * Remove Vulnerability entity from collection (one to many).
      *
-     * @param \App\Entities\Base\Comment $comment
+     * @param \App\Entities\Base\Vulnerability $vulnerability
      * @return \App\Entities\Base\File
      */
-    public function removeComment(Comment $comment)
+    public function removeVulnerability(Vulnerability $vulnerability)
     {
-        $this->comments->removeElement($comment);
+        $this->vulnerabilities->removeElement($vulnerability);
 
         return $this;
     }
 
     /**
-     * Get Comment entity collection (one to many).
+     * Get Vulnerability entity collection (one to many).
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getComments()
+    public function getVulnerabilities()
     {
-        return $this->comments;
+        return $this->vulnerabilities;
     }
 
     /**

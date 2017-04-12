@@ -272,7 +272,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
 
         return sha1(
             $uniqueColumns->filter(function ($value) {
-                return isset($value);
+                return isset($value) && !is_object($value);
             })->merge($objectHashes)->implode(":")
         );
     }

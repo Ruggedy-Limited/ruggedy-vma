@@ -69,6 +69,16 @@ label:focus,
     -webkit-appearance: none;
 }
 
+.label-high {
+    background: #ff5500;
+}
+
+.badge {
+    padding: 3px 7px 4px 6px;
+    margin: 0 3px;
+    border-radius: 50%;
+}
+
 @media (min-width: 1200px) {
     .container {
         width: 90% !important;
@@ -621,6 +631,7 @@ Start: Cards
 }
 
 .list-content-card {
+    word-wrap: break-word;
     position: relative;
     background: #fff;
     margin-top: 15px;
@@ -1140,6 +1151,10 @@ Start: Comments
 .chat li .chat-body p {
     margin: 0;
     color: #777777;
+}
+
+.comment-editor {
+    display: none;
 }
 
 .panel .slidedown .glyphicon, .chat .glyphicon {

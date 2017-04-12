@@ -37,7 +37,7 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Add Folder</h3>
             <br>
-            {!! Form::open(['url' => '/foo/bar']) !!}
+            {!! Form::open(['url' => route('workspace.folder.store', ['workspaceId' => $workspaceId])]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
@@ -46,7 +46,7 @@
                 {!! Form::label('description', 'Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
             </div>
-            <button class="primary-btn" type="submit">Submit</button>
+            <button class="primary-btn" type="submit">Create Folder</button>
             {!! Form::close() !!}
         </div>
         <div class="col-md-2"></div>

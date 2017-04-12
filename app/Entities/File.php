@@ -15,9 +15,6 @@ use Illuminate\Support\Collection;
  */
 class File extends Base\File implements SystemComponent
 {
-    /** Association name constants */
-    const VULNERABILITIES = 'vulnerabilities';
-
     const FILE_TYPE_XML    = 'xml';
     const FILE_TYPE_CSV    = 'csv';
     const FILE_TYPE_JSON   = 'json';
@@ -26,20 +23,17 @@ class File extends Base\File implements SystemComponent
     const FILE_EXTENSION_NESSUS = 'nessus';
 
     /**
+     * @ORM\OneToMany(targetEntity="Vulnerability", mappedBy="file", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @ORM\OrderBy({"severity" = "DESC"})
+     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
+     */
+    protected $vulnerabilities;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="files", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
      */
     protected $user;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="files", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(
-     *     name="files_vulnerabilities",
-     *     joinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")}
-     * )
-     */
-    protected $vulnerabilities;
 
     /**
      * @ORM\ManyToMany(targetEntity="OpenPort", inversedBy="files", fetch="EXTRA_LAZY")
@@ -75,10 +69,9 @@ class File extends Base\File implements SystemComponent
     public function __construct()
     {
         parent::__construct();
-        $this->vulnerabilities             = new ArrayCollection();
-        $this->openPorts                   = new ArrayCollection();
-        $this->softwareInformation         = new ArrayCollection();
-        $this->audits                      = new ArrayCollection();
+        $this->openPorts           = new ArrayCollection();
+        $this->softwareInformation = new ArrayCollection();
+        $this->audits              = new ArrayCollection();
     }
 
     /**
@@ -114,43 +107,6 @@ class File extends Base\File implements SystemComponent
     public function getParent()
     {
         return $this->workspaceApp;
-    }
-
-    /**
-     * @param Vulnerability $vulnerability
-     * @return $this
-     */
-    public function addVulnerability(Vulnerability $vulnerability)
-    {
-        if ($this->vulnerabilities->contains($vulnerability)) {
-            return $this;
-        }
-
-        $vulnerability->addFile($this); // synchronously updating inverse side
-        $relationKey = $vulnerability->getId() ?? $vulnerability->getHash();
-        $this->vulnerabilities[$relationKey] = $vulnerability;
-
-        return $this;
-    }
-
-    /**
-     * @param Vulnerability $vulnerability
-     * @return $this
-     */
-    public function removeVulnerability(Vulnerability $vulnerability)
-    {
-        $vulnerability->removeFile($this); // synchronously updating inverse side
-        $this->vulnerabilities->removeElement($vulnerability);
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getVulnerabilities()
-    {
-        return $this->vulnerabilities;
     }
 
     /**

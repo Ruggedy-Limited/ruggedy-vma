@@ -532,9 +532,18 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     public function moveFileToProcessed(File $file)
     {
         // Empty or non-existent file
-        if (empty($file) || !$this->fileSystem->exists($file->getPath())) {
+        if (empty($file)) {
             return false;
         }
+
+	    // Mark the file as processed and persist to the DB
+	    $file->setProcessed(true);
+	    $this->em->persist($file);
+	    $this->em->flush($file);
+
+	    if (!$this->fileSystem->exists($file->getPath())) {
+	    	return true;
+	    }
 
         // Get the path where processed files should be moved to
         $processedFilePath = str_replace('scans/', 'scans/processed/', $file->getPath());
@@ -565,11 +574,6 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             ]);
             return false;
         }
-
-        // Mark the file as processed and persist to the DB
-        $file->setProcessed(true);
-        $this->em->persist($file);
-        $this->em->flush($file);
 
         return true;
     }
@@ -634,6 +638,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Get the parent entity if one exists in the local Collection of entities
         if (!$isFromTemporary) {
             $parentEntity = $this->getParentEntityFromLocalCollection($parentEntityClass);
+        }
+
+        if ($entity instanceof Vulnerability) {
+            // Add the file relation to Vulnerabilities
+            $this->addFileRelation($entity, $entityClass, true);
         }
 
         // Populate a criteria array with the values from the entity instance
@@ -978,7 +987,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         if (!($this->$propertyName instanceof Collection)) {
             $this->logger->log(Logger::ERROR, "Invalid temporary storage property", [
                 'expectingClass' => Collection::class,
-                'gotClass'       => is_object($this->$propertyName) ? get_class($this->$propertyName) : 'Not an onject',
+                'gotClass'       => is_object($this->$propertyName) ? get_class($this->$propertyName) : 'Not an object',
             ]);
 
             return;
@@ -1380,11 +1389,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
-        // Check if we need to decode a base64 encoded string
-        $value = $this->parser->value;
-        if ($isBase64) {
-            $value = base64_decode($this->parser->value);
-        }
+        // Check if we need to base64 encode the raw request or response string
+        $value = $this->encodeRawHttpRequestOrResponse($setter, $isBase64, $this->parser->value);
 
         // If we have an empty value then exit early
         if (empty($value)) {
@@ -1410,6 +1416,24 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function checkForBase64Encoding(): bool
     {
         return $this->parser->getAttribute('base64') === 'true';
+    }
+
+    /**
+     * Ensure Base64 encoding and set the raw request/response on the Vulnerability entity
+     */
+    /**
+     * @param string $setter
+     * @param bool $isBase64
+     * @param $value
+     * @return string
+     */
+    protected function encodeRawHttpRequestOrResponse(string $setter, bool $isBase64, $value)
+    {
+        if (!in_array($setter, ['setHttpRawRequest', 'setHttpRawResponse']) || $isBase64) {
+            return $value;
+        }
+
+        return base64_encode($value);
     }
 
     /**

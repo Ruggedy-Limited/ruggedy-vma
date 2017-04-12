@@ -40,7 +40,7 @@
         <div class="col-md-12">
             <a href="{{ route('workspace.apps', ['workspaceId' => $workspace->getId()]) }}"
                class="primary-btn" type="button">Add Application</a>
-            <a href="{{ route('folders.create', ['workspaceId' => $workspace->getId()]) }}"
+            <a href="{{ route('workspace.folder.create', ['workspaceId' => $workspace->getId()]) }}"
                class="primary-btn" type="button">Add Folder</a>
         </div>
     </div>
@@ -97,7 +97,7 @@
                     @else
                         @foreach ($workspace->getFolders() as $folder)
                             <div class="col-md-4 col-sm-6">
-                                <a href="{{ route('folders.index') }}">
+                                <a href="{{ route('workspace.folder.view', ['folderId' => $folder->getId()]) }}">
                                     <div class="card hovercard animated pulse-hover">
                                         <div class="cardheader c-white"></div>
                                         <div class="avatar avatar-white">

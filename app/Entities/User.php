@@ -72,6 +72,16 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
     }
 
     /**
+     * Check if the User is an admin
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return true; //TODO: Implement this properly as an additional column in the users table
+    }
+
+    /**
      * Get the parent Entity of this Entity
      *
      * @return User
