@@ -64,34 +64,27 @@ $("#menu-toggle").click(function(e) {
         $.ajax({
             url:      '/comments/updated/' + vulnerabilityId,
             type:     'POST',
-            dataType: 'JSON',
+            dataType: 'HTML',
             data:     'newer-than=' + newerThan
         }).done(function (comments) {
-            console.log(comments);
-            if (comments.error || comments.length < 1) {
+            if (!comments || comments.length < 1) {
                 return;
             }
 
-            for (var commentNo = 0; commentNo < comments.length; commentNo++) {
-                var comment    = comment[commentNo],
-                    newComment = $('ul.chat > li:first-child').clone();
 
-                newComment.find('strong.primary-font').html(comment.user.name);
+            $(comments).prependTo('ul.chat');
+            $('#comment-count').text($('ul.chat > li').length);
+        }).fail(function (jqXHR) {
+            var firstDigit = (''+jqXHR.status)[0],
+                body       = $('body');
 
-                var commentTime = Math.floor(new Date(comment.created_at) / 1000),
-                    timeAgo     = Math.floor(Date.now() / 1000) - commentTime;
-
-                if (timeAgo <= 0) {
-                    timeAgo = 1;
-                }
-
-                newComment.find('.time-since').html(timeAgo + ' seconds ago');
-                newComment.find('.chat-body > p').html(comment.content);
-
-                newComment.prependTo('ul.chat');
+            if ((firstDigit != '5' && firstDigit != '4') || !body.data('comment-poll')) {
+                return;
             }
+
+            clearInterval(body.data('comment-poll'));
         });
-    }, 30000);
+    }, 20000);
 
     $('body').data('comment-poll', chatTimeout);
 })(jQuery);
