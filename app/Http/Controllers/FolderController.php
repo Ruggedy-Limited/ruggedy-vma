@@ -25,7 +25,7 @@ class FolderController extends AbstractController
      */
     public function create($workspaceId)
     {
-        return $this->controllerResponseHelper(null, 'folders.create', ['workspaceId' => intval($workspaceId)]);
+        return view('folders.create', ['workspaceId' => intval($workspaceId)]);
     }
 
     /**
@@ -33,7 +33,8 @@ class FolderController extends AbstractController
      *
      * @POST("/workspace/folder/store/{workspaceId}", as="workspace.folder.store", where={"workspaceId":"[0-9]+"})
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     * @param $workspaceId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function store(Request $request, $workspaceId)
@@ -44,11 +45,15 @@ class FolderController extends AbstractController
         $folder->setName($request->get('name'))
             ->setDescription($request->get('description'));
 
-        $command  = new CreateFolder(intval($workspaceId), $folder);
-        $response = $this->sendCommandToBusHelper($command);
+        $command = new CreateFolder(intval($workspaceId), $folder);
+        $folder  = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage('Folder created successfully.', parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'workspace.view', ['workspaceId' => $workspaceId], true);
+        if ($this->isCommandError($folder)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success('Folder created successfully.');
+        return redirect()->route('workspace.view', ['workspaceId' => $workspaceId]);
     }
 
     /**
@@ -61,14 +66,18 @@ class FolderController extends AbstractController
      */
     public function show($folderId)
     {
-        $command  = new GetFolder(intval($folderId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command = new GetFolder(intval($folderId));
+        $result  = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'folders.index', $response);
+        if ($this->isCommandError($result)) {
+            return redirect()->back();
+        }
+
+        return view('folders.index', $result);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing a Folder.
      *
      * @GET("/workspace/folder/edit/{folderId}", as="workspace.folder.edit", where={"folderId":"[0-9]+"})
      *
@@ -77,14 +86,18 @@ class FolderController extends AbstractController
      */
     public function edit($folderId)
     {
-        $command  = new GetFolder(intval($folderId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command = new GetFolder(intval($folderId));
+        $folder  = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'folders.create', ['workspace' => $response]);
+        if ($this->isCommandError($folder)) {
+            return redirect()->back()->withInput();
+        }
+
+        return view('folders.edit', ['folder' => $folder]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the Folder details in storage.
      *
      * @POST("/workspace/folder/update/{folderId}", as="workspace.folder.update", where={"folderId":"[0-9]+"})
      *
@@ -95,10 +108,14 @@ class FolderController extends AbstractController
     {
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
-        $command  = new EditFolder(intval($folderId), $this->request->all());
-        $response = $this->sendCommandToBusHelper($command);
+        $command = new EditFolder(intval($folderId), $this->request->all());
+        $folder  = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspace.folder.view', ['folderId' => $folderId], true);
+        if ($this->isCommandError($folder)) {
+            redirect()->back()->withInput();
+        }
+
+        return redirect()->route('workspace.folder.view', ['folderId' => $folderId]);
     }
 
     /**
@@ -109,15 +126,14 @@ class FolderController extends AbstractController
      */
     public function destroy($folderId)
     {
-        $command  = new DeleteFolder($folderId, true);
-        $response = $this->sendCommandToBusHelper($command);
+        $command = new DeleteFolder($folderId, true);
+        $folder  = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper(
-            $response,
-            'workspace.view',
-            ['workspaceId' => $response->getWorkspaceId()],
-            true
-        );
+        if ($this->isCommandError($folder)) {
+            redirect()->back();
+        }
+
+        return redirect()->route('workspace.view', ['workspaceId' => $folder->getWorkspaceId()]);
     }
 
     /**
@@ -133,15 +149,14 @@ class FolderController extends AbstractController
     {
         $folderId = $this->request->get('folder-id', 0);
         $command  = new AddRemoveVulnerabilityToFromFolder(intval($folderId), intval($vulnerabilityId));
-        $response = $this->sendCommandToBusHelper($command);
+        $folder   = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Vulnerability successfully added to folder.", AbstractController::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper(
-            $response,
-            'vulnerability.view',
-            ['vulnerabilityId' => $vulnerabilityId],
-            true
-        );
+        if ($this->isCommandError($folder)) {
+            redirect()->back();
+        }
+
+        $this->flashMessenger->success("Vulnerability successfully added to folder.");
+        return redirect()->route('vulnerability.view', ['vulnerabilityId' => $vulnerabilityId]);
     }
 
     /**
@@ -157,12 +172,16 @@ class FolderController extends AbstractController
     public function removeVulnerabilityToFolder($vulnerabilityId, $folderId)
     {
         $command  = new AddRemoveVulnerabilityToFromFolder(intval($folderId), intval($vulnerabilityId), true);
-        $response = $this->sendCommandToBusHelper($command);
+        $folder   = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Vulnerability successfully removed from folder.", AbstractController::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'workspace.folder.view', [
-            'folderId' => $folderId,
-        ], true);
+        if ($this->isCommandError($folder)) {
+            redirect()->back();
+        }
+
+        $this->flashMessenger->success("Vulnerability successfully removed from folder.");
+
+        return redirect()->route('workspace.folder.view', ['folderId' => $folderId]);
+
     }
 
     /**
