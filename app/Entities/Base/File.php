@@ -28,7 +28,6 @@ class File extends AbstractEntity
     const DELETED                = 'deleted';
     const ASSETS                 = 'assets';
     const VULNERABILITIES        = 'vulnerabilities';
-    const COMMENTS               = 'comments';
     const JIRAISSUES             = 'jiraIssues';
     const USER                   = 'user';
     const WORKSPACEAPP           = 'workspaceApp';
@@ -108,12 +107,6 @@ class File extends AbstractEntity
     protected $vulnerabilities;
 
     /**
-     * @ORM\OneToMany(targetEntity="Comment", mappedBy="file", cascade={"persist"})
-     * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
-     */
-    protected $comments;
-
-    /**
      * @ORM\OneToMany(targetEntity="JiraIssue", mappedBy="file", cascade={"persist"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`file_id`", nullable=false, onDelete="CASCADE")
      */
@@ -135,7 +128,6 @@ class File extends AbstractEntity
     {
         $this->assets = new ArrayCollection();
         $this->vulnerabilities = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         $this->jiraIssues = new ArrayCollection();
     }
 
@@ -485,42 +477,6 @@ class File extends AbstractEntity
     public function getVulnerabilities()
     {
         return $this->vulnerabilities;
-    }
-
-    /**
-     * Add Comment entity to collection (one to many).
-     *
-     * @param \App\Entities\Base\Comment $comment
-     * @return \App\Entities\Base\File
-     */
-    public function addComment(Comment $comment)
-    {
-        $this->comments[] = $comment;
-
-        return $this;
-    }
-
-    /**
-     * Remove Comment entity from collection (one to many).
-     *
-     * @param \App\Entities\Base\Comment $comment
-     * @return \App\Entities\Base\File
-     */
-    public function removeComment(Comment $comment)
-    {
-        $this->comments->removeElement($comment);
-
-        return $this;
-    }
-
-    /**
-     * Get Comment entity collection (one to many).
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getComments()
-    {
-        return $this->comments;
     }
 
     /**
