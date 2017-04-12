@@ -17,7 +17,7 @@ class UserRules extends AbstractEntityRules
     {
         return [
             'name'     => 'bail|required|min:2',
-            'email'    => 'bail|required|email|unique:'. User::class .',email',
+            'email'    => 'bail|required|email',
             'password' => 'present',
         ];
     }
