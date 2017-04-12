@@ -71,7 +71,6 @@ $("#menu-toggle").click(function(e) {
                 return;
             }
 
-
             $(comments).prependTo('ul.chat');
             $('#comment-count').text($('ul.chat > li').length);
         }).fail(function (jqXHR) {
