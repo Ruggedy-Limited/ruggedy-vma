@@ -25,6 +25,7 @@ use App\Entities\File;
 use App\Entities\Folder;
 use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
+use App\Http\Responses\ErrorResponse;
 use Auth;
 use Doctrine\Common\Collections\Collection;
 
