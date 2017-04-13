@@ -7,6 +7,7 @@ use BadMethodCallException;
 use Closure;
 use Exception;
 use Illuminate\Support\Collection;
+use Route;
 
 class ComponentService
 {
@@ -86,5 +87,27 @@ class ComponentService
 
             $level++;
         }
+    }
+
+    /**
+     * Get the title at the end of the breadcrumb for create and edit views, where the entity that is passed in is the
+     * parent entity, so we need to construct the text from the route information
+     *
+     * @return string
+     */
+    public static function getBreadcrumbTextFromRoute(): string
+    {
+        list($entityType, $operation) = explode(".", Route::current()->getName());
+        if (!isset($entityType, $operation) || !in_array($operation, ["create", "edit"])) {
+            return '';
+        }
+
+        // Determine whether we are creating or editing
+        $text = "New ";
+        if ($operation === 'edit') {
+            $text = "Edit ";
+        }
+
+        return $text . ucfirst($entityType);
     }
 }
