@@ -12,10 +12,6 @@
 */
 
 Auth::routes();
-
-Route::get('/theme', 'HomeController@theme'); //Temporary route to theme.
-
-Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index');
 
 Route::get('/workspaces/app/showRecord', 'WorkspaceController@appShowRecord')->name('workspaces.appShowRecord');
