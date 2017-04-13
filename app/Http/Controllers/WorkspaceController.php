@@ -190,12 +190,16 @@ class WorkspaceController extends AbstractController
         $command     = new GetListOfScannerApps(0);
         $scannerApps = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($scannerApps)) {
+        $command   = new GetWorkspace(intval($workspaceId));
+        $workspace = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($scannerApps) || $this->isCommandError($workspace)) {
             return redirect()->back();
         }
 
         return view('workspaces.apps', [
             'scannerApps' => $scannerApps,
+            'workspace'   => $workspace,
             'workspaceId' => $workspaceId,
         ]);
     }
@@ -215,12 +219,16 @@ class WorkspaceController extends AbstractController
         $command    = new GetScannerApp(intval($scannerAppId));
         $scannerApp = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($scannerApp)) {
+        $command   = new GetWorkspace(intval($workspaceId));
+        $workspace = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($scannerApp) || $this->isCommandError($workspace)) {
             return redirect()->back();
         }
 
         return view('workspaces.appsCreate', [
             'workspaceId'  => $workspaceId,
+            'workspace'    => $workspace,
             'scannerAppId' => $scannerAppId,
             'scannerApp'   => $scannerApp,
         ]);

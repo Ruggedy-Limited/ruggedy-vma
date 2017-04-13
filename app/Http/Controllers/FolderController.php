@@ -7,6 +7,7 @@ use App\Commands\CreateFolder;
 use App\Commands\DeleteFolder;
 use App\Commands\EditFolder;
 use App\Commands\GetFolder;
+use App\Commands\GetWorkspace;
 use App\Entities\Folder;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,17 @@ class FolderController extends AbstractController
      */
     public function create($workspaceId)
     {
-        return view('folders.create', ['workspaceId' => intval($workspaceId)]);
+        $command   = new GetWorkspace(intval($workspaceId));
+        $workspace = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back();
+        }
+
+        return view('folders.create', [
+            'workspaceId' => intval($workspaceId),
+            'workspace'   => $workspace,
+        ]);
     }
 
     /**
