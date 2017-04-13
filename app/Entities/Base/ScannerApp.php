@@ -18,8 +18,10 @@ class ScannerApp extends AbstractEntity
 
     /** Column name constants */
     const NAME          = 'name';
+    const FRIENDLY_NAME = 'friendly_name';
     const DESCRIPTION   = 'description';
     const LOGO          = 'logo';
+    const ORDER         = 'order';
     const WORKSPACEAPPS = 'workspaceApps';
 
     /**
@@ -35,6 +37,11 @@ class ScannerApp extends AbstractEntity
     protected $name;
 
     /**
+     * @ORM\Column(name="`friendly_name`", type="string", length=255)
+     */
+    protected $friendly_name;
+
+    /**
      * @ORM\Column(name="`description`", type="string", length=255, nullable=true)
      */
     protected $description;
@@ -43,6 +50,11 @@ class ScannerApp extends AbstractEntity
      * @ORM\Column(name="`logo`", type="string", length=255, nullable=true)
      */
     protected $logo;
+
+    /**
+     * @ORM\Column(name="`order`", type="integer", options={"unsigned":true})
+     */
+    protected $order;
 
     /**
      * @ORM\Column(name="`created_at`", type="datetime")
@@ -112,6 +124,29 @@ class ScannerApp extends AbstractEntity
     }
 
     /**
+     * Set the value of friendly_name.
+     *
+     * @param string $friendly_name
+     * @return ScannerApp
+     */
+    public function setFriendlyName(string $friendly_name)
+    {
+        $this->friendly_name = $friendly_name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of friendly_name.
+     *
+     * @return string
+     */
+    public function getFriendlyName()
+    {
+        return $this->friendly_name;
+    }
+
+    /**
      * Set the value of description.
      *
      * @param string $description
@@ -155,6 +190,29 @@ class ScannerApp extends AbstractEntity
     public function getLogo()
     {
         return $this->logo;
+    }
+
+    /**
+     * Set the value of order.
+     *
+     * @param mixed $order
+     * @return ScannerApp
+     */
+    public function setOrder(int $order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of order.
+     *
+     * @return int
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 
     /**
