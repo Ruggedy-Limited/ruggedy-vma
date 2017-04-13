@@ -104,7 +104,7 @@ class ComponentPolicy
             );
         }
         
-        $componentClass = PermissionService::covertEntityClassToComponentNameHelper($component);
+        $componentClass = PermissionService::convertEntityClassToComponentNameHelper($component);
 
         if ($permission->getComponent()->getClassName() === $componentClass
             && $permission->getInstanceId() === $component->getId()
