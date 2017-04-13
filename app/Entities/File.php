@@ -219,4 +219,15 @@ class File extends Base\File implements SystemComponent
     {
         return $this->audits;
     }
+
+
+    /**
+     * Get the path basename
+     *
+     * @return string
+     */
+    public function getPathBasename()
+    {
+        return basename(parent::getPath());
+    }
 }

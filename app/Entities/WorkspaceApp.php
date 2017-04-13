@@ -51,7 +51,7 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
      */
     public function getParent()
     {
-        return $this->getWorkspace();
+        return $this->workspace;
     }
 
     /**

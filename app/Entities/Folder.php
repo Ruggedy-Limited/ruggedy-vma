@@ -43,7 +43,7 @@ class Folder extends Base\Folder implements SystemComponent
      */
     public function getParent()
     {
-        return $this->getWorkspace();
+        return $this->workspace;
     }
 
     /**
