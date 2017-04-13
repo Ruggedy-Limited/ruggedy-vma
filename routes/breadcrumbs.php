@@ -79,30 +79,19 @@ Breadcrumbs::register('dynamic', function($breadcrumbs, $param1 = null) {
                      $breadcrumbText .= ": " . $entity->getName();
                  }
 
-                 $breadcrumbs->push(
-                     $breadcrumbText,
-                     route(
-                         $entity->getRouteName() . '.view',
-                         [$entity->getRouteParameterName() => $entity->getId()]
-                     )
-                 );
+                 $breadcrumbs->push($breadcrumbText, route($entity->getRouteName() . '.view', [
+                     $entity->getRouteParameterName() => $entity->getId()
+                 ]));
             });
     }
 
-    list($entityType, $operation) = explode(".", Route::current()->getName());
-    if (!isset($entityType, $operation) || !in_array($operation, ["create", "edit"])) {
+    $breadcrumbText = App\Services\ComponentService::getBreadcrumbTextFromRoute();
+    if (empty($breadcrumbText)) {
         return;
     }
 
-    $text = "New ";
-    if ($operation === 'edit') {
-        $text = "Edit ";
-    }
-
-    $entityType = ucfirst($entityType);
-
     $breadcrumbs->push(
-        $text . $entityType,
+        $breadcrumbText,
         Route::current()->uri()
     );
 });
