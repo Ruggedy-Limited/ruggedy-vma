@@ -21,7 +21,8 @@
         "mysql-workbench-schema-exporter/doctrine2-exporter": "~3.0",
         "madewithlove/tactician-laravel": "~1.0",
         "spatie/laravel-fractal": "~3.0",
-        "univerze/laravel-jira": "dev-master"
+        "univerze/laravel-jira": "dev-master",
+        "davejamesmiller/laravel-breadcrumbs": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -77,6 +78,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/Ruggedy-Limited/laravel-jira"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Ruggedy-Limited/laravel-breadcrumbs.git"
         }
     ]
 }
