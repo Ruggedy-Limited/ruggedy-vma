@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Commands\GetListOfWorkspaces;
 
+/**
+ * @Middleware("web")
+ */
 class HomeController extends AbstractController
 {
     /**
      * Show the application dashboard.
+     *
+     * @GET("/", as="home")
      *
      * @return \Illuminate\Http\Response
      */
