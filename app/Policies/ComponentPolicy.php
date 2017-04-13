@@ -6,6 +6,7 @@ use App\Contracts\SystemComponent;
 use App\Entities\ComponentPermission;
 use App\Entities\User;
 use App\Exceptions\RecursionLimitExceededException;
+use App\Services\ComponentService;
 use App\Services\PermissionService;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Collection;
@@ -72,12 +73,22 @@ class ComponentPolicy
      */
     protected function iterateComponentHierarchy(
         SystemComponent $component, ComponentPermission $permission, Collection $requiredPermission
-    )
+    ): bool
     {
         $this->setRecursionCount(0);
 
         try {
-            return $this->checkForComponentPermission($component, $permission, $requiredPermission);
+
+            return ComponentService::getOrderedComponentHierarchy(
+                $component,
+                function ($component) use ($permission, $requiredPermission) {
+                    $this->iterateRecursionCount();
+                    return $this->checkForComponentPermission($component, $permission, $requiredPermission);
+                }
+            )->reduce(function ($accumulated, $result) {
+                return $accumulated || $result;
+            });
+
         } catch (RecursionLimitExceededException $e) {
             return false;
         }
@@ -94,7 +105,7 @@ class ComponentPolicy
      */
     protected function checkForComponentPermission(
         SystemComponent $component, ComponentPermission $permission, Collection $requiredPermission
-    )
+    ): bool
     {
         // Break out of the loop if we've hit the maximum recursion limit
         if ($this->recursionCount >= self::HIERARCHY_RECURSION_LIMIT) {
@@ -110,16 +121,6 @@ class ComponentPolicy
             && $permission->getInstanceId() === $component->getId()
             && $requiredPermission->contains($permission->getPermission())) {
             return true;
-        }
-        
-        $parent = $component->getParent();
-        while (!empty($parent)) {
-            $this->iterateRecursionCount();
-            if ($this->checkForComponentPermission($parent, $permission, $requiredPermission)) {
-                return true;
-            }
-
-            $parent = $parent->getParent();
         }
 
         return false;
