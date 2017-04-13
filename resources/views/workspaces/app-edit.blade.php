@@ -42,7 +42,7 @@
             <p><img src="{{ $scannerApp->getLogo() }}" class="img-secondary"></p>
             <br>
             {!! Form::open([
-                'url' => route('workspace.app.update',['workspaceAppId' => $workspaceAppId)
+                'url' => route('app.update',['workspaceAppId' => $workspaceAppId)
             ]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}

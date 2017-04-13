@@ -1,11 +1,11 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('workspaceApp', $workspaceApp) !!}
+    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <a href="{{ route('workspace.app.delete', [
+    <a href="{{ route('app.delete', [
         'workspaceId'    => $workspaceApp->getWorkspace()->getId(),
         'workspaceAppId' => $workspaceApp->getId()
     ]) }}">
@@ -41,7 +41,7 @@
     </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="{{ route('workspace.app.file.form', ['workspaceAppId' => $workspaceApp->getId()]) }}"
+            <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}"
                class="primary-btn" type="button">Add File</a>
         </div>
     </div>
@@ -50,14 +50,14 @@
         @if ($workspaceApp->getFiles()->count() < 1)
             <p>
                 You haven't uploaded any {{ ucwords($workspaceApp->getScannerApp()->getName()) }} files yet.
-                <a href="{{ route('workspace.app.file.form', ['workspaceAppId' => $workspaceApp->getId()]) }}">
+                <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}">
                     Upload one now?
                 </a>
             </p>
         @else
             @foreach($workspaceApp->getFiles() as $file)
                 <div class="col-md-4 animated pulse-hover">
-                    <a href="{{ route('workspace.app.file.view', ['fileId' => $file->getId()]) }}">
+                    <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
                         <div class="content-card">
                             <h4 class="h-4-1">{{ $file->getName() }}</h4>
                             <p>{{ $file->getDescription() }}</p>

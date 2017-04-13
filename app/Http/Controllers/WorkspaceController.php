@@ -207,7 +207,7 @@ class WorkspaceController extends AbstractController
     /**
      * Display the form to create a WorkspaceApp
      *
-     * @GET("/workspace/app/create/{workspaceId}/{scannerAppId}", as="workspace.app.create",
+     * @GET("/workspace/app/create/{workspaceId}/{scannerAppId}", as="app.create",
      *     where={"workspaceId":"[0-9]+","scannerAppId":"[0-9]+"})
      *
      * @param $workspaceId
@@ -237,7 +237,7 @@ class WorkspaceController extends AbstractController
     /**
      * Display the form to edit a Workspace App
      *
-     * @GET("/workspace/app/edit/{workspaceAppId}", as="workspace.app.edit", where={"workspaceAppId":"[0-9]+"})
+     * @GET("/workspace/app/edit/{workspaceAppId}", as="app.edit", where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -257,7 +257,7 @@ class WorkspaceController extends AbstractController
     /**
      * Save a new WorkspaceApp
      *
-     * @POST("/workspace/app/store/{workspaceId}/{scannerAppId}", as="workspace.app.store",
+     * @POST("/workspace/app/store/{workspaceId}/{scannerAppId}", as="app.store",
      *     where={"workspaceId":"[0-9]+","scannerAppId":"[0-9]+"})
      *
      * @param $workspaceId
@@ -286,7 +286,7 @@ class WorkspaceController extends AbstractController
     /**
      * Update an existing WorkspaceApp
      *
-     * @POST("/workspace/app/update/{workspaceAppId}", as="workspace.app.update",
+     * @POST("/workspace/app/update/{workspaceAppId}", as="app.update",
      *     where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
@@ -310,7 +310,7 @@ class WorkspaceController extends AbstractController
     /**
      * Get a WorkspaceApp and related data
      *
-     * @GET("/workspace/app/{workspaceAppId}", as="workspace.app.view", where={"workspaceAppId":"[0-9]+"})
+     * @GET("/workspace/app/{workspaceAppId}", as="app.view", where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -330,7 +330,7 @@ class WorkspaceController extends AbstractController
     /**
      * Delete WorkspaceApp and all related data
      *
-     * @GET("/workspace/app/delete/{workspaceId}/{workspaceAppId}", as="workspace.app.delete",
+     * @GET("/workspace/app/delete/{workspaceId}/{workspaceAppId}", as="app.delete",
      *     where={"workspaceId":"[0-9]+","workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
@@ -380,7 +380,7 @@ class WorkspaceController extends AbstractController
     /**
      * Show a file and related data including Assets, Vulnerabilities and Comments
      *
-     * @GET("/workspace/app/file/{fileId}", as="workspace.app.file.view", where={"fileId":"[0-9]+"})
+     * @GET("/workspace/app/file/{fileId}", as="file.view", where={"fileId":"[0-9]+"})
      *
      * @param $fileId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -400,7 +400,7 @@ class WorkspaceController extends AbstractController
     /**
      * Display the form where scan output files can be uploaded
      *
-     * @GET("/workspace/app/file/create/{workspaceAppId}", as="workspace.app.file.form",
+     * @GET("/workspace/app/file/create/{workspaceAppId}", as="file.create",
      *     where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
@@ -421,7 +421,7 @@ class WorkspaceController extends AbstractController
     /**
      * Upload scanner output for processing
      *
-     * @POST("/workspace/app/file/upload/{workspaceAppId}", as="workspace.app.file.upload",
+     * @POST("/workspace/app/file/upload/{workspaceAppId}", as="file.upload",
      *     where={"workspaceAppId":"[0-9]+"})
      *
      * @param $workspaceAppId
@@ -442,13 +442,13 @@ class WorkspaceController extends AbstractController
             return redirect()->back()->withInput();
         }
 
-        return redirect()->route('workspace.app.view', ['workspaceApp' => $file->getWorkspaceApp()->getId()]);
+        return redirect()->route('app.view', ['workspaceApp' => $file->getWorkspaceApp()->getId()]);
     }
 
     /**
      * Display the form for editing a file's name and description
      *
-     * @GET("/workspace/app/file/edit/{fileId}", as="workspace.app.file.edit", where={"fileId":"[0-9]+"})
+     * @GET("/workspace/app/file/edit/{fileId}", as="file.edit", where={"fileId":"[0-9]+"})
      *
      * @param $fileId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -468,7 +468,7 @@ class WorkspaceController extends AbstractController
     /**
      * Display the form for editing a file's name and description
      *
-     * @POST("/workspace/app/file/update/{fileId}", as="workspace.app.file.update", where={"fileId":"[0-9]+"})
+     * @POST("/workspace/app/file/update/{fileId}", as="file.update", where={"fileId":"[0-9]+"})
      *
      * @param $fileId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -484,7 +484,7 @@ class WorkspaceController extends AbstractController
             return redirect()->back()->withInput();
         }
 
-        return redirect()->route('workspace.app.file.view', ['fileId' => $fileId]);
+        return redirect()->route('file.view', ['fileId' => $fileId]);
     }
 
 	/**

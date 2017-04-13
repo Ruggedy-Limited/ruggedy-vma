@@ -561,6 +561,17 @@ class File extends AbstractEntity
         return $this->workspaceApp;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'File' : 'Files';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'description', 'path', 'format', 'size', 'user_id', 'workspace_app_id', 'processed', 'deleted', 'created_at', 'updated_at');

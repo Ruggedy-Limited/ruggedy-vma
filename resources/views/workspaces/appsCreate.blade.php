@@ -41,7 +41,7 @@
             <p><img src="{{ $scannerApp->getLogo() }}" class="img-secondary"></p>
             <br>
             {!! Form::open([
-                'url' => route('workspace.app.store',['workspaceId' => $workspaceId, 'scannerAppId' => $scannerAppId])
+                'url' => route('app.store',['workspaceId' => $workspaceId, 'scannerAppId' => $scannerAppId])
             ]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}

@@ -49,7 +49,7 @@
                         @foreach ($scannerApps as $scannerApp)
                             <div class="col-md-4 col-sm-6">
                                 <a href="{{ route(
-                                    'workspace.app.create',
+                                    'app.create',
                                     ['workspaceId' => $workspaceId, 'scannerAppId' => $scannerApp->getId()]
                                 ) }}">
                                     <div class="card hovercard animated pulse-hover">

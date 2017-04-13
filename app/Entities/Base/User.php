@@ -619,6 +619,17 @@ class User extends AbstractEntity
         return $this->workspaces;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'User' : 'Users';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'email', 'password', 'remember_token', 'photo_url', 'country_code', 'phone', 'created_at', 'updated_at');

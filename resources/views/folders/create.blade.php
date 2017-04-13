@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('createFolder', $workspace) !!}
+    {!! Breadcrumbs::render('dynamic', $workspace) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
@@ -36,7 +36,7 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Add Folder</h3>
             <br>
-            {!! Form::open(['url' => route('workspace.folder.store', ['workspaceId' => $workspaceId])]) !!}
+            {!! Form::open(['url' => route('folder.store', ['workspaceId' => $workspaceId])]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
