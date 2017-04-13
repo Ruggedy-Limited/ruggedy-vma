@@ -1,14 +1,13 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <p>Breadcrumbs / Goes / Here
-        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </p>
+    {!! Breadcrumbs::render('createWorkspaceApp', $workspace, $scannerApp) !!}
+    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn round-btn pull-right c-yellow">
+        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+    </button>
 @endsection
 
 @section('content')
@@ -36,7 +35,7 @@
     <div class="row">
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>
-                Add {{ ucwords($scannerApp->getName()) }} App to Workspace
+                Add {{ $scannerApp->getFriendlyName() }} App to Workspace
             </h3>
 
             <p><img src="{{ $scannerApp->getLogo() }}" class="img-secondary"></p>
