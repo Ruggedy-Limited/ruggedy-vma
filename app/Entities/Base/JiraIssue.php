@@ -602,6 +602,17 @@ class JiraIssue extends AbstractEntity
         return $this->vulnerability;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Jira Issue' : 'Jira Issues';
+    }
+
     public function __sleep()
     {
         return array('id', 'project_key', 'issue_id', 'issue_key', 'issue_status', 'issue_type', 'summary', 'description', 'request_type', 'request_status', 'host', 'port', 'retries', 'failure_reason', 'file_id', 'vulnerability_id', 'created_at', 'updated_at');

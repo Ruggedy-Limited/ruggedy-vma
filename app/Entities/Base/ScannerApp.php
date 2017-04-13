@@ -297,6 +297,17 @@ class ScannerApp extends AbstractEntity
         return $this->workspaceApps;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'App' : 'Apps';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'description', 'logo', 'created_at', 'updated_at');

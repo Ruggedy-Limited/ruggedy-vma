@@ -297,4 +297,33 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     {
         return true;
     }
+
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    abstract public function getDisplayName(bool $plural): string;
+
+    /**
+     * Get the name used in routes related to this entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getRouteName(bool $plural = false): string
+    {
+        return strtolower($this->getDisplayName($plural));
+    }
+
+    /**
+     * Get the route parameter name used for passing the ID of a specific entity to a route
+     *
+     * @return string
+     */
+    public function getRouteParameterName(): string
+    {
+        return lcfirst(class_basename($this)) . "Id";
+    }
 }

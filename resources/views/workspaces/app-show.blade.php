@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('file', $file) !!}
+    {!! Breadcrumbs::render('dynamic', $file) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>

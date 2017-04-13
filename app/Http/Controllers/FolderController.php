@@ -19,7 +19,7 @@ class FolderController extends AbstractController
     /**
      * Show the form for creating a folder.
      *
-     * @GET("/workspace/folder/create/{workspaceId}", as="workspace.folder.create", where={"workspaceId":"[0-9]+"})
+     * @GET("/workspace/folder/create/{workspaceId}", as="folder.create", where={"workspaceId":"[0-9]+"})
      *
      * @param $workspaceId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -42,7 +42,7 @@ class FolderController extends AbstractController
     /**
      * Store a newly created resource in storage.
      *
-     * @POST("/workspace/folder/store/{workspaceId}", as="workspace.folder.store", where={"workspaceId":"[0-9]+"})
+     * @POST("/workspace/folder/store/{workspaceId}", as="folder.store", where={"workspaceId":"[0-9]+"})
      *
      * @param  \Illuminate\Http\Request $request
      * @param $workspaceId
@@ -70,7 +70,7 @@ class FolderController extends AbstractController
     /**
      * Display the specified resource.
      *
-     * @GET("/workspace/folder/{folderId}", as="workspace.folder.view", where={"folderId":"[0-9]+"})
+     * @GET("/workspace/folder/{folderId}", as="folder.view", where={"folderId":"[0-9]+"})
      *
      * @param $folderId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -90,7 +90,7 @@ class FolderController extends AbstractController
     /**
      * Show the form for editing a Folder.
      *
-     * @GET("/workspace/folder/edit/{folderId}", as="workspace.folder.edit", where={"folderId":"[0-9]+"})
+     * @GET("/workspace/folder/edit/{folderId}", as="folder.edit", where={"folderId":"[0-9]+"})
      *
      * @param $folderId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -110,7 +110,7 @@ class FolderController extends AbstractController
     /**
      * Update the Folder details in storage.
      *
-     * @POST("/workspace/folder/update/{folderId}", as="workspace.folder.update", where={"folderId":"[0-9]+"})
+     * @POST("/workspace/folder/update/{folderId}", as="folder.update", where={"folderId":"[0-9]+"})
      *
      * @param  int  $folderId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -126,11 +126,13 @@ class FolderController extends AbstractController
             redirect()->back()->withInput();
         }
 
-        return redirect()->route('workspace.folder.view', ['folderId' => $folderId]);
+        return redirect()->route('folder.view', ['folderId' => $folderId]);
     }
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @GET("/workspace/folder/delete/{folderId}", as="folder.delete", where={"folderId":"[0-9]+"})
      *
      * @param  int  $folderId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -191,7 +193,7 @@ class FolderController extends AbstractController
 
         $this->flashMessenger->success("Vulnerability successfully removed from folder.");
 
-        return redirect()->route('workspace.folder.view', ['folderId' => $folderId]);
+        return redirect()->route('folder.view', ['folderId' => $folderId]);
 
     }
 
