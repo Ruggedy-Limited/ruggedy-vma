@@ -234,7 +234,7 @@ class PermissionService
      * @param SystemComponent $entity
      * @return string
      */
-    public static function covertEntityClassToComponentNameHelper(SystemComponent $entity): string
+    public static function convertEntityClassToComponentNameHelper(SystemComponent $entity): string
     {
         $className = get_class($entity);
         if (strpos($className, "\\") !== false) {

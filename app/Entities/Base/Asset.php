@@ -677,6 +677,17 @@ class Asset extends AbstractEntity
         return $this->user;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Asset' : 'Assets';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'cpe', 'vendor', 'ip_address_v4', 'ip_address_v6', 'hostname', 'mac_address', 'mac_vendor', 'os_version', 'netbios', 'uptime', 'last_boot', 'file_id', 'user_id', 'suppressed', 'deleted', 'created_at', 'updated_at');

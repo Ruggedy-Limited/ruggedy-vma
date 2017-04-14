@@ -287,6 +287,17 @@ class Folder extends AbstractEntity
         return $this->user;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Folder' : 'Folders';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'description', 'workspace_id', 'file_id', 'user_id', 'created_at', 'updated_at');

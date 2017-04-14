@@ -1,10 +1,9 @@
 @extends('layouts.main')
 @section ('breadcrumb')
-    <p>Breadcrumbs / Goes / Here
-        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-        </button>
-    </p>
+    {!! Breadcrumbs::render('home') !!}
+    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+    </button>
 @endsection
 
 @section('content')
