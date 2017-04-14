@@ -160,7 +160,7 @@ class AssetRepository extends AbstractSearchableRepository implements Searchable
      *
      * @return Collection
      */
-    protected function getSearchableFields(): Collection
+    public function getSearchableFields(): Collection
     {
         return collect([Asset::NAME, Asset::HOSTNAME, Asset::IP_ADDRESS_V4]);
     }

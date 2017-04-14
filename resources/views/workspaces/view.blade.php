@@ -57,28 +57,8 @@
                             <a href="{{ route('workspaces.apps') }}">Add an Application.</a>
                         </p>
                     @else
-                        @foreach ($workspace->getWorkspaceApps() as $workspaceApp)
-                            <div class="col-md-4 col-sm-6">
-                                <a href="{{
-                                    route('app.view', ['workspaceAppId' => $workspaceApp->getId()])
-                                }}">
-                                <div class="card hovercard animated pulse-hover">
-                                    <div class="cardheader c-white">
-                                    </div>
-                                    <div class="avatar avatar-white">
-                                        <img src="{{ $workspaceApp->getScannerApp()->getLogo() }}">
-                                    </div>
-                                    <div class="info">
-                                        <div class="title h-3">
-                                            <h4>{{ $workspaceApp->getName() }}</h4>
-                                        </div>
-                                        <div class="desc t-3">
-                                            {{ $workspaceApp->getDescription() }}
-                                        </div>
-                                    </div>
-                                </div>
-                                </a>
-                            </div>
+                        @foreach ($workspace->getWorkspaceApps() as $app)
+                            @include('partials.app')
                         @endforeach
                     @endif
                 </div>

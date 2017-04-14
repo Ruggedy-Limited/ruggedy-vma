@@ -13,4 +13,11 @@ interface Searchable
      * @return Collection
      */
     public function search(string $searchTerm): Collection;
+
+    /**
+     * Get a Collection of searchable fields for entities in this repository
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getSearchableFields(): \Illuminate\Support\Collection;
 }

@@ -37,7 +37,7 @@ class WorkspaceRepository extends AbstractSearchableRepository implements Search
      *
      * @return Collection
      */
-    protected function getSearchableFields(): Collection
+    public function getSearchableFields(): Collection
     {
         return collect([Workspace::NAME, Workspace::DESCRIPTION]);
     }

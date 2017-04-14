@@ -326,4 +326,19 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     {
         return lcfirst(class_basename($this)) . "Id";
     }
+
+    /**
+     * Get the amount of points this search result generated.
+     *
+     * @param Collection $searchableFields
+     * @param string $searchTerm
+     * @return mixed
+     */
+    public function getSearchScore(Collection $searchableFields, string $searchTerm): int
+    {
+        // Calculated by summing the number of times the search term was found across all searchable fields.
+        return $searchableFields->reduce(function ($points, $field) use ($searchTerm) {
+            return $points + (substr_count(strtolower($this->$field), strtolower($searchTerm)));
+        });
+    }
 }
