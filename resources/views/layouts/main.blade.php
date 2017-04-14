@@ -62,16 +62,20 @@
         <div class="c-darkgrey nav-sm-btn">
             <i class="fa fa-bars fa-2x" id="menu-toggle"></i>
             <div class="col-md-3 col-sm-6 col-xs-10 pull-right">
-                <div id="custom-search-input">
-                    <div class="input-group col-md-12">
-                        <input type="text" class="form-control" placeholder="Search" />
-                        <span class="input-group-btn">
-                        <button class="btn btn-info btn-lg" type="button">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
+                <form name="search" action="{{ route('search.results') }}" method="POST"
+                      enctype="application/x-www-form-urlencoded">
+                    <div id="custom-search-input">
+                        <div class="input-group col-md-12">
+                                {{ csrf_field() }}
+                                <input type="text" class="form-control" name="s" placeholder="Search" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info btn-lg" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
         <div class="c-lightgrey breadcrumb-nav hidden-xs">

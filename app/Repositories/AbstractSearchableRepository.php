@@ -7,11 +7,6 @@ use App\Entities\User;
 use App\Entities\Vulnerability;
 use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
-use App\Transformers\AssetTransformer;
-use App\Transformers\UserTransformer;
-use App\Transformers\VulnerabilityTransformer;
-use App\Transformers\WorkspaceAppTransformer;
-use App\Transformers\WorkspaceTransformer;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
@@ -34,28 +29,6 @@ abstract class AbstractSearchableRepository extends EntityRepository
         self::SEARCH_TYPE_VULNERABILITY => Vulnerability::class,
         self::SEARCH_TYPE_USER          => User::class,
     ];
-
-    /** @var array */
-    protected static $searchTypeTransformerMap = [
-        self::SEARCH_TYPE_WORKSPACE     => WorkspaceTransformer::class,
-        self::SEARCH_TYPE_WORKSPACE_APP => WorkspaceAppTransformer::class,
-        self::SEARCH_TYPE_ASSET         => AssetTransformer::class,
-        self::SEARCH_TYPE_VULNERABILITY => VulnerabilityTransformer::class,
-        self::SEARCH_TYPE_USER          => UserTransformer::class,
-    ];
-
-    /**
-     * @param int $searchType
-     * @return bool|string
-     */
-    public static function getTransformerForSearchType(int $searchType)
-    {
-        if (!self::isValidSearchType($searchType)) {
-            return false;
-        }
-
-        return static::$searchTypeTransformerMap[$searchType];
-    }
 
     /**
      * Check if a given search type is valid
@@ -113,5 +86,5 @@ abstract class AbstractSearchableRepository extends EntityRepository
      *
      * @return Collection
      */
-    abstract protected function getSearchableFields(): Collection;
+    abstract public function getSearchableFields(): Collection;
 }

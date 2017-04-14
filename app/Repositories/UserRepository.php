@@ -48,7 +48,7 @@ class UserRepository extends AbstractSearchableRepository implements Searchable
      *
      * @return Collection
      */
-    protected function getSearchableFields(): Collection
+    public function getSearchableFields(): Collection
     {
         return collect([User::NAME, User::EMAIL]);
     }

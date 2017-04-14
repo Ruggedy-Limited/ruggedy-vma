@@ -4,6 +4,7 @@ namespace App\Handlers\Commands;
 
 use App\Commands\Search as SearchCommand;
 use App\Contracts\Searchable;
+use App\Entities\Base\AbstractEntity;
 use App\Entities\Vulnerability;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -11,6 +12,7 @@ use App\Exceptions\UnsupportedSearchTypeException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AbstractSearchableRepository;
 use Doctrine\ORM\EntityManager;
+use Illuminate\Support\Collection;
 
 class Search extends CommandHandler
 {
@@ -31,7 +33,7 @@ class Search extends CommandHandler
      * Process the Search command
      *
      * @param SearchCommand $command
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Illuminate\Support\Collection
      * @throws ActionNotPermittedException
      * @throws InvalidInputException
      * @throws UnsupportedSearchTypeException
@@ -41,30 +43,49 @@ class Search extends CommandHandler
         $requestingUser = $this->authenticate();
 
         $searchTerm = $command->getSearchTerm();
-        $searchType = $command->getSearchType();
         // Check that we have everything we need to process the command
-        if (!isset($searchTerm, $searchType)) {
+        if (!isset($searchTerm)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
-        // Make sure we have a valid search type
-        if (!AbstractSearchableRepository::isValidSearchType($searchType)) {
-            throw new UnsupportedSearchTypeException("The given search type is not supported");
-        }
+        // Iterate the different search types and reduce to a single Collection keyed by the entity's display name, each
+        // with a Collection of matching entities sorted in descending order based on how many times a match is found.
+        return AbstractSearchableRepository::getValidSearchTypes()
+            ->reduce(function ($searchResults, $entityClass) use ($searchTerm, $requestingUser) {
+                 /** @var Collection $searchResults */
+                 // Make sure we're using a searchable repository
+                 $repository = $this->em->getRepository($entityClass);
+                 /** @var Searchable $repository */
+                 if (!($repository instanceof Searchable)) {
+                     return $searchResults;
+                 }
 
-        $entityClassForSearch = AbstractSearchableRepository::getValidSearchTypes()->get($searchType);
-        $repository           = $this->em->getRepository($entityClassForSearch);
-        if (!($repository instanceof Searchable)) {
-            throw new UnsupportedSearchTypeException(
-                "The given entity does not have a repository implementing the Searchable Contract"
-            );
-        }
+                 // Intitial results filtered by permissions where relevant
+                 $results = collect($repository->search($searchTerm))->filter(function ($entity) use ($requestingUser) {
+                     if ($entity instanceof Vulnerability) {
+                         return true;
+                     }
 
-        return $repository->search($searchTerm)->filter(function ($entity) use ($requestingUser) {
-            if ($entity instanceof Vulnerability) {
-                return true;
-            }
-            return $requestingUser->can(ComponentPolicy::ACTION_VIEW, $entity);
-        });
+                     return $requestingUser->can(ComponentPolicy::ACTION_VIEW, $entity);
+                 });
+
+                 // No allowed, matching results? Return the Collection that has been carried over from the previous
+                 // iteration as is.
+                 if ($results->isEmpty()) {
+                     return $searchResults;
+                 }
+
+                 // Sort the results in descending order by score. Score is calculated by determining how many times the
+                 // search query was found in the searchable fields
+                 $results = $results->sortByDesc(function ($entity) use ($repository, $searchTerm) {
+                     /** @var AbstractEntity $entity */
+                     return $entity->getSearchScore($repository->getSearchableFields(), $searchTerm);
+                 }, SORT_NUMERIC);
+
+                 // Add the results at a key which is the entity's display name
+                 /** @var AbstractEntity $entity */
+                 $entity = $results->first();
+                 return $searchResults->put($entity->getDisplayName(true), $results);
+            }, new Collection());
     }
 }
