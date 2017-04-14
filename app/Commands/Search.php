@@ -7,19 +7,14 @@ class Search extends Command
     /** @var string */
     protected $searchTerm;
 
-    /** @var int */
-    protected $searchType;
-
     /**
      * Search constructor.
      *
      * @param string $searchTerm
-     * @param int $searchType
      */
-    public function __construct(string $searchTerm, int $searchType)
+    public function __construct(string $searchTerm)
     {
         $this->searchTerm = $searchTerm;
-        $this->searchType = $searchType;
     }
 
     /**
@@ -28,13 +23,5 @@ class Search extends Command
     public function getSearchTerm(): string
     {
         return $this->searchTerm;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSearchType(): int
-    {
-        return $this->searchType;
     }
 }
