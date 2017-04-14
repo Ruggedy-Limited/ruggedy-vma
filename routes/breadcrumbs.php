@@ -5,6 +5,12 @@ Breadcrumbs::register('home', function($breadcrumbs) {
     $breadcrumbs->push('Home', route('home'));
 });
 
+Breadcrumbs::register('search', function($breadcrumbs, $searchTerm) {
+    /** @var \DaveJamesMiller\Breadcrumbs\Generator $breadcrumbs */
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Search results for "' . $searchTerm . '"');
+});
+
 // Home > Workspace > Apps
 Breadcrumbs::register('workspaceApps', function($breadcrumbs, $workspace) {
     /** @var \DaveJamesMiller\Breadcrumbs\Generator $breadcrumbs */

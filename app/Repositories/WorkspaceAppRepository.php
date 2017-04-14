@@ -35,7 +35,7 @@ class WorkspaceAppRepository extends AbstractSearchableRepository implements Sea
      *
      * @return Collection
      */
-    protected function getSearchableFields(): Collection
+    public function getSearchableFields(): Collection
     {
         return collect([WorkspaceApp::NAME, WorkspaceApp::DESCRIPTION]);
     }
