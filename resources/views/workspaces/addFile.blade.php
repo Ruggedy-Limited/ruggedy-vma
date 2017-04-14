@@ -1,14 +1,13 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <p>Breadcrumbs / Goes / Here
-        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </p>
+    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
+    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn round-btn pull-right c-yellow">
+        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+    </button>
 @endsection
 
 @section('content')
@@ -38,7 +37,7 @@
             <h3>Add a {{ ucwords($workspaceApp->getScannerApp()->getName()) }} File</h3>
             <br>
             {!! Form::open([
-                'url' => route('workspace.app.file.upload',
+                'url' => route('file.upload',
                 ['workspaceAppId' => $workspaceApp->getId()]),
                 'files' => 'true'
             ]) !!}

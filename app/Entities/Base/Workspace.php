@@ -342,6 +342,17 @@ class Workspace extends AbstractEntity
         return $this->user;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Workspace' : 'Workspaces';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'description', 'user_id', 'deleted', 'created_at', 'updated_at');

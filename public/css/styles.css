@@ -143,6 +143,20 @@ Start: Navbar
     border-bottom: 1px solid #e0dfdf;
 }
 
+.breadcrumb {
+    float: left;
+}
+
+.breadcrumb > li > a {
+    color: #23b7e5;
+    text-decoration: underline;
+}
+
+.breadcrumb > .active {
+    font-weight: bold;
+    color: #3a3f51;
+}
+
 .nav-btn {
     height: 100px;
     width: 100%;

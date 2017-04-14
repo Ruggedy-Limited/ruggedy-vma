@@ -37,7 +37,7 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Edit File: {{ $file->getName() }}</h3>
             <br>
-            {!! Form::open(['url' => route('workspace.app.file.update', ['fileId' => $file->getId()])]) !!}
+            {!! Form::open(['url' => route('file.update', ['fileId' => $file->getId()])]) !!}
             <div class="form-group">
                 {!! Form::label('name', 'Name') !!}
                 {!! Form::text('name', $file->getName(), ['class' => 'black-form-control']) !!}

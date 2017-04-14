@@ -328,6 +328,17 @@ class WorkspaceApp extends AbstractEntity
         return $this->workspace;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'App' : 'Apps';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'description', 'scanner_app_id', 'workspace_id', 'created_at', 'updated_at');

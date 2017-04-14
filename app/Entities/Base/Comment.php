@@ -284,6 +284,17 @@ class Comment extends AbstractEntity
         return $this->vulnerability;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Comment' : 'Comments';
+    }
+
     public function __sleep()
     {
         return array('id', 'content', 'status', 'user_id', 'vulnerability_id', 'created_at', 'updated_at');

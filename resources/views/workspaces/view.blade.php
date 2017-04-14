@@ -1,20 +1,19 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <p>Breadcrumbs / Goes / Here
-        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-red">
-            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-purple">
-            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </p>
+    {!! Breadcrumbs::render('dynamic', $workspace) !!}
+    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn round-btn pull-right c-red">
+        <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn round-btn pull-right c-purple">
+        <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn round-btn pull-right c-yellow">
+        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+    </button>
 @endsection
 
 @section('content')
@@ -40,7 +39,7 @@
         <div class="col-md-12">
             <a href="{{ route('workspace.apps', ['workspaceId' => $workspace->getId()]) }}"
                class="primary-btn" type="button">Add Application</a>
-            <a href="{{ route('workspace.folder.create', ['workspaceId' => $workspace->getId()]) }}"
+            <a href="{{ route('folder.create', ['workspaceId' => $workspace->getId()]) }}"
                class="primary-btn" type="button">Add Folder</a>
         </div>
     </div>
@@ -61,7 +60,7 @@
                         @foreach ($workspace->getWorkspaceApps() as $workspaceApp)
                             <div class="col-md-4 col-sm-6">
                                 <a href="{{
-                                    route('workspace.app.view', ['workspaceAppId' => $workspaceApp->getId()])
+                                    route('app.view', ['workspaceAppId' => $workspaceApp->getId()])
                                 }}">
                                 <div class="card hovercard animated pulse-hover">
                                     <div class="cardheader c-white">
@@ -97,7 +96,7 @@
                     @else
                         @foreach ($workspace->getFolders() as $folder)
                             <div class="col-md-4 col-sm-6">
-                                <a href="{{ route('workspace.folder.view', ['folderId' => $folder->getId()]) }}">
+                                <a href="{{ route('folder.view', ['folderId' => $folder->getId()]) }}">
                                     <div class="card hovercard animated pulse-hover">
                                         <div class="cardheader c-white"></div>
                                         <div class="avatar avatar-white">

@@ -212,6 +212,17 @@ class Component extends AbstractEntity
         return $this->componentPermissions;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Component' : 'Components';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'class_name', 'created_at', 'updated_at');
