@@ -54,4 +54,11 @@ interface SystemComponent
      * @return string
      */
     public function getRouteName(bool $plural = false): string;
+
+    /**
+     * Get the route parameter name used for passing the ID of a specific entity to a route
+     *
+     * @return string
+     */
+    public function getRouteParameterName(): string;
 }
