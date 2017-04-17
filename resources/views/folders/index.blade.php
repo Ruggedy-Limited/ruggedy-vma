@@ -34,8 +34,25 @@
 
         </div>
     </div>
-    <div class="row animated fadeIn">
-        @include('partials.vulnerabilities')
-    </div>
 
+    <div class="row animated fadeIn">
+        <ul class=tabs>
+            <li>
+                <input type=radio name=tabs id=tab1 checked>
+                <label for=tab1>
+                    <i class="fa fa-bomb fa-2x" aria-hidden="true"></i>
+                    <p class="hidden-xs">Vulnerabilities</p>
+                </label>
+                <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
+                    <div>
+                        <div class="col-xs-12">
+                            @include('partials.vulnerabilities')
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <br style=clear:both;>
+    </div>
 @endsection

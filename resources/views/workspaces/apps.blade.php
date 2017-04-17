@@ -33,19 +33,23 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>XML Apps</label>
+                <label for=tab1>
+                    <i class="fa fa-file-code-o fa-2x" aria-hidden="true"></i>
+                    <p>XML Apps</p>
+                </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     @if (empty($scannerApps))
-                        <div class="container">
-                            <div class="col-xs-12">
-                                <p>
+                        <div>
+                            <div>
+                                <p class="p-l-8">
                                     No apps were found in this context.<br>
                                     This is unusual, so you should probably contact your support provider for help.
                                 </p>
                             </div>
                         </div>
                     @else
+                        <div class="col-xs-12">
                         @foreach ($scannerApps as $scannerApp)
                             <div class="col-md-4 col-sm-6">
                                 <a href="{{ route(
@@ -70,19 +74,24 @@
                                 </a>
                             </div>
                         @endforeach
+                        </div>
                     @endif
                 </div>
             </li>
-            <li>
+            <li class="p-l-25">
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>API Apps</label>
+                <label for=tab2>
+                    <i class="fa fa-exchange fa-2x" aria-hidden="true"></i>
+                    <p>API Apss</p>
+                </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
+                    <div class="col-xs-12">
                     <div class="col-md-4 col-sm-6">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
                             <div class="avatar avatar-white">
-                                <i class="fa fa-cogs fa-5x t-c-red"></i>
+                                <i class="fa fa-cogs fa-5x t-c-grey"></i>
                             </div>
                             <div class="info">
                                 <div class="title h-3">
@@ -92,6 +101,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </li>

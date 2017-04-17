@@ -110,7 +110,10 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerability</label>
+                <label for=tab1>
+                    <i class="fa fa-bomb fa-2x" aria-hidden="true"></i>
+                    <p class="hidden-xs">Vulnerability</p>
+                </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-12">
@@ -124,9 +127,12 @@
                     </div>
                 </div>
             </li>
-            <li>
+            <li class="p-l-25">
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>Solution</label>
+                <label for=tab2>
+                    <i class="fa fa-thumbs-up fa-2x" aria-hidden="true"></i>
+                    <p class="hidden-xs">Solution</p>
+                </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-12">
@@ -136,17 +142,25 @@
                     </div>
                 </div>
             </li>
-            <li>
+            <li class="p-l-25">
                 <input type=radio name=tabs id=tab3>
-                <label for=tab3>Vulnerable Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
+                <label for=tab3>
+                    <i class="fa fa-server fa-2x" aria-hidden="true"></i>
+                    <span id="comment-count" class="badge c-purple visible-xs pull-right">{{ $assets->count() }}</span>
+                    <p class="hidden-xs">Vulnerable Assets<span class="badge c-purple">{{ $assets->count() }}</span></p>
+                    </label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
                     @include('partials.assets')
                 </div>
             </li>
-            <li>
+            <li class="p-l-25">
                 <input type=radio name=tabs id=tab4>
-                <label for=tab4>Comments <span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></label>
+                <label for=tab4>
+                    <i class="fa fa-comments fa-2x" aria-hidden="true"></i>
+                    <span id="comment-count" class="badge c-purple visible-xs pull-right">{{ $comments->count() }}</span>
+                    <p class="hidden-xs">Comments<span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></p>
+                </label>
                 <div id=tab-content4 class=tab-content>
                     <div class="dash-line"></div>
                     <br>
