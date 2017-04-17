@@ -54,7 +54,7 @@
                 </label>
                 <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
+                    <div>
                     @if (empty($workspace->getWorkspaceApps()))
                         <p>
                             No Apps in this Workspace yet.
@@ -76,7 +76,7 @@
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
+                    <div>
                     @if (empty($workspace->getFolders()))
                         <p>
                             No Folders in this Workspace yet.

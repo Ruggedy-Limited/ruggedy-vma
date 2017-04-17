@@ -116,7 +116,7 @@
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-12">
+                    <div class="col-xs-12">
                         <div class="list-content-card">
                             <span class="label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
                                 {{ $vulnerability->getSeverityText() }} Risk
@@ -135,7 +135,7 @@
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-12">
+                    <div class="col-xs-12">
                         <div class="content-card">
                             {!! $vulnerability->getSolution() ?? '<p>No solution available at present.</p>' !!}
                         </div>
@@ -146,8 +146,8 @@
                 <input type=radio name=tabs id=tab3>
                 <label for=tab3>
                     <i class="fa fa-server fa-2x" aria-hidden="true"></i>
-                    <span id="comment-count" class="badge c-purple visible-xs pull-right">{{ $assets->count() }}</span>
-                    <p class="hidden-xs">Vulnerable Assets<span class="badge c-purple">{{ $assets->count() }}</span></p>
+                    <span id="comment-count" class="label-count c-grey visible-xs pull-right">{{ $assets->count() }}</span>
+                    <p class="hidden-xs">Vulnerable Assets<span class="label-count c-grey">{{ $assets->count() }}</span></p>
                     </label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
@@ -158,8 +158,8 @@
                 <input type=radio name=tabs id=tab4>
                 <label for=tab4>
                     <i class="fa fa-comments fa-2x" aria-hidden="true"></i>
-                    <span id="comment-count" class="badge c-purple visible-xs pull-right">{{ $comments->count() }}</span>
-                    <p class="hidden-xs">Comments<span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></p>
+                    <span id="comment-count" class="label-count c-grey visible-xs pull-right">{{ $comments->count() }}</span>
+                    <p class="hidden-xs">Comments<span id="comment-count" class="label-count c-grey">{{ $comments->count() }}</span></p>
                 </label>
                 <div id=tab-content4 class=tab-content>
                     <div class="dash-line"></div>

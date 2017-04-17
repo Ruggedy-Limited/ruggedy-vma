@@ -26,16 +26,19 @@
     </div>
     @if (empty($searchResults) || $searchResults->isEmpty())
         <div class="col-sm-12">
-            <h1>No matching records found for "{{ $searchTerm }}". Please try a different search term.</h1>
+            <h4 class="p-l-8">No matching records found for "{{ $searchTerm }}". Please try a different search term.</h4>
         </div>
     @else
         <div class="row animated fadeIn">
-            <h1>Matches for search phrase: "{{ $searchTerm }}"</h1>
+            <h4 class="p-l-8">Matches for search phrase: "{{ $searchTerm }}"</h4>
             <ul class=tabs>
                 @if (!empty($searchResults->get('Workspaces')))
                     <li>
                         <input type=radio name=tabs id=tab1>
-                        <label for=tab1>Workspaces</label>
+                        <label for=tab1>
+                            <i class="fa fa-th fa-2x" aria-hidden="true"></i>
+                            <p class="hidden-xs">Workspaces</p>
+                        </label>
                         <div id="tab-content1" class="tab-content">
                             <div class="dash-line"></div>
                             @foreach ($searchResults->get('Workspaces') as $workspace)
@@ -45,9 +48,12 @@
                     </li>
                 @endif
                 @if (!empty($searchResults->get('Apps')))
-                    <li>
+                    <li class="p-l-25">
                         <input type=radio name=tabs id=tab2>
-                        <label for=tab2>Apps</label>
+                        <label for=tab2>
+                            <i class="fa fa-window-maximize fa-2x" aria-hidden="true"></i>
+                            <p class="hidden-xs">Apps</p>
+                        </label>
                         <div id="tab-content2" class="tab-content">
                             <div class="dash-line"></div>
                             @foreach ($searchResults->get('Apps') as $app)
@@ -57,9 +63,12 @@
                     </li>
                 @endif
                 @if (!empty($searchResults->get('Vulnerabilities')))
-                    <li>
+                    <li class="p-l-25">
                         <input type=radio name=tabs id=tab3>
-                        <label for=tab3>Vulnerabilities</label>
+                        <label for=tab3>
+                            <i class="fa fa-bomb fa-2x" aria-hidden="true"></i>
+                            <p class="hidden-xs">Vulnerabilities</p>
+                            </label>
                         <div id="tab-content3" class="tab-content">
                             <div class="dash-line"></div>
                             @foreach ($searchResults->get('Vulnerabilities') as $vulnerability)
@@ -70,9 +79,12 @@
                 @endif
                 @if (!empty($searchResults->get('Assets')))
                     <?php $assets = $searchResults->get('Assets') ?>
-                    <li>
+                    <li class="p-l-25">
                         <input type=radio name=tabs id=tab4>
-                        <label for=tab4>Assets</label>
+                        <label for=tab4>
+                            <i class="fa fa-server fa-2x" aria-hidden="true"></i>
+                            <p class="hidden-xs">Assets</p>
+                        </label>
                         <div id="tab-content4" class="tab-content">
                             <div class="dash-line"></div>
                             @include('partials.assets')
@@ -80,9 +92,12 @@
                     </li>
                 @endif
                 @if (!empty($searchResults->get('Users')))
-                    <li>
+                    <li class="p-l-25">
                         <input type=radio name=tabs id=tab5>
-                        <label for=tab5>Users</label>
+                        <label for=tab5>
+                            <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                            <p class="hidden-xs">Users</p>
+                        </label>
                         <div id="tab-content5" class="tab-content">
                             <div class="dash-line"></div>
                             @foreach ($searchResults->get('Users') as $user)

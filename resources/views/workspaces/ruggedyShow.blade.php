@@ -152,7 +152,7 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab3>
-                <label for=tab3>Comments <span class="badge c-purple">3</span></label>
+                <label for=tab3>Comments <span class="label-count c-purple">3</span></label>
                 <div id=tab-content3 class=tab-content>
                     <div class="dash-line"></div>
                     <br>

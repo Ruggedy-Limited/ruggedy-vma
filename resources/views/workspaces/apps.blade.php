@@ -49,7 +49,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="col-xs-12">
+                        <div>
                         @foreach ($scannerApps as $scannerApp)
                             <div class="col-md-4 col-sm-6">
                                 <a href="{{ route(
@@ -86,7 +86,7 @@
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
+                    <div>
                     <div class="col-md-4 col-sm-6">
                         <div class="card hovercard animated pulse-hover">
                             <div class="cardheader c-white"></div>
