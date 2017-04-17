@@ -39,33 +39,52 @@
 
         </div>
     </div>
+
+
     <div class="row animated fadeIn">
         <div class="col-md-12">
             <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}"
                class="primary-btn" type="button">Add File</a>
         </div>
     </div>
-
     <div class="row animated fadeIn">
-        @if ($workspaceApp->getFiles()->count() < 1)
-            <p>
-                You haven't uploaded any {{ ucwords($workspaceApp->getScannerApp()->getName()) }} files yet.
-                <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}">
-                    Upload one now?
-                </a>
-            </p>
-        @else
-            @foreach($workspaceApp->getFiles() as $file)
-                <div class="col-md-4 animated pulse-hover">
-                    <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
-                        <div class="content-card">
-                            <h4 class="h-4-1">{{ $file->getName() }}</h4>
-                            <p>{{ $file->getDescription() }}</p>
+        <ul class=tabs>
+            <li>
+                <input type=radio name=tabs id=tab1 checked>
+                <label for=tab1>
+                    <i class="fa fa-file fa-2x" aria-hidden="true"></i>
+                    <p class="hidden-xs">Files</p>
+                </label>
+                <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
+                    <div>
+                        <div class="col-xs-12">
+                            @if ($workspaceApp->getFiles()->count() < 1)
+                                <br>
+                                <p class="p-l-8">
+                                    You haven't uploaded any {{ ucwords($workspaceApp->getScannerApp()->getName()) }}
+                                    files yet.
+                                    <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}">
+                                        Upload one now?
+                                    </a>
+                                </p>
+                            @else
+                                @foreach($workspaceApp->getFiles() as $file)
+                                    <div class="col-md-4 animated pulse-hover">
+                                        <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
+                                            <div class="content-card">
+                                                <h4 class="h-4-1">{{ $file->getName() }}</h4>
+                                                <p>{{ $file->getDescription() }}</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
-                    </a>
+                    </div>
                 </div>
-            @endforeach
-        @endif
+            </li>
+        </ul>
+        <br style=clear:both;>
     </div>
-
 @endsection

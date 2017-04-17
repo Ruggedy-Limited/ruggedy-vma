@@ -42,19 +42,25 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Users</label>
+                <label for=tab1>
+                    <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                    <p class="hidden-xs">Users</p>
+                </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    @if (empty($users))
-                        <p>
-                            No Users have been created yet.
-                            <a href="{{ route('settings.user.create') }}">Add a User</a>.
-                        </p>
-                    @else
-                        @foreach ($users as $user)
-                            @include('partials.user')
-                        @endforeach
-                    @endif
+                    <div class="col-xs-12">
+                        @if (empty($users))
+                            <br>
+                            <p class="p-l-8">
+                                No Users have been created yet.
+                                <a href="{{ route('settings.user.create') }}">Add a User</a>.
+                            </p>
+                        @else
+                            @foreach ($users as $user)
+                                @include('partials.user')
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
             </li>
         </ul>

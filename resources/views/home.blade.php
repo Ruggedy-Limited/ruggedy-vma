@@ -29,17 +29,32 @@
             <a href="{{ route('workspace.create') }}" class="primary-btn" type="button">Add Workspace</a>
         </div>
     </div>
-
     <div class="row animated fadeIn">
-        @if (empty($workspaces))
-            <div class="col-sm-12">
-                There aren't any workspaces, it's very quiet in here.
-                <a href="{{ route('workspace.create') }}">Add a Workspace</a>
-            </div>
-        @else
-            @foreach ($workspaces as $workspace)
-                @include('partials.workspace')
-            @endforeach
-        @endif
+        <ul class=tabs>
+            <li>
+                <input type=radio name=tabs id=tab1 checked>
+                <label for=tab1>
+                    <i class="fa fa-th fa-2x" aria-hidden="true"></i>
+                    <p class="hidden-xs">Workspaces</p>
+                </label>
+                <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
+                    <div>
+                        <div class="col-xs-12">
+                            @if (empty($workspaces))
+                                <br>
+                                <p class="p-l-8">There aren't any workspaces, it's very quiet in here.
+                                    <a href="{{ route('workspace.create') }}">Add a Workspace</a></p>
+                            @else
+                                @foreach ($workspaces as $workspace)
+                                    @include('partials.workspace')
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <br style=clear:both;>
     </div>
 @endsection
