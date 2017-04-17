@@ -46,7 +46,7 @@
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div>
-                        <div class="col-xs-12">
+                        <div>
                             @include('partials.vulnerabilities')
                         </div>
                     </div>

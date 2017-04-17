@@ -109,6 +109,35 @@ label:focus,
     -webkit-box-shadow: inset 0 0px 0 rgba(255, 255, 255, .1);
 }
 
+.label-count {
+    display: inline;
+    padding: .2em .6em .3em;
+    margin-left: 10px;
+    margin-right: 5px;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+
+.pagination>li>a, .pagination>li>span {
+    border-radius: 50% !important;margin: 0 5px;
+    color: #51576f;
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    background-color: #51576f;
+    border-color: #51576f;
+}
+
+
 /*
 ==========================================================================
 End: Generic
@@ -690,7 +719,7 @@ Start: Cards
 .list-content-card {
     word-wrap: break-word;
     position: relative;
-    background: #fff;
+    background-color: rgba(255, 255, 255, 0.7);
     margin-top: 15px;
     margin-bottom: 0;
     border-radius: 0;
@@ -1148,9 +1177,10 @@ div ul li label {
 }
 
 .dash-line {
-    border-top: 1px dashed #8f93a5;
+    border-top: 2px dashed #8f93a5;
     margin-left:20px;
     margin-right: 20px;
+    margin-top: 5px;
 }
 
 .tabs [id^="tab"]:checked + label {
@@ -1236,6 +1266,14 @@ Start: Comments
     margin-top: 0;
     margin-bottom: 60px;
     border-radius: 0;
+}
+
+.chat-content ul li {
+    padding: 0 0;
+}
+
+.chat-content ol li {
+    padding: 0 0;
 }
 
 /*

@@ -58,9 +58,10 @@
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div>
-                        <div class="col-xs-12">
+                        <div>
                             @if ($workspaceApp->getFiles()->count() < 1)
                                 <br>
+                                <div class="col-xs-12">
                                 <p class="p-l-8">
                                     You haven't uploaded any {{ ucwords($workspaceApp->getScannerApp()->getName()) }}
                                     files yet.
@@ -68,6 +69,7 @@
                                         Upload one now?
                                     </a>
                                 </p>
+                                </div>
                             @else
                                 @foreach($workspaceApp->getFiles() as $file)
                                     <div class="col-md-4 animated pulse-hover">

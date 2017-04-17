@@ -40,12 +40,12 @@
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>
                     <i class="fa fa-bomb fa-2x" aria-hidden="true"></i>
-                    <span id="comment-count" class="badge c-purple visible-xs pull-right">{{ $vulnerabilities->total() }}</span>
-                    <p class="hidden-xs">Vulnerabilities<span class="badge c-purple">{{ $vulnerabilities->total() }}</span></p>
+                    <span id="comment-count" class="label-count c-grey visible-xs pull-right">{{ $vulnerabilities->total() }}</span>
+                    <p class="hidden-xs">Vulnerabilities<span class="label-count c-grey">{{ $vulnerabilities->total() }}</span></p>
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
+                    <div>
                     @include('partials.vulnerabilities')
                     </div>
                 </div>
@@ -54,12 +54,12 @@
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>
                     <i class="fa fa-server fa-2x" aria-hidden="true"></i>
-                    <span id="comment-count" class="badge c-purple visible-xs pull-right">{{ $assets->count() }}</span>
-                    <p class="hidden-xs">Assets<span class="badge c-purple">{{ $assets->count() }}</span></p>
+                    <span id="comment-count" class="label-count c-grey visible-xs pull-right">{{ $assets->count() }}</span>
+                    <p class="hidden-xs">Assets<span class="label-count c-grey">{{ $assets->count() }}</span></p>
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
+                    <div>
                     @include('partials.assets')
                     </div>
                 </div>
