@@ -116,13 +116,28 @@
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
-                        <div class="list-content-card">
-                            <span class="label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
+                    <div class="col-md-12">
+                        <div class="m-t-15">
+                            <div class="label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
                                 {{ $vulnerability->getSeverityText() }} Risk
-                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div>
+                            <p>References: </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="list-content-card">
                             <h4 class="h-4-1">{{ $vulnerability->getName() }}</h4>
                             {!! $vulnerability->getDescription() !!}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="list-content-card">
+                            <h4>Exploits</h4>
+                            <p>List of known exploits to go here.</p>
                         </div>
                     </div>
                 </div>
@@ -135,7 +150,7 @@
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-xs-12">
+                    <div class="col-md-6">
                         <div class="content-card">
                             {!! $vulnerability->getSolution() ?? '<p>No solution available at present.</p>' !!}
                         </div>
