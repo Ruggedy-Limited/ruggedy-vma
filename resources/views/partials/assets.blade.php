@@ -14,16 +14,16 @@
         <div class="col-md-3">
             <a href="#">
                 <div class="list-content-card animated pulse-hover">
-                    <span class="label label-danger">
+                    <span class="label label-danger m-r-5">
                         {{ $asset->getCriticalSeverityVulnerabilities()->count() }}
                     </span>
-                    <span class="label label-high">
+                    <span class="label label-high m-r-5">
                         {{ $asset->getHighSeverityVulnerabilities()->count() }}
                     </span>
-                    <span class="label label-warning">
+                    <span class="label label-warning m-r-5">
                         {{ $asset->getMediumSeverityVulnerabilities()->count() }}
                     </span>
-                    <span class="label label-success">
+                    <span class="label label-success m-r-5">
                         {{ $asset->getLowSeverityVulnerabilities()->count() }}
                     </span>
                     <span class="label label-info">
