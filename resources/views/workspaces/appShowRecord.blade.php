@@ -123,20 +123,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div>
-                            <p>References: </p>
-                        </div>
+                    <div class="col-md-12 m-t-15">
+                        <p><i class="fa fa-book" aria-hidden="true"></i>
+                            <span>Reference: </span>
+                        </p>
+                        <p><i class="fa fa-location-arrow" aria-hidden="true"></i>
+                        <span>URL Path: </span>
+                        </p>
                     </div>
                     <div class="col-md-6">
-                        <div class="list-content-card">
-                            <h4 class="h-4-1">{{ $vulnerability->getName() }}</h4>
+                        <div class="content-card">
+                            <h4>{{ $vulnerability->getName() }}</h4>
                             {!! $vulnerability->getDescription() !!}
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="list-content-card">
-                            <h4>Exploits</h4>
+                        <div class="content-card">
+                            <h4>Known Exploits</h4>
                             <p>List of known exploits to go here.</p>
                         </div>
                     </div>
