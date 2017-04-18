@@ -32,48 +32,7 @@
         </div>
     </div>
     <!-- JIRA -->
-    <div id="jira" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Send to JIRA</h4>
-                </div>
-                <div class="modal-body">
-                    {!! Form::open(['url' => '/foo/bar']) !!}
-                    <div class="col-md-6">
-                    <div class="form-group">
-                        {!! Form::label('name', 'User Name') !!}
-                        {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
-                    </div>
-                        <div class="form-group">
-                            {!! Form::label('name', 'Password') !!}
-                            {!! Form::password('name', ['class' => 'black-form-control']) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            {!! Form::label('name', 'JIRA Project ID') !!}
-                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
-                        </div>
-                        <div class="form-group">
-                            {!! Form::label('name', 'Host') !!}
-                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
-                        </div>
-                        <div class="form-group">
-                            {!! Form::label('name', 'Port') !!}
-                            {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
-                        </div>
-                    </div>
-                    <button class="primary-btn" type="submit">Submit</button>
-                    {!! Form::close() !!}
-                </div>
-            </div>
-
-        </div>
-    </div>
+    @include('partials.jira-form')
     <!-- Folder -->
     <div id="folder" class="modal fade" role="dialog">
         <div class="modal-dialog">
