@@ -118,18 +118,20 @@
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="m-t-15">
-                            <div class="label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
+                            <div class="t-s-14 label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
                                 {{ $vulnerability->getSeverityText() }} Risk
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12 m-t-15">
+                        <div class="single-content-card">
                         <p><i class="fa fa-book" aria-hidden="true"></i>
                             <span>Reference: </span>
                         </p>
                         <p><i class="fa fa-location-arrow" aria-hidden="true"></i>
                         <span>URL Path: </span>
                         </p>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="content-card">
