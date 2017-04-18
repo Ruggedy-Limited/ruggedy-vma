@@ -597,6 +597,7 @@ class WorkspaceController extends AbstractController
      */
     public function sendToJira($vulnerabilityId)
     {
+        // Start creating a new Jira Issue and populate it with data from the request
         $jiraIssue = new JiraIssue();
         $jiraIssue->setHost($this->request->get('host'))
             ->setPort($this->request->get('port'))
@@ -607,6 +608,8 @@ class WorkspaceController extends AbstractController
 
         $ajaxResponse = new AjaxResponse();
 
+        // Do validation but catch the ValidationExceptions to handle them here ourselves
+        // because this is a JSON response
         try {
             $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
         } catch (ValidationException $e) {
@@ -617,6 +620,7 @@ class WorkspaceController extends AbstractController
             return response()->json($ajaxResponse);
         }
 
+        // Create and send the command to create a new Jira ticket
         $command = new CreateJiraTicket(
             $vulnerabilityId,
             $this->request->get('username'),
@@ -626,6 +630,11 @@ class WorkspaceController extends AbstractController
 
         /** @var JiraIssue $jiraIssueResponse */
         $jiraIssueResponse = $this->sendCommandToBusHelper($command);
+
+        // Handle the response and make sure the issue was created successfully, or notify the user what the error is
+        // where possible
+
+        // Command errors
         if ($jiraIssueResponse instanceof ErrorResponse) {
             $ajaxResponse->setHtml(view('partials.custom-message', [
                 'bsClass' => 'danger',
@@ -635,6 +644,7 @@ class WorkspaceController extends AbstractController
             return response()->json($ajaxResponse);
         }
 
+        // Jira API errors
         if ($jiraIssueResponse->getRequestStatus() !== JiraIssue::REQUEST_STATUS_SUCCESS) {
             $ajaxResponse->setHtml(view('partials.custom-message', [
                 'bsClass' => 'danger',
@@ -644,8 +654,7 @@ class WorkspaceController extends AbstractController
             return response()->json($ajaxResponse);
         }
 
-
-
+        // Success
         $ajaxResponse->setHtml(view('partials.custom-message', [
             'bsClass' => 'success',
             'message' => 'Jira Issue <a href="' . $jiraIssueResponse->getIssueUrl() . '" target="_blank">'
