@@ -106,7 +106,7 @@
         </div>
     </div>
 
-    <div class="row animated fadeIn">
+    <div class="row animated fadeIn {{ $vulnerability->getFile()->getWorkspaceApp()->getScannerApp()->getName() }}">
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
@@ -156,7 +156,7 @@
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-6">
-                        <div class="content-card">
+                        <div class="content-card solution">
                             {!! $vulnerability->getSolution() ?? '<p>No solution available at present.</p>' !!}
                         </div>
                     </div>
