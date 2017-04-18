@@ -586,6 +586,10 @@ Start: Colors, Text, Padding, Margins
     font-size: 10px;
 }
 
+.t-s-14 {
+    font-size: 14px;
+}
+
 .t-c-red {
     color: #eb4957 !important;
 }
@@ -740,13 +744,13 @@ Start: Cards
 .single-content-card {
     word-wrap: break-word;
     position: relative;
-    background-color: rgba(255, 255, 255, 0.7);
-    margin-top: 15px;
+    background-color: white;
+    margin-top: 0;
     margin-bottom: 0;
     border-radius: 0;
     height: 100%;
     width: 100%;
-    padding: 5px 15px 5px 15px;
+    padding: 7px 15px 2px 15px;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }

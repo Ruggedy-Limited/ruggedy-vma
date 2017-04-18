@@ -1,6 +1,6 @@
 @if (empty($vulnerabilities) || $vulnerabilities->isEmpty())
     @if (isset($folder))
-        <div>
+        <div class="col-xs-12">
         <br>
         <p class="p-l-8">No Vulnerabilities here yet. To add one, when viewing a Vulnerability, click the "Add to
             Folder"
