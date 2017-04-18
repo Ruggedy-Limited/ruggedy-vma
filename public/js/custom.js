@@ -137,3 +137,60 @@ $("#menu-toggle").click(function(e) {
         $('#comment-editor-' + commentId).find('form').submit();
     });
 })(jQuery);
+
+// Send to Jira with Ajax
+(function ($) {
+    var jiraContainer = $('#jira');
+    if (jiraContainer.length < 1) {
+        return;
+    }
+
+    var jiraForm       = jiraContainer.find('form'),
+        modalContent   = jiraContainer.find('.modal-content'),
+        overlayAndIcon = jiraContainer.find('.waiting-icon-container, .waiting-overlay'),
+        defaultError   = '<div class="alert alert-danger">'
+        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+        + 'Jira Issue creation failed this time. Please try again.</div>',
+        hideAlert    = function() {
+            var alert = modalContent.find('.alert');
+            if (alert.length <  1) {
+                return;
+            }
+
+            setTimeout(function () {
+                alert.slideUp(300);
+                alert.remove();
+            }, 3000);
+        };
+
+    jiraForm.on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).prop('action'),
+            type: $(this).prop('method'),
+            dataType: 'JSON',
+            data: $(this).serialize(),
+            beforeSend: function () {
+                overlayAndIcon.fadeIn(300);
+            }
+        }).done(function(data) {
+            if (!data.html) {
+                modalContent.prepend(defaultError);
+                return;
+            }
+
+            modalContent.prepend(data.html);
+            if (data.isError) {
+                hideAlert();
+                return;
+            }
+
+            jiraForm.find('input').val("");
+        }).fail(function () {
+            modalContent.prepend(defaultError);
+            hideAlert();
+        }).always(function () {
+            overlayAndIcon.fadeOut(300);
+        });
+    })
+})(jQuery);

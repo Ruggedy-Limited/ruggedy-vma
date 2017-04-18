@@ -83,14 +83,13 @@ class JiraService
      * Generate issue summary from User input or Vulnerability name
      *
      * @param Vulnerability $vulnerability
-     * @param File $file
      * @param JiraIssue $jiraIssue
      * @return string
      */
-    public function getIssueSummaryText(Vulnerability $vulnerability, File $file, JiraIssue $jiraIssue): string
+    public function getIssueSummaryText(Vulnerability $vulnerability, JiraIssue $jiraIssue): string
     {
         return $summary = $jiraIssue->getSummary() ?? $vulnerability->getName() . " found by "
-            . ucwords($file->getWorkspaceApp()->getScannerApp()->getName());
+            . ucwords($vulnerability->getFile()->getWorkspaceApp()->getScannerApp()->getName());
     }
 
     /**
@@ -101,7 +100,7 @@ class JiraService
      * @param File $file
      * @return string
      */
-    public function getIssueDescriptionText(Vulnerability $vulnerability, File $file, JiraIssue $jiraIssue): string
+    public function getIssueDescriptionText(Vulnerability $vulnerability, JiraIssue $jiraIssue): string
     {
         return $this->addMarkdownAndOtherFormattingForJira(collect([
             ''                               => $jiraIssue->getDescription(),
@@ -113,8 +112,10 @@ class JiraService
             'Resolution'                     => $vulnerability->getSolution(),
             'Vulnerable Assets'              => $this->getVulnerableAssetsText($vulnerability),
             'Exploits'                       => $this->getExploitsText($vulnerability),
-            'Found in File'                  => basename($file->getPath()),
-            'Scanner App'                    => ucwords($file->getWorkspaceApp()->getScannerApp()->getName()),
+            'Found in File'                  => basename($vulnerability->getFile()->getPath()),
+            'Scanner App'                    => ucwords(
+                $vulnerability->getFile()->getWorkspaceApp()->getScannerApp()->getName()
+            ),
         ]));
     }
 
