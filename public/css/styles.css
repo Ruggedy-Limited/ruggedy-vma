@@ -715,6 +715,7 @@ Start: Cards
 }
 
 .content-card {
+    word-wrap: break-word;
     position: relative;
     background-color: rgba(255, 255, 255, 0.6);
     margin-top: 15px;
@@ -1389,6 +1390,9 @@ Start: Vulnerability Views
     font-size: 18px;
 }
 
+.nexpose .content-card.solution ul {
+    padding-left: 7px;
+}
 /*
 ==========================================================================
 End: Vulnerability Views
