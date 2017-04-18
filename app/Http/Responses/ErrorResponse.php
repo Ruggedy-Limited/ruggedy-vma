@@ -10,7 +10,8 @@ use stdClass;
 class ErrorResponse implements JsonSerializable, Jsonable
 {
     /** @var bool */
-    protected $error = true;
+    protected $isError = true;
+
     /** @var  string */
     protected $message;
 
@@ -75,15 +76,15 @@ class ErrorResponse implements JsonSerializable, Jsonable
      */
     public function isError()
     {
-        return $this->error;
+        return $this->isError;
     }
 
     /**
-     * @param boolean $error
+     * @param boolean $isError
      */
-    public function setError($error)
+    public function setError($isError)
     {
-        $this->error = $error;
+        $this->isError = $isError;
     }
 
     /**
