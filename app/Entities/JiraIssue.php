@@ -29,4 +29,14 @@ class JiraIssue extends Base\JiraIssue
     const REQUEST_TYPE_SEARCH = 'search';
     const REQUEST_TYPE_CREATE = 'create';
     const REQUEST_TYPE_UPDATE = 'update';
+
+    /**
+     * Get the URL for this Jira issue
+     *
+     * @return string
+     */
+    public function getIssueUrl(): string
+    {
+        return rtrim($this->host, "/") . "/browse/" . $this->getIssueKey();
+    }
 }
