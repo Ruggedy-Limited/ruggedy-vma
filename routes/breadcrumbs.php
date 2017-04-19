@@ -1,5 +1,7 @@
 <?php
 // Home
+use App\Entities\WorkspaceApp;
+
 Breadcrumbs::register('home', function($breadcrumbs) {
     /** @var \DaveJamesMiller\Breadcrumbs\Generator $breadcrumbs */
     $breadcrumbs->push('Home', route('home'));
@@ -80,7 +82,12 @@ Breadcrumbs::register('dynamic', function($breadcrumbs, $param1 = null) {
         App\Services\ComponentService::getOrderedComponentHierarchy($param1)
             ->each(function ($entity) use ($breadcrumbs) {
                  /** @var App\Entities\Base\AbstractEntity|App\Contracts\SystemComponent $entity */
-                 $breadcrumbText = $entity->getDisplayName();
+                 $breadcrumbText = '';
+                 if ($entity instanceof WorkspaceApp) {
+                     $breadcrumbText = $entity->getScannerApp()->getFriendlyName() . ' ';
+                 }
+
+                 $breadcrumbText .= $entity->getDisplayName();
                  if (method_exists($entity, 'getName')) {
                      $breadcrumbText .= ": " . $entity->getName();
                  }
