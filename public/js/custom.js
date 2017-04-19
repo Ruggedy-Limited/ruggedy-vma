@@ -157,69 +157,107 @@ $("#menu-toggle").click(function(e) {
 
 // Send to Jira with Ajax
 (function ($) {
-    var jiraContainer = $('#jira');
-    if (jiraContainer.length < 1) {
+    var submitAjaxForm = function (formContainer, defaultErrorTxt, done) {
+        if (formContainer.length < 1) {
+            return;
+        }
+
+        var form = formContainer.find('form'),
+            modalContent = formContainer.find('.modal-content'),
+            overlayAndIcon = formContainer.find('.waiting-icon-container, .waiting-overlay'),
+            defaultErrorTxt = defaultErrorTxt
+                || "Something went wrong and we could not complete your request this time. Please try again.",
+            defaultError = '<div class="alert alert-danger">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+                + defaultErrorTxt + '</div>',
+            // Hide the error alert after 5 seconds
+            hideAlert = function () {
+                var alert = modalContent.find('.alert');
+                if (alert.length < 1) {
+                    return;
+                }
+
+                setTimeout(function () {
+                    alert.slideUp(800);
+                    alert.remove();
+                }, 5000);
+            };
+
+            done = done || function (data) {
+                // Successful ajax request, but invalid response. Show the default error.
+                if (!data.html) {
+                    modalContent.prepend(defaultError);
+                    return;
+                }
+
+                // Prepend the form with the response message
+                modalContent.prepend(data.html);
+                if (data.isError) {
+                    // If the response is an error, hide it after 5s.
+                    hideAlert();
+                    return;
+                }
+
+                // Success: don't hide the success message because it contains the issue URL, but reset the form.
+                form.find('input').val("");
+            };
+
+        // When the Send to Jira form is submitted
+        form.on('submit', function (e) {
+            // Prevent the default form submission
+            e.preventDefault();
+
+            // Send an ajax request with all the form data
+            $.ajax({
+                url: $(this).prop('action'),
+                type: $(this).prop('method'),
+                dataType: 'JSON',
+                data: $(this).serialize(),
+                // Overlay the form with a light-grey overlay and a loading icon
+                beforeSend: function () {
+                    overlayAndIcon.fadeIn(300);
+                }
+            }).done(done).fail(function () {
+                // Show the default error.
+                modalContent.prepend(defaultError);
+                hideAlert();
+            }).always(function () {
+                // Always hide the overlay and loading icon when the ajax request is done
+                overlayAndIcon.fadeOut(300);
+            });
+        });
+    };
+
+    // Jira issue creation
+    submitAjaxForm(
+        $('#jira'),
+        'Something went wrong and we were not able to create an new Jira Issue for you, but please try again.'
+    );
+
+    // New asset creation for the Ruggedy app
+    submitAjaxForm(
+        $('#add-asset-form'),
+        "Something went wrong and we were not able to create a new Asset for you, but please try again."
+    );
+
+})(jQuery);
+
+(function ($) {
+    var newAssetForm = $('form#new-asset');
+    if (newAssetForm.length < 1) {
         return;
     }
 
-    var jiraForm       = jiraContainer.find('form'),
-        modalContent   = jiraContainer.find('.modal-content'),
-        overlayAndIcon = jiraContainer.find('.waiting-icon-container, .waiting-overlay'),
-        defaultError   = '<div class="alert alert-danger">'
-        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-        + 'Jira Issue creation failed this time. Please try again.</div>',
-        // Hide the error alert after 5 seconds
-        hideAlert    = function() {
-            var alert = modalContent.find('.alert');
-            if (alert.length <  1) {
-                return;
-            }
-
-            setTimeout(function () {
-                alert.slideUp(800);
-                alert.remove();
-            }, 5000);
-        };
-
-    // When the Send to Jira form is submitted
-    jiraForm.on('submit', function (e) {
-        // Prevent the default form submission
+    newAssetForm.on('submit', function (e) {
         e.preventDefault();
-
-        // Send an ajax request with all the form data
         $.ajax({
             url: $(this).prop('action'),
             type: $(this).prop('method'),
             dataType: 'JSON',
             data: $(this).serialize(),
-            // Overlay the form with a light-grey overlay and a loading icon
             beforeSend: function () {
-                overlayAndIcon.fadeIn(300);
-            }
-        }).done(function(data) {
-            // Successful ajax request, but invalid response. Show the default error.
-            if (!data.html) {
-                modalContent.prepend(defaultError);
-                return;
-            }
 
-            // Prepend the form with the response message
-            modalContent.prepend(data.html);
-            if (data.isError) {
-                // If the response is an error, hide it after 5s.
-                hideAlert();
-                return;
             }
-
-            // Success: don't hide the success message because it contains the issue URL, but reset the form.
-            jiraForm.find('input').val("");
-        }).fail(function () {
-            // Show the default error.
-            modalContent.prepend(defaultError);
-            hideAlert();
-        }).always(function () {
-            // Always hide the overlay and loading icon when the ajax request is done
-            overlayAndIcon.fadeOut(300);
-        });
+        })
     })
 })(jQuery);
