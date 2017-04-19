@@ -65,25 +65,12 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     }
 
     /**
-     * @param Vulnerability $vulnerability
-     * @return Base\WorkspaceApp
-     */
-    public function addVulnerability(Vulnerability $vulnerability)
-    {
-        $vulnerability->setWorkspaceApp($this);
-        return parent::addVulnerability($vulnerability);
-    }
-
-    /**
-     * Get a unique list of Assets
+     * Get if this is a Ruggedy App or not
      *
-     * @return Collection
+     * @return bool
      */
-    public function getAssets()
+    public function isRuggedyApp(): bool
     {
-        return collect($this->getVulnerabilities()->toArray())->flatMap(function ($vulnerability) {
-            /** @var \App\Entities\Vulnerability $vulnerability */
-            return $vulnerability->getAssets();
-        })->unique();
+        return $this->scannerApp->getName() === ScannerApp::SCANNER_RUGGEDY;
     }
 }
