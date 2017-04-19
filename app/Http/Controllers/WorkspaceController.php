@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Commands\CreateAsset;
 use App\Commands\CreateComment;
 use App\Commands\CreateJiraTicket;
 use App\Commands\CreateWorkspace;
@@ -21,10 +22,12 @@ use App\Commands\GetVulnerability;
 use App\Commands\GetWorkspace;
 use App\Commands\GetWorkspaceApp;
 use App\Commands\UploadScanOutput;
+use App\Entities\Asset;
 use App\Entities\Comment;
 use App\Entities\File;
 use App\Entities\Folder;
 use App\Entities\JiraIssue;
+use App\Entities\Vulnerability;
 use App\Entities\Workspace;
 use App\Entities\WorkspaceApp;
 use App\Http\Responses\AjaxResponse;
@@ -33,6 +36,7 @@ use Auth;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 /**
  * @Middleware("web")
@@ -323,6 +327,7 @@ class WorkspaceController extends AbstractController
     public function viewWorkspaceApp($workspaceAppId)
     {
         $command      = new GetWorkspaceApp(intval($workspaceAppId));
+        /** @var WorkspaceApp $workspaceApp */
         $workspaceApp = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($workspaceApp)) {
@@ -400,6 +405,26 @@ class WorkspaceController extends AbstractController
         }
 
         return view('workspaces.app-show', $fileInfo);
+    }
+
+    /**
+     * Show a file and related data including Assets, Vulnerabilities and Comments
+     *
+     * @GET("/workspace/ruggedy-app/{fileId}", as="ruggedy-app.view", where={"fileId":"[0-9]+"})
+     *
+     * @param $fileId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function viewRuggedyApp($fileId)
+    {
+        $command  = new GetFile(intval($fileId));
+        $fileInfo = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($fileInfo)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.ruggedy-app-show', $fileInfo);
     }
 
     /**
@@ -639,7 +664,7 @@ class WorkspaceController extends AbstractController
             $ajaxResponse->setHtml(view('partials.custom-message', [
                 'bsClass' => 'danger',
                 'message' => $jiraIssueResponse->getMessage()
-            ]));
+            ])->render());
 
             return response()->json($ajaxResponse);
         }
@@ -649,7 +674,7 @@ class WorkspaceController extends AbstractController
             $ajaxResponse->setHtml(view('partials.custom-message', [
                 'bsClass' => 'danger',
                 'message' => $jiraIssueResponse->getFailureReason() ?? 'Jira Issue creation failed. Please try again.',
-            ]));
+            ])->render());
 
             return response()->json($ajaxResponse);
         }
@@ -666,12 +691,88 @@ class WorkspaceController extends AbstractController
         return response()->json($ajaxResponse);
     }
 
-    public function ruggedyIndex() {
-        return view ('workspaces.ruggedyIndex');
+    /**
+     * Show the form to create a new custom Vulnerability in the Ruggedy App
+     *
+     * @GET("/workspace/ruggedy-app/create/{workspaceAppId}", as="vulnerability.create",
+     *     where={"workspaceAppId":"[0-9]+"})
+     *
+     * @param $workspaceAppId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function ruggedyCreateVulnerability($workspaceAppId) {
+        $command = new GetWorkspaceApp(intval($workspaceAppId));
+        $workspaceApp = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.ruggedy-create', [
+            'workspaceApp' => $workspaceApp,
+            'file'         => $workspaceApp->getFiles()->first(),
+            'severities'   => Vulnerability::getSeverityTextToScoreMap()->map(function($score) {
+                return intval($score);
+            })->flip()->prepend("-- Select a Severity --", "")->toArray(),
+            'vendors'      => Asset::getValidOsVendors()->reduce(function ($vendors, $vendor) {
+                return $vendors->put($vendor, $vendor);
+            }, collect([]))->prepend("-- Select a Vendor --", "")->toArray()
+        ]);
     }
 
-    public function ruggedyCreate() {
-        return view ('workspaces.ruggedyCreate');
+    /**
+     * Store a new custom Vulnerability for the Ruggedy App
+     *
+     * @POST("/workspace/ruggedy-app/store/{fileId}", as="vulnerability.store",
+     *     where={"fileId":"[0-9]+"})
+     *
+     * @param $fileId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function ruggedyStoreVulnerability($fileId)
+    {
+        //
+    }
+
+    /**
+     * Create an Asset via ajax from the Add Vulnerability view of the Ruggedy App
+     *
+     * @POST("/asset/create/{assetId}", as="asset.create", where={"fileId":"[0-9]+"})
+     *
+     * @param $fileId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createAsset($fileId)
+    {
+        // Only allow ajax requests to access this endpoint
+        if (!$this->request->ajax()) {
+            throw new MethodNotAllowedHttpException([], "That route cannot be accessed in that way.");
+        }
+
+        // Create a new Asset entity and populate it from the request
+        $asset = new Asset();
+        $asset->setFromArray($this->request->all());
+
+        // Send the CreateAsset command over the command bus
+        $command = new CreateAsset(intval($fileId), $asset);
+        $asset = $this->sendCommandToBusHelper($command);
+
+        $ajaxResponse = new AjaxResponse();
+        // Handle command errors, set the custom-message partial HTML on AjaxResponse::$html and exit early
+        if ($this->isCommandError($asset)) {
+            $ajaxResponse->setHtml(
+                view('partials.custom-message', [
+                    'bsClass' => 'danger',
+                    'message' => $asset->getMessage(),
+                ])->render()
+            );
+            return response()->json($ajaxResponse);
+        }
+
+        // Set the asset partial HTML populated with the new Asset details on AjaxResponse::$html
+        $ajaxResponse->setHtml(view('partials.asset', ['asset' => $asset])->render());
+        $ajaxResponse->setError(false);
+        return response()->json($ajaxResponse);
     }
 
     public function ruggedyShow() {
