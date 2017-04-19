@@ -3,6 +3,8 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\CreateWorkspaceApp as CreateWorkspaceAppCommand;
+use App\Entities\File;
+use App\Entities\ScannerApp;
 use App\Entities\WorkspaceApp;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -91,8 +93,25 @@ class CreateWorkspaceApp extends CommandHandler
         // Persist the changes to the database and refresh the entity state
         $this->em->persist($workspaceApp);
         $this->em->flush($workspaceApp);
-        $this->em->refresh($workspaceApp);
 
+        // Create a dummy file for Ruggedy App
+        if ($scannerApp->getName() === ScannerApp::SCANNER_RUGGEDY) {
+            $file = new File();
+            $file->setName($workspaceApp->getName())
+                ->setDescription($workspaceApp->getDescription())
+                ->setFormat(File::FILE_TYPE_XML)
+                ->setPath(base_path())
+                ->setDeleted(false)
+                ->setProcessed(true)
+                ->setSize(0)
+                ->setUser($requestingUser)
+                ->setWorkspaceApp($workspaceApp);
+
+            $this->em->persist($file);
+            $this->em->flush($file);
+        }
+
+        $this->em->refresh($workspaceApp);
         return $workspaceApp;
     }
 }
