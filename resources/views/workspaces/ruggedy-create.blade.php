@@ -11,9 +11,6 @@
 @endsection
 
 @section('content')
-
-    @include('layouts.formError')
-
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -33,16 +30,16 @@
     </div>
     <!-- Add asset form -->
     @include('partials.asset-form')
+    {!! Form::open([
+        'url' => route(
+            'vulnerability.store',
+            [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]
+        ),
+        'files' => 'true'
+    ]) !!}
     <div class="row">
         <div class="col-md-6 col-sm-6 animated fadeIn">
             <h3>Add Vulnerability</h3>
-            {!! Form::open([
-                'url' => route(
-                    'vulnerability.store',
-                    [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]
-                ),
-                'files' => 'true'
-            ]) !!}
             <button class="primary-btn" type="submit">Submit</button>
             <div class="form-group">
                 {!! Form::label('name', 'Vulnerability Name') !!}
@@ -79,7 +76,9 @@
                 </script>
             </div>
         </div>
-        <div class="col-sm-4 col-sm-offset-1 animated fadeIn">
+        <div class="col-md-1 col-sm-1 animated fadeIn"></div>
+        <div class="col-md-4 col-sm-4 animated fadeIn">
+            <br><br><br><br><br>
             <div class="form-group">
                 {!! Form::label('severity', 'Risk Score') !!}
                 {!! Form::select('severity', $severities) !!}
@@ -100,12 +99,16 @@
                 {!! Form::label('thumbnail_3', 'Screenshot 3', ['class' => '']) !!}
                 {!! Form::file('thumbnail_3') !!}
             </div>
-            {!! Form::close() !!}
+            <h3>Related Assets</h3>
+            <a href="#" class="primary-btn" data-toggle="modal" data-target="#add-asset-form">
+                Add an Asset
+            </a>
+            <div id="related-assets">
+            </div>
         </div>
         <div class="col-md-2"></div>
         <div class="col-md-6 animated fadeInUp">
-
         </div>
     </div>
-
+    {!! Form::close() !!}
 @endsection
