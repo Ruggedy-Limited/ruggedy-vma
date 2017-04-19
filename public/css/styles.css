@@ -1027,7 +1027,7 @@ select {
     -webkit-appearance: inherit;
 }
 
-#jira .waiting-icon-container {
+.modal .waiting-icon-container {
     display: block;
     position: absolute;
     top: 45%;
@@ -1036,11 +1036,11 @@ select {
     display: none;
 }
 
-#jira .waiting-icon-container .fa {
+.modal .waiting-icon-container .fa {
     color: #fff;
 }
 
-#jira .waiting-overlay {
+.modal .waiting-overlay {
     background: #000;
     opacity: 0.3;
     position: absolute;
