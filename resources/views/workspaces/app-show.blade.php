@@ -1,7 +1,11 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('dynamic', $file) !!}
+    @if ($file->getWorkspaceApp()->isRuggedyApp())
+        {!! Breadcrumbs::render('dynamic', $file->getWorkspaceApp()) !!}
+    @else
+        {!! Breadcrumbs::render('dynamic', $file) !!}
+    @endif
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
