@@ -1,13 +1,13 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('editFolder', $folder) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
     <button type="button" class="btn round-btn pull-right c-yellow">
         <i class="fa fa-times fa-lg" aria-hidden="true"></i>
     </button>
+    {!! Breadcrumbs::render('editFolder', $folder) !!}
 @endsection
 
 @section('content')
