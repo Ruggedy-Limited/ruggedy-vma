@@ -3,6 +3,14 @@ $("#menu-toggle").click(function(e) {
     $("#wrapper").toggleClass("toggled");
 });
 
+(function ($) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-Token': $('meta[name="_token"]').attr('content')
+        }
+    });
+})(jQuery);
+
 // Click handler for the "Post" button to create new comments
 (function ($) {
     $('#btn-chat').on('click', function (e) {
@@ -157,16 +165,17 @@ $("#menu-toggle").click(function(e) {
 
 // Send to Jira with Ajax
 (function ($) {
-    var submitAjaxForm = function (formContainer, defaultErrorTxt, done) {
+    var submitAjaxForm = function (formContainer, defaultErrorTxt, done, hideAfterSuccess) {
         if (formContainer.length < 1) {
             return;
         }
 
+        defaultErrorTxt = defaultErrorTxt
+            || "Something went wrong and we could not complete your request this time. Please try again.";
+
         var form = formContainer.find('form'),
             modalContent = formContainer.find('.modal-content'),
             overlayAndIcon = formContainer.find('.waiting-icon-container, .waiting-overlay'),
-            defaultErrorTxt = defaultErrorTxt
-                || "Something went wrong and we could not complete your request this time. Please try again.",
             defaultError = '<div class="alert alert-danger">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
                 + defaultErrorTxt + '</div>',
@@ -181,25 +190,6 @@ $("#menu-toggle").click(function(e) {
                     alert.slideUp(800);
                     alert.remove();
                 }, 5000);
-            };
-
-            done = done || function (data) {
-                // Successful ajax request, but invalid response. Show the default error.
-                if (!data.html) {
-                    modalContent.prepend(defaultError);
-                    return;
-                }
-
-                // Prepend the form with the response message
-                modalContent.prepend(data.html);
-                if (data.isError) {
-                    // If the response is an error, hide it after 5s.
-                    hideAlert();
-                    return;
-                }
-
-                // Success: don't hide the success message because it contains the issue URL, but reset the form.
-                form.find('input').val("");
             };
 
         // When the Send to Jira form is submitted
@@ -217,7 +207,34 @@ $("#menu-toggle").click(function(e) {
                 beforeSend: function () {
                     overlayAndIcon.fadeIn(300);
                 }
-            }).done(done).fail(function () {
+            }).done(function (data) {
+                // Successful ajax request, but invalid response. Show the default error.
+                if (!data.message) {
+                    modalContent.prepend(defaultError);
+                    return;
+                }
+
+                // Prepend the form with the response message
+                modalContent.prepend(data.message);
+                if (data.isError) {
+                    // If the response is an error, hide it after 5s.
+                    hideAlert();
+                    return;
+                }
+
+                // Success: hide the success message only if the hideAfterSuccess parameter is set
+                if (hideAfterSuccess) {
+                    hideAlert();
+                }
+
+                // Reset the form inputs
+                form.find('input:not([type="submit"]):not([name="_token"])').val("");
+
+                // Execute custom done functionality
+                if (done) {
+                    done(data);
+                }
+            }).fail(function () {
                 // Show the default error.
                 modalContent.prepend(defaultError);
                 hideAlert();
@@ -237,27 +254,29 @@ $("#menu-toggle").click(function(e) {
     // New asset creation for the Ruggedy app
     submitAjaxForm(
         $('#add-asset-form'),
-        "Something went wrong and we were not able to create a new Asset for you, but please try again."
+        "Something went wrong and we were not able to create a new Asset for you, but please try again.",
+        function(data) {
+            var assetContainer = $('#related-assets'),
+                assetsSelect = $('#assets-select');
+            // Make sure everything we need exists in the DOM
+            if (assetContainer.length < 1 || assetsSelect.length < 1 || !data.html) {
+                return;
+            }
+
+            // Append the Asset HTML to right-hand side of the form as a visual aid
+            $(data.html).appendTo(assetContainer);
+
+            // Clear the select options and reset them to all the added Assets as selected options of the multiple
+            // select that will be sent when the Vulnerability record is sent
+            assetsSelect.html("");
+            assetContainer.find('.asset').each(function () {
+                $('<option />').val($(this)
+                    .data('asset-id'))
+                    .prop('selected', 'selected')
+                    .appendTo(assetsSelect);
+            });
+        },
+        true
     );
 
-})(jQuery);
-
-(function ($) {
-    var newAssetForm = $('form#new-asset');
-    if (newAssetForm.length < 1) {
-        return;
-    }
-
-    newAssetForm.on('submit', function (e) {
-        e.preventDefault();
-        $.ajax({
-            url: $(this).prop('action'),
-            type: $(this).prop('method'),
-            dataType: 'JSON',
-            data: $(this).serialize(),
-            beforeSend: function () {
-
-            }
-        })
-    })
 })(jQuery);

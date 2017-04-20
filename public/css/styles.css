@@ -144,7 +144,12 @@ Start: Navbar
 }
 
 .breadcrumb {
-    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb > li {
+    vertical-align: middle;
 }
 
 .breadcrumb > li > a {
@@ -1025,6 +1030,11 @@ select {
     border-bottom: 1px solid #aeb1bb;
     border-radius: 0;
     -webkit-appearance: inherit;
+}
+
+.invisible {
+    height: 0;
+    opacity: 0;
 }
 
 .modal .waiting-icon-container {

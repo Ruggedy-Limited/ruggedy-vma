@@ -1,13 +1,13 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
     <button type="button" class="btn round-btn pull-right c-yellow">
         <i class="fa fa-times fa-lg" aria-hidden="true"></i>
     </button>
+    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
 @endsection
 
 @section('content')
@@ -80,7 +80,7 @@
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <br><br><br><br><br>
             <div class="form-group">
-                {!! Form::label('severity', 'Risk Score') !!}
+                {!! Form::label('severity', 'Risk Score (severity)') !!}
                 {!! Form::select('severity', $severities) !!}
             </div>
             <div class="form-group">
@@ -105,10 +105,18 @@
             </a>
             <div id="related-assets">
             </div>
+            {!! Form::select('assets', [], [], [
+                'multiple' => 'multiple',
+                'name'     => 'assets[]',
+                'class'    => 'invisible',
+                'id'       => 'assets-select',
+            ]) !!}
         </div>
         <div class="col-md-2"></div>
         <div class="col-md-6 animated fadeInUp">
+
         </div>
     </div>
+    {{ csrf_field() }}
     {!! Form::close() !!}
 @endsection

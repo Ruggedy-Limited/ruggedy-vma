@@ -10,7 +10,7 @@
             <div class="waiting-overlay"></div>
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Send to JIRA</h4>
+                <h4 class="modal-title">Add a related Asset</h4>
             </div>
             <div class="modal-body">
                 {!! Form::open([
@@ -18,7 +18,6 @@
                     'id'   => 'new-asset',
                     'name' => 'new-asset',
                 ]) !!}
-                <h3>Add a Related Asset</h3>
                 <div class="form-group">
                     {!! Form::label('name', 'Name') !!}
                     {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
@@ -54,6 +53,9 @@
                 <div class="form-group">
                     {!! Form::label('netbios', 'Netbios Name') !!}
                     {!! Form::text('netbios', null, ['class' => 'black-form-control']) !!}
+                </div>
+                <div class="form-group">
+                    {!! Form::submit('Create Asset', ['class' => 'primary-btn']) !!}
                 </div>
                 {{ csrf_field() }}
                 {!! Form::close() !!}
