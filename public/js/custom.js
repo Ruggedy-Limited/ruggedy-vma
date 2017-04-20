@@ -228,7 +228,7 @@ $("#menu-toggle").click(function(e) {
                 }
 
                 // Reset the form inputs
-                form.find('input:not([type="submit"]):not([name="_token"])').val("");
+                form.find('input:not([type="submit"]):not([name="_token"]), select').val("");
 
                 // Execute custom done functionality
                 if (done) {
