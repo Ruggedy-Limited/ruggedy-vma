@@ -50,7 +50,7 @@ class AssetController extends AbstractController
               ->setIpAddressV4($this->request->get('asset-ip_address_v4'))
               ->setIpAddressV6($this->request->get('asset-ip_address_v6'))
               ->setHostname($this->request->get('asset-hostname'))
-              ->setMacAddress($this->request->get('asset-mac_address'))
+              ->setMacAddress($this->request->get('asset-mac_address', ''))
               ->setOsVersion($this->request->get('asset-os_version'))
               ->setNetbios($this->request->get('asset-netbios'));
 
@@ -88,13 +88,13 @@ class AssetController extends AbstractController
     {
         return [
             'asset-name'          => 'bail|required',
-            'asset-cpe'           => 'bail|regex:' . Asset::REGEX_CPE,
-            'asset-vendor'        => 'bail|in:' . Asset::getValidOsVendors()->implode(","),
-            'asset-ip_address_v4' => 'bail|ipv4',
-            'asset-ip_address_v6' => 'bail|ipv6',
-            'asset-hostname'      => 'bail|url',
-            'asset-mac_address'   => 'bail|regex:' . Asset::REGEX_MAC_ADDRESS,
-            'asset-netbios'       => 'bail|regex:' . Asset::REGEX_NETBIOS_NAME,
+            'asset-cpe'           => 'bail|nullable|regex:' . Asset::REGEX_CPE,
+            'asset-vendor'        => 'bail|nullable|in:' . Asset::getValidOsVendors()->implode(","),
+            'asset-ip_address_v4' => 'bail|nullable|ipv4',
+            'asset-ip_address_v6' => 'bail|nullable|ipv6',
+            'asset-hostname'      => 'bail|nullable|url',
+            'asset-mac_address'   => 'bail|nullable|regex:' . Asset::REGEX_MAC_ADDRESS,
+            'asset-netbios'       => 'bail|nullable|regex:' . Asset::REGEX_NETBIOS_NAME,
         ];
     }
 
