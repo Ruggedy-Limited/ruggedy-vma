@@ -1,7 +1,5 @@
 <?php
 // Home
-use App\Entities\WorkspaceApp;
-
 Breadcrumbs::register('home', function($breadcrumbs) {
     /** @var \DaveJamesMiller\Breadcrumbs\Generator $breadcrumbs */
     $breadcrumbs->push('Home', route('home'));
@@ -82,8 +80,13 @@ Breadcrumbs::register('dynamic', function($breadcrumbs, $param1 = null) {
         App\Services\ComponentService::getOrderedComponentHierarchy($param1)
             ->each(function ($entity) use ($breadcrumbs) {
                  /** @var App\Entities\Base\AbstractEntity|App\Contracts\SystemComponent $entity */
+                 // Skip the file part of the Ruggedy App breadcrumbs
+                 if ($entity instanceof App\Entities\File && $entity->getWorkspaceApp()->isRuggedyApp()) {
+                     return;
+                 }
+
                  $breadcrumbText = '';
-                 if ($entity instanceof WorkspaceApp) {
+                 if ($entity instanceof App\Entities\WorkspaceApp) {
                      $breadcrumbText = $entity->getScannerApp()->getFriendlyName() . ' ';
                  }
 

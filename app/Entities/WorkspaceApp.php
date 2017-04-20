@@ -73,4 +73,19 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     {
         return $this->scannerApp->getName() === ScannerApp::SCANNER_RUGGEDY;
     }
+
+    /**
+     * Override the parent method to cater for the ruggedy app routes
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getRouteName(bool $plural = false): string
+    {
+        if (!$this->isRuggedyApp()) {
+            return parent::getRouteName($plural);
+        }
+
+        return ScannerApp::SCANNER_RUGGEDY . '-' . parent::getRouteName($plural);
+    }
 }
