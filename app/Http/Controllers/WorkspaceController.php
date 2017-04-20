@@ -784,8 +784,6 @@ class WorkspaceController extends AbstractController
             throw new MethodNotAllowedHttpException([], "That route cannot be accessed in that way.");
         }
 
-
-
         // Create a new Asset entity and populate it from the request
         $asset = new Asset();
         $asset->setFromArray($this->request->all());
