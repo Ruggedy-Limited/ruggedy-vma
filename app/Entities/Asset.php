@@ -521,7 +521,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      * @param string $macAddress
      * @return string|null
      */
-    protected function sanitiseMacAddress(string $macAddress)
+    protected function sanitiseMacAddress($macAddress)
     {
         if (empty($macAddress) || preg_match(Asset::REGEX_MAC_ADDRESS, $macAddress)) {
             return $macAddress;
