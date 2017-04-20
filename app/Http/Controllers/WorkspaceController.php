@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Commands\CreateAsset;
 use App\Commands\CreateComment;
 use App\Commands\CreateJiraTicket;
+use App\Commands\CreateVulnerability;
 use App\Commands\CreateWorkspace;
 use App\Commands\CreateWorkspaceApp;
 use App\Commands\DeleteComment;
@@ -638,7 +639,7 @@ class WorkspaceController extends AbstractController
         try {
             $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
         } catch (ValidationException $e) {
-            $ajaxResponse->setHtml(
+            $ajaxResponse->setMessage(
                 view('partials.custom-message', ['bsClass' => 'danger', 'message' => $e->getMessage()])->render()
             );
 
@@ -661,7 +662,7 @@ class WorkspaceController extends AbstractController
 
         // Command errors
         if ($jiraIssueResponse instanceof ErrorResponse) {
-            $ajaxResponse->setHtml(view('partials.custom-message', [
+            $ajaxResponse->setMessage(view('partials.custom-message', [
                 'bsClass' => 'danger',
                 'message' => $jiraIssueResponse->getMessage()
             ])->render());
@@ -671,16 +672,18 @@ class WorkspaceController extends AbstractController
 
         // Jira API errors
         if ($jiraIssueResponse->getRequestStatus() !== JiraIssue::REQUEST_STATUS_SUCCESS) {
-            $ajaxResponse->setHtml(view('partials.custom-message', [
+            $ajaxResponse->setMessage(view('partials.custom-message', [
                 'bsClass' => 'danger',
-                'message' => $jiraIssueResponse->getFailureReason() ?? 'Jira Issue creation failed. Please try again.',
+                'message' => $jiraIssueResponse->getFailureReason()
+                    ?? 'Something went wrong and we were not able to create an new Jira Issue for you, '
+                    . 'but please try again.',
             ])->render());
 
             return response()->json($ajaxResponse);
         }
 
         // Success
-        $ajaxResponse->setHtml(view('partials.custom-message', [
+        $ajaxResponse->setMessage(view('partials.custom-message', [
             'bsClass' => 'success',
             'message' => 'Jira Issue <a href="' . $jiraIssueResponse->getIssueUrl() . '" target="_blank">'
                 . '<span class="jira-issue-key">' . $jiraIssueResponse->getIssueKey() . '</span>'
@@ -708,15 +711,22 @@ class WorkspaceController extends AbstractController
             return redirect()->back();
         }
 
+        // An array of severities for the Vulnerability severity select input
+        $severities = Vulnerability::getSeverityTextToScoreMap()->map(function($score) {
+            return intval($score);
+        })->flip()->prepend("-- Select a Severity --", "")->toArray();
+
+        // An array of valid Asset OS vendors for the select input
+        $vendors = Asset::getValidOsVendors()->reduce(function ($vendors, $vendor) {
+            /** @var \Illuminate\Support\Collection $vendors */
+            return $vendors->put($vendor, $vendor);
+        }, collect([]))->prepend("-- Select a Vendor --", "")->toArray();
+
         return view('workspaces.ruggedy-create', [
             'workspaceApp' => $workspaceApp,
             'file'         => $workspaceApp->getFiles()->first(),
-            'severities'   => Vulnerability::getSeverityTextToScoreMap()->map(function($score) {
-                return intval($score);
-            })->flip()->prepend("-- Select a Severity --", "")->toArray(),
-            'vendors'      => Asset::getValidOsVendors()->reduce(function ($vendors, $vendor) {
-                return $vendors->put($vendor, $vendor);
-            }, collect([]))->prepend("-- Select a Vendor --", "")->toArray()
+            'severities'   => $severities,
+            'vendors'      => $vendors,
         ]);
     }
 
@@ -731,7 +741,32 @@ class WorkspaceController extends AbstractController
      */
     public function ruggedyStoreVulnerability($fileId)
     {
-        //
+        // Validate the form submission
+        $this->validate($this->request, $this->getValidationRules(), $this->getValidationRules());
+
+        // Create a new Vulnerability and populate from the request
+        $vulnerability = new Vulnerability();
+        $vulnerability->setName($this->request->get('name'))
+            ->setDescription($this->request->get('description'))
+            ->setSolution($this->request->get('solution'))
+            ->setPoc($this->request->get('poc'))
+            ->setSeverity($this->request->get('severity'))
+            ->setCvssScore($this->request->get('cvss_score'))
+            ->setThumbnail1($this->request->file('thumbnail_1'))
+            ->setThumbnail2($this->request->file('thumbnail_2'))
+            ->setThumbnail3($this->request->file('thumbnail_3'));
+
+        $command = new CreateVulnerability(intval($fileId), $vulnerability, $this->request->get('assets', []));
+        $vulnerability = $this->sendCommandToBusHelper($command);
+        if ($this->isCommandError($vulnerability)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("A new custom Vulnerability has been created in your Ruggedy App.");
+        return redirect()->route('ruggedy-app.view', [
+            $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
+        ]);
+
     }
 
     /**
@@ -748,6 +783,8 @@ class WorkspaceController extends AbstractController
         if (!$this->request->ajax()) {
             throw new MethodNotAllowedHttpException([], "That route cannot be accessed in that way.");
         }
+
+
 
         // Create a new Asset entity and populate it from the request
         $asset = new Asset();
@@ -770,7 +807,11 @@ class WorkspaceController extends AbstractController
         }
 
         // Set the asset partial HTML populated with the new Asset details on AjaxResponse::$html
-        $ajaxResponse->setHtml(view('partials.asset', ['asset' => $asset])->render());
+        $ajaxResponse->setHtml(view('partials.related-asset', ['asset' => $asset])->render());
+        $ajaxResponse->setMessage(view('partials.custom-message', [
+            'bsClass' => 'success',
+            'message' => 'A new Asset has been created.',
+        ])->render());
         $ajaxResponse->setError(false);
         return response()->json($ajaxResponse);
     }
@@ -802,12 +843,23 @@ class WorkspaceController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            Workspace::NAME        => 'bail|filled',
-            Workspace::DESCRIPTION => 'bail|filled',
-            JiraIssue::HOST        => 'bail|filled|url',
-            JiraIssue::PORT        => 'bail|filled|int',
-            'username'             => 'bail|filled',
-            'password'             => 'bail|filled',
+            Workspace::NAME           => 'bail|filled',
+            Workspace::DESCRIPTION    => 'bail|filled',
+            JiraIssue::HOST           => 'bail|filled|url',
+            JiraIssue::PORT           => 'bail|filled|int',
+            'username'                => 'bail|filled',
+            'password'                => 'bail|filled',
+            Asset::NAME               => 'bail|filled',
+            Asset::CPE                => 'bail|regex:' . Asset::REGEX_CPE,
+            Asset::VENDOR             => 'bail|regex:' . Asset::getValidVendorsRegex(),
+            Asset::IP_ADDRESS_V4      => 'bail|ipv4',
+            Asset::IP_ADDRESS_V6      => 'bail|ipv6',
+            Asset::HOSTNAME           => 'bail|url',
+            Asset::MAC_ADDRESS        => 'bail|regex:' . Asset::REGEX_MAC_ADDRESS,
+            Asset::NETBIOS            => 'bail|regex:' . Asset::REGEX_NETBIOS_NAME,
+            Vulnerability::NAME       => 'bail|filled',
+            Vulnerability::SEVERITY   => 'bail|in:0,3,6,9,10',
+            Vulnerability::CVSS_SCORE => 'bail|numeric|between:0,10',
         ];
     }
 
@@ -819,12 +871,23 @@ class WorkspaceController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            Workspace::NAME        => 'You must give the Workspace a name.',
-            Workspace::DESCRIPTION => 'You must give the Workspace a description.',
-            JiraIssue::HOST        => 'You must provide your Jira host URL.',
-            JiraIssue::PORT        => 'You must provide your Jira host port.',
-            'username'             => 'You must provide your Jira username.',
-            'password'             => 'You must provide your Jira password.',
+            Workspace::NAME           => 'You must give the Workspace a name.',
+            Workspace::DESCRIPTION    => 'You must give the Workspace a description.',
+            JiraIssue::HOST           => 'You must provide your Jira host URL.',
+            JiraIssue::PORT           => 'You must provide your Jira host port.',
+            'username'                => 'You must provide your Jira username.',
+            'password'                => 'You must provide your Jira password.',
+            Asset::NAME               => 'An Asset name is required.',
+            Asset::CPE                => 'Please enter a valid CPE.',
+            Asset::VENDOR             => 'Please enter a valid OS vendor.',
+            Asset::IP_ADDRESS_V4      => 'Please enter a valid IPv4 address.',
+            Asset::IP_ADDRESS_V6      => 'Please enter a valid IPv6 address.',
+            Asset::HOSTNAME           => 'Please enter a valid hostname.',
+            Asset::MAC_ADDRESS        => 'Please enter a valid MAC address.',
+            Asset::NETBIOS            => 'Please enter a valid NETBIOS name.',
+            Vulnerability::NAME       => 'A Vulnerability name is required.',
+            Vulnerability::SEVERITY   => 'Please select a valid risk score (severity).',
+            Vulnerability::CVSS_SCORE => 'Please enter a valid number between 0 - 10 for CVSS score.',
         ];
     }
 }
