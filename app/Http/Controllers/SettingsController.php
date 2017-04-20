@@ -218,10 +218,10 @@ class SettingsController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            User::NAME         => 'bail|filled',
-            User::EMAIL        => 'bail|filled|email',
-            User::PASSWORD     => 'bail|present',
-            'password-confirm' => 'bail|required_with:' . User::PASSWORD . '|same:' . User::PASSWORD,
+            'name'             => 'bail|required',
+            'email'            => 'bail|required|email',
+            'password'         => 'bail|present',
+            'password-confirm' => 'bail|required_with:password|same:password',
         ];
     }
 
@@ -233,10 +233,15 @@ class SettingsController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            User::NAME         => 'Please enter a valid name.',
-            User::EMAIL        => 'Please enter a valid email address.',
-            User::PASSWORD     => 'Please enter a valid password.',
-            'password-confirm' => 'The passwords entered are not the same',
+            'name.required'    => 'A name for the User is required, but it does not seem like you entered one.',
+            'email'            => [
+                'required' => 'An email address is required for a User, but it does not seem like you entered one.',
+                'email'    => 'The email address you entered does not seem to be a valid. Please check and try again.',
+            ],
+            'password-confirm' => [
+                'required_with' => 'It does not seem like you confirmed your password. Please check and try again.',
+                'same'          => 'The passwords you entered do not match. Please try again.',
+            ],
         ];
     }
 }

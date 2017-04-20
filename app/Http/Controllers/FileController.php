@@ -134,8 +134,8 @@ class FileController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            File::NAME => 'bail|filled',
-            'file'     => 'bail|required|file',
+            'name' => 'bail|filled',
+            'file' => 'bail|required|file',
         ];
     }
 
@@ -147,8 +147,13 @@ class FileController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            File::NAME => 'A name is required to create a new File.',
-            'file'     => 'Please select a valid file to upload.',
+            'name.filled' => 'A name is required to create a new File but it does not seem like you entered one. '
+                .'Please try again.',
+            'file'        => [
+                'required' => 'A file must be selected to create a new file entry and upload the file but it does not '
+                    . 'seem like you selected one. Please try again.',
+                'file'     => 'Either the selected file was not valid, or the file upload failed. Please try again.',
+            ],
         ];
     }
 }

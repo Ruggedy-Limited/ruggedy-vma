@@ -34,8 +34,9 @@ class AssetController extends AbstractController
         try {
             $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
         } catch (ValidationException $e) {
+            $message = "<ul><li>" . implode("</li><li>", $e->validator->getMessageBag()->all()) . "</li></ul>";
             $ajaxResponse->setMessage(
-                view('partials.custom-message', ['bsClass' => 'danger', 'message' => $e->getMessage()])->render()
+                view('partials.custom-message', ['bsClass' => 'danger', 'message' => $message])->render()
             );
 
             return response()->json($ajaxResponse);
@@ -86,14 +87,14 @@ class AssetController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            'asset-' . Asset::NAME          => 'bail|filled',
-            'asset-' . Asset::CPE           => 'bail|regex:' . Asset::REGEX_CPE,
-            'asset-' . Asset::VENDOR        => 'bail|regex:' . Asset::getValidVendorsRegex(),
-            'asset-' . Asset::IP_ADDRESS_V4 => 'bail|ipv4',
-            'asset-' . Asset::IP_ADDRESS_V6 => 'bail|ipv6',
-            'asset-' . Asset::HOSTNAME      => 'bail|url',
-            'asset-' . Asset::MAC_ADDRESS   => 'bail|regex:' . Asset::REGEX_MAC_ADDRESS,
-            'asset-' . Asset::NETBIOS       => 'bail|regex:' . Asset::REGEX_NETBIOS_NAME,
+            'asset-name'          => 'bail|required',
+            'asset-cpe'           => 'bail|regex:' . Asset::REGEX_CPE,
+            'asset-vendor'        => 'bail|in:' . Asset::getValidOsVendors()->implode(","),
+            'asset-ip_address_v4' => 'bail|ipv4',
+            'asset-ip_address_v6' => 'bail|ipv6',
+            'asset-hostname'      => 'bail|url',
+            'asset-mac_address'   => 'bail|regex:' . Asset::REGEX_MAC_ADDRESS,
+            'asset-netbios'       => 'bail|regex:' . Asset::REGEX_NETBIOS_NAME,
         ];
     }
 
@@ -105,14 +106,15 @@ class AssetController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            'asset-' . Asset::NAME          => 'An Asset name is required.',
-            'asset-' . Asset::CPE           => 'Please enter a valid CPE.',
-            'asset-' . Asset::VENDOR        => 'Please enter a valid OS vendor.',
-            'asset-' . Asset::IP_ADDRESS_V4 => 'Please enter a valid IPv4 address.',
-            'asset-' . Asset::IP_ADDRESS_V6 => 'Please enter a valid IPv6 address.',
-            'asset-' . Asset::HOSTNAME      => 'Please enter a valid hostname.',
-            'asset-' . Asset::MAC_ADDRESS   => 'Please enter a valid MAC address.',
-            'asset-' . Asset::NETBIOS       => 'Please enter a valid NETBIOS name.',
+            'asset-name.required'      => 'An Asset name is required but it does not seem like you entered one. '
+                .'Please try again.',
+            'asset-cpe.regex'          => 'The CPE you entered does not seem valid. Please try again.',
+            'asset-vendor.in'          => 'The OS vendor you entered does not seem valid. Please try again.',
+            'asset-ip_address_v4.ipv4' => 'The IP address v4 you entered does not seem valid. Please try again.',
+            'asset-ip_address_v6.ipv6' => 'The IP address v6 you entered does not seem valid. Please try again..',
+            'asset-hostname.url'       => 'The hostname you entered does not seem to be a valid URL. Please try again.',
+            'asset-mac_address.regex'  => 'The MAC address you entered does not seem valid. Please try again.',
+            'asset-netbios.regex'      => 'The NETBIOS name you entered does not seem valid. Please try again.',
         ];
     }
 }
