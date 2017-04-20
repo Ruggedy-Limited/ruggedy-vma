@@ -1,11 +1,6 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    @if ($file->getWorkspaceApp()->isRuggedyApp())
-        {!! Breadcrumbs::render('dynamic', $file->getWorkspaceApp()) !!}
-    @else
-        {!! Breadcrumbs::render('dynamic', $file) !!}
-    @endif
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
@@ -18,6 +13,11 @@
     <button type="button" class="btn round-btn pull-right c-yellow">
         <i class="fa fa-times fa-lg" aria-hidden="true"></i>
     </button>
+    @if ($file->getWorkspaceApp()->isRuggedyApp())
+        {!! Breadcrumbs::render('dynamic', $file->getWorkspaceApp()) !!}
+    @else
+        {!! Breadcrumbs::render('dynamic', $file) !!}
+    @endif
 @endsection
 
 @section('content')
