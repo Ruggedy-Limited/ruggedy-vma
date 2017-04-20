@@ -9,6 +9,9 @@ use App\Http\Responses\ErrorResponse;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
+/**
+ * @Middleware("web")
+ */
 class JiraController extends AbstractController
 {
     /**
@@ -29,11 +32,11 @@ class JiraController extends AbstractController
         // Start creating a new Jira Issue and populate it with data from the request
         $jiraIssue = new JiraIssue();
         $jiraIssue->setHost($this->request->get('host'))
-                  ->setPort($this->request->get('port'))
-                  ->setProjectKey($this->request->get('project-id'))
-                  ->setIssueType('Bug')
-                  ->setRequestType(JiraIssue::REQUEST_TYPE_CREATE)
-                  ->setRequestStatus(JiraIssue::REQUEST_STATUS_FAILED);
+            ->setPort($this->request->get('port'))
+            ->setProjectKey($this->request->get('project-id'))
+            ->setIssueType('Bug')
+            ->setRequestType(JiraIssue::REQUEST_TYPE_CREATE)
+            ->setRequestStatus(JiraIssue::REQUEST_STATUS_FAILED);
 
         $ajaxResponse = new AjaxResponse();
 
@@ -42,8 +45,9 @@ class JiraController extends AbstractController
         try {
             $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
         } catch (ValidationException $e) {
+            $message = "<ul><li>" . implode("</li><li>", $e->validator->getMessageBag()->all()) . "</li></ul>";
             $ajaxResponse->setMessage(
-                view('partials.custom-message', ['bsClass' => 'danger', 'message' => $e->getMessage()])->render()
+                view('partials.custom-message', ['bsClass' => 'danger', 'message' => $message])->render()
             );
 
             return response()->json($ajaxResponse);
@@ -105,10 +109,11 @@ class JiraController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            JiraIssue::HOST => 'bail|filled|url',
-            JiraIssue::PORT => 'bail|filled|int',
-            'username'      => 'bail|filled',
-            'password'      => 'bail|filled',
+            'username'   => 'bail|required',
+            'password'   => 'bail|required',
+            'project-id' => 'bail|required',
+            'host'       => 'bail|required|url',
+            'port'       => 'bail|required|int',
         ];
     }
 
@@ -120,10 +125,20 @@ class JiraController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            JiraIssue::HOST => 'You must provide your Jira host URL.',
-            JiraIssue::PORT => 'You must provide your Jira host port.',
-            'username'      => 'You must provide your Jira username.',
-            'password'      => 'You must provide your Jira password.',
+            'username.required'   => 'Your Jira username is required, but it does not seem like you entered it. '
+                .'Please try again.',
+            'password.required'   => 'Your Jira password is required, but it does not seem like you entered it. '
+                . 'Please try again.',
+            'project-id.required' => 'Your Jira Project ID is required, but it does not seem like you entered it. '
+                . 'Please try again.',
+            'host'                => [
+                'required' => 'Your Jira host URL is required, but it does not seem like you entered it.',
+                'url'      => 'The Jira hostname you entered does not seem to be a valid URL.',
+            ],
+            'port'                => [
+                'required' => 'Your Jira host port is required, but it does not seem like you entered it.',
+                'int'      => 'The Jira host port you entered does not seem to be a valid port number.',
+            ],
         ];
     }
 }

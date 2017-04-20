@@ -155,7 +155,7 @@ class WorkspaceController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            Workspace::NAME => 'bail|filled',
+            'name' => 'bail|required',
         ];
     }
 
@@ -167,7 +167,7 @@ class WorkspaceController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            Workspace::NAME => 'You must give the Workspace a name.',
+            'name.required' => 'You must give the Workspace a name.',
         ];
     }
 }

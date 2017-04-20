@@ -8,6 +8,7 @@ use App\Commands\EditWorkspaceApp;
 use App\Commands\GetFile;
 use App\Commands\GetListOfScannerApps;
 use App\Commands\GetScannerApp;
+use App\Commands\GetWorkspace;
 use App\Commands\GetWorkspaceApp;
 use App\Entities\WorkspaceApp;
 
@@ -70,7 +71,7 @@ class AppController extends AbstractController
         $command     = new GetListOfScannerApps(0);
         $scannerApps = $this->sendCommandToBusHelper($command);
 
-        $command   = new GetWorkspaceApp(intval($workspaceId));
+        $command   = new GetWorkspace(intval($workspaceId));
         $workspace = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($scannerApps) || $this->isCommandError($workspace)) {
@@ -218,7 +219,7 @@ class AppController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            WorkspaceApp::NAME => 'bail|filled',
+            'name' => 'bail|filled',
         ];
     }
 
@@ -230,7 +231,8 @@ class AppController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            WorkspaceApp::NAME => 'A name is required to create a new App.',
+            'name.filled' => 'A name is required to create a new App and it does not seem like you entered one. '
+                .'Please try again.',
         ];
     }
 }

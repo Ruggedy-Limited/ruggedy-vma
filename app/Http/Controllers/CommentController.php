@@ -9,6 +9,9 @@ use App\Commands\GetNewComments;
 use App\Entities\Comment;
 use Exception;
 
+/**
+ * @Middleware("web")
+ */
 class CommentController extends AbstractController
 {
     /**
@@ -119,9 +122,7 @@ class CommentController extends AbstractController
      */
     protected function getValidationRules(): array
     {
-        return [
-            Comment::CONTENT => 'bail|required'
-        ];
+        return [];
     }
 
     /**
@@ -131,8 +132,6 @@ class CommentController extends AbstractController
      */
     protected function getValidationMessages(): array
     {
-        return [
-            Comment::CONTENT => 'You type something to create a comment.'
-        ];
+        return [];
     }
 }
