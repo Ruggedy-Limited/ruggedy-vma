@@ -40,7 +40,7 @@
     <div class="row">
         <div class="col-md-6 col-sm-6 animated fadeIn">
             <h3>Add Vulnerability</h3>
-            <button class="primary-btn" type="submit">Submit</button>
+            <button class="primary-btn" type="submit">Create Vulnerability</button>
             <div class="form-group">
                 {!! Form::label('name', 'Vulnerability Name') !!}
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
