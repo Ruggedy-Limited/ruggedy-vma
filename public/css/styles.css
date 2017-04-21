@@ -1062,6 +1062,10 @@ select {
     display: none;
 }
 
+a > span.jira-issue-key {
+    text-decoration: underline;
+}
+
 /*
 ==========================================================================
 Start: Tabs
