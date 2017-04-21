@@ -180,22 +180,24 @@ $("#menu-toggle").click(function(e) {
                 + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
                 + defaultErrorTxt + '</div>',
             // Hide the error alert after 5 seconds
-            hideAlert = function () {
+            hideAlert = function (form) {
                 var alert = modalContent.find('.alert');
-                if (alert.length < 1) {
+                if (alert.length < 1 || !form) {
                     return;
                 }
 
-                setTimeout(function () {
-                    alert.slideUp(800);
-                    alert.remove();
-                }, 5000);
+                form.find('input:visible, select:visible').on('focusin', function () {
+                    alert.slideUp(500, function () {
+                        $(this).remove();
+                    });
+                });
             };
 
         // When the Send to Jira form is submitted
         form.on('submit', function (e) {
             // Prevent the default form submission
             e.preventDefault();
+            var form = $(this);
 
             // Send an ajax request with all the form data
             $.ajax({
@@ -218,13 +220,13 @@ $("#menu-toggle").click(function(e) {
                 modalContent.prepend(data.message);
                 if (data.isError) {
                     // If the response is an error, hide it after 5s.
-                    hideAlert();
+                    hideAlert(form);
                     return;
                 }
 
                 // Success: hide the success message only if the hideAfterSuccess parameter is set
                 if (hideAfterSuccess) {
-                    hideAlert();
+                    hideAlert(form);
                 }
 
                 // Reset the form inputs
@@ -237,7 +239,7 @@ $("#menu-toggle").click(function(e) {
             }).fail(function () {
                 // Show the default error.
                 modalContent.prepend(defaultError);
-                hideAlert();
+                hideAlert(form);
             }).always(function () {
                 // Always hide the overlay and loading icon when the ajax request is done
                 overlayAndIcon.fadeOut(300);
