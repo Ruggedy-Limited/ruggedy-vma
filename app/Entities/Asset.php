@@ -132,6 +132,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setHostname($hostname)
     {
+        if (empty($hostname)) {
+            return $this;
+        }
+
         parent::setHostname(
             $this->sanitiseHostname($hostname)
         );
@@ -180,6 +184,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setMacAddress($mac_address)
     {
+        if (empty($mac_address)) {
+            return $this;
+        }
+
         return parent::setMacAddress(
             $this->sanitiseMacAddress($mac_address)
         );
@@ -193,6 +201,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setVendor($vendor)
     {
+        if (empty($vendor)) {
+            return $this;
+        }
+
         // Parameter is a valid vendor name
         if (static::isValidOsVendor($vendor)) {
             return parent::setVendor($vendor);
@@ -218,6 +230,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setLastBoot($lastBoot)
     {
+        if (empty($lastBoot)) {
+            return $this;
+        }
+
         if (empty($this->sanitiseDate($lastBoot))) {
             return $this;
         }
@@ -521,7 +537,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      * @param string $macAddress
      * @return string|null
      */
-    protected function sanitiseMacAddress($macAddress)
+    protected function sanitiseMacAddress(string $macAddress)
     {
         if (empty($macAddress) || preg_match(Asset::REGEX_MAC_ADDRESS, $macAddress)) {
             return $macAddress;
