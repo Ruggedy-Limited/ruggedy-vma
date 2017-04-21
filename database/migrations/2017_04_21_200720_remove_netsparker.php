@@ -4,6 +4,11 @@ use App\Utils\RawMigration;
 
 class RemoveNetsparker extends RawMigration
 {
+    /**
+     * @inheritdoc
+     *
+     * @return string
+     */
     public function getRawSqlMigration()
     {
         return <<<SQL
