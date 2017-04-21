@@ -95,7 +95,7 @@ class JiraController extends AbstractController
             'message' => 'Jira Issue <a href="' . $jiraIssueResponse->getIssueUrl() . '" target="_blank">'
                 . '<span class="jira-issue-key">' . $jiraIssueResponse->getIssueKey() . '</span>'
                 .'</a> created successfully.'
-        ]));
+        ])->render());
         $ajaxResponse->setError(false);
 
         return response()->json($ajaxResponse);
