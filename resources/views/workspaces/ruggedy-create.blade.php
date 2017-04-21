@@ -104,10 +104,12 @@
                 Add an Asset
             </a>
             <div id="related-assets">
+                @if (!empty($assetsHtml))
+                    {!! $assetsHtml !!}
+                @endif
             </div>
-            {!! Form::select('assets', [], [], [
+            {!! Form::select('assets[]', $assetIds, $assetIds, [
                 'multiple' => 'multiple',
-                'name'     => 'assets[]',
                 'class'    => 'invisible',
                 'id'       => 'assets-select',
             ]) !!}
