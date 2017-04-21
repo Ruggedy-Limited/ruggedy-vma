@@ -1,5 +1,9 @@
 <div class="col-md-4 col-sm-6">
-    <a href="{{ route('app.view', ['workspaceAppId' => $app->getId()]) }}">
+    @if ($app->isRuggedyApp())
+        <a href="{{ route('ruggedy-app.view', ['fileId' => $app->getFiles()->first()->getId()]) }}">
+    @else
+        <a href="{{ route('app.view', ['workspaceAppId' => $app->getId()]) }}">
+    @endif
         <div class="card hovercard animated pulse-hover">
             <div class="cardheader c-white">
             </div>

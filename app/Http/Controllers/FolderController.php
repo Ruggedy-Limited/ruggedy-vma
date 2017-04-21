@@ -160,6 +160,14 @@ class FolderController extends AbstractController
      */
     public function addVulnerabilityToFolder($vulnerabilityId)
     {
+        // Validate the request
+        $this->validate($this->request, ['folder-id' => 'bail|required|int'], [
+            'folder-id' => [
+                'required' => 'Please select the Folder where you want the Vulnerability added.',
+                'int'      => "That doesn't seem to be a valid Folder selection. Please try again.",
+            ]
+        ]);
+
         $folderId = $this->request->get('folder-id', 0);
         $command  = new AddRemoveVulnerabilityToFromFolder(intval($folderId), intval($vulnerabilityId));
         $folder   = $this->sendCommandToBusHelper($command);
@@ -205,9 +213,7 @@ class FolderController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            Folder::NAME        => 'bail|filled',
-            Folder::DESCRIPTION => 'bail|filled',
-            'folder-id'         => 'bail|filled|int',
+            'name' => 'bail|required',
         ];
     }
 
@@ -219,9 +225,8 @@ class FolderController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            Folder::NAME        => 'You must enter a name for the folder.',
-            Folder::DESCRIPTION => 'You must enter a description for the folder.',
-            'folder-id'         => 'You must select which Folder to add the Vulnerability to.',
+            'name.required' => 'A name is required to create a folder but it does not seem like you entered one. '
+                . 'Please try again.',
         ];
     }
 }
