@@ -100,7 +100,7 @@ class AppController extends AbstractController
         $command    = new GetScannerApp(intval($scannerAppId));
         $scannerApp = $this->sendCommandToBusHelper($command);
 
-        $command   = new GetWorkspaceApp(intval($workspaceId));
+        $command   = new GetWorkspace(intval($workspaceId));
         $workspace = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($scannerApp) || $this->isCommandError($workspace)) {
