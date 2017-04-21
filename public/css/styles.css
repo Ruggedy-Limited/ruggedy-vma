@@ -872,6 +872,13 @@ Start: Cards
     margin-top: 10px;
 }
 
+a.remove-vulnerability {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    z-index: 1;
+}
+
 /*
 ==========================================================================
 End: Cards
