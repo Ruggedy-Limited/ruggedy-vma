@@ -4,9 +4,11 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <button type="button" class="btn round-btn pull-right c-yellow">
-        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('workspace.apps', [$workspace->getRouteParameterName() => $workspace->getId()]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
     {!! Breadcrumbs::render('createWorkspaceApp', $workspace, $scannerApp) !!}
 @endsection
 

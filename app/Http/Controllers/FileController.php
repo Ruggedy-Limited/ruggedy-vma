@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Commands\DeleteFile;
 use App\Commands\EditFile;
 use App\Commands\GetFile;
 use App\Commands\GetWorkspaceApp;
@@ -93,14 +94,14 @@ class FileController extends AbstractController
      */
     public function editFile($fileId)
     {
-        $command = new GetFile(intval($fileId));
-        $file    = $this->sendCommandToBusHelper($command);
+        $command  = new GetFile(intval($fileId));
+        $fileInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($file)) {
+        if ($this->isCommandError($fileInfo)) {
             return redirect()->back();
         }
 
-        return view('workspaces.edit-file', ['file' => $file]);
+        return view('workspaces.edit-file', ['file' => $fileInfo['file']]);
     }
 
     /**
@@ -127,6 +128,29 @@ class FileController extends AbstractController
     }
 
     /**
+     * Display the form for editing a file's name and description
+     *
+     * @GET("/workspace/app/file/delete/{fileId}/{workspaceAppId}", as="file.delete",
+     *     where={"fileId":"[0-9]+","workspaceAppId":"[0-9]+"})
+     *
+     * @param $fileId
+     * @param $workspaceAppId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function deleteFile($fileId, $workspaceAppId)
+    {
+        $command = new DeleteFile(intval($fileId), true);
+        $file    = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($file)) {
+            return redirect()->back();
+        }
+
+        $this->flashMessenger->success('File deleted successfully.');
+        return redirect()->route('app.view', ['workspaceAppId' => $workspaceAppId]);
+    }
+
+    /**
      * @inheritdoc
      *
      * @return array
@@ -135,7 +159,7 @@ class FileController extends AbstractController
     {
         return [
             'name' => 'bail|filled',
-            'file' => 'bail|required|file',
+            'file' => 'bail|filled|file',
         ];
     }
 
@@ -150,7 +174,7 @@ class FileController extends AbstractController
             'name.filled' => 'A name is required to create a new File but it does not seem like you entered one. '
                 .'Please try again.',
             'file'        => [
-                'required' => 'A file must be selected to create a new file entry and upload the file but it does not '
+                'filled'   => 'A file must be selected to create a new file entry and upload the file but it does not '
                     . 'seem like you selected one. Please try again.',
                 'file'     => 'Either the selected file was not valid, or the file upload failed. Please try again.',
             ],

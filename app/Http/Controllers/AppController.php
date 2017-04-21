@@ -194,11 +194,11 @@ class AppController extends AbstractController
      * @GET("/workspace/app/delete/{workspaceId}/{workspaceAppId}", as="app.delete",
      *     where={"workspaceId":"[0-9]+","workspaceAppId":"[0-9]+"})
      *
-     * @param $workspaceAppId
      * @param $workspaceId
+     * @param $workspaceAppId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function deleteWorkspaceApp($workspaceAppId, $workspaceId)
+    public function deleteWorkspaceApp($workspaceId, $workspaceAppId)
     {
         $command      = new DeleteWorkspaceApp(intval($workspaceAppId), true);
         $workspaceApp = $this->sendCommandToBusHelper($command);

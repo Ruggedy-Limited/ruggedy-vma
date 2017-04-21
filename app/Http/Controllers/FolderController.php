@@ -97,14 +97,14 @@ class FolderController extends AbstractController
      */
     public function edit($folderId)
     {
-        $command = new GetFolder(intval($folderId));
-        $folder  = $this->sendCommandToBusHelper($command);
+        $command     = new GetFolder(intval($folderId));
+        $folderInfo  = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($folder)) {
+        if ($this->isCommandError($folderInfo)) {
             return redirect()->back()->withInput();
         }
 
-        return view('folders.edit', ['folder' => $folder]);
+        return view('folders.edit', ['folder' => $folderInfo['folder']]);
     }
 
     /**
@@ -146,6 +146,7 @@ class FolderController extends AbstractController
             redirect()->back();
         }
 
+        $this->flashMessenger->success('Folder deleted successfully.');
         return redirect()->route('workspace.view', ['workspaceId' => $folder->getWorkspaceId()]);
     }
 
