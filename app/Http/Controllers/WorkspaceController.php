@@ -93,10 +93,10 @@ class WorkspaceController extends AbstractController
         $workspace = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($workspace)) {
-            return redirect()->back()->withInput();
+            return redirect()->back();
         }
 
-        return view('workspaces.create', ['workspace' => $workspace]);
+        return view('workspaces.edit', ['workspace' => $workspace]);
     }
 
     /**
