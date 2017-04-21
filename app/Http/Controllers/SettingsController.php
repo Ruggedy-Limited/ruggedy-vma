@@ -110,17 +110,6 @@ class SettingsController extends AbstractController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @GET("/settings/user/edit/{userId}", as="settings.user.edit", where={"userId":"[0-9]+"})

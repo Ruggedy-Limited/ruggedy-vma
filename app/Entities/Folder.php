@@ -18,7 +18,7 @@ class Folder extends Base\Folder implements SystemComponent
     const VULNERABILITIES = 'vulnerabilities';
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", cascade={"persist", "remove"},
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", cascade={"persist"},
      *     fetch="EXTRA_LAZY")
      * @ORM\JoinTable(
      *     name="folders_vulnerabilities",
