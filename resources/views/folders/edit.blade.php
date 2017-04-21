@@ -7,7 +7,7 @@
     <button type="button" class="btn round-btn pull-right c-yellow">
         <i class="fa fa-times fa-lg" aria-hidden="true"></i>
     </button>
-    {!! Breadcrumbs::render('editFolder', $folder) !!}
+    {!! Breadcrumbs::render('dynamic', $folder) !!}
 @endsection
 
 @section('content')
