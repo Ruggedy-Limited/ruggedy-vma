@@ -44,6 +44,11 @@ class ComponentPolicy
             return true;
         }
 
+        // Temporarily allow any User to read everything.
+        if ($requiredPermission->contains(ComponentPermission::PERMISSION_READ_ONLY)) {
+            return true;
+        }
+
         $userHasPermission = $user->getPermissions()->exists(
             function ($offset, $permission) use ($component, $requiredPermission) {
                 return $this->iterateComponentHierarchy($component, $permission, $requiredPermission);
