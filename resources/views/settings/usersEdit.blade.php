@@ -1,24 +1,23 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! $user === Auth::user() ? Breadcrumbs::render('profile') : Breadcrumbs::render('editUser', $user) !!}
-        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-        </button>
+    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
+        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+    </button>
+    <a href="{{ route('user.delete', [$user->getRouteParameterName() => $user->getId()]) }}">
         <button type="button" class="btn round-btn pull-right c-red">
             <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
         </button>
+    </a>
+    <a href="{{ route('settings.view') }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
-    </p>
+    </a>
+    {!! $user === Auth::user() ? Breadcrumbs::render('profile') : Breadcrumbs::render('editUser', $user) !!}
 @endsection
 
 @section('content')
-
-    @include('layouts.formError')
-
-
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">

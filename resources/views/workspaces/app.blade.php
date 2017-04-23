@@ -1,7 +1,6 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
@@ -13,12 +12,19 @@
             <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
         </button>
     </a>
-    <button type="button" class="btn round-btn pull-right c-purple">
-        <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-    </button>
-    <button type="button" class="btn round-btn pull-right c-yellow">
-        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('app.edit', [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]) }}">
+        <button type="button" class="btn round-btn pull-right c-purple">
+            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
+    <a href="{{ route('workspace.view', [
+        $workspaceApp->getWorkspace()->getRouteParameterName() => $workspaceApp->getWorkspace()->getId()
+    ]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
+    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
 @endsection
 
 @section('content')

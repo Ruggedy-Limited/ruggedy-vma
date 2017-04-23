@@ -67,8 +67,7 @@ class DeleteWorkspace extends CommandHandler
 
         // If the deletion has been confirmed, then set the deleted flag on the Workspace and save to the database
         if ($command->isConfirm()) {
-            $workspace->setDeleted(true);
-            $this->em->persist($workspace);
+            $this->em->remove($workspace);
             $this->em->flush($workspace);
         }
 
