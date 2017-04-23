@@ -1,19 +1,18 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('dynamic', $vulnerability) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <button type="button" class="btn round-btn pull-right c-yellow">
-        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ url()->previous() }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
+    {!! Breadcrumbs::render('dynamic', $vulnerability) !!}
 @endsection
 
 @section('content')
-
-    @include('layouts.formError')
-
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -61,7 +60,9 @@
     <div class="row animated fadeIn">
         <div class="col-md-12">
             <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#jira">Send to JIRA</a>
-            <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">Add to Folder</a>
+            @if (!empty($folders))
+                <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">Add to Folder</a>
+            @endif
         </div>
     </div>
 

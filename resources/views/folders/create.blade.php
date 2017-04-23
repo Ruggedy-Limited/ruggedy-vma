@@ -1,19 +1,18 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('dynamic', $workspace) !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <button type="button" class="btn round-btn pull-right c-yellow">
-        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('workspace.view', ['workspaceId' => $workspaceId]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
+    {!! Breadcrumbs::render('dynamic', $workspace) !!}
 @endsection
 
 @section('content')
-
-    @include('layouts.formError')
-
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">

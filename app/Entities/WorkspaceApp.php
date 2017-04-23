@@ -65,25 +65,27 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     }
 
     /**
-     * @param Vulnerability $vulnerability
-     * @return Base\WorkspaceApp
+     * Get if this is a Ruggedy App or not
+     *
+     * @return bool
      */
-    public function addVulnerability(Vulnerability $vulnerability)
+    public function isRuggedyApp(): bool
     {
-        $vulnerability->setWorkspaceApp($this);
-        return parent::addVulnerability($vulnerability);
+        return $this->scannerApp->getName() === ScannerApp::SCANNER_RUGGEDY;
     }
 
     /**
-     * Get a unique list of Assets
+     * Override the parent method to cater for the ruggedy app routes
      *
-     * @return Collection
+     * @param bool $plural
+     * @return string
      */
-    public function getAssets()
+    public function getRouteName(bool $plural = false): string
     {
-        return collect($this->getVulnerabilities()->toArray())->flatMap(function ($vulnerability) {
-            /** @var \App\Entities\Vulnerability $vulnerability */
-            return $vulnerability->getAssets();
-        })->unique();
+        if (!$this->isRuggedyApp()) {
+            return parent::getRouteName($plural);
+        }
+
+        return ScannerApp::SCANNER_RUGGEDY . '-' . parent::getRouteName($plural);
     }
 }

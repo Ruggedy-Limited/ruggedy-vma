@@ -1,19 +1,18 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    {!! Breadcrumbs::render('settings') !!}
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <button type="button" class="btn round-btn pull-right c-yellow">
-        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('home') }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
+    {!! Breadcrumbs::render('settings') !!}
 @endsection
 
 @section('content')
-
-    @include('layouts.formError')
-
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
