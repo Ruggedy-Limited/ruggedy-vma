@@ -9,6 +9,8 @@ use App\Commands\EditFolder;
 use App\Commands\GetFolder;
 use App\Commands\GetWorkspace;
 use App\Entities\Folder;
+use App\Policies\ComponentPolicy;
+use Auth;
 use Illuminate\Http\Request;
 
 /**
@@ -30,6 +32,11 @@ class FolderController extends AbstractController
         $workspace = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($workspace)) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
+            $this->flashMessenger->error("You do not have permission to create Folders in this Workspace.");
             return redirect()->back();
         }
 
@@ -102,6 +109,11 @@ class FolderController extends AbstractController
 
         if ($this->isCommandError($folderInfo)) {
             return redirect()->back()->withInput();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $folderInfo['folder'])) {
+            $this->flashMessenger->error("You do not have permission to edit that Folder.");
+            return redirect()->back();
         }
 
         return view('folders.edit', ['folder' => $folderInfo['folder']]);
