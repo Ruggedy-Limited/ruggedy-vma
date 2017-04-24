@@ -68,23 +68,23 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class MessagingModel
 {
     /** General */
-    const ERROR_DEFAULT       = "error_default";
-    const ERROR_INVALID_INPUT = "error_invalid_input";
-    const ERROR_INVALID_EMAIL = "error_sending_invite_invalid_email";
+    const ERROR_DEFAULT       = 'error_default';
+    const ERROR_INVALID_INPUT = 'error_invalid_input';
+    const ERROR_INVALID_EMAIL = 'error_sending_invite_invalid_email';
 
     /** User Management */
-    const ERROR_SENDING_INVITE_GENERAL            = "error_sending_invite";
-    const ERROR_TEAM_DOES_NOT_EXIST               = "error_team_does_not_exist";
-    const ERROR_TEAM_MEMBER_DOES_NOT_EXIST        = "error_team_member_does_not_exist";
-    const ERROR_USER_DOES_NOT_EXIST               = "error_user_does_not_exist";
-    const ERROR_USER_NOT_TEAM_OWNER               = "error_user_not_team_owner";
-    const ERROR_CANNOT_EDIT_ACCOUNT               = "error_cannot_edit_account";
-    const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = "error_account_with_email_already_exists";
-    const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
+    const ERROR_SENDING_INVITE_GENERAL            = 'error_sending_invite';
+    const ERROR_TEAM_DOES_NOT_EXIST               = 'error_team_does_not_exist';
+    const ERROR_TEAM_MEMBER_DOES_NOT_EXIST        = 'error_team_member_does_not_exist';
+    const ERROR_USER_DOES_NOT_EXIST               = 'error_user_does_not_exist';
+    const ERROR_USER_NOT_TEAM_OWNER               = 'error_user_not_team_owner';
+    const ERROR_CANNOT_EDIT_ACCOUNT               = 'error_cannot_edit_account';
+    const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = 'error_account_with_email_already_exists';
+    const ERROR_FIELD_DOES_NOT_EXIST              = 'error_field_does_not_exist';
     /** User-related Permission */
-    const ERROR_USER_DELETE_PERMISSION            = "error_user_delete_permission";
-    const ERROR_GET_ALL_USERS_PERMISSION          = "error_get_all_users_permission";
-    const ERROR_VIEW_USER_PERMISSION              = "error_view_user_permission";
+    const ERROR_USER_DELETE_PERMISSION            = 'error_user_delete_permission';
+    const ERROR_GET_ALL_USERS_PERMISSION          = 'error_get_all_users_permission';
+    const ERROR_VIEW_USER_PERMISSION              = 'error_view_user_permission';
 
     /** File Management */
     const ERROR_FILE_DOES_NOT_EXIST         = 'error_file_does_not_exist';
@@ -105,29 +105,29 @@ class MessagingModel
     const ERROR_FOLDER_DELETE_PERMISSION = 'error_folder_delete_permission';
 
     /** Workspace Management */
-    const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
-    const ERROR_WORKSPACE_DOES_NOT_EXIST    = "error_workspace_does_not_exist";
-    const WARNING_DELETING_WORKSPACE        = "warning_deleting_workspace";
-    const ERROR_COULD_NOT_DELETE_WORKSPACE  = "error_could_not_delete_workspace";
+    const ERROR_COULD_NOT_CREATE_WORKSPACE  = 'error_could_not_create_workspace';
+    const ERROR_WORKSPACE_DOES_NOT_EXIST    = 'error_workspace_does_not_exist';
+    const WARNING_DELETING_WORKSPACE        = 'warning_deleting_workspace';
+    const ERROR_COULD_NOT_DELETE_WORKSPACE  = 'error_could_not_delete_workspace';
     /** Workspace-related permission */
-    const ERROR_WORKSPACE_CREATE_PERMISSION = "error_workspace_create_permission";
-    const ERROR_DELETE_WORKSPACE_PERMISSION = "error_delete_workspace_permission";
-    const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_edit_workspace_permission";
-    const ERROR_LIST_WORKSPACES_PERMISSION  = "error_list_workspaces_permission";
-    const ERROR_VIEW_WORKSPACE_PERMISSION   = "error_view_workspace_permission";
+    const ERROR_WORKSPACE_CREATE_PERMISSION = 'error_workspace_create_permission';
+    const ERROR_DELETE_WORKSPACE_PERMISSION = 'error_delete_workspace_permission';
+    const ERROR_EDIT_WORKSPACE_PERMISSION   = 'error_edit_workspace_permission';
+    const ERROR_LIST_WORKSPACES_PERMISSION  = 'error_list_workspaces_permission';
+    const ERROR_VIEW_WORKSPACE_PERMISSION   = 'error_view_workspace_permission';
     
     /** Asset Management */
-    const ERROR_COULD_NOT_CREATE_ASSET      = "error_could_not_create_asset";
-    const ERROR_COULD_NOT_CREATE_ASSET_FILE = "error_could_not_create_asset_file";
-    const ERROR_ASSET_DOES_NOT_EXIST        = "error_asset_does_not_exist";
-    const WARNING_DELETING_ASSET            = "warning_deleting_asset";
-    const ERROR_COULD_NOT_DELETE_ASSET      = "error_could_not_delete_asset";
+    const ERROR_COULD_NOT_CREATE_ASSET      = 'error_could_not_create_asset';
+    const ERROR_COULD_NOT_CREATE_ASSET_FILE = 'error_could_not_create_asset_file';
+    const ERROR_ASSET_DOES_NOT_EXIST        = 'error_asset_does_not_exist';
+    const WARNING_DELETING_ASSET            = 'warning_deleting_asset';
+    const ERROR_COULD_NOT_DELETE_ASSET      = 'error_could_not_delete_asset';
     /** Asset-related permission */
-    const ERROR_ASSET_CREATE_PERMISSION     = "error_asset_create_permission";
-    const ERROR_DELETE_ASSET_PERMISSION     = "error_delete_asset_permission";
-    const ERROR_EDIT_ASSET_PERMISSION       = "error_asset_permission";
-    const ERROR_LIST_ASSETS_PERMISSION      = "error_list_assets_permission";
-    const ERROR_VIEW_ASSET_PERMISSION       = "error_view_asset_permission";
+    const ERROR_ASSET_CREATE_PERMISSION     = 'error_asset_create_permission';
+    const ERROR_DELETE_ASSET_PERMISSION     = 'error_delete_asset_permission';
+    const ERROR_EDIT_ASSET_PERMISSION       = 'error_asset_permission';
+    const ERROR_LIST_ASSETS_PERMISSION      = 'error_list_assets_permission';
+    const ERROR_VIEW_ASSET_PERMISSION       = 'error_view_asset_permission';
     
     /** Permission Management */
     const ERROR_AUTH_USER_NOT_OWNER       = 'error_auth_user_not_owner';
