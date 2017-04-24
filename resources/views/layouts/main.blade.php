@@ -51,13 +51,22 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <!-- The logout requires a post request since Laravel 5.3:
+                Ref: https://laracasts.com/discuss/channels/laravel/laravel-53-logout-methodnotallowed -->
+                <a href="{{ url('/logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-sign-out fa-lg nav-indent" aria-hidden="true"></i>
                         </h4>
                         <p class="nav-btn-text">Logout</p>
                     </div>
                 </a>
+                <form id="logout-form"
+                      action="{{ url('/logout') }}"
+                      method="POST"
+                      style="display: none;">
+                    {{ csrf_field() }}
+                </form>
             </li>
         </ul>
     </div>
