@@ -60,7 +60,7 @@ class CreateWorkspace extends CommandHandler
         // Check that the parent User exists
         /** @var User $user */
         $user = $this->userRepository->find($userId);
-        if (empty($user)) {
+        if (empty($user) || $user->isDeleted()) {
             throw new UserNotFoundException("The User was not found or has been deleted");
         }
 

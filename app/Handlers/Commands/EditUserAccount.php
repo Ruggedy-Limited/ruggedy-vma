@@ -56,7 +56,7 @@ class EditUserAccount extends CommandHandler
             $user = $this->userRepository->find($userId);
         }
 
-        if (empty($user)) {
+        if (empty($user) || $user->isDeleted()) {
             throw new UserNotFoundException("There is not existing User with the given ID");
         }
 

@@ -192,7 +192,7 @@ class PermissionService
         // Get the User that the permissions are being created for
         /** @var User $user */
         $user = $this->userRepository->find($userId);
-        if (empty($user)) {
+        if (empty($user) || $user->isDeleted()) {
             throw new UserNotFoundException("A User with that ID does not exist");
         }
 

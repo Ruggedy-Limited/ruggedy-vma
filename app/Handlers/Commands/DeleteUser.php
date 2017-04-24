@@ -54,7 +54,7 @@ class DeleteUser extends CommandHandler
             );
         }
 
-        $this->em->remove($user);
+        $user->setDeleted(true);
         $this->em->flush($user);
 
         return $user;

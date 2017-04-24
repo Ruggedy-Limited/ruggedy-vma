@@ -52,6 +52,8 @@ class CreateUser extends CommandHandler
             throw new ActionNotPermittedException("Only admins can create Users.");
         }
 
+        $user->setDeleted(false);
+
         $this->em->persist($user);
         $this->em->flush($user);
         $this->em->refresh($user);
