@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateUser;
+use App\Commands\DeleteUser;
 use App\Commands\EditUserAccount;
 use App\Commands\GetAllUsers;
 use App\Commands\GetUser;
@@ -173,7 +174,14 @@ class SettingsController extends AbstractController
      */
     public function destroy($id)
     {
-        //
+        $command = new DeleteUser(intval($id));
+        $user    = $this->sendCommandToBusHelper($command);
+        if ($this->isCommandError($user)) {
+            return redirect()->back();
+        }
+
+        $this->flashMessenger->success("User account deleted successfully.");
+        return redirect()->route('settings.view');
     }
 
     /**
