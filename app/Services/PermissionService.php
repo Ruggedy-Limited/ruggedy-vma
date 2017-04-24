@@ -236,13 +236,7 @@ class PermissionService
      */
     public static function convertEntityClassToComponentNameHelper(SystemComponent $entity): string
     {
-        $className = get_class($entity);
-        if (strpos($className, "\\") !== false) {
-            $classNameParts = explode("\\", $className);
-            $className = array_pop($classNameParts);
-        }
-
-        return $className;
+        return class_basename($entity);
     }
 
     /**
