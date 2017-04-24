@@ -7,6 +7,7 @@ use App\Commands\DeleteWorkspace;
 use App\Commands\EditWorkspace;
 use App\Commands\GetWorkspace;
 use App\Entities\Workspace;
+use App\Policies\ComponentPolicy;
 use Auth;
 
 /**
@@ -23,6 +24,11 @@ class WorkspaceController extends AbstractController
      */
     public function create()
     {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, new Workspace())) {
+            $this->flashMessenger->error("You do not have permission to create Workspaces.");
+            return redirect()->back();
+        }
+
         return view('workspaces.create');
     }
 
@@ -93,6 +99,11 @@ class WorkspaceController extends AbstractController
         $workspace = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($workspace)) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
+            $this->flashMessenger->error("You do not have permission to edit that Workspace.");
             return redirect()->back();
         }
 

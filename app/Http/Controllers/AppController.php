@@ -11,6 +11,8 @@ use App\Commands\GetScannerApp;
 use App\Commands\GetWorkspace;
 use App\Commands\GetWorkspaceApp;
 use App\Entities\WorkspaceApp;
+use App\Policies\ComponentPolicy;
+use Auth;
 
 /**
  * @Middleware("web")
@@ -78,6 +80,11 @@ class AppController extends AbstractController
             return redirect()->back();
         }
 
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
+            $this->flashMessenger->error("You do not have permission to create Apps in this Workspace.");
+            return redirect()->back();
+        }
+
         return view('workspaces.apps', [
             'scannerApps' => $scannerApps,
             'workspace'   => $workspace,
@@ -107,6 +114,11 @@ class AppController extends AbstractController
             return redirect()->back();
         }
 
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
+            $this->flashMessenger->error("You do not have permission to create Apps in this Workspace.");
+            return redirect()->back();
+        }
+
         return view('workspaces.appsCreate', [
             'workspaceId'  => $workspaceId,
             'workspace'    => $workspace,
@@ -129,6 +141,11 @@ class AppController extends AbstractController
         $workspaceApp = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceApp)) {
+            $this->flashMessenger->error("You do not have permission to edit that App.");
             return redirect()->back();
         }
 
