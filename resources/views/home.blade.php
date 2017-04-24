@@ -26,7 +26,7 @@
     </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            @can(App\Policies\ComponentPolicy::ACTION_CREATE, new App\Entities\Workspace())
+            @can (App\Policies\ComponentPolicy::ACTION_CREATE, new App\Entities\Workspace())
                 <a href="{{ route('workspace.create') }}" class="primary-btn" type="button">Add Workspace</a>
             @endcan
         </div>

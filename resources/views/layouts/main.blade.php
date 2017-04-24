@@ -31,7 +31,7 @@
                     </div>
                 </a>
             </li>
-            @can(App\Policies\ComponentPolicy::ACTION_EDIT, new App\Entities\User())
+            @can (App\Policies\ComponentPolicy::ACTION_EDIT, new App\Entities\User())
                 <li>
                     <a href="{{ route('settings.view') }}">
                         <div class="nav-btn">
