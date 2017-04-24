@@ -61,7 +61,11 @@
         <div class="col-md-12">
             <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#jira">Send to JIRA</a>
             @if (!empty($folders))
-                <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">Add to Folder</a>
+                @can (App\Policies\ComponentPolicy::ACTION_EDIT, $vulnerability)
+                    <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">
+                        Add to Folder
+                    </a>
+                @endcan
             @endif
         </div>
     </div>

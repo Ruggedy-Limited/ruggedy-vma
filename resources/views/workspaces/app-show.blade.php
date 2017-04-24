@@ -4,27 +4,29 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    @if ($file->getWorkspaceApp()->isRuggedyApp())
-        <a href="{{ route('app.delete', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
-    @else
-        <a href="{{ route('file.delete', [
-            $file->getRouteParameterName()                    => $file->getId(),
-            $file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()
-        ]) }}">
-    @endif
-        <button type="button" class="btn round-btn pull-right c-red">
-            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
-    @if ($file->getWorkspaceApp()->isRuggedyApp())
-        <a href="{{ route('app.edit', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
-    @else
-        <a href="{{ route('file.edit', [$file->getRouteParameterName() => $file->getId()]) }}">
-    @endif
-        <button type="button" class="btn round-btn pull-right c-purple">
-            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
+    @can (App\Policies\ComponentPolicy::ACTION_EDIT, $file)
+        @if ($file->getWorkspaceApp()->isRuggedyApp())
+            <a href="{{ route('app.delete', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
+        @else
+            <a href="{{ route('file.delete', [
+                $file->getRouteParameterName()                    => $file->getId(),
+                $file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()
+            ]) }}">
+        @endif
+            <button type="button" class="btn round-btn pull-right c-red">
+                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+        @if ($file->getWorkspaceApp()->isRuggedyApp())
+            <a href="{{ route('app.edit', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
+        @else
+            <a href="{{ route('file.edit', [$file->getRouteParameterName() => $file->getId()]) }}">
+        @endif
+            <button type="button" class="btn round-btn pull-right c-purple">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endcan
     @if ($file->getWorkspaceApp()->isRuggedyApp())
         <a href="{{ route('workspace.view', [$file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()]) }}">
     @else

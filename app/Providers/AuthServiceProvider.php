@@ -41,8 +41,6 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         User::class                            => ComponentPolicy::class,
         UserProxy::class                       => ComponentPolicy::class,
-        Team::class                            => ComponentPolicy::class,
-        TeamProxy::class                       => ComponentPolicy::class,
         Workspace::class                       => ComponentPolicy::class,
         WorkspaceProxy::class                  => ComponentPolicy::class,
         Asset::class                           => ComponentPolicy::class,
