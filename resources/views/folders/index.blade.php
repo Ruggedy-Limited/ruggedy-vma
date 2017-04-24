@@ -4,16 +4,18 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <a href="{{ route('folder.delete', [$folder->getRouteParameterName() => $folder->getId()]) }}">
-        <button type="button" class="btn round-btn pull-right c-red">
-            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
-    <a href="{{ route('folder.edit', [$folder->getRouteParameterName() => $folder->getId()]) }}">
-        <button type="button" class="btn round-btn pull-right c-purple">
-            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
+    @can (App\Policies\ComponentPolicy::ACTION_EDIT, $folder)
+        <a href="{{ route('folder.delete', [$folder->getRouteParameterName() => $folder->getId()]) }}">
+            <button type="button" class="btn round-btn pull-right c-red">
+                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+        <a href="{{ route('folder.edit', [$folder->getRouteParameterName() => $folder->getId()]) }}">
+            <button type="button" class="btn round-btn pull-right c-purple">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endcan
     <a href="{{ route('workspace.view', [
         $folder->getWorkspace()->getRouteParameterName() => $folder->getWorkspace()->getId()
     ]) }}">
