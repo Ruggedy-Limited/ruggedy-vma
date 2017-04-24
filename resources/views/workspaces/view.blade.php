@@ -4,7 +4,7 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    @can(App\Policies\ComponentPolicy::ACTION_EDIT, $workspace)
+    @can (App\Policies\ComponentPolicy::ACTION_EDIT, $workspace)
         <a href="{{ route('workspace.delete', [$workspace->getRouteParameterName() => $workspace->getId()]) }}">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
@@ -45,7 +45,7 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            @can(App\Policies\ComponentPolicy::ACTION_CREATE, $workspace)
+            @can (App\Policies\ComponentPolicy::ACTION_CREATE, $workspace)
                 <a href="{{ route('workspace.apps', ['workspaceId' => $workspace->getId()]) }}"
                    class="primary-btn" type="button">Add Application</a>
                 <a href="{{ route('folder.create', ['workspaceId' => $workspace->getId()]) }}"
