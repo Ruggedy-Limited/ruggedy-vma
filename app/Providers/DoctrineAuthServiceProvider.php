@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Auth\DoctrineUserProvider;
+use App\Auth\CustomUserProvider;
 use App\Entities\User;
 use App\Repositories\UserRepository;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -18,12 +18,12 @@ class DoctrineAuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app['auth']->extend('doctrine', function()
+        $this->app['auth']->extend('custom', function()
         {
             // Extend the apps authentication to use the Doctrine UserRepository
             $hasher     = App::make(Hasher::class);
             $repository = App::make(UserRepository::class);
-            return new DoctrineUserProvider(new User(), $hasher, $repository);
+            return new CustomUserProvider(new User(), $hasher, $repository);
         });
     }
 
