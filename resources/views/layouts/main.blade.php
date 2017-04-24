@@ -51,6 +51,8 @@
                 </a>
             </li>
             <li>
+                <!-- The logout requires a post request since Laravel 5.3:
+                Ref: https://laracasts.com/discuss/channels/laravel/laravel-53-logout-methodnotallowed -->
                 <a href="{{ url('/logout') }}"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <div class="nav-btn">
