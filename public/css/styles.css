@@ -146,6 +146,9 @@ Start: Navbar
 .breadcrumb {
     padding: 0;
     margin: 0;
+    white-space: nowrap;
+    width: 90%;
+    display: inline-flex;
 }
 
 .breadcrumb > li {
@@ -160,6 +163,18 @@ Start: Navbar
 .breadcrumb > .active {
     font-weight: bold;
     color: #3a3f51;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 768px) {
+    .breadcrumb {
+        display: none;
+    }
+
+    .breadcrumb-nav {
+        padding: 10px;
+    }
 }
 
 .nav-btn {

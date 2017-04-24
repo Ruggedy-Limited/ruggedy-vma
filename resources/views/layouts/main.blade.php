@@ -90,7 +90,7 @@
                 </form>
             </div>
         </div>
-        <div class="c-lightgrey breadcrumb-nav hidden-xs">
+        <div class="c-lightgrey breadcrumb-nav">
             @yield('breadcrumb')
         </div>
 
