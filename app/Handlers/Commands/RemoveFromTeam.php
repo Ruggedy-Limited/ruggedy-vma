@@ -81,7 +81,7 @@ class RemoveFromTeam extends CommandHandler
         // Check that the User exists
         /** @var User $user */
         $user = $this->userRepository->find($userId);
-        if (empty($user)) {
+        if (empty($user) || $user->isDeleted()) {
             throw new UserNotFoundException("No user related to the given user ID was found in the database");
         }
 
