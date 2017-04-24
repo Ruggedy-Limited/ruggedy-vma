@@ -4,7 +4,15 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <a href="{{ url()->previous() }}">
+    @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
+        <a href="{{ route('ruggedy-app.view', [
+            $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
+        ]) }}">
+    @else
+        <a href="{{ route('file.view', [
+            $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
+        ]) }}">
+    @endif
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
