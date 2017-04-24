@@ -45,7 +45,7 @@ class GetUser extends CommandHandler
 
         // Make sure the User exists
         $user = $this->repository->find($userId);
-        if (empty($user)) {
+        if (empty($user) || $user->isDeleted()) {
             throw new UserNotFoundException("There is no existing User with the given ID");
         }
 
