@@ -81,21 +81,24 @@ class MessagingModel
     const ERROR_CANNOT_EDIT_ACCOUNT               = "error_cannot_edit_account";
     const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = "error_account_with_email_already_exists";
     const ERROR_FIELD_DOES_NOT_EXIST              = "error_field_does_not_exist";
+    /** User-related Permission */
     const ERROR_USER_DELETE_PERMISSION            = "error_user_delete_permission";
     const ERROR_GET_ALL_USERS_PERMISSION          = "error_get_all_users_permission";
     const ERROR_VIEW_USER_PERMISSION              = "error_view_user_permission";
 
     /** File Management */
     const ERROR_FILE_DOES_NOT_EXIST         = 'error_file_does_not_exist';
+    const ERROR_INVALID_OR_UNSUPPORTED_FILE = 'error_invalid_or_unsupported_file';
+    const ERROR_FILE_COULD_NOT_BE_WRITTEN   = 'error_file_could_not_be_written';
+    /** File-related permission */
     const ERROR_FILE_VIEW_PERMISSION        = 'error_file_view_permission';
     const ERROR_DELETE_FILE_PERMISSION      = 'error_delete_file_permission';
     const ERROR_EDIT_FILE_PERMISSION        = 'error_edit_file_permission';
-    const ERROR_INVALID_OR_UNSUPPORTED_FILE = 'error_invalid_or_unsupported_file';
-    const ERROR_FILE_COULD_NOT_BE_WRITTEN   = 'error_file_could_not_be_written';
     const ERROR_UPLOAD_FILE_PERMISSION      = 'error_upload_file_permission';
 
     /** Folder Management */
     const ERROR_FOLDER_DOES_NOT_EXIST    = 'error_folder_does_not_exist';
+    /** Folder-related permission */
     const ERROR_FOLDER_VIEW_PERMISSION   = 'error_folder_view_permission';
     const ERROR_FOLDER_CREATE_PERMISSION = 'error_folder_create_permission';
     const ERROR_FOLDER_EDIT_PERMISSION   = 'error_folder_edit_permission';
@@ -103,11 +106,12 @@ class MessagingModel
 
     /** Workspace Management */
     const ERROR_COULD_NOT_CREATE_WORKSPACE  = "error_could_not_create_workspace";
-    const ERROR_WORKSPACE_CREATE_PERMISSION = "error_workspace_create_permission";
     const ERROR_WORKSPACE_DOES_NOT_EXIST    = "error_workspace_does_not_exist";
-    const ERROR_DELETE_WORKSPACE_PERMISSION = "error_delete_workspace_permission";
     const WARNING_DELETING_WORKSPACE        = "warning_deleting_workspace";
     const ERROR_COULD_NOT_DELETE_WORKSPACE  = "error_could_not_delete_workspace";
+    /** Workspace-related permission */
+    const ERROR_WORKSPACE_CREATE_PERMISSION = "error_workspace_create_permission";
+    const ERROR_DELETE_WORKSPACE_PERMISSION = "error_delete_workspace_permission";
     const ERROR_EDIT_WORKSPACE_PERMISSION   = "error_edit_workspace_permission";
     const ERROR_LIST_WORKSPACES_PERMISSION  = "error_list_workspaces_permission";
     const ERROR_VIEW_WORKSPACE_PERMISSION   = "error_view_workspace_permission";
@@ -115,11 +119,12 @@ class MessagingModel
     /** Asset Management */
     const ERROR_COULD_NOT_CREATE_ASSET      = "error_could_not_create_asset";
     const ERROR_COULD_NOT_CREATE_ASSET_FILE = "error_could_not_create_asset_file";
-    const ERROR_ASSET_CREATE_PERMISSION     = "error_asset_create_permission";
     const ERROR_ASSET_DOES_NOT_EXIST        = "error_asset_does_not_exist";
-    const ERROR_DELETE_ASSET_PERMISSION     = "error_delete_asset_permission";
     const WARNING_DELETING_ASSET            = "warning_deleting_asset";
     const ERROR_COULD_NOT_DELETE_ASSET      = "error_could_not_delete_asset";
+    /** Asset-related permission */
+    const ERROR_ASSET_CREATE_PERMISSION     = "error_asset_create_permission";
+    const ERROR_DELETE_ASSET_PERMISSION     = "error_delete_asset_permission";
     const ERROR_EDIT_ASSET_PERMISSION       = "error_asset_permission";
     const ERROR_LIST_ASSETS_PERMISSION      = "error_list_assets_permission";
     const ERROR_VIEW_ASSET_PERMISSION       = "error_view_asset_permission";
@@ -132,22 +137,25 @@ class MessagingModel
 
     /** Vulnerability Management */
     const ERROR_VULNERABILITY_DOES_NOT_EXIST        = 'error_vulnerability_does_not_exist';
-    const ERROR_ADD_REMOVE_VULNERABILITY_PERMISSION = 'error_add_remove_vulnerability_permission';
     const ERROR_VULNERABILITY_FILE_DOES_NOT_EXIST   = 'error_vulnerability_file_does_not_exist';
+    /** Vulnerability-related permission */
+    const ERROR_ADD_REMOVE_VULNERABILITY_PERMISSION = 'error_add_remove_vulnerability_permission';
     const ERROR_CREATE_VULNERABILITY_PERMISSION     = 'error_create_vulnerability_permission';
     const ERROR_DELETE_VULNERABILITY_PERMISSION     = 'error_delete_vulnerability_permission';
     const ERROR_EDIT_VULNERABILITY_PERMISSION       = 'error_edit_vulnerability_permission';
 
     /** Comment Management */
-    const ERROR_CREATE_COMMENT_PERMISSION = 'error_create_comment';
     const ERROR_COMMENT_DOES_NOT_EXIST    = 'error_comment_does_not_exist';
+    /** Comment-related permission */
+    const ERROR_CREATE_COMMENT_PERMISSION = 'error_create_comment';
     const ERROR_DELETE_COMMENT_PERMISSION = 'error_delete_comment_permission';
     const ERROR_EDIT_COMMENT_PERMISSION   = 'error_edit_comment_permission';
 
     /** App Management */
     const ERROR_SCANNER_APP_DOES_NOT_EXIST      = 'error_scanner_app_does_not_exist';
-    const ERROR_CREATE_WORKSPACE_APP_PERMISSION = 'error_create_workspace_app_permission';
     const ERROR_WORKSPACE_APP_DOES_NOT_EXIST    = 'error_workspace_app_does_not_exist';
+    /** App-related permission */
+    const ERROR_CREATE_WORKSPACE_APP_PERMISSION = 'error_create_workspace_app_permission';
     const ERROR_DELETE_WORKSPACE_APP_PERMISSION = 'error_delete_workspace_app_permission';
     const ERROR_EDIT_WORKSPACE_APP_PERMISSION   = 'error_edit_workspace_app_permission';
     const ERROR_VIEW_WORKSPACE_APP_PERMISSION   = 'error_view_workspace_app_permission';
@@ -167,17 +175,23 @@ class MessagingModel
 
         // Initialise the command message map as a Collection
         $actionNotPermittedMap = new Collection([
+
+            /** User-related commands */
             GetUserInformation::class                 => static::ERROR_USER_NOT_TEAM_OWNER,
             GetListOfUsersInTeam::class               => static::ERROR_USER_NOT_TEAM_OWNER,
             GetAllUsers::class                        => static::ERROR_GET_ALL_USERS_PERMISSION,
             GetUser::class                            => static::ERROR_VIEW_USER_PERMISSION,
             EditUserAccount::class                    => static::ERROR_CANNOT_EDIT_ACCOUNT,
             DeleteUser::class                         => static::ERROR_USER_DELETE_PERMISSION,
+
+            /** Workspace-related commands */
             CreateWorkspace::class                    => static::ERROR_WORKSPACE_CREATE_PERMISSION,
             DeleteWorkspace::class                    => static::ERROR_DELETE_WORKSPACE_PERMISSION,
             EditWorkspace::class                      => static::ERROR_EDIT_WORKSPACE_PERMISSION,
             GetListOfUsersWorkspaces::class           => static::ERROR_LIST_WORKSPACES_PERMISSION,
             GetWorkspace::class                       => static::ERROR_VIEW_WORKSPACE_PERMISSION,
+
+            /** Asset-related commands */
             GetAsset::class                           => static::ERROR_VIEW_ASSET_PERMISSION,
             GetAssets::class                          => static::ERROR_LIST_ASSETS_PERMISSION,
             CreateAsset::class                        => static::ERROR_ASSET_CREATE_PERMISSION,
@@ -185,36 +199,51 @@ class MessagingModel
             DeleteAsset::class                        => static::ERROR_DELETE_ASSET_PERMISSION,
             GetAssetsMasterList::class                => static::ERROR_LIST_ASSETS_PERMISSION,
             GetAssetsInWorkspace::class               => static::ERROR_LIST_ASSETS_PERMISSION,
+
+            /** Permission-related commands */
             UpsertPermission::class                   => static::ERROR_AUTH_USER_NOT_OWNER,
             RevokePermission::class                   => static::ERROR_AUTH_USER_NOT_OWNER,
             GetListOfPermissions::class               => static::ERROR_AUTH_USER_NOT_OWNER_LIST,
+
+            /** File-related commands */
             GetFile::class                            => static::ERROR_FILE_VIEW_PERMISSION,
             DeleteFile::class                         => static::ERROR_DELETE_FILE_PERMISSION,
             EditFile::class                           => static::ERROR_EDIT_FILE_PERMISSION,
+            UploadScanOutput::class                   => static::ERROR_UPLOAD_FILE_PERMISSION,
+
+            /** Folder-related commands */
             GetFolder::class                          => static::ERROR_FOLDER_VIEW_PERMISSION,
             CreateFolder::class                       => static::ERROR_FOLDER_CREATE_PERMISSION,
             EditFolder::class                         => static::ERROR_FOLDER_EDIT_PERMISSION,
             DeleteFolder::class                       => static::ERROR_FOLDER_DELETE_PERMISSION,
             AddRemoveVulnerabilityToFromFolder::class => static::ERROR_ADD_REMOVE_VULNERABILITY_PERMISSION,
+
+            /** Comment-related commands */
             CreateComment::class                      => static::ERROR_CREATE_COMMENT_PERMISSION,
             DeleteComment::class                      => static::ERROR_DELETE_COMMENT_PERMISSION,
             EditComment::class                        => static::ERROR_EDIT_COMMENT_PERMISSION,
+
+            /** Vulnerability-related commands */
             CreateVulnerability::class                => static::ERROR_CREATE_VULNERABILITY_PERMISSION,
             DeleteVulnerability::class                => static::ERROR_DELETE_VULNERABILITY_PERMISSION,
             EditVulnerability::class                  => static::ERROR_EDIT_VULNERABILITY_PERMISSION,
+
+            /** App-related commands */
             CreateWorkspaceApp::class                 => static::ERROR_CREATE_WORKSPACE_APP_PERMISSION,
             DeleteWorkspaceApp::class                 => static::ERROR_DELETE_WORKSPACE_APP_PERMISSION,
             EditWorkspaceApp::class                   => static::ERROR_EDIT_WORKSPACE_APP_PERMISSION,
             GetWorkspaceApp::class                    => static::ERROR_VIEW_WORKSPACE_APP_PERMISSION,
-            UploadScanOutput::class                   => static::ERROR_UPLOAD_FILE_PERMISSION,
         ]);
 
         $fileNotFoundMap = new Collection([
-            CreateAsset::class         => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
+            /** File-related */
             GetFile::class             => static::ERROR_FILE_DOES_NOT_EXIST,
-            CreateVulnerability::class => static::ERROR_VULNERABILITY_FILE_DOES_NOT_EXIST,
             DeleteFile::class          => static::ERROR_FILE_DOES_NOT_EXIST,
             EditFile::class            => static::ERROR_FILE_DOES_NOT_EXIST,
+
+            /** Other */
+            CreateAsset::class         => static::ERROR_COULD_NOT_CREATE_ASSET_FILE,
+            CreateVulnerability::class => static::ERROR_VULNERABILITY_FILE_DOES_NOT_EXIST,
         ]);
 
         static::$commandMessageMap = new Collection([
