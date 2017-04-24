@@ -38,7 +38,7 @@ class GetAllUsers extends CommandHandler
             throw new ActionNotPermittedException("User does not have permission to list other Users on the system.");
         }
 
-        $users = $this->repository->findAll();
+        $users = $this->repository->findBy([User::DELETED => false]);
 
         return collect($users)->filter(function ($user) use ($requestingUser) {
             return $user->getId() !== $requestingUser->getId();
