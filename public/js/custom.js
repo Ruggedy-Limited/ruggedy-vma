@@ -20,7 +20,7 @@
     $(document).ready(function () {
         var matches = window.location.toString().match(/#tab[0-9]+/g);
         // Check the URL for tab selectors
-        if (matches.length < 1) {
+        if (!matches || matches.length < 1) {
             return;
         }
 
