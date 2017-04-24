@@ -43,17 +43,20 @@ class DeleteUser extends CommandHandler
         $requestingUser = $this->authenticate();
 
         /** @var User $user */
+        // Make sure the User exists
         $user = $this->repository->find($command->getId());
         if (empty($user)) {
             throw new UserNotFoundException("An existing User with the given ID was not found.");
         }
 
+        // Make sure the authenticated User has permission to delete other Users
         if ($requestingUser->cannot(ComponentPolicy::ACTION_DELETE, $user)) {
             throw new ActionNotPermittedException(
                 "The authenticated User does not have permission to delete other Users."
             );
         }
 
+        // Set the deleted flag and save
         $user->setDeleted(true);
         $this->em->flush($user);
 
