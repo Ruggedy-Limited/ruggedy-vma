@@ -25,6 +25,7 @@ class User extends AbstractEntity
     const COUNTRY_CODE                            = 'country_code';
     const PHONE                                   = 'phone';
     const IS_ADMIN                                = 'is_admin';
+    const DELETED                                 = 'deleted';
     const ASSETS                                  = 'assets';
     const COMMENTS                                = 'comments';
     const COMPONENTPERMISSIONRELATEDBYUSERIDS     = 'componentPermissionRelatedByUserIds';
@@ -79,6 +80,11 @@ class User extends AbstractEntity
      * @ORM\Column(name="`is_admin`", type="boolean", options={"unsigned":true})
      */
     protected $is_admin;
+
+    /**
+     * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
+     */
+    protected $deleted;
 
     /**
      * @ORM\Column(name="`created_at`", type="datetime", nullable=true)
@@ -330,7 +336,7 @@ class User extends AbstractEntity
     /**
      * Get the value of is_admin.
      *
-     * @return mixed
+     * @return bool
      */
     public function isAdmin()
     {
@@ -346,6 +352,30 @@ class User extends AbstractEntity
     public function setIsAdmin($is_admin)
     {
         $this->is_admin = $is_admin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of deleted.
+     *
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Set the value of deleted
+     *
+     * @param bool $deleted
+     * @return User
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
         return $this;
     }
 
