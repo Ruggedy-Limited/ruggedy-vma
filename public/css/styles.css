@@ -73,6 +73,10 @@ label:focus,
     background: #ff5500;
 }
 
+.label-post-request {
+    background: #000088;
+}
+
 .badge {
     padding: 3px 7px 4px 6px;
     margin: 0 3px;
@@ -618,6 +622,10 @@ Start: Colors, Text, Padding, Margins
     padding-left: 8px;
 }
 
+.m-r-8 {
+    margin-right: 8px;
+}
+
 /*
 ==========================================================================
 Start: Cards
@@ -892,6 +900,14 @@ a.remove-vulnerability {
     right: 30px;
     top: 30px;
     z-index: 1;
+}
+
+.http-data a.collapsed .collapsed-state, .http-data a:not(.collapsed) .expanded-state {
+    display: inline-block;
+}
+
+.http-data a:not(.collapsed) .collapsed-state, .http-data a.collapsed .expanded-state {
+    display: none;
 }
 
 /*

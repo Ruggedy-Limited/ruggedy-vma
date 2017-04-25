@@ -108,18 +108,32 @@
                     </div>
                 </div>
             </li>
+            @if (!empty($vulnerability->getVulnerabilityHttpData()))
+                <li>
+                    <input type=radio name=tabs id=tab3>
+                    <label for=tab3>Vulnerable URLs <span class="badge c-purple">{{ $vulnerability->getVulnerabilityHttpData()->count() }}</span></label>
+                    <div id=tab-content3 class=tab-content>
+                        <div class="dash-line"></div>
+                        <div class="col-md-12">
+                            @foreach ($vulnerability->getVulnerabilityHttpData() as $httpData)
+                                @include('partials.http-data')
+                            @endforeach
+                        </div>
+                    </div>
+                </li>
+            @endif
             <li>
-                <input type=radio name=tabs id=tab3>
-                <label for=tab3>Vulnerable Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
-                <div id=tab-content3 class=tab-content>
+                <input type=radio name=tabs id=tab4>
+                <label for=tab4>Vulnerable Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
+                <div id=tab-content4 class=tab-content>
                     <div class="dash-line"></div>
                     @include('partials.assets')
                 </div>
             </li>
             <li>
-                <input type=radio name=tabs id=tab4>
-                <label for=tab4>Comments <span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></label>
-                <div id=tab-content4 class=tab-content>
+                <input type=radio name=tabs id=tab5>
+                <label for=tab5>Comments <span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></label>
+                <div id=tab-content5 class=tab-content>
                     <div class="dash-line"></div>
                     <br>
                     @include('partials.comments')
