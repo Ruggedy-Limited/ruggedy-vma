@@ -1221,8 +1221,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $existingEntity = $this->em->getRepository($entityClass)->findOneBy($findOneByCriteria);
         if (!empty($existingEntity)) {
             $entity->setId($existingEntity->getId());
-            $entity = $this->em->merge($entity);
-            return $entity;
+            return $this->em->merge($entity);
         }
 
         return $entity;

@@ -196,8 +196,6 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                     VulnerabilityHttpData::class,
                     [],
                     Vulnerability::class,
-                    false,
-                    false
                 ]),
             ]),
             'issues' => 'flushDoctrineUnitOfWork',
