@@ -4,6 +4,7 @@ namespace App\Services\Parsers;
 
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
+use App\Entities\VulnerabilityHttpData;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Entities\Vulnerability;
@@ -20,6 +21,8 @@ use XMLReader;
 
 class BurpXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
 {
+    protected $location;
+
     /**
      * BurpXmlParserService constructor.
      *
@@ -81,10 +84,11 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
 
+
             'request' => new Collection([
                 'setHttpMethod' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'method',
-                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => VulnerabilityHttpData::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|in:GET,HEAD,POST,PUT,OPTIONS,CONNECT,TRACE,DELETE'
                 ]),
             ]),
@@ -137,25 +141,28 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
 
+            'requestresponse' => collect([
+                'initialiseNewEntity' => collect([
+                    VulnerabilityHttpData::class,
+                ]),
+            ]),
+
             'request' => new Collection([
                 'captureCDataField' => new Collection([
-                    Vulnerability::class,
+                    VulnerabilityHttpData::class,
                     'setHttpRawRequest',
                 ]),
             ]),
 
             'response' => new Collection([
                 'captureCDataField' => new Collection([
-                    Vulnerability::class,
+                    VulnerabilityHttpData::class,
                     'setHttpRawResponse',
                 ]),
             ]),
 
             'location' => new Collection([
-                'captureCDataField' => new Collection([
-                    Vulnerability::class,
-                    'setHttpUri',
-                ]),
+                'storeTemporaryLocation',
             ]),
 
             'references' => 'addReferences',
@@ -181,6 +188,16 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                         Asset::IP_ADDRESS_V4 => null,
                     ],
                     Workspace::class,
+                ]),
+            ]),
+            'requestresponse' => collect([
+                'setLocation',
+                'persistPopulatedEntity' => collect([
+                    VulnerabilityHttpData::class,
+                    [],
+                    Vulnerability::class,
+                    false,
+                    false
                 ]),
             ]),
             'issues' => 'flushDoctrineUnitOfWork',
@@ -244,6 +261,44 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 false
             );
         });
+    }
+
+    /**
+     * Store the location value for this issue.
+     */
+    protected function storeTemporaryLocation()
+    {
+        // Move into the CData node
+        $this->parser->read();
+
+        // Exit early is this is not a CData field
+        if ($this->parser->nodeType !== XMLReader::CDATA) {
+            return;
+        }
+
+        // Make sure the current value in the parser is not empty
+        $value = $this->parser->value;
+        if (!isset($value)) {
+            return;
+        }
+
+        // Set the location property
+        $this->location = $value;
+    }
+
+    /**
+     * Set the location on the VulnerabilityHttpData entity.
+     */
+    protected function setLocation()
+    {
+        // Get the VulnerabilityHttpData entity from the entity Collection and make sure there is an entity there and
+        // that the location property is set on this service
+        $entity = $this->entities->get(VulnerabilityHttpData::class);
+        if (!isset($this->location, $entity)) {
+            return;
+        }
+
+        $entity->setHttpUri($this->location);
     }
 
     /**

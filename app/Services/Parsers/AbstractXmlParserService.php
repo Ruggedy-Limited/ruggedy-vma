@@ -18,6 +18,7 @@ use App\Entities\OpenPort;
 use App\Entities\SoftwareInformation;
 use App\Entities\User;
 use App\Entities\Vulnerability;
+use App\Entities\VulnerabilityHttpData;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Exceptions\ParserMappingException;
@@ -177,9 +178,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 Asset::class                      => 'addAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
                 Exploit::class                    => 'addExploit',
+                VulnerabilityHttpData::class      => 'addVulnerabilityHttpData',
             ]),
 
             VulnerabilityReferenceCode::class => new Collection([
+                Vulnerability::class => 'setVulnerability',
+            ]),
+
+            VulnerabilityHttpData::class => new Collection([
                 Vulnerability::class => 'setVulnerability',
             ]),
 
@@ -664,7 +670,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Add the User relation where the entity implements the SystemComponent contract
         $this->addUserRelation($entity);
 
-        // Add the entity to the Entity Manager unless the persist
+        // Add the entity to the Entity Manager unless the persist flag is deliberately set to false
         if ($persist) {
             $this->em->persist($entity);
         }
