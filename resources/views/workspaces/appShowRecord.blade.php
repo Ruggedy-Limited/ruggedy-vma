@@ -108,7 +108,7 @@
                     </div>
                 </div>
             </li>
-            @if (!empty($vulnerability->getVulnerabilityHttpData()))
+            @if (!$vulnerability->getVulnerabilityHttpData()->isEmpty())
                 <li>
                     <input type=radio name=tabs id=tab3>
                     <label for=tab3>Vulnerable URLs <span class="badge c-purple">{{ $vulnerability->getVulnerabilityHttpData()->count() }}</span></label>
