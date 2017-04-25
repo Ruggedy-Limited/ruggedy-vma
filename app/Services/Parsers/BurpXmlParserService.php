@@ -21,7 +21,11 @@ use XMLReader;
 
 class BurpXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
 {
+    /** @var string */
     protected $location;
+
+    /** @var string */
+    protected $issueDetail;
 
     /**
      * BurpXmlParserService constructor.
@@ -116,12 +120,7 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
             ]),
 
             'issueDetail' => new Collection([
-                'captureCDataField' => new Collection([
-                    Vulnerability::class,
-                    'setDescription',
-                    'Issue Detail',
-                    true,
-                ]),
+                'storeTemporaryIssueDetail',
             ]),
 
             'remediationBackground' => new Collection([
@@ -191,6 +190,7 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
             'requestresponse' => collect([
+                'setIssueDetail',
                 'setLocation',
                 'persistPopulatedEntity' => collect([
                     VulnerabilityHttpData::class,
@@ -268,22 +268,11 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
      */
     protected function storeTemporaryLocation()
     {
-        // Move into the CData node
-        $this->parser->read();
-
-        // Exit early is this is not a CData field
-        if ($this->parser->nodeType !== XMLReader::CDATA) {
-            return;
-        }
-
-        // Make sure the current value in the parser is not empty
-        $value = $this->parser->value;
-        if (!isset($value)) {
-            return;
-        }
+        // Get the value of the current nodes CDATA child
+        $value = $this->getCurrentNodesCDataValue();
 
         // Set the location property
-        $this->location = $value;
+        $this->location = !empty($value) ? $value : null;
     }
 
     /**
@@ -299,6 +288,33 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
         }
 
         $entity->setHttpUri($this->location);
+    }
+
+    /**
+     * Store the issue detail value for this issue.
+     */
+    protected function storeTemporaryIssueDetail()
+    {
+        // Get the value of the current nodes CDATA child
+        $value = $this->getCurrentNodesCDataValue();
+
+        // Set the issue detail property
+        $this->issueDetail = !empty($value) ? $value : null;
+    }
+
+    /**
+     * Set the issue detail on the VulnerabilityHttpData entity.
+     */
+    protected function setIssueDetail()
+    {
+        // Get the VulnerabilityHttpData entity from the entity Collection and make sure there is an entity there and
+        // that the issue detail property is set on this service
+        $entity = $this->entities->get(VulnerabilityHttpData::class);
+        if (!isset($this->issueDetail, $entity)) {
+            return;
+        }
+
+        $entity->setIssueDetail($this->issueDetail);
     }
 
     /**
