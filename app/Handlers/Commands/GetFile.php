@@ -63,6 +63,11 @@ class GetFile extends CommandHandler
         }
 
         $vulnerabilities = $this->vulnerabilityRepository->findByFileQuery($command->getId());
+        if (!$vulnerabilities->isEmpty()) {
+            $vulnerabilities->getCollection()->transform(function ($result) {
+                return current($result);
+            });
+        }
 
         return [
             Vulnerability::FILE   => $file,
