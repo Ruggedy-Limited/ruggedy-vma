@@ -411,6 +411,19 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     }
 
     /**
+     * Get the Asset's total risk by summing up all the related Vulnerability severities
+     *
+     * @return int
+     */
+    public function getAssetTotalRisk(): int
+    {
+        return collect($this->vulnerabilities)->reduce(function ($totalRisk, $vulnerability) {
+            /** @var Vulnerability $vulnerability */
+            return $totalRisk + $vulnerability->getSeverity();
+        }, 0.00);
+    }
+
+    /**
      * Relate the given Audit to this Asset instance and create the relation on the inverse Audit entity
      *
      * @param Audit $audit

@@ -3,6 +3,7 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\GetFile as GetFileCommand;
+use App\Entities\Asset;
 use App\Entities\File;
 use App\Entities\Vulnerability;
 use App\Exceptions\ActionNotPermittedException;
@@ -69,9 +70,14 @@ class GetFile extends CommandHandler
             });
         }
 
+        $assets = collect($file->getAssets())->sortByDesc(function ($asset) {
+            /** @var Asset $asset */
+            return $asset->getAssetTotalRisk();
+        });
+
         return [
             Vulnerability::FILE   => $file,
-            File::ASSETS          => $file->getAssets(),
+            File::ASSETS          => $assets,
             File::VULNERABILITIES => $vulnerabilities,
         ];
     }
