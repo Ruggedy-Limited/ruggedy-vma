@@ -91,7 +91,7 @@
             </div>
         </div>
         <div class="c-lightgrey breadcrumb-nav">
-            @yield('breadcrumb')
+            <strong>@yield('breadcrumb')</strong>
         </div>
 
         <div class="container">
