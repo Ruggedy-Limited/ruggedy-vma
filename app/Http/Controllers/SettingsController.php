@@ -110,6 +110,7 @@ class SettingsController extends AbstractController
             $user->setName($this->request->get('name'))
                 ->setEmail($this->request->get('email'))
                 ->setPassword(bcrypt($this->request->get('password')))
+                ->setIsAdmin($this->request->get('is_admin', 0))
         );
 
         $user = $this->sendCommandToBusHelper($command);
@@ -118,7 +119,7 @@ class SettingsController extends AbstractController
             return redirect()->back()->withInput();
         }
 
-        return redirect()->route($user, 'settings.view');
+        return redirect()->route('settings.view');
     }
 
     /**
