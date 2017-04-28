@@ -34,10 +34,8 @@ use App\Commands\GetAssetsMasterList;
 use App\Commands\GetFile;
 use App\Commands\GetFolder;
 use App\Commands\GetListOfPermissions;
-use App\Commands\GetListOfUsersInTeam;
 use App\Commands\GetListOfUsersWorkspaces;
 use App\Commands\GetUser;
-use App\Commands\GetUserInformation;
 use App\Commands\GetWorkspace;
 use App\Commands\GetWorkspaceApp;
 use App\Commands\RevokePermission;
@@ -53,9 +51,7 @@ use App\Exceptions\InvalidEmailException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\InvalidPermissionException;
 use App\Exceptions\ScannerAppNotFoundException;
-use App\Exceptions\TeamNotFoundException;
 use App\Exceptions\UserNotFoundException;
-use App\Exceptions\UserNotInTeamException;
 use App\Exceptions\VulnerabilityNotFoundException;
 use App\Exceptions\WorkspaceAppNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
@@ -74,10 +70,7 @@ class MessagingModel
 
     /** User Management */
     const ERROR_SENDING_INVITE_GENERAL            = 'error_sending_invite';
-    const ERROR_TEAM_DOES_NOT_EXIST               = 'error_team_does_not_exist';
-    const ERROR_TEAM_MEMBER_DOES_NOT_EXIST        = 'error_team_member_does_not_exist';
     const ERROR_USER_DOES_NOT_EXIST               = 'error_user_does_not_exist';
-    const ERROR_USER_NOT_TEAM_OWNER               = 'error_user_not_team_owner';
     const ERROR_CANNOT_EDIT_ACCOUNT               = 'error_cannot_edit_account';
     const ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS = 'error_account_with_email_already_exists';
     const ERROR_FIELD_DOES_NOT_EXIST              = 'error_field_does_not_exist';
@@ -177,8 +170,6 @@ class MessagingModel
         $actionNotPermittedMap = new Collection([
 
             /** User-related commands */
-            GetUserInformation::class                 => static::ERROR_USER_NOT_TEAM_OWNER,
-            GetListOfUsersInTeam::class               => static::ERROR_USER_NOT_TEAM_OWNER,
             GetAllUsers::class                        => static::ERROR_GET_ALL_USERS_PERMISSION,
             GetUser::class                            => static::ERROR_VIEW_USER_PERMISSION,
             EditUserAccount::class                    => static::ERROR_CANNOT_EDIT_ACCOUNT,
@@ -250,9 +241,7 @@ class MessagingModel
             ActionNotPermittedException::class   => $actionNotPermittedMap,
             InvalidEmailException::class          => static::ERROR_INVALID_EMAIL,
             InvalidInputException::class          => static::ERROR_INVALID_INPUT,
-            TeamNotFoundException::class          => static::ERROR_TEAM_DOES_NOT_EXIST,
             UserNotFoundException::class          => static::ERROR_USER_DOES_NOT_EXIST,
-            UserNotInTeamException::class         => static::ERROR_TEAM_MEMBER_DOES_NOT_EXIST,
             ORMException::class                   => static::ERROR_ACCOUNT_WITH_EMAIL_ALREADY_EXISTS,
             FileNotFoundException::class          => $fileNotFoundMap,
             WorkspaceNotFoundException::class     => static::ERROR_WORKSPACE_DOES_NOT_EXIST,
