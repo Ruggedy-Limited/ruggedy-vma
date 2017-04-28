@@ -1,9 +1,6 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
     @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
         <a href="{{ route('ruggedy-app.view', [
             $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
