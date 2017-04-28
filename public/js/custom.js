@@ -277,3 +277,16 @@
     );
 
 })(jQuery);
+
+(function ($) {
+    $('.remove-poc').on('click', function (e) {
+        e.preventDefault();
+        var mustDelete = confirm("Are you sure you want to remove this image? This cannot be undone.");
+        if (!mustDelete) {
+            return;
+        }
+
+        var thumbnailBlock = $(this).parent();
+        thumbnailBlock.addClass('hidden').siblings('label, input').removeClass('hidden');
+    });
+})(jQuery);

@@ -14,6 +14,22 @@
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
     </a>
+    @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
+        <a href="{{ route('vulnerability.delete', [
+            $vulnerability->getRouteParameterName() => $vulnerability->getId()
+        ]) }}">
+            <button type="button" class="btn round-btn pull-right c-red">
+                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+        <a href="{{ route('vulnerability.edit', [
+            $vulnerability->getRouteParameterName() => $vulnerability->getId()
+        ]) }}">
+            <button type="button" class="btn round-btn pull-right c-purple">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endif
     {!! Breadcrumbs::render('dynamic', $vulnerability) !!}
 @endsection
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateAsset;
+use App\Commands\DeleteAsset;
 use App\Entities\Asset;
 use App\Http\Responses\AjaxResponse;
 use Illuminate\Validation\ValidationException;
@@ -45,14 +46,14 @@ class AssetController extends AbstractController
         // Create a new Asset entity and populate it from the request
         $asset = new Asset();
         $asset->setName($this->request->get('asset-name'))
-              ->setCpe($this->request->get('asset-cpe'))
-              ->setVendor($this->request->get('asset-vendor'))
-              ->setIpAddressV4($this->request->get('asset-ip_address_v4'))
-              ->setIpAddressV6($this->request->get('asset-ip_address_v6'))
-              ->setHostname($this->request->get('asset-hostname'))
-              ->setMacAddress($this->request->get('asset-mac_address', ''))
-              ->setOsVersion($this->request->get('asset-os_version'))
-              ->setNetbios($this->request->get('asset-netbios'));
+            ->setCpe($this->request->get('asset-cpe'))
+            ->setVendor($this->request->get('asset-vendor'))
+            ->setIpAddressV4($this->request->get('asset-ip_address_v4'))
+            ->setIpAddressV6($this->request->get('asset-ip_address_v6'))
+            ->setHostname($this->request->get('asset-hostname'))
+            ->setMacAddress($this->request->get('asset-mac_address', ''))
+            ->setOsVersion($this->request->get('asset-os_version'))
+            ->setNetbios($this->request->get('asset-netbios'));
 
         // Send the CreateAsset command over the command bus
         $command = new CreateAsset(intval($fileId), $asset);
@@ -76,6 +77,48 @@ class AssetController extends AbstractController
             'message' => 'A new Asset has been created.',
         ])->render());
         $ajaxResponse->setError(false);
+        return response()->json($ajaxResponse);
+    }
+
+    /**
+     * Remove an Asset
+     *
+     * @GET("/asset/delete/{assetId}", as="asset.delete", where={"assetId":"[0-9]+"})
+     *
+     * @param $assetId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function removeAsset($assetId)
+    {
+        // Only allow ajax requests to access this endpoint
+        if (!$this->request->ajax()) {
+            throw new MethodNotAllowedHttpException([], "That route cannot be accessed in that way.");
+        }
+
+        $ajaxResponse = new AjaxResponse();
+
+        $command = new DeleteAsset(intval($assetId));
+        $asset   = $this->sendCommandToBusHelper($command);
+
+        // If the command returned an error response then return the error message
+        if ($this->isCommandError($asset)) {
+            $ajaxResponse->setHtml(
+                view('partials.custom-message', [
+                    'bsClass' => 'danger',
+                    'message' => $asset->getMessage(),
+                ])->render()
+            );
+
+            return response()->json($ajaxResponse);
+        }
+
+        // Return a success message
+        $ajaxResponse->setMessage(view('partials.custom-message', [
+            'bsClass' => 'success',
+            'message' => 'Asset deleted successfully.',
+        ])->render());
+        $ajaxResponse->setError(false);
+
         return response()->json($ajaxResponse);
     }
 
