@@ -1,9 +1,11 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('home') }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $workspace)
         <a href="{{ route('workspace.delete', [$workspace->getRouteParameterName() => $workspace->getId()]) }}">
             <button type="button" class="btn round-btn pull-right c-red">
@@ -16,11 +18,6 @@
             </button>
         </a>
     @endcan
-    <a href="{{ route('home') }}">
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
     {!! Breadcrumbs::render('dynamic', $workspace) !!}
 @endsection
 
@@ -58,9 +55,21 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Apps</label>
+                <label for=tab1>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $workspace->getWorkspaceApps()->count() }}
+                        </span>
+                        <i class="fa fa-window-maximize fa-2x" aria-hidden="true"></i><br>
+                        <small>Apps</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Apps<span class="label-count c-grey">{{ $workspace->getWorkspaceApps()->count() }}</span>
+                    </p>
+                </label>
                 <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
+                    <div>
                     @if (empty($workspace->getWorkspaceApps()))
                         <p>
                             No Apps in this Workspace yet.
@@ -71,13 +80,26 @@
                             @include('partials.app')
                         @endforeach
                     @endif
+                    </div>
                 </div>
             </li>
-            <li>
+            <li class="p-l-25">
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>Folders</label>
+                <label for=tab2>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $workspace->getFolders()->count() }}
+                        </span>
+                        <i class="fa fa-folder fa-2x" aria-hidden="true"></i><br>
+                        <small>Folders</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Folders<span class="label-count c-grey">{{ $workspace->getFolders()->count() }}</span>
+                    </p>
+                </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
+                    <div>
                     @if (empty($workspace->getFolders()))
                         <p>
                             No Folders in this Workspace yet.
@@ -90,7 +112,7 @@
                                     <div class="card hovercard animated pulse-hover">
                                         <div class="cardheader c-white"></div>
                                         <div class="avatar avatar-white">
-                                            <i class="fa fa-folder fa-5x t-c-purple"></i>
+                                            <i class="fa fa-folder fa-5x t-c-grey"></i>
                                         </div>
                                         <div class="info">
                                             <div class="title h-3">
@@ -105,6 +127,7 @@
                             </div>
                         @endforeach
                     @endif
+                    </div>
                 </div>
             </li>
         </ul>

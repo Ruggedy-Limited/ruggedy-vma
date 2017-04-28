@@ -37,7 +37,7 @@ class ComponentPermission extends Base\ComponentPermission
         // Set a list of attributes to include by default when no specific list is given
         if (empty($onlyTheseAttributes)) {
             $onlyTheseAttributes = [
-                'component' ,'instance_id', 'user_id', 'team_id', 'permission', 'granted_by', 'created_at', 'updated_at'
+                'component' ,'instance_id', 'user_id', 'permission', 'granted_by', 'created_at', 'updated_at'
             ];
         }
 
@@ -85,7 +85,6 @@ class ComponentPermission extends Base\ComponentPermission
         return new Collection([
             'component_id' => 'getComponent',
             'user_id'      => 'getUserRelatedByUserId',
-            'team_id'      => 'getTeam',
             'granted_by'   => 'getUserRelatedByGrantedBy',
         ]);
     }
