@@ -42,8 +42,16 @@
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>
-                    <i class="fa fa-users fa-2x" aria-hidden="true"></i>
-                    <p class="hidden-xs">Users</p>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ count($users) }}
+                        </span>
+                        <i class="fa fa-users fa-2x" aria-hidden="true"></i><br>
+                        <small>Users</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Users<span class="label-count c-grey">{{ count($users) }}</span>
+                    </p>
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
