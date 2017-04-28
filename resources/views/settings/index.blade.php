@@ -1,9 +1,6 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
     <a href="{{ route('home') }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
@@ -41,19 +38,33 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Users</label>
+                <label for=tab1>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ count($users) }}
+                        </span>
+                        <i class="fa fa-users fa-2x" aria-hidden="true"></i><br>
+                        <small>Users</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Users<span class="label-count c-grey">{{ count($users) }}</span>
+                    </p>
+                </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
-                    @if (empty($users))
-                        <p>
-                            No Users have been created yet.
-                            <a href="{{ route('settings.user.create') }}">Add a User</a>.
-                        </p>
-                    @else
-                        @foreach ($users as $user)
-                            @include('partials.user')
-                        @endforeach
-                    @endif
+                    <div class="col-xs-12">
+                        @if (empty($users))
+                            <br>
+                            <p class="p-l-8">
+                                No Users have been created yet.
+                                <a href="{{ route('settings.user.create') }}">Add a User</a>.
+                            </p>
+                        @else
+                            @foreach ($users as $user)
+                                @include('partials.user')
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
             </li>
         </ul>

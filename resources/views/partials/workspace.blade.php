@@ -4,7 +4,7 @@
             <div class="cardheader c-white">
             </div>
             <div class="avatar avatar-white">
-                <i class="fa fa-th-large fa-5x t-c-purple"></i>
+                <i class="fa fa-th fa-5x t-c-grey"></i>
             </div>
             <div class="info">
                 <div class="title h-3">
