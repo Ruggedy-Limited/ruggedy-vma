@@ -58,8 +58,16 @@
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>
-                    <i class="fa fa-file fa-2x" aria-hidden="true"></i>
-                    <p class="hidden-xs">Files</p>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $workspaceApp->getFiles()->count() }}
+                        </span>
+                        <i class="fa fa-file fa-2x" aria-hidden="true"></i><br>
+                        <small>Files</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Files<span class="label-count c-grey">{{ $workspaceApp->getFiles()->count() }}</span>
+                    </p>
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>

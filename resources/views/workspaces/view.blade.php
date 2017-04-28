@@ -55,8 +55,16 @@
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>
-                    <i class="fa fa-window-maximize fa-2x" aria-hidden="true"></i>
-                    <p class="hidden-xs">Apps</p>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $workspace->getWorkspaceApps()->count() }}
+                        </span>
+                        <i class="fa fa-window-maximize fa-2x" aria-hidden="true"></i><br>
+                        <small>Apps</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Apps<span class="label-count c-grey">{{ $workspace->getWorkspaceApps()->count() }}</span>
+                    </p>
                 </label>
                 <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
@@ -77,8 +85,16 @@
             <li class="p-l-25">
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>
-                    <i class="fa fa-folder fa-2x" aria-hidden="true"></i>
-                    <p class="hidden-xs">Folders</p>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $workspace->getFolders()->count() }}
+                        </span>
+                        <i class="fa fa-folder fa-2x" aria-hidden="true"></i><br>
+                        <small>Folders</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Folders<span class="label-count c-grey">{{ $workspace->getFolders()->count() }}</span>
+                    </p>
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>

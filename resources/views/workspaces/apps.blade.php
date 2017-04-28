@@ -36,8 +36,16 @@
             <li>
                 <input type=radio name=tabs id=tab1 checked>
                 <label for=tab1>
-                    <i class="fa fa-file-code-o fa-2x" aria-hidden="true"></i>
-                    <p>XML Apps</p>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ count($scannerApps) }}
+                        </span>
+                        <i class="fa fa-file-code-o fa-2x" aria-hidden="true"></i><br>
+                        <small>XML Apps</small>
+                    </div>
+                    <p class="hidden-xs">
+                        XML Apps<span class="label-count c-grey">{{ count($scannerApps) }}</span>
+                    </p>
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
@@ -83,8 +91,16 @@
             <li class="p-l-25">
                 <input type=radio name=tabs id=tab2>
                 <label for=tab2>
-                    <i class="fa fa-exchange fa-2x" aria-hidden="true"></i>
-                    <p>API Apss</p>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            0
+                        </span>
+                        <i class="fa fa-exchange fa-2x" aria-hidden="true"></i><br>
+                        <small>API Apps</small>
+                    </div>
+                    <p class="hidden-xs">
+                        API Apps<span class="label-count c-grey">0</span>
+                    </p>
                 </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>

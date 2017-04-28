@@ -79,6 +79,11 @@ label:focus,
     border-radius: 50%;
 }
 
+.mobile-count {
+    position: absolute;
+    left: 10px;
+}
+
 @media (min-width: 1200px) {
     .container {
         width: 90% !important;
@@ -620,7 +625,7 @@ Start: Colors, Text, Padding, Margins
 }
 
 .t-c-green {
-    color: #95b254 !important;
+    color: #00cc00 !important;
 }
 
 .t-c-grey {
@@ -1177,26 +1182,32 @@ Start: Tabs
 ==========================================================================
 */
 
-div ul li label {
+/*div ul li label {
     display: inline-block;
     max-width: 150%;
     margin-bottom: 5px;
     margin-right: 20px;
     font-weight: bold;
     margin-left: -20px;
-}
+}*/
 
 .tabs {
     width: 100%;
     float: none;
     list-style: none;
     position: relative;
-    margin: 0 0 0 0;
+    margin: 0;
+    padding-left: 20px;
 }
 
 .tabs > li {
     float: left;
     display: block;
+    padding-left: 15px;
+}
+
+.tabs > li:first-child {
+    padding-left: 0;
 }
 
 .tabs input[type="radio"] {
@@ -1207,14 +1218,14 @@ div ul li label {
 
 .tabs label {
     display: block;
-    padding: 8px 0;
+    padding: 8px 15px;
     border-radius: 0;
     font-size: 16px;
     background: transparent;
     cursor: pointer;
     position: relative;
     top: 4px;
-    border: 0 solid transparent;
+    border: 3px solid transparent;
 }
 
 .tabs-label {
@@ -1245,28 +1256,95 @@ div ul li label {
     left: 0;
     background: transparent;
     margin-bottom: 15px;
-    margin-top: 10px;
 }
 
 .dash-line {
     border-top: 2px dashed #8f93a5;
     margin-left:20px;
     margin-right: 20px;
-    margin-top: 5px;
 }
 
 .tabs [id^="tab"]:checked + label {
-    border: 0 solid #51576f;
+    border: 3px solid #000066;
     color: inherit;
 }
 
-.tabs [id^="tab"]:checked + label i {
-    border: 0 solid #95b254;
-    color: #95b254;
+.tabs [id^="tab"]:checked + label i, .tabs [id^="tab"]:checked + label small, .tabs [id^="tab"]:checked + label p  {
+    border: 0;
+    color: #000066;
 }
 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
     display: block;
+}
+
+.tabs label p {
+    margin: 0;
+}
+
+.mobile-tab {
+    text-align: center;
+    width: 60px;
+    max-width: 60px;
+    line-height: 1em;
+}
+
+.mobile-tab small {
+    font-size: 0.7em;
+}
+
+.mobile-tab .label-count {
+    position: absolute;;
+    top: 3px;
+    right: 5px;
+    margin:0;
+}
+
+@media only screen and (max-width: 767px) {
+    .tabs {
+        padding: 0 20px;
+    }
+
+    .tabs label {
+        margin: 0;
+        padding: 8px 0;
+        border: 0;
+    }
+
+    .tabs > li.p-l-25 {
+        padding-left: 10px;
+    }
+
+    .tabs [id^="tab"]:checked + label {
+        border: 0;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .tabs .tab-content {
+        padding: 15px 0;
+    }
+
+    .mobile-content {
+        width: 45px;
+        max-width: 45px;
+    }
+
+    .mobile-tab small {
+        font-size: 0.6em;
+    }
+
+    .mobile-tab i {
+        font-size: 1em;
+    }
+
+    .label-count {
+        font-size: 50%;
+    }
+
+    .mobile-tab .label-count {
+        right: 15px;
+    }
 }
 
 /*
