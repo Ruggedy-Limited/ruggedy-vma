@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateAsset;
+use App\Commands\GetAsset;
 use App\Entities\Asset;
 use App\Http\Responses\AjaxResponse;
 use Illuminate\Validation\ValidationException;
@@ -77,6 +78,26 @@ class AssetController extends AbstractController
         ])->render());
         $ajaxResponse->setError(false);
         return response()->json($ajaxResponse);
+    }
+
+    /**
+     * Show a single Asset
+     *
+     * @GET("/file/asset/{assetId}", as="asset.view", where={"assetId":"[0-9]+"})
+     *
+     * @param $assetId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function showAsset($assetId)
+    {
+        $command = new GetAsset(intval($assetId));
+        $asset   = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($assetId)) {
+            return redirect()->back();
+        }
+
+        return view('workspaces.asset', ['asset' => $asset]);
     }
 
     /**
