@@ -1,9 +1,13 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('workspace.view', [
+        $workspaceApp->getWorkspace()->getRouteParameterName() => $workspaceApp->getWorkspace()->getId()
+    ]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $workspaceApp)
         <a href="{{ route('app.delete', [
             'workspaceId'    => $workspaceApp->getWorkspace()->getId(),
@@ -19,13 +23,6 @@
             </button>
         </a>
     @endcan
-    <a href="{{ route('workspace.view', [
-        $workspaceApp->getWorkspace()->getRouteParameterName() => $workspaceApp->getWorkspace()->getId()
-    ]) }}">
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
     {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
 @endsection
 

@@ -1,9 +1,15 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
+    @if ($file->getWorkspaceApp()->isRuggedyApp())
+        <a href="{{ route('workspace.view', [$file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()]) }}">
+    @else
+        <a href="{{ route('app.view', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
+    @endif
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $file)
         @if ($file->getWorkspaceApp()->isRuggedyApp())
             <a href="{{ route('app.delete', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
@@ -27,15 +33,6 @@
             </button>
         </a>
     @endcan
-    @if ($file->getWorkspaceApp()->isRuggedyApp())
-        <a href="{{ route('workspace.view', [$file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()]) }}">
-    @else
-        <a href="{{ route('app.view', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
-    @endif
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
     @if ($file->getWorkspaceApp()->isRuggedyApp())
         {!! Breadcrumbs::render('dynamic', $file->getWorkspaceApp()) !!}
     @else

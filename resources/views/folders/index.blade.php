@@ -1,9 +1,7 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
+
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $folder)
         <a href="{{ route('folder.delete', [$folder->getRouteParameterName() => $folder->getId()]) }}">
             <button type="button" class="btn round-btn pull-right c-red">

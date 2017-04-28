@@ -1,9 +1,6 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
     <a href="{{ route('home') }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
