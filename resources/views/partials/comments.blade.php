@@ -1,4 +1,4 @@
-<div class="col-md-12">
+<div class="col-xs-12">
     <div>
         <form id="comment-form" action="{{ route('comment.create', ['vulnerabilityId' => $vulnerability->getId()]) }}" method="POST">
             {{ csrf_field() }}

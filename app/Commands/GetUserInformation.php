@@ -3,6 +3,6 @@
 namespace App\Commands;
 
 
-class GetUserInformation extends UserAndTeam
+class GetUserInformation extends GetSomething
 {
 }

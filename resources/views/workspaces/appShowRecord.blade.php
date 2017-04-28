@@ -1,9 +1,6 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
     @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
         <a href="{{ route('ruggedy-app.view', [
             $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
@@ -78,19 +75,29 @@
         </div>
     </div>
 
-    <div class="row animated fadeIn">
+    <div class="row animated fadeIn {{ $vulnerability->getFile()->getWorkspaceApp()->getScannerApp()->getName() }}">
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerability</label>
+                <label for=tab1>
+                    <div class="visible-xs mobile-tab">
+                        <i class="fa fa-bomb fa-2x" aria-hidden="true"></i><br>
+                        <small>Vulnerability</small>
+                    </div>
+                    <p class="hidden-xs">Vulnerability</p>
+                </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div class="col-md-12">
-                        <div class="list-content-card">
-                            <span class="label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
+                        <div class="m-t-15">
+                            <div class="t-s-14 label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
                                 {{ $vulnerability->getSeverityText() }} Risk
-                            </span>
-                            <h4 class="h-4-1">{{ $vulnerability->getName() }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="content-card">
+                            <h4>{{ $vulnerability->getName() }}</h4>
                             {!! $vulnerability->getDescription() !!}
                         </div>
                     </div>
@@ -98,21 +105,60 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>Solution</label>
+                <label for=tab2>
+                    <div class="visible-xs mobile-tab">
+                        <i class="fa fa-thumbs-up fa-2x" aria-hidden="true"></i><br>
+                        <small>Solution</small>
+                    </div>
+                    <p class="hidden-xs">Solution</p>
+                </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
-                    <div class="col-md-12">
-                        <div class="content-card">
+                    <div class="col-md-6">
+                        <div class="content-card solution">
                             {!! $vulnerability->getSolution() ?? '<p>No solution available at present.</p>' !!}
                         </div>
                     </div>
                 </div>
             </li>
+            <li>
+                <input type=radio name=tabs id=tab3>
+                <label for=tab3>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $assets->count() }}
+                        </span>
+                        <i class="fa fa-server fa-2x" aria-hidden="true"></i><br>
+                        <small>Assets</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Assets<span class="label-count c-grey">{{ $assets->count() }}</span>
+                    </p>
+                    </label>
+                <div id=tab-content3 class=tab-content>
+                    <div class="dash-line"></div>
+                    @include('partials.assets')
+                </div>
+            </li>
             @if (!$vulnerability->getVulnerabilityHttpData()->isEmpty())
                 <li>
-                    <input type=radio name=tabs id=tab3>
-                    <label for=tab3>Vulnerable URLs <span class="badge c-purple">{{ $vulnerability->getVulnerabilityHttpData()->count() }}</span></label>
-                    <div id=tab-content3 class=tab-content>
+                    <input type=radio name=tabs id=tab4>
+                    <label for=tab4>
+                        <div class="visible-xs mobile-tab">
+                            <span class="label-count c-grey">
+                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                            </span>
+                            <i class="fa fa-link fa-2x" aria-hidden="true"></i><br>
+                            <small>URLs</small>
+                        </div>
+                        <p class="hidden-xs">
+                            URLs
+                            <span class="label-count c-grey">
+                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                            </span>
+                        </p>
+                    </label>
+                    <div id=tab-content4 class=tab-content>
                         <div class="dash-line"></div>
                         <div class="col-md-12">
                             @foreach ($vulnerability->getVulnerabilityHttpData() as $httpData)
@@ -123,19 +169,21 @@
                 </li>
             @endif
             <li>
-                <input type=radio name=tabs id=tab4>
-                <label for=tab4>Vulnerable Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
+                <input type=radio name=tabs id=tab5>
+                <label for=tab5>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $comments->count() }}
+                        </span>
+                        <i class="fa fa-comments fa-2x" aria-hidden="true"></i><br>
+                        <small>Comments</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Comments<span class="label-count c-grey">{{ $comments->count() }}</span>
+                    </p>
+                </label>
                 <div id=tab-content4 class=tab-content>
                     <div class="dash-line"></div>
-                    @include('partials.assets')
-                </div>
-            </li>
-            <li>
-                <input type=radio name=tabs id=tab5>
-                <label for=tab5>Comments <span id="comment-count" class="badge c-purple">{{ $comments->count() }}</span></label>
-                <div id=tab-content5 class=tab-content>
-                    <div class="dash-line"></div>
-                    <br>
                     @include('partials.comments')
                 </div>
             </li>
