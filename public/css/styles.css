@@ -207,7 +207,7 @@ Start: Navbar
     padding: 0;
     margin: 0;
     white-space: nowrap;
-    width: 90%;
+    width: 88%;
     display: inline-flex;
 }
 
@@ -227,7 +227,13 @@ Start: Navbar
     overflow: hidden;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1023px) {
+    .breadcrumb {
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 767px) {
     .breadcrumb {
         display: none;
     }
