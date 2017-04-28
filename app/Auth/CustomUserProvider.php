@@ -9,8 +9,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Facades\EntityManager;
 
-
-class DoctrineUserProvider implements UserProvider
+class CustomUserProvider implements UserProvider
 {
     /** @var  User */
     protected $model;
@@ -76,7 +75,14 @@ class DoctrineUserProvider implements UserProvider
      */
     public function retrieveByCredentials(array $credentials)
     {
-        return $this->repository->findByCredentials($credentials);
+        $criteria = [];
+        foreach ($credentials as $key => $value) {
+            if (!str_contains($key, 'password')) {
+                $criteria[$key] = $value;
+            }
+        }
+
+        return $this->repository->findByCredentials($criteria);
     }
 
     /**

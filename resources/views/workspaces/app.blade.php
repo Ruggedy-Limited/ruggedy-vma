@@ -4,19 +4,21 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <a href="{{ route('app.delete', [
-        'workspaceId'    => $workspaceApp->getWorkspace()->getId(),
-        'workspaceAppId' => $workspaceApp->getId()
-    ]) }}">
-        <button type="button" class="btn round-btn pull-right c-red">
-            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
-    <a href="{{ route('app.edit', [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]) }}">
-        <button type="button" class="btn round-btn pull-right c-purple">
-            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
+    @can (App\Policies\ComponentPolicy::ACTION_EDIT, $workspaceApp)
+        <a href="{{ route('app.delete', [
+            'workspaceId'    => $workspaceApp->getWorkspace()->getId(),
+            'workspaceAppId' => $workspaceApp->getId()
+        ]) }}">
+            <button type="button" class="btn round-btn pull-right c-red">
+                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+        <a href="{{ route('app.edit', [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]) }}">
+            <button type="button" class="btn round-btn pull-right c-purple">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endcan
     <a href="{{ route('workspace.view', [
         $workspaceApp->getWorkspace()->getRouteParameterName() => $workspaceApp->getWorkspace()->getId()
     ]) }}">
@@ -49,8 +51,10 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
+            @can (App\Policies\ComponentPolicy::ACTION_CREATE, $workspaceApp)
             <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}"
                class="primary-btn" type="button">Add File</a>
+            @endcan
         </div>
     </div>
     <div class="row animated fadeIn">

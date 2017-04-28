@@ -79,7 +79,9 @@ class GetListOfUsersInTeam extends CommandHandler
             );
         }
 
-        return $team->getUsers()->toArray();
+        return $team->getUsers()->filter(function ($user) {
+            return !$user->isDeleted();
+        })->toArray();
     }
 
     /**

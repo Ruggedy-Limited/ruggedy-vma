@@ -4,6 +4,7 @@ namespace App\Services\Parsers;
 
 use App\Contracts\ParsesXmlFiles;
 use App\Entities\Asset;
+use App\Entities\VulnerabilityHttpData;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Entities\Vulnerability;
@@ -20,6 +21,12 @@ use XMLReader;
 
 class BurpXmlParserService extends AbstractXmlParserService implements ParsesXmlFiles
 {
+    /** @var string */
+    protected $location;
+
+    /** @var string */
+    protected $issueDetail;
+
     /**
      * BurpXmlParserService constructor.
      *
@@ -81,10 +88,11 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
 
+
             'request' => new Collection([
                 'setHttpMethod' => new Collection([
                     parent::MAP_ATTRIBUTE_XML_ATTRIBUTE => 'method',
-                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => Vulnerability::class,
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS  => VulnerabilityHttpData::class,
                     parent::MAP_ATTRIBUTE_VALIDATION    => 'filled|in:GET,HEAD,POST,PUT,OPTIONS,CONNECT,TRACE,DELETE'
                 ]),
             ]),
@@ -112,12 +120,7 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
             ]),
 
             'issueDetail' => new Collection([
-                'captureCDataField' => new Collection([
-                    Vulnerability::class,
-                    'setDescription',
-                    'Issue Detail',
-                    true,
-                ]),
+                'storeTemporaryIssueDetail',
             ]),
 
             'remediationBackground' => new Collection([
@@ -137,25 +140,28 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 ]),
             ]),
 
+            'requestresponse' => collect([
+                'initialiseNewEntity' => collect([
+                    VulnerabilityHttpData::class,
+                ]),
+            ]),
+
             'request' => new Collection([
                 'captureCDataField' => new Collection([
-                    Vulnerability::class,
+                    VulnerabilityHttpData::class,
                     'setHttpRawRequest',
                 ]),
             ]),
 
             'response' => new Collection([
                 'captureCDataField' => new Collection([
-                    Vulnerability::class,
+                    VulnerabilityHttpData::class,
                     'setHttpRawResponse',
                 ]),
             ]),
 
             'location' => new Collection([
-                'captureCDataField' => new Collection([
-                    Vulnerability::class,
-                    'setHttpUri',
-                ]),
+                'storeTemporaryLocation',
             ]),
 
             'references' => 'addReferences',
@@ -181,6 +187,15 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                         Asset::IP_ADDRESS_V4 => null,
                     ],
                     Workspace::class,
+                ]),
+            ]),
+            'requestresponse' => collect([
+                'setIssueDetail',
+                'setLocation',
+                'persistPopulatedEntity' => collect([
+                    VulnerabilityHttpData::class,
+                    [],
+                    Vulnerability::class,
                 ]),
             ]),
             'issues' => 'flushDoctrineUnitOfWork',
@@ -244,6 +259,60 @@ class BurpXmlParserService extends AbstractXmlParserService implements ParsesXml
                 false
             );
         });
+    }
+
+    /**
+     * Store the location value for this issue.
+     */
+    protected function storeTemporaryLocation()
+    {
+        // Get the value of the current nodes CDATA child
+        $value = $this->getCurrentNodesCDataValue();
+
+        // Set the location property
+        $this->location = !empty($value) ? $value : null;
+    }
+
+    /**
+     * Set the location on the VulnerabilityHttpData entity.
+     */
+    protected function setLocation()
+    {
+        // Get the VulnerabilityHttpData entity from the entity Collection and make sure there is an entity there and
+        // that the location property is set on this service
+        $entity = $this->entities->get(VulnerabilityHttpData::class);
+        if (!isset($this->location, $entity)) {
+            return;
+        }
+
+        $entity->setHttpUri($this->location);
+    }
+
+    /**
+     * Store the issue detail value for this issue.
+     */
+    protected function storeTemporaryIssueDetail()
+    {
+        // Get the value of the current nodes CDATA child
+        $value = $this->getCurrentNodesCDataValue();
+
+        // Set the issue detail property
+        $this->issueDetail = !empty($value) ? $value : null;
+    }
+
+    /**
+     * Set the issue detail on the VulnerabilityHttpData entity.
+     */
+    protected function setIssueDetail()
+    {
+        // Get the VulnerabilityHttpData entity from the entity Collection and make sure there is an entity there and
+        // that the issue detail property is set on this service
+        $entity = $this->entities->get(VulnerabilityHttpData::class);
+        if (!isset($this->issueDetail, $entity)) {
+            return;
+        }
+
+        $entity->setIssueDetail($this->issueDetail);
     }
 
     /**

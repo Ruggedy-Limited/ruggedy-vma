@@ -50,7 +50,7 @@ class GetListOfUsersWorkspaces extends CommandHandler
 
         /** @var User $user */
         $user = $this->userRepository->find($userId);
-        if (empty($user)) {
+        if (empty($user) || $user->isDeleted()) {
             throw new UserNotFoundException("A User related to the given User ID was not found");
         }
 

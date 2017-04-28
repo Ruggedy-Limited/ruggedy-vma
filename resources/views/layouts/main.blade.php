@@ -31,14 +31,16 @@
                     </div>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('settings.view') }}">
-                    <div class="nav-btn">
-                        <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
-                        <p class="nav-btn-text">Settings</p>
-                    </div>
-                </a>
-            </li>
+            @can (App\Policies\ComponentPolicy::ACTION_EDIT, new App\Entities\User())
+                <li>
+                    <a href="{{ route('settings.view') }}">
+                        <div class="nav-btn">
+                            <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
+                            <p class="nav-btn-text">Settings</p>
+                        </div>
+                    </a>
+                </li>
+            @endcan
             <li>
                 <a href="{{ route('settings.user.profile') }}">
                     <div class="nav-btn">
@@ -49,13 +51,22 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <!-- The logout requires a post request since Laravel 5.3:
+                Ref: https://laracasts.com/discuss/channels/laravel/laravel-53-logout-methodnotallowed -->
+                <a href="{{ url('/logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-sign-out fa-lg nav-indent" aria-hidden="true"></i>
                         </h4>
                         <p class="nav-btn-text">Logout</p>
                     </div>
                 </a>
+                <form id="logout-form"
+                      action="{{ url('/logout') }}"
+                      method="POST"
+                      style="display: none;">
+                    {{ csrf_field() }}
+                </form>
             </li>
         </ul>
     </div>
@@ -79,7 +90,7 @@
                 </form>
             </div>
         </div>
-        <div class="c-lightgrey breadcrumb-nav hidden-xs">
+        <div class="c-lightgrey breadcrumb-nav">
             <strong>@yield('breadcrumb')</strong>
         </div>
 

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateUser;
+use App\Commands\DeleteUser;
 use App\Commands\EditUserAccount;
 use App\Commands\GetAllUsers;
 use App\Commands\GetUser;
 use App\Entities\User;
+use App\Policies\ComponentPolicy;
 use App\Services\JsonLogService;
 use Auth;
 use Illuminate\Auth\Events\Registered;
@@ -51,6 +53,11 @@ class SettingsController extends AbstractController
      */
     public function index()
     {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, new User())) {
+            $this->flashMessenger->error("You do not have permission to view the application settings.");
+            return redirect()->back();
+        }
+
         $command = new GetAllUsers(0);
         $users   = $this->sendCommandToBusHelper($command);
 
@@ -70,6 +77,11 @@ class SettingsController extends AbstractController
      */
     public function create()
     {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, new User())) {
+            $this->flashMessenger->error("You do not have permission to create new Users.");
+            return redirect()->back();
+        }
+
         return view('settings.usersCreate');
     }
 
@@ -126,6 +138,11 @@ class SettingsController extends AbstractController
             return redirect()->back();
         }
 
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $user)) {
+            $this->flashMessenger->error("You do not have permission to edit that User profile.");
+            return redirect()->back();
+        }
+
         return view('settings.usersEdit', ['user' => $user]);
     }
 
@@ -173,7 +190,14 @@ class SettingsController extends AbstractController
      */
     public function destroy($id)
     {
-        //
+        $command = new DeleteUser(intval($id));
+        $user    = $this->sendCommandToBusHelper($command);
+        if ($this->isCommandError($user)) {
+            return redirect()->back();
+        }
+
+        $this->flashMessenger->success("User account deleted successfully.");
+        return redirect()->route('settings.view');
     }
 
     /**
