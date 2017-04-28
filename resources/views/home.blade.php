@@ -31,17 +31,42 @@
             @endcan
         </div>
     </div>
-
     <div class="row animated fadeIn">
-        @if (empty($workspaces))
-            <div class="col-sm-12">
-                There aren't any workspaces, it's very quiet in here.
-                <a href="{{ route('workspace.create') }}">Add a Workspace</a>
-            </div>
-        @else
-            @foreach ($workspaces as $workspace)
-                @include('partials.workspace')
-            @endforeach
-        @endif
+        <ul class=tabs>
+            <li>
+                <input type=radio name=tabs id=tab1 checked>
+                <label for=tab1>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ count($workspaces) }}
+                        </span>
+                        <i class="fa fa-th fa-2x" aria-hidden="true"></i><br>
+                        <small>Workspaces</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Workspaces<span class="label-count c-grey">{{ count($workspaces) }}</span>
+                    </p>
+                </label>
+                <div id=tab-content1 class=tab-content>
+                    <div class="dash-line"></div>
+                    <div>
+                        <div>
+                            @if (empty($workspaces))
+                                <br>
+                            <div class="col-xs-12">
+                                <p class="p-l-8">There aren't any workspaces, it's very quiet in here.
+                                    <a href="{{ route('workspace.create') }}">Add a Workspace</a></p>
+                            </div>
+                            @else
+                                @foreach ($workspaces as $workspace)
+                                    @include('partials.workspace')
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <br style=clear:both;>
     </div>
 @endsection

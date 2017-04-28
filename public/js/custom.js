@@ -1,3 +1,10 @@
+(function ($) {
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+})(jQuery);
+
 // Always send CSRF token with ajax requests.
 (function ($) {
     $.ajaxSetup({
@@ -33,12 +40,6 @@
         $(matches[0]).prop('checked', 'checked');
     });
 })(jQuery);
-
-// Sidebar menu toggle
-$("#menu-toggle").click(function(e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-});
 
 // Click handler for the "Post" button to create new comments
 (function ($) {

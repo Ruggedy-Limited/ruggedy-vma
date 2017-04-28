@@ -1,21 +1,18 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
-    @if (!empty(Auth::user()) && Auth::user()->getId() !== $user->getId())
-        <a href="{{ route('user.delete', [$user->getRouteParameterName() => $user->getId()]) }}">
-            <button type="button" class="btn round-btn pull-right c-red">
-                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
-            </button>
-        </a>
-    @endif
     <a href="{{ route('settings.view') }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
     </a>
+    @if (!empty(Auth::user()) && Auth::user()->getId() !== $user->getId())
+        <a href="{{ route('settings.user.delete', [$user->getRouteParameterName() => $user->getId()]) }}">
+            <button type="button" class="btn round-btn pull-right c-red">
+                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endif
     {!! $user === Auth::user() ? Breadcrumbs::render('profile') : Breadcrumbs::render('editUser', $user) !!}
 @endsection
 

@@ -12,7 +12,7 @@ class AddNexposeScanner extends RawMigration
     {
         return <<<SQL
 INSERT INTO `scanner_apps` (`name`, `description`, `logo`, `created_at`, `updated_at`) VALUES
-('nexpose', 'Nexpose Web Vulnerability Scanner', '/img/nexpose-logo.png', NOW(), NOW());
+('nexpose', 'Nexpose Vulnerability Scanner', '/img/nexpose-logo.png', NOW(), NOW());
 SQL;
 
     }
