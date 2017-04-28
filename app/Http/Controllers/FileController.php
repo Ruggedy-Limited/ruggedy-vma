@@ -7,6 +7,8 @@ use App\Commands\GetFile;
 use App\Commands\GetWorkspaceApp;
 use App\Commands\UploadScanOutput;
 use App\Entities\File;
+use App\Policies\ComponentPolicy;
+use Auth;
 
 /**
  * @Middleware("web")
@@ -48,6 +50,11 @@ class FileController extends AbstractController
         $workspaceApp = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($workspaceApp)) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_CREATE, $workspaceApp)) {
+            $this->flashMessenger->error("You do not have permission to add Files to this App.");
             return redirect()->back();
         }
 
@@ -98,6 +105,11 @@ class FileController extends AbstractController
         $fileInfo = $this->sendCommandToBusHelper($command);
 
         if ($this->isCommandError($fileInfo)) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $fileInfo['file'])) {
+            $this->flashMessenger->error("You do not have permission to edit that File.");
             return redirect()->back();
         }
 

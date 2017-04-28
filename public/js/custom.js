@@ -5,6 +5,7 @@
     });
 })(jQuery);
 
+// Always send CSRF token with ajax requests.
 (function ($) {
     $.ajaxSetup({
         headers: {
@@ -13,46 +14,38 @@
     });
 })(jQuery);
 
+// Add the tab selector to the URL as a fragment when the tab changes and if a tab selector fragment is found in the URL
+// when the page is loaded, select the relevant tab.
+(function ($) {
+    // Add the tab selector to the URL as a fragment when the tab changes
+    $('input[name="tabs"][type="radio"]').on('change', function () {
+        var newLocation = window.location.toString().replace(/#tab[0-9]+/g, '');
+        window.location = newLocation + '#' + $(this).prop('id');
+    });
+
+    // If a tab selector fragment is found in the URL when the page is loaded, select the relevant tab.
+    $(document).ready(function () {
+        var matches = window.location.toString().match(/#tab[0-9]+/g);
+        // Check the URL for tab selectors
+        if (!matches || matches.length < 1) {
+            return;
+        }
+
+        // Make sure the tab related to the selected exists in the DOM
+        if ($(matches[0]).length < 1) {
+            return;
+        }
+
+        // Select the relevant tab
+        $(matches[0]).prop('checked', 'checked');
+    });
+})(jQuery);
+
 // Click handler for the "Post" button to create new comments
 (function ($) {
     $('#btn-chat').on('click', function (e) {
         e.preventDefault();
         $('#comment-form').submit();
-
-        /*var clickTime = Math.floor(Date.now() / 1000);
-        ckEditor.updateElement();
-        $.ajax({
-            url:      commentForm.prop('action'),
-            type:     commentForm.prop('method'),
-            dataType: 'json',
-            data:     'comment=' + $('#comment-txt'),
-            beforeSend: function () {
-                ckEditor.showNotification('Posting...', 'info').show();
-            }
-        }).then(
-            function (comment) {
-                console.log(comment);
-                if (comment.error) {
-                    ckEditor.showNotification('There was a problem posting your comment.').show();
-                    return;
-                }
-
-                var newComment = $('ul.chat > li:first-child').clone();
-                newComment.find('strong.primary-font').html(comment.user.name);
-
-                var timeAgo = Math.floor(Date.now() / 1000) - clickTime;
-                if (timeAgo === 0) {
-                    timeAgo = 1;
-                }
-                newComment.find('.time-since').html(timeAgo + ' seconds ago');
-                newComment.find('.chat-body > p').html(comment.content);
-
-                newComment.prependTo('ul.chat');
-            },
-            function () {
-                ckEditor.showNotification('There was a problem posting your comment.').show();
-            }
-        );*/
     });
 })(jQuery);
 

@@ -4,7 +4,15 @@
     <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
         <i class="fa fa-question fa-lg" aria-hidden="true"></i>
     </button>
-    <a href="{{ url()->previous() }}">
+    @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
+        <a href="{{ route('ruggedy-app.view', [
+            $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
+        ]) }}">
+    @else
+        <a href="{{ route('file.view', [
+            $vulnerability->getFile()->getRouteParameterName() => $vulnerability->getFile()->getId()
+        ]) }}">
+    @endif
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
@@ -61,7 +69,11 @@
         <div class="col-md-12">
             <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#jira">Send to JIRA</a>
             @if (!empty($folders))
-                <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">Add to Folder</a>
+                @can (App\Policies\ComponentPolicy::ACTION_EDIT, $vulnerability)
+                    <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">
+                        Add to Folder
+                    </a>
+                @endcan
             @endif
         </div>
     </div>
@@ -131,9 +143,23 @@
                     @include('partials.assets')
                 </div>
             </li>
+            @if (!$vulnerability->getVulnerabilityHttpData()->isEmpty())
+                <li>
+                    <input type=radio name=tabs id=tab4>
+                    <label for=tab4>Vulnerable URLs <span class="badge c-purple">{{ $vulnerability->getVulnerabilityHttpData()->count() }}</span></label>
+                    <div id=tab-content4 class=tab-content>
+                        <div class="dash-line"></div>
+                        <div class="col-md-12">
+                            @foreach ($vulnerability->getVulnerabilityHttpData() as $httpData)
+                                @include('partials.http-data')
+                            @endforeach
+                        </div>
+                    </div>
+                </li>
+            @endif
             <li>
-                <input type=radio name=tabs id=tab4>
-                <label for=tab4>
+                <input type=radio name=tabs id=tab5>
+                <label for=tab5>
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
                             {{ $comments->count() }}
@@ -147,7 +173,6 @@
                 </label>
                 <div id=tab-content4 class=tab-content>
                     <div class="dash-line"></div>
-                    <br>
                     @include('partials.comments')
                 </div>
             </li>
