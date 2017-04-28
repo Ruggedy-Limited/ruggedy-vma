@@ -7,7 +7,7 @@
         </button>
     </a>
     @if (!empty(Auth::user()) && Auth::user()->getId() !== $user->getId())
-        <a href="{{ route('user.delete', [$user->getRouteParameterName() => $user->getId()]) }}">
+        <a href="{{ route('settings.user.delete', [$user->getRouteParameterName() => $user->getId()]) }}">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>
