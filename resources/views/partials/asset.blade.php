@@ -1,5 +1,5 @@
 <div class="col-md-3 asset" data-asset-id="{{ $asset->getId() }}">
-    <a href="#">
+    <a href="{{ route('asset.view', [$asset->getRouteParameterName() => $asset->getId()]) }}">
         <div class="list-content-card animated pulse-hover">
             <span class="label label-danger m-r-5">
                 {{ $asset->getCriticalSeverityVulnerabilities()->count() }}
