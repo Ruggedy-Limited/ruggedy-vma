@@ -1238,7 +1238,7 @@ Start: Tabs
 }
 
 .tabs > li:first-child {
-    padding-left: 0;
+    padding-left: 0 !important;
 }
 
 .tabs input[type="radio"] {
@@ -1342,7 +1342,7 @@ Start: Tabs
         border: 0;
     }
 
-    .tabs > li.p-l-25 {
+    .tabs > li {
         padding-left: 10px;
     }
 
@@ -1356,9 +1356,13 @@ Start: Tabs
         padding: 15px 0;
     }
 
-    .mobile-content {
-        width: 45px;
-        max-width: 45px;
+    .tabs > li {
+        padding: 0;
+    }
+
+    .mobile-tab {
+        width: 50px;
+        max-width: 50px;
     }
 
     .mobile-tab small {
@@ -1369,12 +1373,9 @@ Start: Tabs
         font-size: 1em;
     }
 
-    .label-count {
-        font-size: 50%;
-    }
-
     .mobile-tab .label-count {
-        right: 15px;
+        font-size: 50%;
+        right: 10px;
     }
 }
 

@@ -146,7 +146,21 @@
             @if (!$vulnerability->getVulnerabilityHttpData()->isEmpty())
                 <li>
                     <input type=radio name=tabs id=tab4>
-                    <label for=tab4>Vulnerable URLs <span class="badge c-purple">{{ $vulnerability->getVulnerabilityHttpData()->count() }}</span></label>
+                    <label for=tab4>
+                        <div class="visible-xs mobile-tab">
+                            <span class="label-count c-grey">
+                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                            </span>
+                            <i class="fa fa-link fa-2x" aria-hidden="true"></i><br>
+                            <small>URLs</small>
+                        </div>
+                        <p class="hidden-xs">
+                            URLs
+                            <span class="label-count c-grey">
+                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                            </span>
+                        </p>
+                    </label>
                     <div id=tab-content4 class=tab-content>
                         <div class="dash-line"></div>
                         <div class="col-md-12">
