@@ -288,6 +288,89 @@
         }
 
         var thumbnailBlock = $(this).parent();
-        thumbnailBlock.addClass('hidden').siblings('label, input').removeClass('hidden');
+        thumbnailBlock.siblings('label, input').removeClass('hidden');
+        thumbnailBlock.remove();
+    });
+})(jQuery);
+
+// Enable removing of Assets in the Ruggedy App Vulnerability view
+(function ($) {
+    $('.remove-asset').on('click', function (e) {
+        e.preventDefault();
+
+        // Confirm the action to delete an Asset
+        var mustDelete = confirm("Are you sure you want to remove this Asset? This cannot be undone.");
+        if (!mustDelete) {
+            return;
+        }
+
+        // Initialise variables
+        var defaultError   = '<div class="alert alert-danger">'
+            + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+            + 'The Asset could not be deleted. Please try again.</div>',
+            relatedAssets  = $('#related-assets'),
+            iconAndOverlay = $('.container:first').children('.waiting-icon-container, .waiting-overlay'),
+            assetBlock     = $(this).parent('div').parent('a').parent('.asset'),
+            assetId        = $(this).data('asset-id'),
+            assetsSelect   = $('#assets-select');
+
+        // Prepare and send the ajax request
+        $.ajax({
+            url: '/asset/delete/' + assetId,
+            type: 'GET',
+            dataType: 'JSON',
+            // Overlay the window with a light-grey overlay and a loading icon
+            beforeSend: function () {
+                iconAndOverlay.fadeIn(300)
+            }
+        }).fail(function () {
+            // Show a standard error message
+            relatedAssets.prepend(defaultError);
+        }).done(function (data) {
+            // Successful ajax request, but invalid response. Show the default error.
+            if (!data.message) {
+                relatedAssets.prepend(defaultError);
+                return;
+            }
+
+            // Prepend the assets div with the response message
+            relatedAssets.prepend(data.message);
+            if (data.isError) {
+                return;
+            }
+
+            // After 3.5 seconds slide up and remove the related Asset block and
+            // remove the asset ID from the assets[] multiple select input
+            setTimeout(function () {
+                assetBlock.slideUp(500, function () {
+                    $(this).remove();
+                    // Clear the select options and reset them to all the added Assets as selected options of the
+                    // multiple select that will be sent when the Vulnerability record is sent
+                    assetsSelect.html("");
+                    relatedAssets.find('.asset').each(function () {
+                        $('<option />').val($(this)
+                            .data('asset-id'))
+                            .prop('selected', 'selected')
+                            .appendTo(assetsSelect);
+                    });
+                });
+            }, 3500);
+        }).always(function () {
+            // Clear the loading overlay and icon
+            iconAndOverlay.fadeOut(300);
+
+            // Find the alert message
+            var alert = relatedAssets.find('.alert:first');
+            if (alert.length !== 1) {
+                return;
+            }
+
+            // Slide the alert message up after 3 seconds
+            setTimeout(function () {
+                alert.slideUp(500, function () {
+                    $(this).remove();
+                });
+            }, 3000);
+        });
     });
 })(jQuery);

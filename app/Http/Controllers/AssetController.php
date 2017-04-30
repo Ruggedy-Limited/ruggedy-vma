@@ -97,7 +97,7 @@ class AssetController extends AbstractController
 
         $ajaxResponse = new AjaxResponse();
 
-        $command = new DeleteAsset(intval($assetId));
+        $command = new DeleteAsset(intval($assetId), true);
         $asset   = $this->sendCommandToBusHelper($command);
 
         // If the command returned an error response then return the error message
