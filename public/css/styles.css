@@ -1039,7 +1039,7 @@ a.remove-vulnerability {
     height: auto;
 }
 
-.remove-poc {
+.remove-poc, .remove-asset {
     position: absolute;
     top: 2px;
     right: 2px;
@@ -1052,7 +1052,7 @@ a.remove-vulnerability {
     cursor: pointer;
 }
 
-.remove-poc i.fa-times {
+.remove-poc i.fa-times, .remove-asset i.fa-times {
     font-size: 1.2em;
     -moz-transition: 200ms font-size ease-in;
     -o-transition:  200ms font-size ease-in;
@@ -1060,7 +1060,7 @@ a.remove-vulnerability {
     transition: 200ms font-size ease-in;
 }
 
-.remove-poc:hover i.fa-times {
+.remove-poc:hover i.fa-times, .remove-asset:hover i.fa-times {
     font-size: 1.3em;
 }
 
@@ -1237,8 +1237,7 @@ select {
     opacity: 0;
 }
 
-.modal .waiting-icon-container {
-    display: block;
+.waiting-icon-container {
     position: absolute;
     top: 45%;
     left: 45%;
@@ -1246,11 +1245,11 @@ select {
     display: none;
 }
 
-.modal .waiting-icon-container .fa {
+.waiting-icon-container .fa {
     color: #fff;
 }
 
-.modal .waiting-overlay {
+.waiting-overlay {
     background: #000;
     opacity: 0.3;
     position: absolute;
