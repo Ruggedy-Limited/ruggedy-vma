@@ -39,7 +39,7 @@
     <div class="row">
         <div class="col-md-6 col-sm-6 animated fadeIn">
             <h3>Add Vulnerability</h3>
-            <button class="primary-btn" type="submit">Create Vulnerability</button>
+            <button class="primary-btn" type="submit">Save Changes</button>
             <div class="form-group">
                 {!! Form::label('name', 'Vulnerability Name') !!}
                 {!! Form::text('name', $vulnerability->getName(), ['class' => 'black-form-control']) !!}
@@ -110,6 +110,9 @@
                 </div>
             </div>
             @include('partials.related-assets')
+            <div class="form-group">
+                <button class="primary-btn" type="submit">Save Changes</button>
+            </div>
         </div>
         <div class="col-md-2"></div>
         <div class="col-md-6 animated fadeInUp">
