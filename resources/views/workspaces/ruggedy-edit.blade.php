@@ -10,6 +10,11 @@
 @endsection
 
 @section('content')
+    <div class="waiting-icon-container">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="waiting-overlay"></div>
     <!-- Modal -->
     <div id="help" class="modal fade" role="dialog">
         <div class="modal-dialog">
