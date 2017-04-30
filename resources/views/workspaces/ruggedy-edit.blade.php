@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <a href="{{ route('ruggedy-app.view', [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]) }}">
+    <a href="{{ route('vulnerability.view', [$vulnerability->getRouteParameterName() => $vulnerability->getId()]) }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
