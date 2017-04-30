@@ -278,6 +278,7 @@
 
 })(jQuery);
 
+// Enable removal of thumbnail images from custom Vulnerabilities
 (function ($) {
     $('.remove-poc').on('click', function (e) {
         e.preventDefault();

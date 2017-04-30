@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Entities\Vulnerability;
 use Illuminate\Http\UploadedFile;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -47,7 +48,7 @@ class ImageService
                 }
 
                 $file = $thumbnail->move(
-                    Vulnerability::getThumbnailStoragePath(),
+                    storage_path('app' . DIRECTORY_SEPARATOR . static::pocPath()),
                     date("YmdHis") . '_' . md5($thumbnail->getClientOriginalName() . microtime()) . '.'
                     . $thumbnail->getClientOriginalExtension()
                 );
@@ -57,5 +58,53 @@ class ImageService
 
             $vulnerability->$setter($file->getRealPath());
         });
+    }
+
+    /**
+     * Remove the Vulnerability Thumbnail stored at the given path
+     *
+     * @param string $path
+     * @return bool
+     */
+    public function removeVulnerabilityThumbnail(string $path): bool
+    {
+        if (empty($path) || !$this->fileSystem->exists($path)) {
+            return true;
+        }
+
+        try {
+            $this->fileSystem->remove($path);
+            return true;
+        } catch (IOException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Return the disk to use for image storage
+     *
+     * @return string
+     */
+    public static function disk(): string
+    {
+        return 'local';
+    }
+
+    /**
+     * Return the storage path for POC images
+     *
+     * @return string
+     */
+    public static function pocPath(): string
+    {
+        return 'poc-images' . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    public function getFileSystem(): Filesystem
+    {
+        return $this->fileSystem;
     }
 }
