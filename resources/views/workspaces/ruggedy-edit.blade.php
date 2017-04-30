@@ -87,21 +87,21 @@
                 {!! Form::text('cvss_score', $vulnerability->getCvssScore(), ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group row">
-                <div class="col-xs-12 col-md-4 text-center">
+                <div class="col-xs-12">
                 @include('partials.thumnail-edit', [
                     'thumbnail' => $vulnerability->getThumbnail1(),
                     'fieldName' => 'thumbnail_1',
                     'labelText' => 'Screenshot 1',
                 ])
                 </div>
-                <div class="col-xs-12 col-md-4 text-center">
+                <div class="col-xs-12">
                     @include('partials.thumnail-edit', [
                         'thumbnail' => $vulnerability->getThumbnail2(),
                         'fieldName' => 'thumbnail_2',
                         'labelText' => 'Screenshot 2',
                     ])
                 </div>
-                <div class="col-xs-12 col-md-4 text-center">
+                <div class="col-xs-12">
                     @include('partials.thumnail-edit', [
                         'thumbnail' => $vulnerability->getThumbnail3(),
                         'fieldName' => 'thumbnail_3',
