@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateUser;
+use App\Commands\DeleteUser;
 use App\Commands\EditUserAccount;
 use App\Commands\GetAllUsers;
 use App\Commands\GetUser;
@@ -109,6 +110,7 @@ class SettingsController extends AbstractController
             $user->setName($this->request->get('name'))
                 ->setEmail($this->request->get('email'))
                 ->setPassword(bcrypt($this->request->get('password')))
+                ->setIsAdmin($this->request->get('is_admin', 0))
         );
 
         $user = $this->sendCommandToBusHelper($command);
@@ -117,7 +119,7 @@ class SettingsController extends AbstractController
             return redirect()->back()->withInput();
         }
 
-        return redirect()->route($user, 'settings.view');
+        return redirect()->route('settings.view');
     }
 
     /**
@@ -189,7 +191,14 @@ class SettingsController extends AbstractController
      */
     public function destroy($id)
     {
-        //
+        $command = new DeleteUser(intval($id));
+        $user    = $this->sendCommandToBusHelper($command);
+        if ($this->isCommandError($user)) {
+            return redirect()->back();
+        }
+
+        $this->flashMessenger->success("User account deleted successfully.");
+        return redirect()->route('settings.view');
     }
 
     /**

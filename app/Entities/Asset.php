@@ -78,7 +78,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     protected $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="asset_software_information",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="software_information_id", referencedColumnName="id",
@@ -88,7 +88,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     protected $relatedSoftwareInformation;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="assets_vulnerabilities",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")}
@@ -97,7 +97,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="assets_audits",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="audit_id", referencedColumnName="id", onDelete="CASCADE")}
@@ -408,6 +408,19 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
             /** @var Vulnerability $vulnerability */
             return $vulnerability->getSeverityText() === $level;
         });
+    }
+
+    /**
+     * Get the Asset's total risk by summing up all the related Vulnerability severities
+     *
+     * @return int
+     */
+    public function getAssetTotalRisk(): int
+    {
+        return collect($this->vulnerabilities)->reduce(function ($totalRisk, $vulnerability) {
+            /** @var Vulnerability $vulnerability */
+            return $totalRisk + $vulnerability->getSeverity();
+        }, 0.00);
     }
 
     /**

@@ -73,10 +73,19 @@ label:focus,
     background: #ff5500;
 }
 
+.label-post-request {
+    background: #000088;
+}
+
 .badge {
     padding: 3px 7px 4px 6px;
     margin: 0 3px;
     border-radius: 50%;
+}
+
+.mobile-count {
+    position: absolute;
+    left: 10px;
 }
 
 @media (min-width: 1200px) {
@@ -96,6 +105,47 @@ label:focus,
         width: 90% !important;
     }
 }
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: transparent !important;
+}
+
+.navbar-collapse {
+    padding-right: 15px;
+    padding-left: 15px;
+    overflow-x: visible;
+    -webkit-overflow-scrolling: touch;
+    -webkit-box-shadow: inset 0 0px 0 rgba(255, 255, 255, .1);
+}
+
+.label-count {
+    display: inline;
+    padding: .2em .6em .3em;
+    margin-left: 10px;
+    margin-right: 5px;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+
+.pagination>li>a, .pagination>li>span {
+    border-radius: 50% !important;margin: 0 5px;
+    color: #51576f;
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    background-color: #51576f;
+    border-color: #51576f;
+}
+
 
 /*
 ==========================================================================
@@ -138,14 +188,27 @@ Start: Navbar
 .breadcrumb-nav {
     height: 50px;
     width: 100%;
-    padding: 10px 40px 15px 35px;
+    padding: 10px 40px 15px 40px;
     color: #58666e;
     border-bottom: 1px solid #e0dfdf;
 }
 
+.breadcrumb-nav ol {
+    height: 25px;
+}
+
+.breadcrumb-nav ol a {
+    text-decoration: none !important;
+    color: #ababab !important;
+}
+
+
 .breadcrumb {
     padding: 0;
     margin: 0;
+    white-space: nowrap;
+    width: 88%;
+    display: inline-flex;
 }
 
 .breadcrumb > li {
@@ -160,6 +223,24 @@ Start: Navbar
 .breadcrumb > .active {
     font-weight: bold;
     color: #3a3f51;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 1023px) {
+    .breadcrumb {
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .breadcrumb {
+        display: none;
+    }
+
+    .breadcrumb-nav {
+        padding: 10px;
+    }
 }
 
 .nav-btn {
@@ -525,6 +606,7 @@ Start: Colors, Text, Padding, Margins
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    margin-top: 15px;
 }
 
 .t-5 {
@@ -537,6 +619,10 @@ Start: Colors, Text, Padding, Margins
 
 .t-s-10 {
     font-size: 10px;
+}
+
+.t-s-14 {
+    font-size: 14px;
 }
 
 .t-c-red {
@@ -561,6 +647,14 @@ Start: Colors, Text, Padding, Margins
 
 .t-c-blue {
     color: #23b7e5 !important;
+}
+
+.t-c-green {
+    color: #00cc00 !important;
+}
+
+.t-c-grey {
+    color: #51576f !important;
 }
 
 .c-black {
@@ -603,6 +697,29 @@ Start: Colors, Text, Padding, Margins
     padding-left: 8px;
 }
 
+.p-l-15 {
+    padding-left: 15px;
+}
+
+.p-l-20 {
+    padding-left: 20px;
+}
+
+.p-l-25 {
+    padding-left: 25px;
+}
+
+.m-r-5 {
+    margin-right: 5px;
+}
+
+.m-t-15 {
+    margin-top: 15px;
+}
+.m-r-8 {
+    margin-right: 8px;
+}
+
 /*
 ==========================================================================
 Start: Cards
@@ -637,8 +754,9 @@ Start: Cards
 }
 
 .content-card {
+    word-wrap: break-word;
     position: relative;
-    background: #fff;
+    background-color: rgba(255, 255, 255, 0.6);
     margin-top: 15px;
     margin-bottom: 15px;
     border-radius: 0;
@@ -652,13 +770,27 @@ Start: Cards
 .list-content-card {
     word-wrap: break-word;
     position: relative;
-    background: #fff;
+    background-color: rgba(255, 255, 255, 0.6);
     margin-top: 15px;
     margin-bottom: 0;
     border-radius: 0;
     height: 100%;
     width: 100%;
     padding: 15px 15px 5px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.single-content-card {
+    word-wrap: break-word;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin-top: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    padding: 7px 15px 2px 15px;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
@@ -717,7 +849,7 @@ Start: Cards
 
 .card {
     position: relative;
-    background: #fff;
+    background-color: rgba(255, 255, 255, 0.6);
     margin-bottom: 15px;
     margin-top: 15px;
     border-radius: 0;
@@ -876,7 +1008,56 @@ a.remove-vulnerability {
     position: absolute;
     right: 30px;
     top: 30px;
+    z-index: 2;
+}
+
+.thumbnail-block {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+.thumbnail-overlay {
+    position: absolute;;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0;
     z-index: 1;
+    -moz-transition: 200ms opacity ease-in;
+    -o-transition:  200ms opacity ease-in;
+    -webkit-transition: 200ms opacity ease-in;
+    transition: 200ms opacity ease-in;
+}
+
+.remove-poc:hover ~ .thumbnail-overlay {
+    opacity: 0.4;
+}
+
+.poc {
+    width: 100%;
+    height: auto;
+}
+
+.remove-block {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    text-align: center;
+    display: inline-block;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.http-data a.collapsed .collapsed-state, .http-data a:not(.collapsed) .expanded-state {
+    display: inline-block;
+}
+
+.http-data a:not(.collapsed) .collapsed-state, .http-data a.collapsed .expanded-state {
+    display: none;
 }
 
 /*
@@ -1044,8 +1225,7 @@ select {
     opacity: 0;
 }
 
-.modal .waiting-icon-container {
-    display: block;
+.waiting-icon-container {
     position: absolute;
     top: 45%;
     left: 45%;
@@ -1053,11 +1233,11 @@ select {
     display: none;
 }
 
-.modal .waiting-icon-container .fa {
+.waiting-icon-container .fa {
     color: #fff;
 }
 
-.modal .waiting-overlay {
+.waiting-overlay {
     background: #000;
     opacity: 0.3;
     position: absolute;
@@ -1079,26 +1259,32 @@ Start: Tabs
 ==========================================================================
 */
 
-div ul li label {
+/*div ul li label {
     display: inline-block;
     max-width: 150%;
     margin-bottom: 5px;
     margin-right: 20px;
     font-weight: bold;
     margin-left: -20px;
-}
+}*/
 
 .tabs {
     width: 100%;
     float: none;
     list-style: none;
     position: relative;
-    margin: 15px 0 0 0;
+    margin: 0;
+    padding-left: 20px;
 }
 
 .tabs > li {
     float: left;
     display: block;
+    padding-left: 15px;
+}
+
+.tabs > li:first-child {
+    padding-left: 0 !important;
 }
 
 .tabs input[type="radio"] {
@@ -1109,7 +1295,7 @@ div ul li label {
 
 .tabs label {
     display: block;
-    padding: 8px 20px;
+    padding: 8px 15px;
     border-radius: 0;
     font-size: 16px;
     background: transparent;
@@ -1150,18 +1336,93 @@ div ul li label {
 }
 
 .dash-line {
-    border-top: 1px dashed #8f93a5;
+    border-top: 2px dashed #8f93a5;
     margin-left:20px;
     margin-right: 20px;
 }
 
 .tabs [id^="tab"]:checked + label {
-    border: 3px solid #51576f;
+    border: 3px solid #000066;
     color: inherit;
+}
+
+.tabs [id^="tab"]:checked + label i, .tabs [id^="tab"]:checked + label small, .tabs [id^="tab"]:checked + label p  {
+    border: 0;
+    color: #000066;
 }
 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
     display: block;
+}
+
+.tabs label p {
+    margin: 0;
+}
+
+.mobile-tab {
+    text-align: center;
+    width: 60px;
+    max-width: 60px;
+    line-height: 1em;
+}
+
+.mobile-tab small {
+    font-size: 0.7em;
+}
+
+.mobile-tab .label-count {
+    position: absolute;;
+    top: 3px;
+    right: 5px;
+    margin:0;
+}
+
+@media only screen and (max-width: 767px) {
+    .tabs {
+        padding: 0 20px;
+    }
+
+    .tabs label {
+        margin: 0;
+        padding: 8px 0;
+        border: 0;
+    }
+
+    .tabs > li {
+        padding-left: 10px;
+    }
+
+    .tabs [id^="tab"]:checked + label {
+        border: 0;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .tabs .tab-content {
+        padding: 15px 0;
+    }
+
+    .tabs > li {
+        padding: 0;
+    }
+
+    .mobile-tab {
+        width: 50px;
+        max-width: 50px;
+    }
+
+    .mobile-tab small {
+        font-size: 0.6em;
+    }
+
+    .mobile-tab i {
+        font-size: 1em;
+    }
+
+    .mobile-tab .label-count {
+        font-size: 50%;
+        right: 10px;
+    }
 }
 
 /*
@@ -1233,6 +1494,14 @@ Start: Comments
     margin-top: 0;
     margin-bottom: 60px;
     border-radius: 0;
+}
+
+.chat-content ul li {
+    padding: 0 0;
+}
+
+.chat-content ol li {
+    padding: 0 0;
 }
 
 /*
@@ -1313,4 +1582,21 @@ Start: CKEditor
 End: CKEditor
 ==========================================================================
 */
+/*
+==========================================================================
+Start: Vulnerability Views
+==========================================================================
+*/
 
+.content-card h3 {
+    font-size: 18px;
+}
+
+.nexpose .content-card.solution ul {
+    padding-left: 7px;
+}
+/*
+==========================================================================
+End: Vulnerability Views
+==========================================================================
+*/

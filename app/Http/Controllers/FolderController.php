@@ -71,7 +71,7 @@ class FolderController extends AbstractController
         }
 
         $this->flashMessenger->success('Folder created successfully.');
-        return redirect()->route('workspace.view', ['workspaceId' => $workspaceId]);
+        return redirect(route('workspace.view', ['workspaceId' => $workspaceId]) . '#tab2');
     }
 
     /**
