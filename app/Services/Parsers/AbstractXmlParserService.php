@@ -36,6 +36,7 @@ use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
 use ReflectionClass;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use XMLReader;
 
 abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
@@ -558,7 +559,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 'user'      => $file->getUserId(),
                 'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
-            return false;
+
+            throw new FileException("Could not delete file after processing.");
         }
 
         return true;
