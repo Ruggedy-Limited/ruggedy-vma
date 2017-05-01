@@ -10,7 +10,7 @@ use App\Entities\Comment;
 use Exception;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class CommentController extends AbstractController
 {
