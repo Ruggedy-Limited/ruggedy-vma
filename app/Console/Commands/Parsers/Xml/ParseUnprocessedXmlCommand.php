@@ -12,6 +12,7 @@ use League\Tactician\CommandBus;
 use Exception;
 use Monolog\Logger;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ParseUnprocessedXmlCommand extends Command implements CustomLogging
 {
@@ -93,6 +94,8 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
             try {
                 $parseFileCommand = new ParseFile($file);
                 $this->bus->handle($parseFileCommand);
+            } catch (FileException $e) {
+                $this->warn("Could not delete file after processing.");
             } catch (Exception $e) {
                 $this->logger->log(Logger::ERROR, "Unhandled exception when parsing file", [
                     'fileId'    => $file->getId(),
