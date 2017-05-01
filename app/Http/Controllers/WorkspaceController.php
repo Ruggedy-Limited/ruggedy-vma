@@ -11,7 +11,7 @@ use App\Policies\ComponentPolicy;
 use Auth;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class WorkspaceController extends AbstractController
 {

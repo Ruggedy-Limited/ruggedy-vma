@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class JiraController extends AbstractController
 {

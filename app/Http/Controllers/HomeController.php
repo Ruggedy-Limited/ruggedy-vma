@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Commands\GetListOfWorkspaces;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class HomeController extends AbstractController
 {

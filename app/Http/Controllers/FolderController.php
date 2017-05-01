@@ -14,7 +14,7 @@ use Auth;
 use Illuminate\Http\Request;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class FolderController extends AbstractController
 {

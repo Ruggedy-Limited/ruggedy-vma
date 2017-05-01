@@ -19,7 +19,7 @@ use League\Tactician\CommandBus;
 use Somnambulist\EntityValidation\Factories\EntityValidationFactory;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class SettingsController extends AbstractController
 {

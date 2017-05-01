@@ -6,7 +6,7 @@ use App\Services\ImageService;
 use Storage;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class ImageController extends Controller
 {

@@ -15,7 +15,7 @@ use App\Policies\ComponentPolicy;
 use Auth;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class AppController extends AbstractController
 {
