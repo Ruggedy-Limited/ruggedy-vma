@@ -1,7 +1,11 @@
 <div class="col-md-6 asset" data-asset-id="{{ $asset->getId() }}">
     <a href="#">
         <div class="list-content-card animated pulse-hover">
-            <span class="remove-asset" data-asset-id="{{ $asset->getId() }}"><i class="fa fa-times t-c-red"></i></span>
+            <div class="remove-block">
+                <span class="remove-asset btn round-btn c-red" data-asset-id="{{ $asset->getId() }}">
+                    <i class="fa fa-trash fa-lg"></i>
+                </span>
+            </div>
             <h4 class="h-4-1">{{  $asset->getName() }}</h4>
             @if (!empty($asset->getIpAddressV4()))
                 <p>IP Address: {{ $asset->getIpAddressV4() }}</p>

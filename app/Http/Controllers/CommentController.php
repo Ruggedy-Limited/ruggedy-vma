@@ -39,7 +39,7 @@ class CommentController extends AbstractController
         }
 
         $this->flashMessenger->success("A new comment was posted successfully.");
-        return redirect(route('vulnerability.view', ['vulnerabilityId' => $vulnerabilityId]) . '#tab4');
+        return redirect(route('vulnerability.view', ['vulnerabilityId' => $vulnerabilityId]) . '#tab5');
     }
 
     /**
@@ -66,7 +66,7 @@ class CommentController extends AbstractController
         }
 
         $this->flashMessenger->success("Comment updated successfully.");
-        return redirect(redirect()->back()->getTargetUrl() . '#tab4');
+        return redirect(redirect()->back()->getTargetUrl() . '#tab5');
     }
 
     /**
@@ -87,7 +87,7 @@ class CommentController extends AbstractController
         }
 
         $this->flashMessenger->success("Comment deleted successfully.");
-        return redirect()->back();
+        return redirect(redirect()->back()->getTargetUrl() . '#tab5');
     }
 
     /**
