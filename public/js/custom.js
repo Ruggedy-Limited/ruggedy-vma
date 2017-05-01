@@ -14,6 +14,20 @@
     });
 })(jQuery);
 
+// Slide up alert messages after 4 seconds.
+(function ($) {
+    $(document).ready(function () {
+        var firstAlert = $('.container:first > .alert');
+        if (firstAlert.length !== 1) {
+            return;
+        }
+
+        setTimeout(function () {
+            firstAlert.slideUp(500);
+        }, 4000);
+    });
+})(jQuery);
+
 // Add the tab selector to the URL as a fragment when the tab changes and if a tab selector fragment is found in the URL
 // when the page is loaded, select the relevant tab.
 (function ($) {
