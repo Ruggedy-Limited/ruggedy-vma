@@ -29,7 +29,7 @@ class CommentController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         $comment = new Comment();
-        $comment->setContent($this->request->get('comment'));
+        $comment->setContent(clean($this->request->get('comment')));
 
         $command = new CreateComment(intval($vulnerabilityId), $comment);
         $comment = $this->sendCommandToBusHelper($command);
@@ -56,7 +56,7 @@ class CommentController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         $command = new EditComment(intval($commentId), [
-            Comment::CONTENT => $this->request->get('comment-' . $commentId)
+            Comment::CONTENT => clean($this->request->get('comment-' . $commentId))
         ]);
 
         $comment = $this->sendCommandToBusHelper($command);
