@@ -132,7 +132,8 @@ class AssetController extends AbstractController
         return [
             'asset-name'          => 'bail|required',
             'asset-cpe'           => 'bail|nullable|regex:' . Asset::REGEX_CPE,
-            'asset-vendor'        => 'bail|nullable|in:' . Asset::getValidOsVendors()->implode(","),
+            'asset-vendor'        => 'bail|nullable|in:' . Asset::getValidOsVendors()->implode(",")
+                . "," . Asset::OS_VENDOR_UNKNOWN,
             'asset-ip_address_v4' => 'bail|nullable|ipv4',
             'asset-ip_address_v6' => 'bail|nullable|ipv6',
             'asset-hostname'      => 'bail|nullable|url',
