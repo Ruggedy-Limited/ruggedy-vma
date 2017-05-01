@@ -54,11 +54,11 @@ div.container {
 }
 
 textarea:hover,
-input:hover,
+input:hover:not([type="checkbox"]):not([type="radio"]),
 textarea:active,
-input:active,
+input:active:not([type="checkbox"]):not([type="radio"]),
 textarea:focus,
-input:focus,
+input:focus:not([type="checkbox"]):not([type="radio"]),
 button:focus,
 button:active,
 button:hover,
