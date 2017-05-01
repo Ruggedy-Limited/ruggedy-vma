@@ -62,7 +62,7 @@ class DeleteComment extends CommandHandler
         }
 
         // Check that the User has permission to delete the Comment
-        if ($requestingUser->isAdmin() && $requestingUser->getId() !== $comment->getUser()->getId()) {
+        if (!$requestingUser->isAdmin() && $requestingUser->getId() !== $comment->getUser()->getId()) {
             throw new ActionNotPermittedException("User does not have permission to delete this Comment");
         }
 

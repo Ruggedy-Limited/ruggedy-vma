@@ -4,6 +4,7 @@ namespace App\Handlers\Commands;
 
 use App\Commands\CreateComment as CreateCommentCommand;
 use App\Entities\Comment;
+use App\Entities\User;
 use App\Entities\Vulnerability;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
@@ -81,7 +82,7 @@ class CreateComment extends CommandHandler
         }
 
         // Make sure the User has permission to create a Comment
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $vulnerability->getFile())) {
+        if (empty($requestingUser) || !($requestingUser instanceof User)) {
             throw new ActionNotPermittedException(
                 "The requesting User does not have permission to create new Comments"
             );
