@@ -6,14 +6,14 @@
                     <a class="pull-right" href="{{ route('comment.remove', [
                                                 'commentId' => $comment->getId(),
                                             ]) }}">
-                        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+                        <i class="fa fa-times fa-lg t-c-red" aria-hidden="true"></i>
                     </a>
                 @endif
                 @if ($comment->isEditable())
                     <a class="pull-right edit-comment" href="{{ route('comment.edit', [
                                                 'commentId' => $comment->getId(),
                                             ]) }}" data-comment-id="{{ $comment->getId() }}">
-                        <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+                        <i class="fa fa-pencil fa-lg t-c-purple" aria-hidden="true"></i>
                     </a>
                 @endif
                 <strong class="primary-font">{{ $comment->getUser()->getName() }}</strong>
