@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 use League\Tactician\CommandBus;
 use Exception;
 use Monolog\Logger;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ParseUnprocessedXmlCommand extends Command implements CustomLogging
 {
@@ -34,6 +35,9 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
     /** @var CommandBus */
     protected $bus;
 
+    /** @var Filesystem */
+    protected $filesystem;
+
     /** @var JsonLogService */
     protected $logger;
 
@@ -42,12 +46,16 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
      *
      * @param FileRepository $fileRepository
      * @param CommandBus $bus
+     * @param Filesystem $filesystem
      * @param JsonLogService $logger
      */
-    public function __construct(FileRepository $fileRepository, CommandBus $bus, JsonLogService $logger)
+    public function __construct(
+        FileRepository $fileRepository, CommandBus $bus, FileSystem $filesystem, JsonLogService $logger
+    )
     {
         parent::__construct();
         $this->repository = $fileRepository;
+        $this->filesystem = $filesystem;
         $this->bus        = $bus;
 
         $this->setLoggerContext($logger);
@@ -59,10 +67,23 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
      */
     public function handle()
     {
+        // Stop and exit early if there is a lock file because this means another cron is already executing.
+        if ($this->filesystem->exists($this->getLockFilePath())) {
+            $this->warn("Cannot continue processing. Lock file exists.");
+            $this->logger->log(Logger::DEBUG, "Cannot continue processing. Lock file exists.", [
+                'lockFilePath' => $this->getLockFilePath(),
+            ]);
+
+            return;
+        }
+
+        $this->filesystem->touch($this->getLockFilePath());
+
         // Get unprocessed files grouped by workspace ID
         $filesByWorkspace = $this->repository->findUnprocessed();
         if ($filesByWorkspace->isEmpty()) {
             $this->info("No files to process at the moment.");
+            $this->filesystem->remove($this->getLockFilePath());
             return;
         }
 
@@ -87,6 +108,8 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
             $this->info("Successfully processed file: {$file->getPath()}.");
             return;
         });
+
+        $this->filesystem->remove($this->getLockFilePath());
     }
 
     /**
@@ -118,6 +141,16 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
     function getLogFilename(): string
     {
         return 'unprocessed-xml-parser.json.log';
+    }
+
+    /**
+     * Get the path to the lock file
+     *
+     * @return string
+     */
+    public function getLockFilePath(): string
+    {
+        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'parser.lock';
     }
 
     /**
