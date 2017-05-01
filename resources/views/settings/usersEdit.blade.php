@@ -56,6 +56,12 @@
                 {!! Form::label('password-confirm', 'Confirm Password') !!}
                 {!! Form::password('password-confirm', ['class' => 'black-form-control']) !!}
             </div>
+            @if (!empty(Auth::user()) && Auth::user()->isAdmin() && Auth::user() !== $user)
+                <div class="form-group">
+                    {!! Form::checkbox('is_admin', true, $user->isAdmin()) !!}
+                    {!! Form::label('is_admin', 'User is an Admin') !!}
+                </div>
+            @endif
             <button class="primary-btn" type="submit">Save Changes</button>
             {!! Form::close() !!}
         </div>
