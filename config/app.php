@@ -192,6 +192,7 @@ return [
         Madewithlove\Tactician\ServiceProvider::class,
         Univerze\Jira\JiraServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
+        Mews\Purifier\PurifierServiceProvider::class,
     ],
 
     /*
