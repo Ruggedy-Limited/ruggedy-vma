@@ -69,6 +69,10 @@ label:focus,
     -webkit-appearance: none;
 }
 
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
 .label-high {
     background: #ff5500;
 }
