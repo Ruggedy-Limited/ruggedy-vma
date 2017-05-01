@@ -20,13 +20,7 @@ return [
 
     MessagingModel::ERROR_INVALID_EMAIL                       => "Sorry, the email address you provided is invalid.",
 
-    MessagingModel::ERROR_TEAM_DOES_NOT_EXIST                 => "Sorry, that team does not exist.",
-
-    MessagingModel::ERROR_TEAM_MEMBER_DOES_NOT_EXIST          => "Sorry, that person is not part of that team.",
-
     MessagingModel::ERROR_USER_DOES_NOT_EXIST                 => "Sorry, that person does not exist.",
-
-    MessagingModel::ERROR_USER_NOT_TEAM_OWNER                 => "Sorry, you don't own that team.",
 
     MessagingModel::ERROR_CANNOT_EDIT_ACCOUNT                 => "Sorry, you don't have permission to edit that "
         ."account.",
