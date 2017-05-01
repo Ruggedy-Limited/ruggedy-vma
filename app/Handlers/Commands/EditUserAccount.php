@@ -74,8 +74,10 @@ class EditUserAccount extends CommandHandler
         }
         $profileChanges[User::PASSWORD] = $password;
 
-        // Apply the changes to the User Model
-        $user->setFromArray($profileChanges);
+        // Apply the changes to the User Model and explicitly set the admin flag based on the presence of the is_admin
+        // array key because it is a checkbox ans will be absent from the request when not checked.
+        $user->setFromArray($profileChanges)
+            ->setIsAdmin(!empty($profileChanges[User::IS_ADMIN]));
 
         // Save the changes
         $this->em->persist($user);
