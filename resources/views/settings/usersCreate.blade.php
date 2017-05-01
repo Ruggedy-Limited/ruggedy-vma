@@ -49,6 +49,10 @@
                 {!! Form::label('password-confirm', 'Confirm Password') !!}
                 {!! Form::password('password-confirm', ['class' => 'black-form-control']) !!}
             </div>
+            <div class="form-group">
+                {!! Form::checkbox('is_admin', true, false) !!}
+                {!! Form::label('is_admin', 'User is an Admin') !!}
+            </div>
             <button class="primary-btn" type="submit">Create User</button>
             {!! Form::close() !!}
         </div>
