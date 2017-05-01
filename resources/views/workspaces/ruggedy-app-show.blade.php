@@ -1,9 +1,11 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-        <i class="fa fa-question fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('workspace.view', [$file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $file->getWorkspaceApp())
         <a href="{{ route('app.delete', [
             $file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId(),
@@ -19,11 +21,6 @@
             </button>
         </a>
     @endcan
-    <a href="{{ route('workspace.view', [$file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()]) }}">
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </a>
     {!! Breadcrumbs::render('dynamic', $file->getWorkspaceApp()) !!}
 @endsection
 
@@ -57,7 +54,18 @@
         <ul class=tabs>
             <li>
                 <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>Vulnerabilities <span class="badge c-purple">{{ $vulnerabilities->total() }}</span></label>
+                <label for=tab1>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $vulnerabilities->total() }}
+                        </span>
+                        <i class="fa fa-bomb fa-2x" aria-hidden="true"></i><br>
+                        <small>Vulnerabilities</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Vulnerabilities<span class="label-count c-grey">{{ $vulnerabilities->total() }}</span>
+                    </p>
+                </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     @if (empty($vulnerabilities) || $vulnerabilities->isEmpty())
@@ -79,7 +87,18 @@
             </li>
             <li>
                 <input type=radio name=tabs id=tab2>
-                <label for=tab2>Assets <span class="badge c-purple">{{ $assets->count() }}</span></label>
+                <label for=tab2>
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ $assets->count() }}
+                        </span>
+                        <i class="fa fa-server fa-2x" aria-hidden="true"></i><br>
+                        <small>Assets</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Assets<span class="label-count c-grey">{{ $assets->count() }}</span>
+                    </p>
+                </label>
                 <div id=tab-content2 class=tab-content>
                     <div class="dash-line"></div>
                     @if ($assets->isEmpty())

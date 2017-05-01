@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * App\Entities\Base\ComponentPermission
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`component_permissions`", indexes={@ORM\Index(name="component_permissions_component_fk_idx", columns={"`component_id`"}), @ORM\Index(name="component_permissions_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="component_permissions_user_granted_fk_idx", columns={"`granted_by`"}), @ORM\Index(name="component_permissions_team_fk", columns={"`team_id`"})})
+ * @ORM\Table(name="`component_permissions`", indexes={@ORM\Index(name="component_permissions_component_fk_idx", columns={"`component_id`"}), @ORM\Index(name="component_permissions_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="component_permissions_user_granted_fk_idx", columns={"`granted_by`"})})
  */
 class ComponentPermission extends AbstractEntity
 {
@@ -207,29 +207,6 @@ class ComponentPermission extends AbstractEntity
     }
 
     /**
-     * Set the value of team_id.
-     *
-     * @param integer $team_id
-     * @return \App\Entities\Base\ComponentPermission
-     */
-    public function setTeamId($team_id)
-    {
-        $this->team_id = $team_id;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of team_id.
-     *
-     * @return integer
-     */
-    public function getTeamId()
-    {
-        return $this->team_id;
-    }
-
-    /**
      * Set the value of granted_by.
      *
      * @param integer $granted_by
@@ -345,29 +322,6 @@ class ComponentPermission extends AbstractEntity
     }
 
     /**
-     * Set Team entity (many to one).
-     *
-     * @param \App\Entities\Base\Team $team
-     * @return \App\Entities\Base\ComponentPermission
-     */
-    public function setTeam(Team $team = null)
-    {
-        $this->team = $team;
-
-        return $this;
-    }
-
-    /**
-     * Get Team entity (many to one).
-     *
-     * @return \App\Entities\Base\Team
-     */
-    public function getTeam()
-    {
-        return $this->team;
-    }
-
-    /**
      * Set User entity related by `granted_by` (many to one).
      *
      * @param \App\Entities\Base\User $user
@@ -403,6 +357,6 @@ class ComponentPermission extends AbstractEntity
 
     public function __sleep()
     {
-        return array('id', 'component_id', 'instance_id', 'permission', 'user_id', 'team_id', 'granted_by', 'created_at', 'updated_at');
+        return array('id', 'component_id', 'instance_id', 'permission', 'user_id', 'granted_by', 'created_at', 'updated_at');
     }
 }

@@ -18,6 +18,7 @@ use App\Entities\OpenPort;
 use App\Entities\SoftwareInformation;
 use App\Entities\User;
 use App\Entities\Vulnerability;
+use App\Entities\VulnerabilityHttpData;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Exceptions\ParserMappingException;
@@ -35,6 +36,7 @@ use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
 use ReflectionClass;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use XMLReader;
 
 abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
@@ -177,9 +179,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 Asset::class                      => 'addAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
                 Exploit::class                    => 'addExploit',
+                VulnerabilityHttpData::class      => 'addVulnerabilityHttpData',
             ]),
 
             VulnerabilityReferenceCode::class => new Collection([
+                Vulnerability::class => 'setVulnerability',
+            ]),
+
+            VulnerabilityHttpData::class => new Collection([
                 Vulnerability::class => 'setVulnerability',
             ]),
 
@@ -239,7 +246,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             throw $e;
         }
 
-        $this->moveFileToProcessed($file);
+        $this->deleteProcessedFile($file);
     }
 
     /**
@@ -529,7 +536,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * @param File $file
      * @return bool
      */
-    public function moveFileToProcessed(File $file)
+    public function deleteProcessedFile(File $file)
     {
         // Empty or non-existent file
         if (empty($file)) {
@@ -545,34 +552,15 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
 	    	return true;
 	    }
 
-        // Get the path where processed files should be moved to
-        $processedFilePath = str_replace('scans/', 'scans/processed/', $file->getPath());
-        $processedPath     = $this->fileSystem->dirname($processedFilePath);
-
-        // Check if the directory exists and if not, create it
-        $dirExists = true;
-        if (!$this->fileSystem->exists($processedPath)) {
-            $dirExists = $this->fileSystem->makeDirectory($processedPath, 0744, true);
-        }
-
-        // Directory creation probably failed?
-        if (!$dirExists) {
-            $this->logger->log(Logger::ERROR, "Failed to create directory for processed file", [
-                'file'      => $file->getPath(),
-                'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
-            ]);
-            return false;
-        }
-
         // Attempt to move a file to it's processed directory location
-        if (!$this->fileSystem->move($file->getPath(), $processedFilePath)) {
-            $this->logger->log(Logger::ERROR, "Could not move processed file", [
+        if (!$this->fileSystem->delete($file->getPath())) {
+            $this->logger->log(Logger::ERROR, "Could not delete processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
                 'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
-            return false;
+
+            throw new FileException("Could not delete file after processing.");
         }
 
         return true;
@@ -664,7 +652,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Add the User relation where the entity implements the SystemComponent contract
         $this->addUserRelation($entity);
 
-        // Add the entity to the Entity Manager unless the persist
+        // Add the entity to the Entity Manager unless the persist flag is deliberately set to false
         if ($persist) {
             $this->em->persist($entity);
         }
@@ -1215,8 +1203,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $existingEntity = $this->em->getRepository($entityClass)->findOneBy($findOneByCriteria);
         if (!empty($existingEntity)) {
             $entity->setId($existingEntity->getId());
-            $entity = $this->em->merge($entity);
-            return $entity;
+            return $this->em->merge($entity);
         }
 
         return $entity;
@@ -1370,11 +1357,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Check if the base64 flag is set on the node
         $isBase64 = $this->checkForBase64Encoding();
 
-        // Move into the CData node
-        $this->parser->read();
-
-        // Exit early is this is not a CData field
-        if ($this->parser->nodeType !== XMLReader::CDATA) {
+        $value = $this->getCurrentNodesCDataValue();
+        if (empty($value)) {
             return;
         }
 
@@ -1390,7 +1374,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         }
 
         // Check if we need to base64 encode the raw request or response string
-        $value = $this->encodeRawHttpRequestOrResponse($setter, $isBase64, $this->parser->value);
+        $value = $this->encodeRawHttpRequestOrResponse($setter, $isBase64, $value);
 
         // If we have an empty value then exit early
         if (empty($value)) {
@@ -1406,6 +1390,29 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // When the append flag is set, append the heading and node contents to the the value that exists
         $getter = 'g' . substr($setter, 1);
         $entity->$setter($entity->$getter() . PHP_EOL . $heading . $value);
+    }
+
+    /**
+     * Get the value from the CData node that is a direct descendant of the current node.
+     *
+     * @return string
+     */
+    protected function getCurrentNodesCDataValue(): string
+    {
+        // Move into the CData node
+        $this->parser->read();
+
+        // Exit early is this is not a CData field
+        if ($this->parser->nodeType !== XMLReader::CDATA) {
+            return '';
+        }
+
+        $value = $this->parser->value;
+        if (empty($value)) {
+            return '';
+        }
+
+        return $value;
     }
 
     /**
