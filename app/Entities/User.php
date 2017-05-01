@@ -6,9 +6,12 @@ use App\Contracts\HasComponentPermissions;
 use App\Contracts\SystemComponent;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordsTrait;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use LaravelDoctrine\ORM\Notifications\Notifiable;
 use stdClass;
 
 /**
@@ -17,9 +20,10 @@ use stdClass;
  * @ORM\Entity(repositoryClass="App\Repositories\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class User extends Base\User implements Authenticatable, AuthorizableContract, SystemComponent, HasComponentPermissions
+class User extends Base\User implements Authenticatable, AuthorizableContract, SystemComponent, HasComponentPermissions,
+    CanResetPassword
 {
-    use Authorizable;
+    use Authorizable, CanResetPasswordsTrait, Notifiable;
 
     /**
      * Override the AbstractEntity method, just to provide a default set of attributes to include when coercing to
@@ -33,7 +37,7 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
         // Set a list of attributes to include by default when no specific list is given
         if (empty($onlyTheseAttributes)) {
             $onlyTheseAttributes = [
-                'id', 'name', 'email', 'photo_url', 'uses_two_factor_auth', 'created_at', 'updated_at'
+                'id', 'name', 'email', 'created_at', 'updated_at'
             ];
         }
 
@@ -96,7 +100,26 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      */
     public function getAuthIdentifier()
     {
-        return $this->id;
+        $name = $this->getAuthIdentifierName();
+
+        return $this->{$name};
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword()
+    {
+        return parent::getPassword();
+    }
+
+    /**
+     * @param string $password
+     * @return Base\User
+     */
+    public function setPassword($password)
+    {
+        return parent::setPassword($password);
     }
 
     /**
@@ -105,7 +128,27 @@ class User extends Base\User implements Authenticatable, AuthorizableContract, S
      */
     public function getAuthPassword()
     {
-        return $this->password;
+        return $this->getPassword();
+    }
+
+    /**
+     * Get the token value for the "remember me" session.
+     * @return string
+     */
+    public function getRememberToken()
+    {
+        return parent::getRememberToken();
+    }
+
+    /**
+     * Set the token value for the "remember me" session.
+     *
+     * @param string $value
+     * @return Base\User
+     */
+    public function setRememberToken($value)
+    {
+        return parent::setRememberToken($value);
     }
 
     /**
