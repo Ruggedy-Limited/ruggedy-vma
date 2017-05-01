@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use App\Contracts\SystemComponent;
+use App\Entities\Base\Vulnerability;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Support\Collection;
@@ -210,6 +211,12 @@ class File extends Base\File implements SystemComponent
         $this->audits->removeElement($audit);
 
         return $this;
+    }
+
+    public function addVulnerability(Vulnerability $vulnerability)
+    {
+        $vulnerability->setFileId($this->id);
+        return parent::addVulnerability($vulnerability);
     }
 
     /**
