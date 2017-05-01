@@ -119,6 +119,7 @@ class SettingsController extends AbstractController
             return redirect()->back()->withInput();
         }
 
+        $this->flashMessenger->success("New User created successfully.");
         return redirect()->route('settings.view');
     }
 
