@@ -1,6 +1,10 @@
 @if (!empty($thumbnail))
     <a class="thumbnail-block" href="{{ route('get.poc-image', ['slug' => basename($thumbnail)]) }}" target="_blank">
-        <span class="remove-poc" data-image-id="{{ $fieldName }}"><i class="fa fa-times t-c-red"></i></span>
+        <div class="remove-block">
+            <span class="remove-poc btn round-btn c-red" data-image-id="{{ $fieldName }}">
+                <i class="fa fa-trash fa-lg"></i>
+            </span>
+        </div>
         <div class="thumbnail-overlay"></div>
         <img class="thumbnail poc" src="{{ route('get.poc-image', ['slug' => basename($thumbnail)]) }}" />
         {!! Form::hidden($fieldName . '_path', $thumbnail) !!}

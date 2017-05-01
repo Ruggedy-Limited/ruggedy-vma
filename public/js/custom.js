@@ -287,7 +287,7 @@
             return;
         }
 
-        var thumbnailBlock = $(this).parent();
+        var thumbnailBlock = $(this).parent('.remove-block').parent();
         thumbnailBlock.siblings('label, input').removeClass('hidden');
         thumbnailBlock.remove();
     });
@@ -310,7 +310,7 @@
             + 'The Asset could not be deleted. Please try again.</div>',
             relatedAssets  = $('#related-assets'),
             iconAndOverlay = $('.container:first').children('.waiting-icon-container, .waiting-overlay'),
-            assetBlock     = $(this).parent('div').parent('a').parent('.asset'),
+            assetBlock     = $(this).parent('div').parent('div').parent('a').parent('.asset'),
             assetId        = $(this).data('asset-id'),
             assetsSelect   = $('#assets-select');
 

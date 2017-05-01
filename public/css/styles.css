@@ -1039,29 +1039,17 @@ a.remove-vulnerability {
     height: auto;
 }
 
-.remove-poc, .remove-asset {
+.remove-block {
     position: absolute;
     top: 2px;
     right: 2px;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     background: #fff;
     text-align: center;
     display: inline-block;
     z-index: 2;
     cursor: pointer;
-}
-
-.remove-poc i.fa-times, .remove-asset i.fa-times {
-    font-size: 1.2em;
-    -moz-transition: 200ms font-size ease-in;
-    -o-transition:  200ms font-size ease-in;
-    -webkit-transition: 200ms font-size ease-in;
-    transition: 200ms font-size ease-in;
-}
-
-.remove-poc:hover i.fa-times, .remove-asset:hover i.fa-times {
-    font-size: 1.3em;
 }
 
 .http-data a.collapsed .collapsed-state, .http-data a:not(.collapsed) .expanded-state {
