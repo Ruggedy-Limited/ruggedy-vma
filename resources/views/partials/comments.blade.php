@@ -24,5 +24,8 @@
                 </ul>
             @endif
         </div>
+        <div class="col-xs-12">
+            {{ $comments->links() }}
+        </div>
     </div>
 </div>

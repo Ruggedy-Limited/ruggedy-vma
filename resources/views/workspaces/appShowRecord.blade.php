@@ -121,31 +121,15 @@
                 </div>
             </li>
             <li>
-                <input type=radio name=tabs id=tab3>
-                <label for=tab3>
-                    <div class="visible-xs mobile-tab">
-                        <span class="label-count c-grey">
-                            {{ $assets->count() }}
-                        </span>
-                        <i class="fa fa-server fa-2x" aria-hidden="true"></i><br>
-                        <small>Assets</small>
-                    </div>
-                    <p class="hidden-xs">
-                        Assets<span class="label-count c-grey">{{ $assets->count() }}</span>
-                    </p>
-                    </label>
-                <div id=tab-content3 class=tab-content>
-                    <div class="dash-line"></div>
-                    @include('partials.assets')
-                </div>
+                @include('partials.assets-tab', ['tabNo' => 2])
             </li>
-            @if (!$vulnerability->getVulnerabilityHttpData()->isEmpty())
+            @if (!empty($httpDataCollection) && !$httpDataCollection->isEmpty())
                 <li>
                     <input type=radio name=tabs id=tab4>
                     <label for=tab4>
                         <div class="visible-xs mobile-tab">
                             <span class="label-count c-grey">
-                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                                {{ $httpDataCollection->total() }}
                             </span>
                             <i class="fa fa-link fa-2x" aria-hidden="true"></i><br>
                             <small>URLs</small>
@@ -153,16 +137,19 @@
                         <p class="hidden-xs">
                             URLs
                             <span class="label-count c-grey">
-                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                                {{ $httpDataCollection->total() }}
                             </span>
                         </p>
                     </label>
                     <div id=tab-content4 class=tab-content>
                         <div class="dash-line"></div>
                         <div class="col-md-12">
-                            @foreach ($vulnerability->getVulnerabilityHttpData() as $httpData)
+                            @foreach ($httpDataCollection as $httpData)
                                 @include('partials.http-data')
                             @endforeach
+                        </div>
+                        <div class="col-xs-12">
+                            {{ $httpDataCollection->links() }}
                         </div>
                     </div>
                 </li>
@@ -172,13 +159,13 @@
                 <label for=tab5>
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
-                            {{ $comments->count() }}
+                            {{ !empty($comments) ? $comments->total() : 0 }}
                         </span>
                         <i class="fa fa-comments fa-2x" aria-hidden="true"></i><br>
                         <small>Comments</small>
                     </div>
                     <p class="hidden-xs">
-                        Comments<span class="label-count c-grey">{{ $comments->count() }}</span>
+                        Comments<span class="label-count c-grey">{{ !empty($comments) ? $comments->total() : 0 }}</span>
                     </p>
                 </label>
                 <div id=tab-content4 class=tab-content>
