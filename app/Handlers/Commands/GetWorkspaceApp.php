@@ -7,6 +7,7 @@ use App\Entities\WorkspaceApp;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\WorkspaceAppNotFoundException;
 use App\Policies\ComponentPolicy;
+use App\Repositories\FileRepository;
 use App\Repositories\WorkspaceAppRepository;
 
 class GetWorkspaceApp extends CommandHandler
@@ -14,14 +15,19 @@ class GetWorkspaceApp extends CommandHandler
     /** @var WorkspaceAppRepository */
     protected $workspaceAppRepository;
 
+    /** @var FileRepository */
+    protected $fileRepository;
+
     /**
      * GetWorkspaceApp constructor.
      *
      * @param WorkspaceAppRepository $workspaceAppRepository
+     * @param FileRepository $fileRepository
      */
-    public function __construct(WorkspaceAppRepository $workspaceAppRepository)
+    public function __construct(WorkspaceAppRepository $workspaceAppRepository, FileRepository $fileRepository)
     {
         $this->workspaceAppRepository = $workspaceAppRepository;
+        $this->fileRepository         = $fileRepository;
     }
 
     /**
@@ -49,6 +55,9 @@ class GetWorkspaceApp extends CommandHandler
             throw new ActionNotPermittedException("The requesting User is not permitted to view this WorkspaceApp.");
         }
 
-        return $workspaceApp;
+        return collect([
+            'app'   => $workspaceApp,
+            'files' => $this->fileRepository->findByApp($workspaceApp->getId()),
+        ]);
     }
 }
