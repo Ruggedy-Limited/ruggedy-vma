@@ -42,20 +42,20 @@
                 <label for=tab1>
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
-                            {{ $workspaceApp->getFiles()->count() }}
+                            {{ !empty($files) ? $files->total() : 0 }}
                         </span>
                         <i class="fa fa-file fa-2x" aria-hidden="true"></i><br>
                         <small>Files</small>
                     </div>
                     <p class="hidden-xs">
-                        Files<span class="label-count c-grey">{{ $workspaceApp->getFiles()->count() }}</span>
+                        Files<span class="label-count c-grey">{{ !empty($files) ? $files->total() : 0 }}</span>
                     </p>
                 </label>
                 <div id=tab-content1 class=tab-content>
                     <div class="dash-line"></div>
                     <div>
                         <div>
-                            @if ($workspaceApp->getFiles()->count() < 1)
+                            @if (empty($files) || $files->isEmpty())
                                 <br>
                                 <div class="col-xs-12">
                                 <p class="p-l-8">
@@ -67,16 +67,21 @@
                                 </p>
                                 </div>
                             @else
-                                @foreach($workspaceApp->getFiles() as $file)
-                                    <div class="col-md-4 animated pulse-hover">
-                                        <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
-                                            <div class="content-card">
-                                                <h4 class="h-4-1">{{ $file->getName() }}</h4>
-                                                <p>{{ $file->getDescription() }}</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                @endforeach
+                                <div class="row">
+                                    @foreach($files as $file)
+                                        <div class="col-md-4 animated pulse-hover">
+                                            <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
+                                                <div class="content-card">
+                                                    <h4 class="h-4-1">{{ $file->getName() }}</h4>
+                                                    <p>{{ $file->getDescription() }}</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="row">
+                                    {{ $files->links() }}
+                                </div>
                             @endif
                         </div>
                     </div>

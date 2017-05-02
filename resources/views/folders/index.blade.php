@@ -28,25 +28,7 @@
     <div class="row animated fadeIn">
         <ul class=tabs>
             <li>
-                <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>
-                    <div class="visible-xs mobile-tab">
-                        <span class="label-count c-grey">{{ $vulnerabilities->total() }}</span>
-                        <i class="fa fa-bomb fa-2x" aria-hidden="true"></i>
-                        <small>Vulnerabilities</small>
-                    </div>
-                    <p class="hidden-xs">
-                        Vulnerabilities <span class="label-count c-grey">{{ $vulnerabilities->total() }}</span>
-                    </p>
-                </label>
-                <div id=tab-content1 class=tab-content>
-                    <div class="dash-line"></div>
-                    <div>
-                        <div>
-                            @include('partials.vulnerabilities')
-                        </div>
-                    </div>
-                </div>
+                @include('partials.vulnerabilities-tab', ['tabNo' => 1])
             </li>
         </ul>
         <br style=clear:both;>
