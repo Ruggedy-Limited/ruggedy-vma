@@ -20,6 +20,10 @@ class HomeController extends AbstractController
     {
         $command = new GetListOfWorkspaces(0);
         $workspaces = $this->sendCommandToBusHelper($command);
+        if ($this->isCommandError($workspaces)) {
+            return view('layouts.main');
+        }
+
         return view('home', ['workspaces' => $workspaces]);
     }
 

@@ -25,15 +25,10 @@ class GetListOfWorkspaces extends CommandHandler
      * Process the GetListOfWorkspaces command.
      *
      * @param GetListOfWorkspacesCommand $command
-     * @return array
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function handle(GetListOfWorkspacesCommand $command)
     {
-        $userId = $command->getId();
-        if (empty($userId)) {
-            return $this->workspaceRepository->findAll();
-        }
-
-        return $this->workspaceRepository->findBy([Workspace::USER_ID => $userId]);
+        return $this->workspaceRepository->findAllQuery($command->getId());
     }
 }
