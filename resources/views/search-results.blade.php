@@ -9,23 +9,6 @@
 @endsection
 
 @section('content')
-    <!-- Modal -->
-    <div id="help" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Title</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Help text goes here.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
     @if (empty($searchResults) || $searchResults->isEmpty())
         <div class="col-sm-12">
             <h4 class="p-l-8">No matching records found for "{{ $searchTerm }}". Please try a different search term.</h4>
