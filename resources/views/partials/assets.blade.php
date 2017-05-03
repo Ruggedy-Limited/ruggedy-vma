@@ -25,6 +25,6 @@
         @endforeach
     </div>
     <div class="row">
-        {{ $assets->links() }}
+        {{ !empty($tabNo) ? $assets->fragment('tab' . $tabNo)->links() : $assets->links() }}
     </div>
 @endif

@@ -25,7 +25,7 @@
             @endif
         </div>
         <div class="col-xs-12">
-            {{ $comments->links() }}
+            {{ $comments->fragment('tab5')->links() }}
         </div>
     </div>
 </div>

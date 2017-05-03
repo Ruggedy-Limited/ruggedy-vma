@@ -26,7 +26,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                {{ $apps->links() }}
+                {{ $apps->fragment('tab' . $tabNo)->links() }}
             </div>
         </div>
     @endif
