@@ -14,10 +14,16 @@
 <div id="tab-content{{ $tabNo }}" class="tab-content">
     <div class="dash-line"></div>
     @if (empty($apps) || $apps->isEmpty())
-        <p>
-            No Apps in this Workspace yet.
-            <a href="{{ route('workspaces.apps') }}">Add an Application.</a>
-        </p>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="content-card">
+                    No Apps in this Workspace yet.
+                    <a href="{{ route('workspace.apps', [
+                        $workspace->getRouteParameterName() => $workspace->getId()
+                    ]) }}">Add an Application.</a>
+                </div>
+            </div>
+        </div>
     @else
         <div class="row">
             @foreach ($apps as $app)
