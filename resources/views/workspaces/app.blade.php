@@ -38,8 +38,8 @@
     <div class="row animated fadeIn">
         <ul class=tabs>
             <li>
-                <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>
+                <input type="radio" name="tabs" id="tab1" checked>
+                <label for="tab1">
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
                             {{ !empty($files) ? $files->total() : 0 }}
@@ -51,7 +51,7 @@
                         Files<span class="label-count c-grey">{{ !empty($files) ? $files->total() : 0 }}</span>
                     </p>
                 </label>
-                <div id=tab-content1 class=tab-content>
+                <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
                     <div>
                         <div>
