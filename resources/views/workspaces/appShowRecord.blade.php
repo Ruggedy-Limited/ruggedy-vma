@@ -77,15 +77,15 @@
     <div class="row animated fadeIn {{ $vulnerability->getFile()->getWorkspaceApp()->getScannerApp()->getName() }}">
         <ul class=tabs>
             <li>
-                <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>
+                <input type="radio" name="tabs" id="tab1" checked>
+                <label for="tab1">
                     <div class="visible-xs mobile-tab">
                         <i class="fa fa-bomb fa-2x" aria-hidden="true"></i><br>
                         <small>Vulnerability</small>
                     </div>
                     <p class="hidden-xs">Vulnerability</p>
                 </label>
-                <div id=tab-content1 class=tab-content>
+                <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="m-t-15">
@@ -103,15 +103,15 @@
                 </div>
             </li>
             <li>
-                <input type=radio name=tabs id=tab2>
-                <label for=tab2>
+                <input type="radio" name="tabs" id="tab2">
+                <label for="tab2">
                     <div class="visible-xs mobile-tab">
                         <i class="fa fa-thumbs-up fa-2x" aria-hidden="true"></i><br>
                         <small>Solution</small>
                     </div>
                     <p class="hidden-xs">Solution</p>
                 </label>
-                <div id=tab-content2 class=tab-content>
+                <div id="tab-content2" class="tab-content">
                     <div class="dash-line"></div>
                     <div class="col-md-6">
                         <div class="content-card solution">
@@ -125,8 +125,8 @@
             </li>
             @if (!empty($httpDataCollection) && !$httpDataCollection->isEmpty())
                 <li>
-                    <input type=radio name=tabs id=tab4>
-                    <label for=tab4>
+                    <input type="radio" name="tabs" id="tab4">
+                    <label for="tab4">
                         <div class="visible-xs mobile-tab">
                             <span class="label-count c-grey">
                                 {{ $httpDataCollection->total() }}
@@ -141,7 +141,7 @@
                             </span>
                         </p>
                     </label>
-                    <div id=tab-content4 class=tab-content>
+                    <div id="tab-content4" class="tab-content">
                         <div class="dash-line"></div>
                         <div class="col-md-12">
                             @foreach ($httpDataCollection as $httpData)
@@ -155,8 +155,8 @@
                 </li>
             @endif
             <li>
-                <input type=radio name=tabs id=tab5>
-                <label for=tab5>
+                <input type="radio" name="tabs" id="tab5">
+                <label for="tab5">
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
                             {{ !empty($comments) ? $comments->total() : 0 }}
@@ -168,7 +168,7 @@
                         Comments<span class="label-count c-grey">{{ !empty($comments) ? $comments->total() : 0 }}</span>
                     </p>
                 </label>
-                <div id=tab-content4 class=tab-content>
+                <div id="tab-content5" class="tab-content">
                     <div class="dash-line"></div>
                     @include('partials.comments')
                 </div>
