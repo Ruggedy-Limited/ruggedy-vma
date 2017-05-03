@@ -26,7 +26,7 @@
                     @include('partials.workspace')
                 @endforeach
                 <div class="col-xs-12">
-                    {{ $workspaces->links() }}
+                    {{ $workspaces->fragment('tab' . $tabNo)->links() }}
                 </div>
             @endif
         </div>

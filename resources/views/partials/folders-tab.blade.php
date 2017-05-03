@@ -25,7 +25,7 @@
             @endforeach
         </div>
         <div class="row">
-            {{ $folders->links() }}
+            {{ $folders->fragment('tab' . $tabNo)->links() }}
         </div>
     @endif
 </div>

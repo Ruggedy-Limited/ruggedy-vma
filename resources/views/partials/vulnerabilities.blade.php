@@ -30,7 +30,7 @@
         </div>
     @endforeach
     <div class="col-xs-12">
-    {{ $vulnerabilities->links() }}
+    {{ !empty($tabNo) ? $vulnerabilities->fragment('tab' . $tabNo)->links() : $vulnerabilities->links() }}
     </div>
 @endif
 

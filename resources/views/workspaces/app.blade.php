@@ -80,7 +80,7 @@
                                     @endforeach
                                 </div>
                                 <div class="row">
-                                    {{ $files->links() }}
+                                    {{ $files->fragment('tab1')->links() }}
                                 </div>
                             @endif
                         </div>

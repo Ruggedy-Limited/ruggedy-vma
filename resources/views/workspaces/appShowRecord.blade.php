@@ -149,7 +149,7 @@
                             @endforeach
                         </div>
                         <div class="col-xs-12">
-                            {{ $httpDataCollection->links() }}
+                            {{ $httpDataCollection->fragment('tab4')->links() }}
                         </div>
                     </div>
                 </li>
