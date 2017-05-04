@@ -76,8 +76,18 @@ class FileController extends AbstractController
      */
     public function uploadFile($workspaceAppId)
     {
+        $rules = $this->getValidationRules();
+        $rules['file'] = 'bail|required|file';
+
+        $messages = $this->getValidationMessages();
+        $messages['file'] = [
+            'required' => 'A file must be selected to create a new file entry and upload the file but it does not '
+                . 'seem like you selected one. Please try again.',
+            'file'     => 'Either the selected file was not valid, or the file upload failed. Please try again.',
+        ];
+
         // Validate the request
-        $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
+        $this->validate($this->request, $rules, $messages);
 
         // Initialise a new File entity to send with the command
         $file = new File();
@@ -175,7 +185,6 @@ class FileController extends AbstractController
     {
         return [
             'name' => 'bail|filled',
-            'file' => 'bail|filled|file',
         ];
     }
 
@@ -188,12 +197,7 @@ class FileController extends AbstractController
     {
         return [
             'name.filled' => 'A name is required to create a new File but it does not seem like you entered one. '
-                .'Please try again.',
-            'file'        => [
-                'filled'   => 'A file must be selected to create a new file entry and upload the file but it does not '
-                    . 'seem like you selected one. Please try again.',
-                'file'     => 'Either the selected file was not valid, or the file upload failed. Please try again.',
-            ],
+                . 'Please try again.',
         ];
     }
 }
