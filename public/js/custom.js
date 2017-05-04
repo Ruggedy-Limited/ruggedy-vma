@@ -63,9 +63,9 @@
     });
 })(jQuery);
 
-// Check for new comments every 30 seconds
+// Check for new comments every 20 seconds
 (function ($) {
-    if ($('.chat-card').length < 1) {
+    if ($('.chat-card').length < 1 || window.location.toString().match(/comments_page=[2-9]([0-9]+)*/) !== null) {
         return;
     }
 
