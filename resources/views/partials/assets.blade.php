@@ -1,5 +1,5 @@
 @if (empty($assets) || $assets->isEmpty())
-    @if ($isRuggedyApp)
+    @if (!empty($isRuggedyApp))
         <div class="row">
             <div class="col-xs-12">
                 <div class="content-card">
