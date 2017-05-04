@@ -121,7 +121,7 @@
                 </div>
             </li>
             <li>
-                @include('partials.assets-tab', ['tabNo' => 2])
+                @include('partials.assets-tab', ['tabNo' => 3])
             </li>
             @if (!empty($httpDataCollection) && !$httpDataCollection->isEmpty())
                 <li>
