@@ -75,14 +75,18 @@ class WorkspaceController extends AbstractController
     public function view($workspaceId)
     {
         // Create a command and send it over the bus to the handler
-        $command = new GetWorkspace(intval($workspaceId));
-        $workspace = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($workspace)) {
+        if ($this->isCommandError($workspaceInfo)) {
             return redirect()->back()->withInput();
         }
 
-        return view('workspaces.view', ['workspace' => $workspace]);
+        return view('workspaces.view', [
+            'workspace' => $workspaceInfo->get('workspace'),
+            'apps'      => $workspaceInfo->get('apps'),
+            'folders'   => $workspaceInfo->get('folders'),
+        ]);
     }
 
     /**
@@ -95,19 +99,19 @@ class WorkspaceController extends AbstractController
      */
     public function edit($workspaceId)
     {
-        $command = new GetWorkspace(intval($workspaceId));
-        $workspace = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($workspace)) {
+        if ($this->isCommandError($workspaceInfo)) {
             return redirect()->back();
         }
 
-        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceInfo->get('workspace'))) {
             $this->flashMessenger->error("You do not have permission to edit that Workspace.");
             return redirect()->back();
         }
 
-        return view('workspaces.edit', ['workspace' => $workspace]);
+        return view('workspaces.edit', ['workspace' => $workspaceInfo->get('workspace')]);
     }
 
     /**

@@ -70,15 +70,17 @@ class GetFile extends CommandHandler
             });
         }
 
-        $assets = collect($file->getAssets())->sortByDesc(function ($asset) {
-            /** @var Asset $asset */
-            return $asset->getAssetTotalRisk();
-        });
+        $assets = $this->assetRepository->findByFileQuery($command->getId());
+        if (!$assets->isEmpty()) {
+            $assets->getCollection()->transform(function ($result) {
+                return current($result);
+            });
+        }
 
-        return [
+        return collect([
             Vulnerability::FILE   => $file,
             File::ASSETS          => $assets,
             File::VULNERABILITIES => $vulnerabilities,
-        ];
+        ]);
     }
 }

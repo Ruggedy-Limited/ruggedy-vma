@@ -90,7 +90,10 @@ Breadcrumbs::register('dynamic', function($breadcrumbs, $param1 = null) {
                      $breadcrumbText = $entity->getScannerApp()->getFriendlyName() . ' ';
                  }
 
-                 $breadcrumbText .= $entity->getDisplayName();
+                 if (!($entity instanceof App\Entities\WorkspaceApp && $entity->isRuggedyApp())) {
+                     $breadcrumbText .= $entity->getDisplayName();
+                 }
+
                  if (method_exists($entity, 'getName')) {
                      $breadcrumbText .= ": " . $entity->getName();
                  }

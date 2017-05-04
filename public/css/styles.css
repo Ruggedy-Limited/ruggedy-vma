@@ -1339,6 +1339,10 @@ Start: Tabs
     margin-bottom: 15px;
 }
 
+.tabs .tab-content .row {
+    margin: 0;
+}
+
 .dash-line {
     border-top: 2px dashed #8f93a5;
     margin-left:20px;

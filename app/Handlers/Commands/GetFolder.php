@@ -55,6 +55,11 @@ class GetFolder extends CommandHandler
         }
 
         $vulnerabilities = $this->vulnerabilityRepository->findByFolderQuery($command->getId());
+        if (!empty($vulnerabilities)) {
+            $vulnerabilities->getCollection()->transform(function ($result) {
+                return current($result);
+            });
+        }
 
         return [
             'folder'                => $folder,
