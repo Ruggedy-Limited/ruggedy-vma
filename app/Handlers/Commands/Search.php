@@ -60,13 +60,15 @@ class Search extends CommandHandler
                      return $searchResults;
                  }
 
-                 // Intitial results filtered by permissions where relevant
-                 $results = collect($repository->search($searchTerm))->filter(function ($entity) use ($requestingUser) {
-                     if ($entity instanceof Vulnerability) {
-                         return true;
-                     }
+                 $paginator = $repository->search($searchTerm);
 
-                     return $requestingUser->can(ComponentPolicy::ACTION_VIEW, $entity);
+                 // Intitial results removing any aggregate fields used for sorting
+                 $results = $paginator->getCollection()->map(function ($result) {
+                     return is_array($result) ? current($result) : $result;
+                 })->filter(function ($entity) use ($requestingUser) {
+                     // Filter by permissions where relevant
+                     return $entity instanceof Vulnerability
+                         || $requestingUser->can(ComponentPolicy::ACTION_VIEW, $entity);
                  });
 
                  // No allowed, matching results? Return the Collection that has been carried over from the previous
@@ -85,7 +87,7 @@ class Search extends CommandHandler
                  // Add the results at a key which is the entity's display name
                  /** @var AbstractEntity $entity */
                  $entity = $results->first();
-                 return $searchResults->put($entity->getDisplayName(true), $results);
+                 return $searchResults->put($entity->getDisplayName(true), $paginator->setCollection($results));
             }, new Collection());
     }
 }

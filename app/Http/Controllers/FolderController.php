@@ -28,13 +28,14 @@ class FolderController extends AbstractController
      */
     public function create($workspaceId)
     {
-        $command   = new GetWorkspace(intval($workspaceId));
-        $workspace = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($workspace)) {
+        if ($this->isCommandError($workspaceInfo)) {
             return redirect()->back();
         }
 
+        $workspace = $workspaceInfo->get('workspace');
         if (Auth::user()->cannot(ComponentPolicy::ACTION_CREATE, $workspace)) {
             $this->flashMessenger->error("You do not have permission to create Folders in this Workspace.");
             return redirect()->back();
@@ -42,7 +43,7 @@ class FolderController extends AbstractController
 
         return view('folders.create', [
             'workspaceId' => intval($workspaceId),
-            'workspace'   => $workspace,
+            'workspace'   => $workspaceInfo->get('workspace'),
         ]);
     }
 

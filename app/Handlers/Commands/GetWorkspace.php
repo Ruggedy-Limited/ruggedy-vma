@@ -8,28 +8,44 @@ use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
+use App\Repositories\FolderRepository;
+use App\Repositories\WorkspaceAppRepository;
 use App\Repositories\WorkspaceRepository;
+use Illuminate\Support\Collection;
 
 class GetWorkspace extends CommandHandler
 {
     /** @var WorkspaceRepository */
     protected $workspaceRepository;
 
+    /** @var WorkspaceAppRepository */
+    protected $appRepository;
+
+    /** @var FolderRepository */
+    protected $folderRepository;
+
     /**
      * GetListOfVulnerabilitiesInWorkspace constructor.
      *
      * @param WorkspaceRepository $workspaceRepository
+     * @param WorkspaceAppRepository $appRepository
+     * @param FolderRepository $folderRepository
      */
-    public function __construct(WorkspaceRepository $workspaceRepository)
+    public function __construct(
+        WorkspaceRepository $workspaceRepository, WorkspaceAppRepository $appRepository,
+        FolderRepository $folderRepository
+    )
     {
         $this->workspaceRepository = $workspaceRepository;
+        $this->appRepository       = $appRepository;
+        $this->folderRepository    = $folderRepository;
     }
 
     /**
      * Process the GetListOfVulnerabilitiesInWorkspace command
      *
      * @param GetWorkspaceCommand $command
-     * @return Workspace
+     * @return Collection
      * @throws ActionNotPermittedException
      * @throws InvalidInputException
      * @throws WorkspaceNotFoundException
@@ -57,8 +73,12 @@ class GetWorkspace extends CommandHandler
                 . "Vulnerabilities from that Workspace");
         }
 
-        // Return the Workspace entity
-        return $workspace;
+        // Return the Workspace entity and paginated apps and folders
+        return collect([
+            'workspace' => $workspace,
+            'apps'      => $this->appRepository->findByWorkspace($workspaceId),
+            'folders'   => $this->folderRepository->findByWorkspace($workspaceId),
+        ]);
     }
 
     /**
