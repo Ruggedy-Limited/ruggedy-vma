@@ -267,7 +267,7 @@ CREATE TABLE `files_open_ports` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `file_open_port_idx` (`file_id`,`open_port_id`),
   KEY `files_open_ports_open_port_fk` (`open_port_id`),
-  CONSTRAINT `files_open_ports_file_fk` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `files_open_ports_file_fk` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `files_open_ports_open_port_fk` FOREIGN KEY (`open_port_id`) REFERENCES `open_ports` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
