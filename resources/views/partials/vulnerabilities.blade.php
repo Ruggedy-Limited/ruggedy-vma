@@ -5,7 +5,7 @@
             <p class="p-l-8">No Vulnerabilities here yet. To add one, when viewing a Vulnerability, click the "Add to
                 Folder" button and select this folder from the list.</p>
         </div>
-    @elseif ($isRuggedyApp)
+    @elseif (!empty($isRuggedyApp))
         <div class="row">
             <div class="col-xs-12">
                 <div class="content-card">
