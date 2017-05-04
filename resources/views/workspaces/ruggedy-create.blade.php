@@ -15,7 +15,7 @@
     {!! Form::open([
         'url' => route(
             'vulnerability.store',
-            [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]
+            [$file->getRouteParameterName() => $file->getId()]
         ),
         'files' => 'true'
     ]) !!}
