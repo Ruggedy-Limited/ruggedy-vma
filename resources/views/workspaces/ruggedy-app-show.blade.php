@@ -28,7 +28,7 @@
     <div class="row animated fadeIn">
         <div class="col-md-12">
             @can (App\Policies\ComponentPolicy::ACTION_CREATE, $file->getWorkspaceApp())
-                <a href="{{ route('vulnerability.create', ['fileId' => $file->getId()]) }}"
+                <a href="{{ route('vulnerability.create', ['workspaceAppId' => $file->getWorkspaceApp()->getId()]) }}"
                     class="primary-btn" type="button">Add Vulnerability</a>
             @endcan
         </div>
