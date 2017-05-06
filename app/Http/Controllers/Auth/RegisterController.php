@@ -63,7 +63,7 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
-        return view('auth.register');
+        return redirect()->route('home');
     }
 
     /**
@@ -74,16 +74,7 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        $user = new UserEntity();
-        $user->setFromArray($request->all());
-        $this->validator()->validate($user);
-
-        event(new Registered($user = $this->create($request->all())));
-
-        $this->guard()->login($user);
-
-        return $this->registered($request, $user)
-            ?: redirect($this->redirectPath());
+        return redirect()->route('home');
     }
 
     /**
