@@ -11,7 +11,7 @@ use App\Policies\ComponentPolicy;
 use Auth;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class FileController extends AbstractController
 {
@@ -32,7 +32,11 @@ class FileController extends AbstractController
             return redirect()->back();
         }
 
-        return view('workspaces.app-show', $fileInfo);
+        return view('workspaces.app-show', [
+            'file'            => $fileInfo->get('file'),
+            'vulnerabilities' => $fileInfo->get('vulnerabilities'),
+            'assets'          => $fileInfo->get('assets'),
+        ]);
     }
 
     /**
@@ -46,19 +50,19 @@ class FileController extends AbstractController
      */
     public function addFile($workspaceAppId)
     {
-        $command      = new GetWorkspaceApp(intval($workspaceAppId));
-        $workspaceApp = $this->sendCommandToBusHelper($command);
+        $command          = new GetWorkspaceApp(intval($workspaceAppId));
+        $workspaceAppInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($workspaceApp)) {
+        if ($this->isCommandError($workspaceAppInfo)) {
             return redirect()->back();
         }
 
-        if (Auth::user()->cannot(ComponentPolicy::ACTION_CREATE, $workspaceApp)) {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_CREATE, $workspaceAppInfo->get('app'))) {
             $this->flashMessenger->error("You do not have permission to add Files to this App.");
             return redirect()->back();
         }
 
-        return view('workspaces.addFile', ['workspaceApp' => $workspaceApp]);
+        return view('workspaces.addFile', ['workspaceApp' => $workspaceAppInfo->get('app')]);
     }
 
     /**
@@ -72,8 +76,18 @@ class FileController extends AbstractController
      */
     public function uploadFile($workspaceAppId)
     {
+        $rules = $this->getValidationRules();
+        $rules['file'] = 'bail|required|file';
+
+        $messages = $this->getValidationMessages();
+        $messages['file'] = [
+            'required' => 'A file must be selected to create a new file entry and upload the file but it does not '
+                . 'seem like you selected one. Please try again.',
+            'file'     => 'Either the selected file was not valid, or the file upload failed. Please try again.',
+        ];
+
         // Validate the request
-        $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
+        $this->validate($this->request, $rules, $messages);
 
         // Initialise a new File entity to send with the command
         $file = new File();
@@ -108,12 +122,12 @@ class FileController extends AbstractController
             return redirect()->back();
         }
 
-        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $fileInfo['file'])) {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $fileInfo->get('file'))) {
             $this->flashMessenger->error("You do not have permission to edit that File.");
             return redirect()->back();
         }
 
-        return view('workspaces.edit-file', ['file' => $fileInfo['file']]);
+        return view('workspaces.edit-file', ['file' => $fileInfo->get('file')]);
     }
 
     /**
@@ -171,7 +185,6 @@ class FileController extends AbstractController
     {
         return [
             'name' => 'bail|filled',
-            'file' => 'bail|filled|file',
         ];
     }
 
@@ -184,12 +197,7 @@ class FileController extends AbstractController
     {
         return [
             'name.filled' => 'A name is required to create a new File but it does not seem like you entered one. '
-                .'Please try again.',
-            'file'        => [
-                'filled'   => 'A file must be selected to create a new file entry and upload the file but it does not '
-                    . 'seem like you selected one. Please try again.',
-                'file'     => 'Either the selected file was not valid, or the file upload failed. Please try again.',
-            ],
+                . 'Please try again.',
         ];
     }
 }

@@ -54,11 +54,11 @@ div.container {
 }
 
 textarea:hover,
-input:hover,
+input:hover:not([type="checkbox"]):not([type="radio"]),
 textarea:active,
-input:active,
+input:active:not([type="checkbox"]):not([type="radio"]),
 textarea:focus,
-input:focus,
+input:focus:not([type="checkbox"]):not([type="radio"]),
 button:focus,
 button:active,
 button:hover,
@@ -67,6 +67,10 @@ label:focus,
 .btn.active {
     outline: 0 !important;
     -webkit-appearance: none;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
 }
 
 .label-high {
@@ -1008,7 +1012,48 @@ a.remove-vulnerability {
     position: absolute;
     right: 30px;
     top: 30px;
+    z-index: 2;
+}
+
+.thumbnail-block {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+.thumbnail-overlay {
+    position: absolute;;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0;
     z-index: 1;
+    -moz-transition: 200ms opacity ease-in;
+    -o-transition:  200ms opacity ease-in;
+    -webkit-transition: 200ms opacity ease-in;
+    transition: 200ms opacity ease-in;
+}
+
+.remove-poc:hover ~ .thumbnail-overlay {
+    opacity: 0.4;
+}
+
+.poc {
+    width: 100%;
+    height: auto;
+}
+
+.remove-block {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    text-align: center;
+    display: inline-block;
+    z-index: 2;
+    cursor: pointer;
 }
 
 .http-data a.collapsed .collapsed-state, .http-data a:not(.collapsed) .expanded-state {
@@ -1184,8 +1229,7 @@ select {
     opacity: 0;
 }
 
-.modal .waiting-icon-container {
-    display: block;
+.waiting-icon-container {
     position: absolute;
     top: 45%;
     left: 45%;
@@ -1193,11 +1237,11 @@ select {
     display: none;
 }
 
-.modal .waiting-icon-container .fa {
+.waiting-icon-container .fa {
     color: #fff;
 }
 
-.modal .waiting-overlay {
+.waiting-overlay {
     background: #000;
     opacity: 0.3;
     position: absolute;
@@ -1293,6 +1337,10 @@ Start: Tabs
     left: 0;
     background: transparent;
     margin-bottom: 15px;
+}
+
+.tabs .tab-content .row {
+    margin: 0;
 }
 
 .dash-line {

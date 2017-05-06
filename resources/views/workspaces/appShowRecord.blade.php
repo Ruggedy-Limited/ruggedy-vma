@@ -14,27 +14,26 @@
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
     </a>
+    @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
+        <a href="{{ route('vulnerability.delete', [
+            $vulnerability->getRouteParameterName() => $vulnerability->getId()
+        ]) }}">
+            <button type="button" class="btn round-btn pull-right c-red">
+                <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+        <a href="{{ route('vulnerability.edit', [
+            $vulnerability->getRouteParameterName() => $vulnerability->getId()
+        ]) }}">
+            <button type="button" class="btn round-btn pull-right c-purple">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endif
     {!! Breadcrumbs::render('dynamic', $vulnerability) !!}
 @endsection
 
 @section('content')
-    <!-- Modal -->
-    <div id="help" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Help text goes here.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
     <!-- JIRA -->
     @include('partials.jira-form')
     <!-- Folder -->
@@ -78,15 +77,15 @@
     <div class="row animated fadeIn {{ $vulnerability->getFile()->getWorkspaceApp()->getScannerApp()->getName() }}">
         <ul class=tabs>
             <li>
-                <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>
+                <input type="radio" name="tabs" id="tab1" checked>
+                <label for="tab1">
                     <div class="visible-xs mobile-tab">
                         <i class="fa fa-bomb fa-2x" aria-hidden="true"></i><br>
                         <small>Vulnerability</small>
                     </div>
                     <p class="hidden-xs">Vulnerability</p>
                 </label>
-                <div id=tab-content1 class=tab-content>
+                <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
                     <div class="col-md-12">
                         <div class="m-t-15">
@@ -104,15 +103,15 @@
                 </div>
             </li>
             <li>
-                <input type=radio name=tabs id=tab2>
-                <label for=tab2>
+                <input type="radio" name="tabs" id="tab2">
+                <label for="tab2">
                     <div class="visible-xs mobile-tab">
                         <i class="fa fa-thumbs-up fa-2x" aria-hidden="true"></i><br>
                         <small>Solution</small>
                     </div>
                     <p class="hidden-xs">Solution</p>
                 </label>
-                <div id=tab-content2 class=tab-content>
+                <div id="tab-content2" class="tab-content">
                     <div class="dash-line"></div>
                     <div class="col-md-6">
                         <div class="content-card solution">
@@ -122,31 +121,15 @@
                 </div>
             </li>
             <li>
-                <input type=radio name=tabs id=tab3>
-                <label for=tab3>
-                    <div class="visible-xs mobile-tab">
-                        <span class="label-count c-grey">
-                            {{ $assets->count() }}
-                        </span>
-                        <i class="fa fa-server fa-2x" aria-hidden="true"></i><br>
-                        <small>Assets</small>
-                    </div>
-                    <p class="hidden-xs">
-                        Assets<span class="label-count c-grey">{{ $assets->count() }}</span>
-                    </p>
-                    </label>
-                <div id=tab-content3 class=tab-content>
-                    <div class="dash-line"></div>
-                    @include('partials.assets')
-                </div>
+                @include('partials.assets-tab', ['tabNo' => 3])
             </li>
-            @if (!$vulnerability->getVulnerabilityHttpData()->isEmpty())
+            @if (!empty($httpDataCollection) && !$httpDataCollection->isEmpty())
                 <li>
-                    <input type=radio name=tabs id=tab4>
-                    <label for=tab4>
+                    <input type="radio" name="tabs" id="tab4">
+                    <label for="tab4">
                         <div class="visible-xs mobile-tab">
                             <span class="label-count c-grey">
-                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                                {{ $httpDataCollection->total() }}
                             </span>
                             <i class="fa fa-link fa-2x" aria-hidden="true"></i><br>
                             <small>URLs</small>
@@ -154,35 +137,38 @@
                         <p class="hidden-xs">
                             URLs
                             <span class="label-count c-grey">
-                                {{ $vulnerability->getVulnerabilityHttpData()->count() }}
+                                {{ $httpDataCollection->total() }}
                             </span>
                         </p>
                     </label>
-                    <div id=tab-content4 class=tab-content>
+                    <div id="tab-content4" class="tab-content">
                         <div class="dash-line"></div>
                         <div class="col-md-12">
-                            @foreach ($vulnerability->getVulnerabilityHttpData() as $httpData)
+                            @foreach ($httpDataCollection as $httpData)
                                 @include('partials.http-data')
                             @endforeach
+                        </div>
+                        <div class="col-xs-12">
+                            {{ $httpDataCollection->fragment('tab4')->links() }}
                         </div>
                     </div>
                 </li>
             @endif
             <li>
-                <input type=radio name=tabs id=tab5>
-                <label for=tab5>
+                <input type="radio" name="tabs" id="tab5">
+                <label for="tab5">
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
-                            {{ $comments->count() }}
+                            {{ !empty($comments) ? $comments->total() : 0 }}
                         </span>
                         <i class="fa fa-comments fa-2x" aria-hidden="true"></i><br>
                         <small>Comments</small>
                     </div>
                     <p class="hidden-xs">
-                        Comments<span class="label-count c-grey">{{ $comments->count() }}</span>
+                        Comments<span class="label-count c-grey">{{ !empty($comments) ? $comments->total() : 0 }}</span>
                     </p>
                 </label>
-                <div id=tab-content4 class=tab-content>
+                <div id="tab-content5" class="tab-content">
                     <div class="dash-line"></div>
                     @include('partials.comments')
                 </div>

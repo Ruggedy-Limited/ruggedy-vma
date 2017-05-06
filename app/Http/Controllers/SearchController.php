@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Commands\Search;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class SearchController extends AbstractController
 {

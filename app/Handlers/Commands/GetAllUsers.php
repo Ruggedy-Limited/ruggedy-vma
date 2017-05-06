@@ -27,7 +27,7 @@ class GetAllUsers extends CommandHandler
      * Process the GetAllUsers command.
      *
      * @param GetAllUsersCommand $command
-     * @return array
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      * @throws ActionNotPermittedException
      */
     public function handle(GetAllUsersCommand $command)
@@ -38,10 +38,6 @@ class GetAllUsers extends CommandHandler
             throw new ActionNotPermittedException("User does not have permission to list other Users on the system.");
         }
 
-        $users = $this->repository->findBy([User::DELETED => false]);
-
-        return collect($users)->filter(function ($user) use ($requestingUser) {
-            return $user->getId() !== $requestingUser->getId();
-        })->all();
+        return $this->repository->findAllButCurrentUserQuery($requestingUser);
     }
 }

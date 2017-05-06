@@ -10,29 +10,12 @@
 @endsection
 
 @section('content')
-    <!-- Modal -->
-    <div id="help" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Help text goes here.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
     <!-- Add asset form -->
     @include('partials.asset-form')
     {!! Form::open([
         'url' => route(
             'vulnerability.store',
-            [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]
+            [$file->getRouteParameterName() => $file->getId()]
         ),
         'files' => 'true'
     ]) !!}
@@ -98,20 +81,7 @@
                 {!! Form::label('thumbnail_3', 'Screenshot 3', ['class' => '']) !!}
                 {!! Form::file('thumbnail_3') !!}
             </div>
-            <h3>Related Assets</h3>
-            <a href="#" class="primary-btn" data-toggle="modal" data-target="#add-asset-form">
-                Add an Asset
-            </a>
-            <div id="related-assets">
-                @if (!empty($assetsHtml))
-                    {!! $assetsHtml !!}
-                @endif
-            </div>
-            {!! Form::select('assets[]', $assetIds, $assetIds, [
-                'multiple' => 'multiple',
-                'class'    => 'invisible',
-                'id'       => 'assets-select',
-            ]) !!}
+            @include('partials.related-assets')
         </div>
         <div class="col-md-2"></div>
         <div class="col-md-6 animated fadeInUp">

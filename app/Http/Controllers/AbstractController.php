@@ -63,9 +63,6 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     {
         parent::__construct($request, $translator);
 
-        // Add the auth middleware everywhere
-        $this->middleware(['auth']);
-
         // Set a context for the logger
         $this->setLoggerContext($logger);
 

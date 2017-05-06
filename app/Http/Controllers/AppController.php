@@ -15,7 +15,7 @@ use App\Policies\ComponentPolicy;
 use Auth;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class AppController extends AbstractController
 {
@@ -29,15 +29,18 @@ class AppController extends AbstractController
      */
     public function viewWorkspaceApp($workspaceAppId)
     {
-        $command      = new GetWorkspaceApp(intval($workspaceAppId));
-        /** @var WorkspaceApp $workspaceApp */
-        $workspaceApp = $this->sendCommandToBusHelper($command);
+        $command          = new GetWorkspaceApp(intval($workspaceAppId));
+        /** @var WorkspaceApp $workspaceAppInfo */
+        $workspaceAppInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($workspaceApp)) {
+        if ($this->isCommandError($workspaceAppInfo)) {
             return redirect()->back();
         }
 
-        return view('workspaces.app', ['workspaceApp' => $workspaceApp]);
+        return view('workspaces.app', [
+            'workspaceApp' => $workspaceAppInfo->get('app'),
+            'files'        => $workspaceAppInfo->get('files'),
+        ]);
     }
 
     /**
@@ -57,7 +60,11 @@ class AppController extends AbstractController
             return redirect()->back();
         }
 
-        return view('workspaces.ruggedy-app-show', $fileInfo);
+        return view('workspaces.ruggedy-app-show', [
+            'file'            => $fileInfo->get('file'),
+            'vulnerabilities' => $fileInfo->get('vulnerabilities'),
+            'assets'          => $fileInfo->get('assets'),
+        ]);
     }
 
     /**
@@ -73,21 +80,21 @@ class AppController extends AbstractController
         $command     = new GetListOfScannerApps(0);
         $scannerApps = $this->sendCommandToBusHelper($command);
 
-        $command   = new GetWorkspace(intval($workspaceId));
-        $workspace = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($scannerApps) || $this->isCommandError($workspace)) {
+        if ($this->isCommandError($scannerApps) || $this->isCommandError($workspaceInfo)) {
             return redirect()->back();
         }
 
-        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceInfo->get('workspace'))) {
             $this->flashMessenger->error("You do not have permission to create Apps in this Workspace.");
             return redirect()->back();
         }
 
         return view('workspaces.apps', [
             'scannerApps' => $scannerApps,
-            'workspace'   => $workspace,
+            'workspace'   => $workspaceInfo->get('workspace'),
             'workspaceId' => $workspaceId,
         ]);
     }
@@ -107,21 +114,21 @@ class AppController extends AbstractController
         $command    = new GetScannerApp(intval($scannerAppId));
         $scannerApp = $this->sendCommandToBusHelper($command);
 
-        $command   = new GetWorkspace(intval($workspaceId));
-        $workspace = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($scannerApp) || $this->isCommandError($workspace)) {
+        if ($this->isCommandError($scannerApp) || $this->isCommandError($workspaceInfo)) {
             return redirect()->back();
         }
 
-        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspace)) {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceInfo->get('workspace'))) {
             $this->flashMessenger->error("You do not have permission to create Apps in this Workspace.");
             return redirect()->back();
         }
 
         return view('workspaces.appsCreate', [
             'workspaceId'  => $workspaceId,
-            'workspace'    => $workspace,
+            'workspace'    => $workspaceInfo->get('workspace'),
             'scannerAppId' => $scannerAppId,
             'scannerApp'   => $scannerApp,
         ]);
@@ -137,19 +144,19 @@ class AppController extends AbstractController
      */
     public function editWorkspaceApp($workspaceAppId)
     {
-        $command      = new GetWorkspaceApp(intval($workspaceAppId));
-        $workspaceApp = $this->sendCommandToBusHelper($command);
+        $command          = new GetWorkspaceApp(intval($workspaceAppId));
+        $workspaceAppInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($workspaceApp)) {
+        if ($this->isCommandError($workspaceAppInfo)) {
             return redirect()->back();
         }
 
-        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceApp)) {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceAppInfo->get('app'))) {
             $this->flashMessenger->error("You do not have permission to edit that App.");
             return redirect()->back();
         }
 
-        return view('workspaces.app-edit', ['workspaceApp' => $workspaceApp]);
+        return view('workspaces.app-edit', ['workspaceApp' => $workspaceAppInfo->get('app')]);
     }
 
     /**

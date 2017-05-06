@@ -17,23 +17,6 @@
 @endsection
 
 @section('content')
-    <!-- Modal -->
-    <div id="help" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Help text goes here.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br>
     <div class="row">
         <div class="col-md-4 col-sm-4 animated fadeIn">
             <h3>Edit User</h3>
@@ -56,6 +39,12 @@
                 {!! Form::label('password-confirm', 'Confirm Password') !!}
                 {!! Form::password('password-confirm', ['class' => 'black-form-control']) !!}
             </div>
+            @if (!empty(Auth::user()) && Auth::user()->isAdmin() && Auth::user() !== $user)
+                <div class="form-group">
+                    {!! Form::checkbox('is_admin', true, $user->isAdmin()) !!}
+                    {!! Form::label('is_admin', 'User is an Admin') !!}
+                </div>
+            @endif
             <button class="primary-btn" type="submit">Save Changes</button>
             {!! Form::close() !!}
         </div>

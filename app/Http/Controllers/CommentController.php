@@ -10,7 +10,7 @@ use App\Entities\Comment;
 use Exception;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class CommentController extends AbstractController
 {
@@ -29,7 +29,7 @@ class CommentController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         $comment = new Comment();
-        $comment->setContent($this->request->get('comment'));
+        $comment->setContent(clean($this->request->get('comment')));
 
         $command = new CreateComment(intval($vulnerabilityId), $comment);
         $comment = $this->sendCommandToBusHelper($command);
@@ -39,7 +39,7 @@ class CommentController extends AbstractController
         }
 
         $this->flashMessenger->success("A new comment was posted successfully.");
-        return redirect(route('vulnerability.view', ['vulnerabilityId' => $vulnerabilityId]) . '#tab4');
+        return redirect(route('vulnerability.view', ['vulnerabilityId' => $vulnerabilityId]) . '#tab5');
     }
 
     /**
@@ -56,7 +56,7 @@ class CommentController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         $command = new EditComment(intval($commentId), [
-            Comment::CONTENT => $this->request->get('comment-' . $commentId)
+            Comment::CONTENT => clean($this->request->get('comment-' . $commentId))
         ]);
 
         $comment = $this->sendCommandToBusHelper($command);
@@ -66,7 +66,7 @@ class CommentController extends AbstractController
         }
 
         $this->flashMessenger->success("Comment updated successfully.");
-        return redirect(redirect()->back()->getTargetUrl() . '#tab4');
+        return redirect(redirect()->back()->getTargetUrl() . '#tab5');
     }
 
     /**
@@ -87,7 +87,7 @@ class CommentController extends AbstractController
         }
 
         $this->flashMessenger->success("Comment deleted successfully.");
-        return redirect()->back();
+        return redirect(redirect()->back()->getTargetUrl() . '#tab5');
     }
 
     /**

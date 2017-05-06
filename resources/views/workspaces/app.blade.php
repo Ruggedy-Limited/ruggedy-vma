@@ -27,25 +27,6 @@
 @endsection
 
 @section('content')
-    <!-- Modal -->
-    <div id="help" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Help text goes here.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-
     <div class="row animated fadeIn">
         <div class="col-md-12">
             @can (App\Policies\ComponentPolicy::ACTION_CREATE, $workspaceApp)
@@ -57,24 +38,24 @@
     <div class="row animated fadeIn">
         <ul class=tabs>
             <li>
-                <input type=radio name=tabs id=tab1 checked>
-                <label for=tab1>
+                <input type="radio" name="tabs" id="tab1" checked>
+                <label for="tab1">
                     <div class="visible-xs mobile-tab">
                         <span class="label-count c-grey">
-                            {{ $workspaceApp->getFiles()->count() }}
+                            {{ !empty($files) ? $files->total() : 0 }}
                         </span>
                         <i class="fa fa-file fa-2x" aria-hidden="true"></i><br>
                         <small>Files</small>
                     </div>
                     <p class="hidden-xs">
-                        Files<span class="label-count c-grey">{{ $workspaceApp->getFiles()->count() }}</span>
+                        Files<span class="label-count c-grey">{{ !empty($files) ? $files->total() : 0 }}</span>
                     </p>
                 </label>
-                <div id=tab-content1 class=tab-content>
+                <div id="tab-content1" class="tab-content">
                     <div class="dash-line"></div>
                     <div>
                         <div>
-                            @if ($workspaceApp->getFiles()->count() < 1)
+                            @if (empty($files) || $files->isEmpty())
                                 <br>
                                 <div class="col-xs-12">
                                 <p class="p-l-8">
@@ -86,16 +67,21 @@
                                 </p>
                                 </div>
                             @else
-                                @foreach($workspaceApp->getFiles() as $file)
-                                    <div class="col-md-4 animated pulse-hover">
-                                        <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
-                                            <div class="content-card">
-                                                <h4 class="h-4-1">{{ $file->getName() }}</h4>
-                                                <p>{{ $file->getDescription() }}</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                @endforeach
+                                <div class="row">
+                                    @foreach($files as $file)
+                                        <div class="col-md-4 animated pulse-hover">
+                                            <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
+                                                <div class="content-card">
+                                                    <h4 class="h-4-1">{{ $file->getName() }}</h4>
+                                                    <p>{{ $file->getDescription() }}</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="row">
+                                    {{ $files->fragment('tab1')->links() }}
+                                </div>
                             @endif
                         </div>
                     </div>

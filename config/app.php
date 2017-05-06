@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Laravel',
+    'name' => 'Ruggedy App',
 
     /*
     |--------------------------------------------------------------------------
@@ -192,6 +192,7 @@ return [
         Madewithlove\Tactician\ServiceProvider::class,
         Univerze\Jira\JiraServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
+        Mews\Purifier\PurifierServiceProvider::class,
     ],
 
     /*
