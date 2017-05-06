@@ -5,11 +5,14 @@ namespace App\Repositories;
 use App\Contracts\Searchable;
 use App\Entities\User;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Collection;
-
+use LaravelDoctrine\ORM\Pagination\PaginatesFromRequest;
 
 class UserRepository extends AbstractSearchableRepository implements Searchable
 {
+    use PaginatesFromRequest;
+
     /**
      * Find a user by their ID and remember me token
      *
@@ -48,6 +51,30 @@ class UserRepository extends AbstractSearchableRepository implements Searchable
     }
 
     /**
+     * Get a paginated list of Users
+     *
+     * @param User $user
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function findAllButCurrentUserQuery(User $user)
+    {
+        return $this->paginate(
+            $this->addOrdering(
+                $this->createQueryBuilder('u')->addCriteria(
+                    Criteria::create()->where(
+                        Criteria::expr()->eq('u.deleted', false)
+                    )->andWhere(
+                        Criteria::expr()->neq('u.id', $user->getId())
+                    )
+                )
+            )->getQuery(),
+            $this->getPerPage(),
+            $this->getPageName(),
+            false
+        )->setPageName($this->getPageName());
+    }
+
+    /**
      * @inheritdoc
      *
      * @return Collection
@@ -83,5 +110,47 @@ class UserRepository extends AbstractSearchableRepository implements Searchable
         }
 
         return parent::findOneBy($criteria, $orderBy);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return string
+     */
+    protected function getQueryBuilderAlias(): string
+    {
+        return 'u';
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return string
+     */
+    protected function getPageName(): string
+    {
+        return 'users_page';
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return int
+     */
+    protected function getPerPage(): int
+    {
+        return 9;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param QueryBuilder $queryBuilder
+     * @return QueryBuilder
+     */
+    protected function addOrdering(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        return parent::addOrdering($queryBuilder)
+            ->orderBy('u.created_at', Criteria::DESC);
     }
 }

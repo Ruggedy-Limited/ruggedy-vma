@@ -10,6 +10,9 @@ use App\Entities\WorkspaceApp;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 abstract class AbstractSearchableRepository extends EntityRepository
@@ -20,6 +23,9 @@ abstract class AbstractSearchableRepository extends EntityRepository
     const SEARCH_TYPE_ASSET         = 3;
     const SEARCH_TYPE_VULNERABILITY = 4;
     const SEARCH_TYPE_USER          = 5;
+
+    /** Default per page */
+    const DEFAULT_PER_PAGE = 10;
 
     /** @var array */
     protected static $searchTypeEntityMap = [
@@ -59,11 +65,21 @@ abstract class AbstractSearchableRepository extends EntityRepository
      * Search for matching entities
      *
      * @param string $searchTerm
-     * @return \Doctrine\Common\Collections\Collection
+     * @return LengthAwarePaginator
      */
-    public function search(string $searchTerm): DoctrineCollection
+    public function search(string $searchTerm): LengthAwarePaginator
     {
-        return $this->matching($this->getSearchCriteria($searchTerm));
+        return $this->paginate(
+            $this->addOrdering(
+                $this->createQueryBuilder($this->getQueryBuilderAlias())
+                     ->addCriteria(
+                         $this->getSearchCriteria($searchTerm)
+                     )
+            )->getQuery(),
+            $this->getPerPage(),
+            $this->getPageName(),
+            false
+        );
     }
 
     /**
@@ -87,4 +103,51 @@ abstract class AbstractSearchableRepository extends EntityRepository
      * @return Collection
      */
     abstract public function getSearchableFields(): Collection;
+
+    /**
+     * Get the default QueryBuilder alias for a repository
+     *
+     * @return string
+     */
+    abstract protected function getQueryBuilderAlias(): string;
+
+    /**
+     * Get the page name to be used by the paginator. This is used in the query string
+     * and then used by the paginator to determine the current page.
+     *
+     * @return string
+     */
+    abstract protected function getPageName(): string;
+
+    /**
+     * Get the number of results to display on a page
+     *
+     * @return int
+     */
+    protected function getPerPage(): int
+    {
+        return self::DEFAULT_PER_PAGE;
+    }
+
+    /**
+     * @param Query  $query
+     * @param int    $perPage
+     * @param bool   $fetchJoinCollection
+     * @param string $pageName
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    abstract public function paginate(Query $query, $perPage, $pageName = 'page', $fetchJoinCollection = true);
+
+    /**
+     * Template for adding an ORDER BY clause, to be extended by adding search ordering in extended classes.
+     * The default will add no ordering to the query, but will just return th query as is.
+     *
+     * @param QueryBuilder $queryBuilder
+     * @return QueryBuilder
+     */
+    protected function addOrdering(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        return $queryBuilder;
+    }
 }
