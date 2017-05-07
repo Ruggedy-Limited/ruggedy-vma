@@ -74,7 +74,7 @@ It is highly recommended that you amend these details by logging in and making t
 
 ## Development Roadmap
 
-This still needs to be clearly defined, but the plan is to make some improvements to the XML parser and to create a single command setup process in the next couple of months. 
+This still needs to be clearly defined, but the immediate plans are to make some improvements to the XML parser and to create a single command setup process in the next couple of months. 
 
 ## Contributing
 
