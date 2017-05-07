@@ -52,4 +52,5 @@
             </li>
         </ul>
         <br style=clear:both;>
+    </div>
 @endsection
