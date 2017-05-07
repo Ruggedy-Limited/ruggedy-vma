@@ -425,6 +425,7 @@ Start: Buttons
     text-align: center;
     padding: 6px 0;
     margin-right: 5px;
+    margin-top: -5px;
     font-size: 11px;
     line-height: 1.428571429;
     border-radius: 15px;
