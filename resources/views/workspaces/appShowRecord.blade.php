@@ -92,11 +92,18 @@
                             <div class="t-s-14 label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
                                 {{ $vulnerability->getSeverityText() }} Risk
                             </div>
+                            <div class="m-l-8 t-s-14 label c-grey t-s-10">CVSS
+                                {{ $vulnerability->getCvssScore() }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 m-t-15">
+                        <div class="single-content-card">
+                            <h4>{{ $vulnerability->getName() }}</h4>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="content-card">
-                            <h4>{{ $vulnerability->getName() }}</h4>
                             {!! $vulnerability->getDescription() !!}
                         </div>
                     </div>
@@ -113,7 +120,7 @@
                 </label>
                 <div id="tab-content2" class="tab-content">
                     <div class="dash-line"></div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="content-card solution">
                             {!! $vulnerability->getSolution() ?? '<p>No solution available at present.</p>' !!}
                         </div>
