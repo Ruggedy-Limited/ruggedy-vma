@@ -1,6 +1,10 @@
 <p align="center"><img src="http://www.ruggedy.io/img/logo_final_skyblue.png"></p>
 
-## About Ruggedy
+## About Ruggedy Limited
+
+Ruggedy Limited is a New Zealand-based company founded by [Francois Marais](https://github.com//francois-ruggedy) and [Gareth Lawson](https://github.com/garethlawson). Our passion can be summed up as *"automation through technology that helps people in their day-today jobs and lives"*. Francois is an Information Security specialist and Gareth is a Software Developer. Each have more than 15 years of experience in their areas of expertise and have embarked on a journey to see how they can bring these two specialities together to create a "security as code" solution. You can read more on our website: [www.ruggedy.io](http://www.ruggedy.io).
+
+## About Ruggedy Go
 
 Ruggedy Go is an open source web application built by [Ruggedy Limited](http://ruggey.io) in PHP, using the Laravel framework as a foundation.
 
@@ -11,11 +15,12 @@ In the simplest terms, the application does the following:
 - Provides an approachable, consistent user interface for analysing the data found in these files.
 - Allows you to add your own manual findings of vulnerabilities using the Ruggedy App, named after the company that built this software.
 - Allows you to group Vulnerabilities into "Folders".
+- Enables collaboration through "comments" on vulnerability records.
 - Makes it easy to send vulnerability information directly into Jira as a "Bug" issue.
 
 ## Requirements
 
-This application has a few system requirements. All of these requirements are satisfied by the Laravel Homestead virtual machine, so it's highly recommended that you use Homestead if you are installing the application on your own machine.
+This application has a few system requirements. All of these requirements are satisfied by the [Laravel Homestead virtual machine](https://laravel.com/docs/5.4/homestead), so it's highly recommended that you use Homestead if you are installing the application on your own machine.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
 
@@ -25,10 +30,13 @@ However, if you are not using Homestead, you will need to make sure your server 
 - Mbstring PHP Extension
 - Tokenizer PHP Extension
 - XML PHP Extension
+- A web server installed, e.g. Apache, Nginx etc.
+- [Composer](https://getcomposer.org/) must be installed
+- [Bower](https://bower.io) must be installed
+- [NodeJS and NPM](http://nodejs.org/) must be installed
+- [Git](http://git-scm.org/) must be installed
 
 For more information on how to setup and configure your web server environment you can read the [Laravel documentation](http://laravel.com/docs).
-
-This application also requires [composer](https://getcomposer.org/) & [Bower](https://bower.io) Package Managers, [NodeJS and NPM](http://nodejs.org/), and [Git](http://git-scm.org/)
 
 ## Setup and Installation
 
@@ -50,16 +58,31 @@ Now run the following commands from your shell while in the directory where the 
 - `bower install`
 - `npm install`
 - `php artisan key:generate && php artisan migrate`
+- `crontab -e` then add the following cron job to your crontab:
+`* * * * * /path/to/php /path/to/ruggedy-go/artisan schedule:run >> /path/to/ruggedy-go/storage/logs/cron.log 2>&1`
 
-If all of the above commands succeed, then the application should be installed and accessible via the URL/hostname you configured on your web server (Apache/Nginx).
+NOTE: *In the cron entry, make sure you replace **/path/to** with the path relevant to your server/environment*.
+
+
+If all of the above commands succeed, then the application should be installed, working and accessible via the URL/hostname you configured on your web server (Apache/Nginx). A default admin user is installed with the following credentials:
+
+Username: admin@localhost
+
+Password: password
+
+It is highly recommended that you amend these details by logging in and making the relevant changes by clicking the "Profile" menu option on the main menu that can be accessed by clicking the hamburger menu icon at the top-left of the screen. 
+
+## Development Roadmap
+
+This still needs to be clearly defined, but the plan is to make some improvements to the XML parser and to create a single command setup process in the next couple of months. 
 
 ## Contributing
 
-Thank you for considering contributing to Ruggedy Go! Please send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io) so that we can add you as a contributor.
+Thank you for considering contributing to Ruggedy Go! Feel free to submit a pull request against the master branch or send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io) if you want to discuss specific contributions.
 
 ## Security Vulnerabilities
 
-If you discover security vulnerabilities in the application please send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io).
+If you discover security vulnerabilities in the application please send an email with a detailed description and proof of concept to [hello@ruggedy.io](mailto:hello@ruggedy.io).
 
 ## License
 
