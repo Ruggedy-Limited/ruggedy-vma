@@ -6,6 +6,8 @@ use App\Commands\EditUserAccount as EditUserAccountCommand;
 use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
+use App\Exceptions\UserNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -49,21 +51,40 @@ class EditUserAccount extends CommandHandler
             throw new InvalidInputException("The required userId member is not set on the command object");
         }
 
+        $user = $requestingUser;
+        if ($requestingUser->getId() !== $userId) {
+            $user = $this->userRepository->find($userId);
+        }
+
+        if (empty($user) || $user->isDeleted()) {
+            throw new UserNotFoundException("There is not existing User with the given ID");
+        }
+
         // Check that the user is editing their own account
-        if ($requestingUser->getId() !== intval($userId)) {
+        if ($requestingUser->cannot(ComponentPolicy::ACTION_EDIT, $user)) {
             throw new ActionNotPermittedException("User editing account is not the account owner");
         }
 
-        // Apply the changes to the User Model
         $profileChanges = $command->getRequestedChanges();
-        $requestingUser->setFromArray($profileChanges);
+
+        // Change the password where necessary
+        $password = $user->getPassword();
+        if (isset($profileChanges[User::PASSWORD])) {
+            $password = bcrypt($profileChanges[User::PASSWORD]);
+        }
+        $profileChanges[User::PASSWORD] = $password;
+
+        // Apply the changes to the User Model and explicitly set the admin flag based on the presence of the is_admin
+        // array key because it is a checkbox ans will be absent from the request when not checked.
+        $user->setFromArray($profileChanges)
+            ->setIsAdmin(!empty($profileChanges[User::IS_ADMIN]));
 
         // Save the changes
-        $this->em->persist($requestingUser);
-        $this->em->flush($requestingUser);
-        $this->em->refresh($requestingUser);
+        $this->em->persist($user);
+        $this->em->flush($user);
+        $this->em->refresh($user);
 
-        return $requestingUser;
+        return $user;
     }
 
     /**

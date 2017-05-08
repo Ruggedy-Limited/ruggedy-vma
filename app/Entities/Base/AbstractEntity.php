@@ -272,7 +272,7 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
 
         return sha1(
             $uniqueColumns->filter(function ($value) {
-                return isset($value);
+                return isset($value) && !is_object($value);
             })->merge($objectHashes)->implode(":")
         );
     }
@@ -296,5 +296,49 @@ abstract class AbstractEntity implements Jsonable, JsonSerializable
     public function hasMinimumRequiredPropertiesSet(): bool
     {
         return true;
+    }
+
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    abstract public function getDisplayName(bool $plural): string;
+
+    /**
+     * Get the name used in routes related to this entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getRouteName(bool $plural = false): string
+    {
+        return strtolower($this->getDisplayName($plural));
+    }
+
+    /**
+     * Get the route parameter name used for passing the ID of a specific entity to a route
+     *
+     * @return string
+     */
+    public function getRouteParameterName(): string
+    {
+        return lcfirst(class_basename($this)) . "Id";
+    }
+
+    /**
+     * Get the amount of points this search result generated.
+     *
+     * @param Collection $searchableFields
+     * @param string $searchTerm
+     * @return mixed
+     */
+    public function getSearchScore(Collection $searchableFields, string $searchTerm): int
+    {
+        // Calculated by summing the number of times the search term was found across all searchable fields.
+        return $searchableFields->reduce(function ($points, $field) use ($searchTerm) {
+            return $points + (substr_count(strtolower($this->$field), strtolower($searchTerm)));
+        });
     }
 }

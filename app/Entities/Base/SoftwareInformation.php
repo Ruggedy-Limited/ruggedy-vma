@@ -194,6 +194,17 @@ class SoftwareInformation extends AbstractEntity
         return $this->updated_at;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return 'Software';
+    }
+
     public function __sleep()
     {
         return array('id', 'name', 'version', 'vendor', 'created_at', 'updated_at');

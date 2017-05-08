@@ -24,6 +24,8 @@ class User extends AbstractEntity
     const PHOTO_URL                               = 'photo_url';
     const COUNTRY_CODE                            = 'country_code';
     const PHONE                                   = 'phone';
+    const IS_ADMIN                                = 'is_admin';
+    const DELETED                                 = 'deleted';
     const ASSETS                                  = 'assets';
     const COMMENTS                                = 'comments';
     const COMPONENTPERMISSIONRELATEDBYUSERIDS     = 'componentPermissionRelatedByUserIds';
@@ -73,6 +75,16 @@ class User extends AbstractEntity
      * @ORM\Column(name="`phone`", type="string", length=25, nullable=true)
      */
     protected $phone;
+
+    /**
+     * @ORM\Column(name="`is_admin`", type="boolean", options={"unsigned":true})
+     */
+    protected $is_admin;
+
+    /**
+     * @ORM\Column(name="`deleted`", type="boolean", options={"unsigned":true})
+     */
+    protected $deleted;
 
     /**
      * @ORM\Column(name="`created_at`", type="datetime", nullable=true)
@@ -319,6 +331,52 @@ class User extends AbstractEntity
     public function getPhone()
     {
         return $this->phone;
+    }
+
+    /**
+     * Get the value of is_admin.
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
+    /**
+     * Set the value of is_admin
+     *
+     * @param mixed $is_admin
+     * @return User
+     */
+    public function setIsAdmin($is_admin)
+    {
+        $this->is_admin = $is_admin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of deleted.
+     *
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Set the value of deleted
+     *
+     * @param bool $deleted
+     * @return User
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
     }
 
     /**
@@ -617,6 +675,17 @@ class User extends AbstractEntity
     public function getWorkspaces()
     {
         return $this->workspaces;
+    }
+
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'User' : 'Users';
     }
 
     public function __sleep()

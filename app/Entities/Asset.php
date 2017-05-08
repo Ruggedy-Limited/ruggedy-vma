@@ -78,7 +78,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     protected $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="SoftwareInformation", inversedBy="assets", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="asset_software_information",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="software_information_id", referencedColumnName="id",
@@ -88,7 +88,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     protected $relatedSoftwareInformation;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="assets", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="assets_vulnerabilities",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="vulnerability_id", referencedColumnName="id", onDelete="CASCADE")}
@@ -97,7 +97,7 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     protected $vulnerabilities;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="Audit", inversedBy="assets", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="assets_audits",
      *     joinColumns={@ORM\JoinColumn(name="asset_id", referencedColumnName="id", onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="audit_id", referencedColumnName="id", onDelete="CASCADE")}
@@ -132,6 +132,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setHostname($hostname)
     {
+        if (empty($hostname)) {
+            return $this;
+        }
+
         parent::setHostname(
             $this->sanitiseHostname($hostname)
         );
@@ -180,6 +184,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setMacAddress($mac_address)
     {
+        if (empty($mac_address)) {
+            return $this;
+        }
+
         return parent::setMacAddress(
             $this->sanitiseMacAddress($mac_address)
         );
@@ -193,6 +201,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setVendor($vendor)
     {
+        if (empty($vendor)) {
+            return $this;
+        }
+
         // Parameter is a valid vendor name
         if (static::isValidOsVendor($vendor)) {
             return parent::setVendor($vendor);
@@ -218,6 +230,10 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
      */
     public function setLastBoot($lastBoot)
     {
+        if (empty($lastBoot)) {
+            return $this;
+        }
+
         if (empty($this->sanitiseDate($lastBoot))) {
             return $this;
         }
@@ -226,15 +242,13 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     }
 
     /**
-     * Get the parent Entity of this Entity. In this case we return the Workspace related to the parent file, because
-     * this method is used when determining permissions, and file have no permissions directly associated with them
-     * because they are not considered a component of our system, but rather a data source.
+     * Get the parent Entity of this Entity.
      *
-     * @return Base\Workspace
+     * @return Base\File
      */
     public function getParent()
     {
-        return $this->file->getWorkspaceApp()->getWorkspace();
+        return $this->file;
     }
 
     /**
@@ -323,6 +337,8 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
     }
 
     /**
+     * Get the Collection of related Vulnerability entities
+     *
      * @return ArrayCollection
      */
     public function getVulnerabilities()
@@ -390,6 +406,19 @@ class Asset extends Base\Asset implements SystemComponent, HasIdColumn, Generate
             /** @var Vulnerability $vulnerability */
             return $vulnerability->getSeverityText() === $level;
         });
+    }
+
+    /**
+     * Get the Asset's total risk by summing up all the related Vulnerability severities
+     *
+     * @return int
+     */
+    public function getAssetTotalRisk(): int
+    {
+        return collect($this->vulnerabilities)->reduce(function ($totalRisk, $vulnerability) {
+            /** @var Vulnerability $vulnerability */
+            return $totalRisk + $vulnerability->getSeverity();
+        }, 0.00);
     }
 
     /**

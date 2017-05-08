@@ -55,7 +55,10 @@ return [
     |
     */
 
-    'from' => ['address' => 'noreply@ruggedy.io', 'name' => 'Ruggedy [No Reply]'],
+    'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'noreply@dispostable.com'),
+        'name'    => env('MAIL_FROM_NAME', 'Admin [No Reply]')
+    ],
 
     /*
     |--------------------------------------------------------------------------

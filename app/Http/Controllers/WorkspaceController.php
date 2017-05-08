@@ -3,37 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Commands\CreateWorkspace;
-use App\Commands\CreateWorkspaceApp;
 use App\Commands\DeleteWorkspace;
-use App\Commands\DeleteWorkspaceApp;
 use App\Commands\EditWorkspace;
-use App\Commands\GetFile;
-use App\Commands\GetListOfScannerApps;
-use App\Commands\GetScannerApp;
-use App\Commands\GetVulnerability;
 use App\Commands\GetWorkspace;
-use App\Commands\GetWorkspaceApp;
-use App\Commands\UploadScanOutput;
-use App\Entities\File;
 use App\Entities\Workspace;
-use App\Entities\WorkspaceApp;
+use App\Policies\ComponentPolicy;
 use Auth;
 
 /**
- * @Middleware("web")
+ * @Middleware({"web", "auth"})
  */
 class WorkspaceController extends AbstractController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return view('workspaces.index');
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -43,6 +24,11 @@ class WorkspaceController extends AbstractController
      */
     public function create()
     {
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, new Workspace())) {
+            $this->flashMessenger->error("You do not have permission to create Workspaces.");
+            return redirect()->back();
+        }
+
         return view('workspaces.create');
     }
 
@@ -63,15 +49,19 @@ class WorkspaceController extends AbstractController
 
         // Create a new Workspace entity and populate the name & description from the request
         $entity = new Workspace();
-        $entity->setName($this->request->get('name'));
-        $entity->setDescription($this->request->get('description'));
+        $entity->setName($this->request->get('name'))
+            ->setDescription($this->request->get('description'));
 
         // Create a command and send it over the bus to the handler
-        $command = new CreateWorkspace($userId, $entity);
-        $response = $this->sendCommandToBusHelper($command);
+        $command = new CreateWorkspace(intval($userId), $entity);
+        $workspace = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Workspace created successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'home', [], true);
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("Workspace created successfully.");
+        return redirect()->route('home');
     }
 
     /**
@@ -85,10 +75,18 @@ class WorkspaceController extends AbstractController
     public function view($workspaceId)
     {
         // Create a command and send it over the bus to the handler
-        $command = new GetWorkspace(intval($workspaceId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspaces.view', ['workspace' => $response]);
+        if ($this->isCommandError($workspaceInfo)) {
+            return redirect()->back()->withInput();
+        }
+
+        return view('workspaces.view', [
+            'workspace' => $workspaceInfo->get('workspace'),
+            'apps'      => $workspaceInfo->get('apps'),
+            'folders'   => $workspaceInfo->get('folders'),
+        ]);
     }
 
     /**
@@ -101,10 +99,19 @@ class WorkspaceController extends AbstractController
      */
     public function edit($workspaceId)
     {
-        $command = new GetWorkspace(intval($workspaceId));
-        $response = $this->sendCommandToBusHelper($command);
+        $command       = new GetWorkspace(intval($workspaceId));
+        $workspaceInfo = $this->sendCommandToBusHelper($command);
 
-        return $this->controllerResponseHelper($response, 'workspace.edit', ['workspace' => $response]);
+        if ($this->isCommandError($workspaceInfo)) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->cannot(ComponentPolicy::ACTION_EDIT, $workspaceInfo->get('workspace'))) {
+            $this->flashMessenger->error("You do not have permission to edit that Workspace.");
+            return redirect()->back();
+        }
+
+        return view('workspaces.edit', ['workspace' => $workspaceInfo->get('workspace')]);
     }
 
     /**
@@ -121,11 +128,15 @@ class WorkspaceController extends AbstractController
         $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
 
         // Create a command and send it over the bus to the handler
-        $command = new EditWorkspace($workspaceId, $this->request->all());
-        $response = $this->sendCommandToBusHelper($command);
+        $command   = new EditWorkspace(intval($workspaceId), $this->request->all());
+        $workspace = $this->sendCommandToBusHelper($command);
 
-        $this->addMessage("Workspace updated successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'home', [], true);
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back()->withInput();
+        }
+
+        $this->flashMessenger->success("Workspace updated successfully.");
+        return redirect()->route('home');
     }
 
     /**
@@ -139,208 +150,16 @@ class WorkspaceController extends AbstractController
     public function destroy($workspaceId)
     {
         // Create a new command and send it over the bus
-        $command  = new DeleteWorkspace($workspaceId, true);
-        $response = $this->sendCommandToBusHelper($command);
+        $command   = new DeleteWorkspace(intval($workspaceId), true);
+        $workspace = $this->sendCommandToBusHelper($command);
+
+        if ($this->isCommandError($workspace)) {
+            return redirect()->back();
+        }
 
         // Add a success message and then generate a response for the Controller
-        $this->addMessage("Workspace deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'home', [], true);
-    }
-
-    /**
-     * Get a full list of all possible ScannerApps
-     *
-     * @GET("/workspace/apps/{workspaceId}", as="workspace.apps", where={"workspaceId":"[0-9]+"})
-     *
-     * @param $workspaceId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function apps($workspaceId)
-    {
-        $command     = new GetListOfScannerApps(0);
-        $scannerApps = $this->sendCommandToBusHelper($command);
-
-	    return $this->controllerResponseHelper(null, 'workspaces.apps', [
-            'scannerApps' => $scannerApps,
-            'workspaceId' => $workspaceId,
-        ]);
-    }
-
-    /**
-     * Display the form to create a WorkspaceApp
-     *
-     * @GET("/workspace/app/create/{workspaceId}/{scannerAppId}", as="workspace.app.create",
-     *     where={"workspaceId":"[0-9]+","scannerAppId":"[0-9]+"})
-     *
-     * @param $workspaceId
-     * @param $scannerAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function createWorkspaceApp($workspaceId, $scannerAppId)
-    {
-        $command    = new GetScannerApp($scannerAppId);
-        $scannerApp = $this->sendCommandToBusHelper($command);
-
-        return $this->controllerResponseHelper($scannerApp, 'workspaces.appsCreate', [
-            'workspaceId'  => $workspaceId,
-            'scannerAppId' => $scannerAppId,
-            'scannerApp'   => $scannerApp,
-        ]);
-    }
-
-    /**
-     * Save a new WorkspaceApp
-     *
-     * @POST("/workspace/app/store/{workspaceId}/{scannerAppId}", as="workspace.app.store",
-     *     where={"workspaceId":"[0-9]+","scannerAppId":"[0-9]+"})
-     *
-     * @param $workspaceId
-     * @param $scannerAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function storeWorkspaceApp($workspaceId, $scannerAppId)
-    {
-        $this->validate($this->request, $this->getValidationRules(), $this->getValidationMessages());
-
-        $workspaceApp = new WorkspaceApp();
-        $workspaceApp->setName($this->request->get('name'))
-            ->setDescription($this->request->get('description'));
-
-        $command = new CreateWorkspaceApp($workspaceId, $scannerAppId, $workspaceApp);
-        $response = $this->sendCommandToBusHelper($command);
-
-        $this->addMessage("New Workspace App created successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'workspace.view', ['workspaceId' => $workspaceId], true);
-    }
-
-    /**
-     * Get a WorkspaceApp and related data
-     *
-     * @GET("/workspace/app/{workspaceAppId}", as="workspace.app.view", where={"workspaceAppId":"[0-9]+"})
-     *
-     * @param $workspaceAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function viewWorkspaceApp($workspaceAppId)
-    {
-        $command  = new GetWorkspaceApp($workspaceAppId);
-        $response = $this->sendCommandToBusHelper($command);
-
-        return $this->controllerResponseHelper($response, 'workspaces.app', ['workspaceApp' => $response]);
-    }
-
-    /**
-     * Delete WorkspaceApp and all related data
-     *
-     * @GET("/workspace/app/delete/{workspaceId}/{workspaceAppId}", as="workspace.app.delete",
-     *     where={"workspaceId":"[0-9]+","workspaceAppId":"[0-9]+"})
-     *
-     * @param $workspaceAppId
-     * @param $workspaceId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function deleteWorkspaceApp($workspaceAppId, $workspaceId)
-    {
-        $command  = new DeleteWorkspaceApp($workspaceAppId, true);
-        $response = $this->sendCommandToBusHelper($command);
-
-        $this->addMessage("Workspace App deleted successfully.", parent::MESSAGE_TYPE_SUCCESS);
-        return $this->controllerResponseHelper($response, 'workspace.view', ['workspaceId' => $workspaceId], true);
-    }
-
-    /**
-     * Get a single Vulnerability record related to a specific file
-     *
-     * @GET("/file/vulnerability/{fileId}/{vulnerabilityID}", as="file.vulnerability.view",
-     *     where={"fileId":"[0-9]+","vulnerabilityId":"[0-9]+"})
-     *
-     * @param $fileId
-     * @param $vulnerabilityId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function appShowRecord($fileId, $vulnerabilityId)
-    {
-        $command  = new GetVulnerability($vulnerabilityId, $fileId);
-        $response = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper(
-            $response,
-            'workspaces.appShowRecord',
-            ['vulnerability' => $response, 'assets' => $response->getAssets()]
-        );
-    }
-
-    /**
-     * Show a file and related data including Assets, Vulnerabilities and Comments
-     *
-     * @GET("/workspace/app/file/{fileId}", as="workspace.app.file.view", where={"fileId":"[0-9]+"})
-     *
-     * @param $fileId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function viewFile($fileId)
-    {
-        $command  = new GetFile($fileId);
-        $response = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper(
-            $response,
-            'workspaces.app-show',
-            ['file' => $response, 'assets' => $response->getAssets()]
-        );
-    }
-
-    /**
-     * Display the form where scan output files can be uploaded
-     *
-     * @GET("/workspace/app/file/create/{workspaceAppId}", as="workspace.app.file.form", where={"workspaceAppId":"[0-9]+"})
-     *
-     * @param $workspaceAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function addFile($workspaceAppId)
-    {
-        $command      = new GetWorkspaceApp($workspaceAppId);
-        $workspaceApp = $this->sendCommandToBusHelper($command);
-        return $this->controllerResponseHelper($workspaceApp, 'workspaces.addFile', ['workspaceApp' => $workspaceApp]);
-    }
-
-    /**
-     * Upload scanner output for processing
-     *
-     * @POST("/workspace/app/file/upload/{workspaceAppId}", as="workspace.app.file.upload",
-     *     where={"workspaceAppId":"[0-9]+"})
-     *
-     * @param $workspaceAppId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function uploadFile($workspaceAppId)
-    {
-        // Initialise a new File entity to send with the command
-        $file = new File();
-        $file->setName($this->request->get('name'))
-            ->setDescription($this->request->get('description'));
-
-        // Create and send the command to upload the scanner output file
-        $command  = new UploadScanOutput($workspaceAppId, $this->request->file('file'), $file);
-        $response = $this->sendCommandToBusHelper($command);
-
-        return $this->controllerResponseHelper(
-            $response,
-            'workspace.app.view',
-            ['workspaceApp' => $file->getWorkspaceApp()->getId()],
-            true
-        );
-    }
-
-    public function ruggedyIndex() {
-        return view ('workspaces.ruggedyIndex');
-    }
-
-    public function ruggedyCreate() {
-        return view ('workspaces.ruggedyCreate');
-    }
-
-    public function ruggedyShow() {
-        return view ('workspaces.ruggedyShow');
+        $this->flashMessenger->success("Workspace deleted successfully.");
+        return redirect()->route('home');
     }
 
     /**
@@ -351,8 +170,7 @@ class WorkspaceController extends AbstractController
     protected function getValidationRules(): array
     {
         return [
-            Workspace::NAME        => 'bail|filled',
-            Workspace::DESCRIPTION => 'bail|filled',
+            'name' => 'bail|required',
         ];
     }
 
@@ -364,8 +182,7 @@ class WorkspaceController extends AbstractController
     protected function getValidationMessages(): array
     {
         return [
-            Workspace::NAME        => 'You must give the Workspace a name',
-            Workspace::DESCRIPTION => 'You must give the Workspace a description',
+            'name.required' => 'You must give the Workspace a name.',
         ];
     }
 }

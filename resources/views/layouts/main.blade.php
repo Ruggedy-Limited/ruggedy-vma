@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_token" content="{{ csrf_token() }}">
     <title>Ruggedy-App</title>
     <link rel="stylesheet" href="{{ asset('/vendor/bootstrap/dist/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('/vendor/font-awesome/css/font-awesome.css') }}">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('/css/styles.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
     <script src="{{ asset('/vendor/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
 </head>
 
 <body>
@@ -29,16 +31,18 @@
                     </div>
                 </a>
             </li>
+            @can (App\Policies\ComponentPolicy::ACTION_EDIT, new App\Entities\User())
+                <li>
+                    <a href="{{ route('settings.view') }}">
+                        <div class="nav-btn">
+                            <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
+                            <p class="nav-btn-text">Settings</p>
+                        </div>
+                    </a>
+                </li>
+            @endcan
             <li>
-                <a href="{{ route('settings.index') }}">
-                    <div class="nav-btn">
-                        <h4 class="nav-btn-header"><i class="fa fa-wrench fa-lg nav-indent" aria-hidden="true"></i></h4>
-                        <p class="nav-btn-text">Settings</p>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('settings.users.profile') }}">
+                <a href="{{ route('settings.user.profile') }}">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
                         </h4>
@@ -47,13 +51,22 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <!-- The logout requires a post request since Laravel 5.3:
+                Ref: https://laracasts.com/discuss/channels/laravel/laravel-53-logout-methodnotallowed -->
+                <a href="{{ url('/logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <div class="nav-btn">
                         <h4 class="nav-btn-header"><i class="fa fa-sign-out fa-lg nav-indent" aria-hidden="true"></i>
                         </h4>
                         <p class="nav-btn-text">Logout</p>
                     </div>
                 </a>
+                <form id="logout-form"
+                      action="{{ url('/logout') }}"
+                      method="POST"
+                      style="display: none;">
+                    {{ csrf_field() }}
+                </form>
             </li>
         </ul>
     </div>
@@ -61,37 +74,33 @@
         <div class="c-darkgrey nav-sm-btn">
             <i class="fa fa-bars fa-2x" id="menu-toggle"></i>
             <div class="col-md-3 col-sm-6 col-xs-10 pull-right">
-                <div id="custom-search-input">
-                    <div class="input-group col-md-12">
-                        <input type="text" class="form-control" placeholder="Search" />
-                        <span class="input-group-btn">
-                        <button class="btn btn-info btn-lg" type="button">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
+                <form name="search" action="{{ route('search.results') }}" method="POST"
+                      enctype="application/x-www-form-urlencoded">
+                    <div id="custom-search-input">
+                        <div class="input-group col-md-12">
+                                {{ csrf_field() }}
+                                <input type="text" class="form-control" name="s" placeholder="Search" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info btn-lg" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
-        <div class="c-lightgrey breadcrumb-nav hidden-xs">
-            @yield('breadcrumb')
+        <div class="c-lightgrey breadcrumb-nav">
+            <strong>@yield('breadcrumb')</strong>
         </div>
 
         <div class="container">
-            @if (session()->has('flash_notification.message'))
-                <div class="alert alert-{{ session('flash_notification.level') }}">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-
-                    {!! session('flash_notification.message') !!}
-                </div>
-            @endif
+            @include('partials.flash-message')
             @yield('content')
 
         </div>
     </div>
 </div>
-
-    <script src="{{ asset('/vendor/jquery/dist/jquery.js') }}"></script>
     <script src="{{ asset('/vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
 </body>

@@ -63,9 +63,6 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     {
         parent::__construct($request, $translator);
 
-        // Add the auth middleware everywhere
-        $this->middleware(['auth']);
-
         // Set a context for the logger
         $this->setLoggerContext($logger);
 
@@ -109,24 +106,29 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     }
 
     /**
-     * Abstract the creation of a Controller response to avoid a lot of duplication
+     * Handle errors processing a command
      *
      * @param $response
-     * @param string $viewOrRoute
-     * @param array $parameters
-     * @param bool $isRedirect
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return bool
      */
-    protected function controllerResponseHelper(
-        $response, string $viewOrRoute, array $parameters = [], bool $isRedirect = false
-    )
+    protected function isCommandError($response): bool
     {
         // Handle error responses from the bus
-        if ($response instanceof ErrorResponse) {
-            $this->flashMessenger->error($response->getMessage());
-            return redirect()->back()->withInput();
+        if (!($response instanceof ErrorResponse)) {
+            return false;
         }
 
+        $this->flashMessenger->error($response->getMessage());
+        return true;
+    }
+
+    /**
+     * Abstract the creation of a Controller response to avoid a lot of duplication
+     *
+     * @return void
+     */
+    protected function flashMessagesToSession()
+    {
         // Flash messages to the session
         if (!$this->messages->isEmpty()) {
             $this->messages->each(function ($messages, $messageType) {
@@ -138,14 +140,6 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
                     });
             });
         }
-
-        // Redirect when necessary
-        if ($isRedirect) {
-            return redirect()->route($viewOrRoute, $parameters);
-        }
-
-        // Return a view when necessary
-        return view($viewOrRoute, $parameters);
     }
 
     /**

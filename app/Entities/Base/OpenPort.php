@@ -398,6 +398,17 @@ class OpenPort extends AbstractEntity
         return $this->asset;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Open Port' : 'Open Ports';
+    }
+
     public function __sleep()
     {
         return array('id', 'number', 'protocol', 'service_name', 'service_product', 'service_extra_info', 'service_finger_print', 'service_banner', 'service_message', 'asset_id', 'created_at', 'updated_at');

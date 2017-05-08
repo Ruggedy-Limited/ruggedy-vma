@@ -18,6 +18,7 @@ use App\Entities\OpenPort;
 use App\Entities\SoftwareInformation;
 use App\Entities\User;
 use App\Entities\Vulnerability;
+use App\Entities\VulnerabilityHttpData;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Exceptions\ParserMappingException;
@@ -35,6 +36,7 @@ use Illuminate\Validation\Factory;
 use League\Tactician\CommandBus;
 use Monolog\Logger;
 use ReflectionClass;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use XMLReader;
 
 abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
@@ -177,9 +179,14 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
                 Asset::class                      => 'addAsset',
                 VulnerabilityReferenceCode::class => 'addVulnerabilityReferenceCode',
                 Exploit::class                    => 'addExploit',
+                VulnerabilityHttpData::class      => 'addVulnerabilityHttpData',
             ]),
 
             VulnerabilityReferenceCode::class => new Collection([
+                Vulnerability::class => 'setVulnerability',
+            ]),
+
+            VulnerabilityHttpData::class => new Collection([
                 Vulnerability::class => 'setVulnerability',
             ]),
 
@@ -239,7 +246,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             throw $e;
         }
 
-        $this->moveFileToProcessed($file);
+        $this->deleteProcessedFile($file);
     }
 
     /**
@@ -529,47 +536,32 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
      * @param File $file
      * @return bool
      */
-    public function moveFileToProcessed(File $file)
+    public function deleteProcessedFile(File $file)
     {
         // Empty or non-existent file
-        if (empty($file) || !$this->fileSystem->exists($file->getPath())) {
+        if (empty($file)) {
             return false;
         }
 
-        // Get the path where processed files should be moved to
-        $processedFilePath = str_replace('scans/', 'scans/processed/', $file->getPath());
-        $processedPath     = $this->fileSystem->dirname($processedFilePath);
+	    // Mark the file as processed and persist to the DB
+	    $file->setProcessed(true);
+	    $this->em->persist($file);
+	    $this->em->flush($file);
 
-        // Check if the directory exists and if not, create it
-        $dirExists = true;
-        if (!$this->fileSystem->exists($processedPath)) {
-            $dirExists = $this->fileSystem->makeDirectory($processedPath, 0744, true);
-        }
-
-        // Directory creation probably failed?
-        if (!$dirExists) {
-            $this->logger->log(Logger::ERROR, "Failed to create directory for processed file", [
-                'file'      => $file->getPath(),
-                'user'      => $file->getUserId(),
-                'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
-            ]);
-            return false;
-        }
+	    if (!$this->fileSystem->exists($file->getPath())) {
+	    	return true;
+	    }
 
         // Attempt to move a file to it's processed directory location
-        if (!$this->fileSystem->move($file->getPath(), $processedFilePath)) {
-            $this->logger->log(Logger::ERROR, "Could not move processed file", [
+        if (!$this->fileSystem->delete($file->getPath())) {
+            $this->logger->log(Logger::ERROR, "Could not delete processed file", [
                 'file'      => $file->getPath(),
                 'user'      => $file->getUserId(),
                 'workspace' => $file->getWorkspaceApp()->getWorkspaceId(),
             ]);
-            return false;
-        }
 
-        // Mark the file as processed and persist to the DB
-        $file->setProcessed(true);
-        $this->em->persist($file);
-        $this->em->flush($file);
+            throw new FileException("Could not delete file after processing.");
+        }
 
         return true;
     }
@@ -636,6 +628,11 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             $parentEntity = $this->getParentEntityFromLocalCollection($parentEntityClass);
         }
 
+        if ($entity instanceof Vulnerability) {
+            // Add the file relation to Vulnerabilities
+            $this->addFileRelation($entity, $entityClass, true);
+        }
+
         // Populate a criteria array with the values from the entity instance
         $findOneByCriteria = $this->getPopulatedCriteria($entity, $findOneByCriteria, $parentEntity);
 
@@ -655,7 +652,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Add the User relation where the entity implements the SystemComponent contract
         $this->addUserRelation($entity);
 
-        // Add the entity to the Entity Manager unless the persist
+        // Add the entity to the Entity Manager unless the persist flag is deliberately set to false
         if ($persist) {
             $this->em->persist($entity);
         }
@@ -978,7 +975,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         if (!($this->$propertyName instanceof Collection)) {
             $this->logger->log(Logger::ERROR, "Invalid temporary storage property", [
                 'expectingClass' => Collection::class,
-                'gotClass'       => is_object($this->$propertyName) ? get_class($this->$propertyName) : 'Not an onject',
+                'gotClass'       => is_object($this->$propertyName) ? get_class($this->$propertyName) : 'Not an object',
             ]);
 
             return;
@@ -1206,8 +1203,7 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         $existingEntity = $this->em->getRepository($entityClass)->findOneBy($findOneByCriteria);
         if (!empty($existingEntity)) {
             $entity->setId($existingEntity->getId());
-            $entity = $this->em->merge($entity);
-            return $entity;
+            return $this->em->merge($entity);
         }
 
         return $entity;
@@ -1361,11 +1357,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
         // Check if the base64 flag is set on the node
         $isBase64 = $this->checkForBase64Encoding();
 
-        // Move into the CData node
-        $this->parser->read();
-
-        // Exit early is this is not a CData field
-        if ($this->parser->nodeType !== XMLReader::CDATA) {
+        $value = $this->getCurrentNodesCDataValue();
+        if (empty($value)) {
             return;
         }
 
@@ -1380,11 +1373,8 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
             return;
         }
 
-        // Check if we need to decode a base64 encoded string
-        $value = $this->parser->value;
-        if ($isBase64) {
-            $value = base64_decode($this->parser->value);
-        }
+        // Check if we need to base64 encode the raw request or response string
+        $value = $this->encodeRawHttpRequestOrResponse($setter, $isBase64, $value);
 
         // If we have an empty value then exit early
         if (empty($value)) {
@@ -1403,6 +1393,29 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     }
 
     /**
+     * Get the value from the CData node that is a direct descendant of the current node.
+     *
+     * @return string
+     */
+    protected function getCurrentNodesCDataValue(): string
+    {
+        // Move into the CData node
+        $this->parser->read();
+
+        // Exit early is this is not a CData field
+        if ($this->parser->nodeType !== XMLReader::CDATA) {
+            return '';
+        }
+
+        $value = $this->parser->value;
+        if (empty($value)) {
+            return '';
+        }
+
+        return $value;
+    }
+
+    /**
      * Check if the value is base64 encoded
      *
      * @return bool
@@ -1410,6 +1423,24 @@ abstract class AbstractXmlParserService implements ParsesXmlFiles, CustomLogging
     protected function checkForBase64Encoding(): bool
     {
         return $this->parser->getAttribute('base64') === 'true';
+    }
+
+    /**
+     * Ensure Base64 encoding and set the raw request/response on the Vulnerability entity
+     */
+    /**
+     * @param string $setter
+     * @param bool $isBase64
+     * @param $value
+     * @return string
+     */
+    protected function encodeRawHttpRequestOrResponse(string $setter, bool $isBase64, $value)
+    {
+        if (!in_array($setter, ['setHttpRawRequest', 'setHttpRawResponse']) || $isBase64) {
+            return $value;
+        }
+
+        return base64_encode($value);
     }
 
     /**

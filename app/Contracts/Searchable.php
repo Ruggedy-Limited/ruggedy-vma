@@ -2,7 +2,8 @@
 
 namespace App\Contracts;
 
-use Doctrine\Common\Collections\Collection;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface Searchable
 {
@@ -10,7 +11,14 @@ interface Searchable
      * Search for matching entities
      *
      * @param string $searchTerm
-     * @return Collection
+     * @return LengthAwarePaginator
      */
-    public function search(string $searchTerm): Collection;
+    public function search(string $searchTerm): LengthAwarePaginator;
+
+    /**
+     * Get a Collection of searchable fields for entities in this repository
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getSearchableFields(): Collection;
 }

@@ -1,11 +1,15 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <p>Breadcrumbs / Goes / Here
-        <button type="button" class="btn round-btn pull-right c-grey" data-toggle="modal" data-target="#help">
-            <i class="fa fa-question fa-lg" aria-hidden="true"></i>
+    <a href="{{ route('workspace.view', [
+        $workspaceApp->getWorkspace()->getRouteParameterName() => $workspaceApp->getWorkspace()->getId()
+    ]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
-        <a href="{{ route('workspace.app.delete', [
+    </a>
+    @can (App\Policies\ComponentPolicy::ACTION_EDIT, $workspaceApp)
+        <a href="{{ route('app.delete', [
             'workspaceId'    => $workspaceApp->getWorkspace()->getId(),
             'workspaceAppId' => $workspaceApp->getId()
         ]) }}">
@@ -13,60 +17,77 @@
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>
         </a>
-        <button type="button" class="btn round-btn pull-right c-purple">
-            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn round-btn pull-right c-yellow">
-            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-        </button>
-    </p>
+        <a href="{{ route('app.edit', [$workspaceApp->getRouteParameterName() => $workspaceApp->getId()]) }}">
+            <button type="button" class="btn round-btn pull-right c-purple">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </button>
+        </a>
+    @endcan
+    {!! Breadcrumbs::render('dynamic', $workspaceApp) !!}
 @endsection
 
 @section('content')
-    <!-- Modal -->
-    <div id="help" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help Ttile</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Help text goes here.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="{{ route('workspace.app.file.form', ['workspaceAppId' => $workspaceApp->getId()]) }}"
+            @can (App\Policies\ComponentPolicy::ACTION_CREATE, $workspaceApp)
+            <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}"
                class="primary-btn" type="button">Add File</a>
+            @endcan
         </div>
     </div>
-
     <div class="row animated fadeIn">
-        @if ($workspaceApp->getFiles()->count() < 1)
-            <p>
-                You haven't uploaded any {{ ucwords($workspaceApp->getScannerApp()->getName()) }} files yet.
-                <a href="{{ route('workspace.app.file.form', ['workspaceAppId' => $workspaceApp->getId()]) }}">
-                    Upload one now?
-                </a>
-            </p>
-        @else
-            @foreach($workspaceApp->getFiles() as $file)
-                <div class="col-md-4 animated pulse-hover">
-                    <a href="{{ route('workspace.app.file.view', ['fileId' => $file->getId()]) }}">
-                        <div class="content-card">
-                            <h4 class="h-4-1">{{ $file->getName() }}</h4>
-                            <p>{{ $file->getDescription() }}</p>
+        <ul class=tabs>
+            <li>
+                <input type="radio" name="tabs" id="tab1" checked>
+                <label for="tab1">
+                    <div class="visible-xs mobile-tab">
+                        <span class="label-count c-grey">
+                            {{ !empty($files) ? $files->total() : 0 }}
+                        </span>
+                        <i class="fa fa-file fa-2x" aria-hidden="true"></i><br>
+                        <small>Files</small>
+                    </div>
+                    <p class="hidden-xs">
+                        Files<span class="label-count c-grey">{{ !empty($files) ? $files->total() : 0 }}</span>
+                    </p>
+                </label>
+                <div id="tab-content1" class="tab-content">
+                    <div class="dash-line"></div>
+                    <div>
+                        <div>
+                            @if (empty($files) || $files->isEmpty())
+                                <br>
+                                <div class="col-xs-12">
+                                <p class="p-l-8">
+                                    You haven't uploaded any {{ ucwords($workspaceApp->getScannerApp()->getName()) }}
+                                    files yet.
+                                    <a href="{{ route('file.create', ['workspaceAppId' => $workspaceApp->getId()]) }}">
+                                        Upload one now?
+                                    </a>
+                                </p>
+                                </div>
+                            @else
+                                <div class="row">
+                                    @foreach($files as $file)
+                                        <div class="col-md-4 animated pulse-hover">
+                                            <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
+                                                <div class="content-card">
+                                                    <h4 class="h-4-1">{{ $file->getName() }}</h4>
+                                                    <p>{{ $file->getDescription() }}</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="row">
+                                    {{ $files->fragment('tab1')->links() }}
+                                </div>
+                            @endif
                         </div>
-                    </a>
+                    </div>
                 </div>
-            @endforeach
-        @endif
+            </li>
+        </ul>
+        <br style=clear:both;>
     </div>
-
 @endsection

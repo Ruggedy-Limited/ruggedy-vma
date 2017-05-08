@@ -513,6 +513,17 @@ class Audit extends AbstractEntity
         return $this->updated_at;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Audit' : 'Audits';
+    }
+
     public function __sleep()
     {
         return array('id', 'audit_file', 'compliance_check_name', 'compliance_check_id', 'actual_value', 'policy_value', 'info', 'result', 'reference', 'see_also', 'description', 'solution', 'agent', 'uname', 'output', 'created_at', 'updated_at');

@@ -58,7 +58,7 @@ class DeleteAsset extends CommandHandler
         // Get the asset instance from the database
         /** @var Asset $asset */
         $asset = $this->assetRepository->find($id);
-        if (empty($asset) || !($asset instanceof Asset) || $asset->getDeleted()) {
+        if (empty($asset)) {
             throw new AssetNotFoundException("There is no existing Asset with the given Asset ID");
         }
 
@@ -71,27 +71,10 @@ class DeleteAsset extends CommandHandler
 
         // If deletion has been confirmed then set the deleted flag and persist the changes
         if ($command->isConfirm()) {
-            $asset->setDeleted(true);
-            $this->em->persist($asset);
+            $this->em->remove($asset);
             $this->em->flush($asset);
         }
 
         return $asset;
-    }
-
-    /**
-     * @return AssetRepository
-     */
-    public function getAssetRepository()
-    {
-        return $this->assetRepository;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    public function getEm()
-    {
-        return $this->em;
     }
 }
