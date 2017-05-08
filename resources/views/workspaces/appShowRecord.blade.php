@@ -51,10 +51,10 @@
                             'vulnerabilityId' => $vulnerability->getId()
                         ])
                     ]) !!}
-                    <div class="form-group col-md-12">
-                        {!! Form::select('folder-id', $folders) !!}
-                    </div>
-                    <button class="primary-btn" type="submit">Add to Folder</button>
+                        <div class="form-group col-md-12">
+                            {!! Form::select('folder-id', $folders) !!}
+                        </div>
+                        <button class="primary-btn" type="submit">Add to Folder</button>
                     {!! Form::close() !!}
                 </div>
             </div>
@@ -63,8 +63,7 @@
 
     <div class="row animated fadeIn">
         <div class="col-md-12">
-            <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#jira">Send to
-                JIRA</a>
+            <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#jira">Send to JIRA</a>
             @if (!empty($folders))
                 @can (App\Policies\ComponentPolicy::ACTION_EDIT, $vulnerability)
                     <a href="#" class="primary-btn" type="button" data-toggle="modal" data-target="#folder">
@@ -138,17 +137,17 @@
                     <input type="radio" name="tabs" id="tab4">
                     <label for="tab4">
                         <div class="visible-xs mobile-tab">
-                <span class="label-count c-grey">
-                    {{ $httpDataCollection->total() }}
-                </span>
+                            <span class="label-count c-grey">
+                                {{ $httpDataCollection->total() }}
+                            </span>
                             <i class="fa fa-link fa-2x" aria-hidden="true"></i><br>
                             <small>URLs</small>
                         </div>
                         <p class="hidden-xs">
                             URLs
                             <span class="label-count c-grey">
-                    {{ $httpDataCollection->total() }}
-                </span>
+                                {{ $httpDataCollection->total() }}
+                            </span>
                         </p>
                     </label>
                     <div id="tab-content4" class="tab-content">
@@ -168,15 +167,14 @@
                 <input type="radio" name="tabs" id="tab5">
                 <label for="tab5">
                     <div class="visible-xs mobile-tab">
-            <span class="label-count c-grey">
-                {{ !empty($comments) ? $comments->total() : 0 }}
-            </span>
+                        <span class="label-count c-grey">
+                            {{ !empty($comments) ? $comments->total() : 0 }}
+                        </span>
                         <i class="fa fa-comments fa-2x" aria-hidden="true"></i><br>
                         <small>Comments</small>
                     </div>
                     <p class="hidden-xs">
-                        Comments<span
-                                class="label-count c-grey">{{ !empty($comments) ? $comments->total() : 0 }}</span>
+                        Comments<span class="label-count c-grey">{{ !empty($comments) ? $comments->total() : 0 }}</span>
                     </p>
                 </label>
                 <div id="tab-content5" class="tab-content">
