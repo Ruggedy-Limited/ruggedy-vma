@@ -93,9 +93,11 @@
                                         <div class="t-s-14 label label-{{ $vulnerability->getBootstrapAlertCssClass() }} t-s-10">
                                             {{ $vulnerability->getSeverityText() }} Risk
                                         </div>
-                                        <div class="m-l-8 t-s-14 label c-grey t-s-10">CVSS
-                                            {{ $vulnerability->getCvssScore() }}
-                                        </div>
+                                        @if (!empty($vulnerability->getCvssScore()))
+                                            <div class="m-l-8 t-s-14 label c-grey t-s-10">CVSS
+                                                {{ $vulnerability->getCvssScore() }}
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-md-12 m-t-15">

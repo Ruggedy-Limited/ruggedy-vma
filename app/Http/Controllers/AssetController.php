@@ -92,13 +92,16 @@ class AssetController extends AbstractController
     public function showAsset($assetId)
     {
         $command = new GetAsset(intval($assetId));
-        $asset   = $this->sendCommandToBusHelper($command);
+        $assetInfo = $this->sendCommandToBusHelper($command);
 
-        if ($this->isCommandError($assetId)) {
+        if ($this->isCommandError($assetInfo)) {
             return redirect()->back();
         }
 
-        return view('workspaces.asset', ['asset' => $asset]);
+        return view('workspaces.asset', [
+            'asset' => $assetInfo->get('asset'),
+            'Vulnerabilities' => $assetInfo->get('vulnerabilities'),
+        ]);
     }
 
     /**
