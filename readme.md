@@ -4,9 +4,9 @@
 
 Ruggedy Limited is a New Zealand-based company founded by [Francois Marais](https://github.com//francois-ruggedy) and [Gareth Lawson](https://github.com/garethlawson). Our passion can be summed up as *"automation through technology that helps people in their day-today jobs and lives"*. Francois is an Information Security specialist and Gareth is a Software Developer. Each have more than 15 years of experience in their areas of expertise and have embarked on a journey to see how they can bring these two specialities together to create a "security as code" solution. You can read more on our website: [www.ruggedy.io](http://www.ruggedy.io).
 
-## About Ruggedy Go
+## About Ruggedy VMA
 
-Ruggedy Go is an open source web application built by [Ruggedy Limited](http://ruggey.io) in PHP, using the Laravel framework as a foundation.
+Ruggedy VMA (Vulnerability Management App) is an open source web application built by [Ruggedy Limited](http://ruggedy.io) in PHP, using the Laravel framework as a foundation.
 
 It is built to assist pen testers, information security consultants, CISOs (Chief Information Security Officers), and anyone who is using tools like Burp, Nessus and Nexpose to do network and server security testing.
 
@@ -47,7 +47,7 @@ The following instructions assume that you have configured your web server envir
 ### Instructions
 
 - Make sure your server environment meets all the requirments.
-- Clone this repository with Git to a location accessible to PHP and your web server (Apache, Nginx etc.): `git clone https://github.com/Ruggedy-Limited/ruggedy-go.git`
+- Clone this repository with Git to a location accessible to PHP and your web server (Apache, Nginx etc.): `git clone https://github.com/Ruggedy-Limited/ruggedy-vma.git`
 - Make a copy of the file named .env.example to a file named just .env, e.g. `cp ./.env.example ./.env`.
 - It is **REQUIRED** that you open the .env file in an editor of your choice and configure your database connection: DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD.
 - It is recommended that you customise the following options in the .env file: APP_ENV (local/development/production), APP_DEBUG (true/false), APP_URL (e.g. http://localhost).
@@ -59,7 +59,7 @@ Now run the following commands from your shell while in the directory where the 
 - `npm install`
 - `php artisan key:generate && php artisan migrate`
 - `crontab -e` then add the following cron job to your crontab:
-`* * * * * /path/to/php /path/to/ruggedy-go/artisan schedule:run >> /path/to/ruggedy-go/storage/logs/cron.log 2>&1`
+`* * * * * /path/to/php /path/to/ruggedy-vma/artisan schedule:run >> /path/to/ruggedy-vma/storage/logs/cron.log 2>&1`
 
 NOTE: *In the cron entry, make sure you replace **/path/to** with the path relevant to your server/environment*.
 
@@ -78,7 +78,7 @@ This still needs to be clearly defined, but the immediate plans are to make some
 
 ## Contributing
 
-Thank you for considering contributing to Ruggedy Go! Feel free to submit a pull request against the master branch or send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io) if you want to discuss specific contributions.
+Thank you for considering contributing to Ruggedy VMA! Feel free to submit a pull request against the master branch or send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io) if you want to discuss specific contributions.
 
 ## Security Vulnerabilities
 
