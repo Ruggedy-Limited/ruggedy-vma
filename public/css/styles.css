@@ -192,7 +192,7 @@ Start: Navbar
 .breadcrumb-nav {
     height: 50px;
     width: 100%;
-    padding: 10px 40px 15px 40px;
+    padding: 15px 40px 15px 40px;
     color: #58666e;
     border-bottom: 1px solid #e0dfdf;
 }
@@ -425,6 +425,7 @@ Start: Buttons
     text-align: center;
     padding: 6px 0;
     margin-right: 5px;
+    margin-top: -5px;
     font-size: 11px;
     line-height: 1.428571429;
     border-radius: 15px;
@@ -723,6 +724,15 @@ Start: Colors, Text, Padding, Margins
 .m-r-8 {
     margin-right: 8px;
 }
+
+.m-l-8 {
+    margin-left: 8px;
+}
+
+.m-l-3 {
+    margin-left: 3px;
+}
+
 
 /*
 ==========================================================================
