@@ -7,20 +7,25 @@ use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
+use App\Repositories\VulnerabilityRepository;
 
 class GetAsset extends CommandHandler
 {
     /** @var AssetRepository */
     protected $assetRepository;
 
+    /** @var VulnerabilityRepository */
+    protected $vulnerabilityRepository;
+
     /**
      * GetAsset constructor.
      *
      * @param AssetRepository $assetRepository
      */
-    public function __construct(AssetRepository $assetRepository)
+    public function __construct(AssetRepository $assetRepository, VulnerabilityRepository $vulnerabilityRepository)
     {
         $this->assetRepository = $assetRepository;
+        $this->vulnerabilityRepository = $vulnerabilityRepository;
     }
 
     /**
@@ -44,6 +49,16 @@ class GetAsset extends CommandHandler
             throw new ActionNotPermittedException("Requesting User not permitted to view this Asset");
         }
 
-        return $asset;
+        $vulnerabilities = $this->vulnerabilityRepository->findByAssetQuery($command->getId());
+        if (!empty($vulnerabilities)) {
+            $vulnerabilities->getCollection()->transform(function ($result) {
+                return current($result);   
+            });
+        }
+
+        return collect([
+            'asset' => $asset,
+            'vulnerabilities' => $vulnerabilities,
+        ]);
     }
 }

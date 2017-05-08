@@ -14,7 +14,7 @@
             <div class="collapse" id="http-info-{{ $httpData->getId() }}">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h3>Issue Detail</h3>
+                        <h4>Issue Detail</h4>
                         {!! $httpData->getIssueDetail() !!}
                     </div>
                 </div>
