@@ -31,6 +31,7 @@ However, if you are not using Homestead, you will need to make sure your server 
 - Tokenizer PHP Extension
 - XML PHP Extension
 - A web server installed, e.g. Apache, Nginx etc.
+- A running MySQL server with an empty database to use when installing the application
 - [Composer](https://getcomposer.org/) must be installed
 - [Bower](https://bower.io) must be installed
 - [NodeJS and NPM](http://nodejs.org/) must be installed
