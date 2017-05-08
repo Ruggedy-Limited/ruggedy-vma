@@ -100,7 +100,7 @@ class AssetController extends AbstractController
 
         return view('workspaces.asset', [
             'asset' => $assetInfo->get('asset'),
-            'Vulnerabilities' => $assetInfo->get('vulnerabilities'),
+            'vulnerabilities' => $assetInfo->get('vulnerabilities'),
         ]);
     }
 
