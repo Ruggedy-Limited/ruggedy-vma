@@ -33,22 +33,7 @@
                 </div>
             </li>
             <li>
-                <input type="radio" name="tabs" id="tab2">
-                <label for="tab2">
-                    <div class="visible-xs mobile-tab">
-                        <i class="fa fa-thumbs-up fa-2x" aria-hidden="true"></i><br>
-                        <small>Vulnerabilities</small>
-                    </div>
-                    <p class="hidden-xs">Vulnerabilities</p>
-                </label>
-                <div id="tab-content2" class="tab-content">
-                    <div class="dash-line"></div>
-                    <div class="col-md-12">
-                        <div class="content-card solution">
-
-                        </div>
-                    </div>
-                </div>
+                @include('partials.vulnerabilities-tab', ['tabNo' => 2])
             </li>
         </ul>
         <br style=clear:both;>
