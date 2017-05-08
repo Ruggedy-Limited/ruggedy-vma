@@ -34,7 +34,7 @@
                         Provide a Title, Description and XML file. Click Submit to upload the file.</p>
                     <h4>Step 5 - View and Manage Vulnerabilities</h4>
                     <p>Select your File and interact with the relevant vulnerability data. Vulnerability records can
-                    be added to a Folder or send to JIRA.</p>
+                    be added to a Folder or sent to JIRA.</p>
                 </div>
             </div>
 
