@@ -7,9 +7,6 @@ use App\Entities\JiraIssue;
 class CreateJiraTicket extends Command
 {
     /** @var int */
-    protected $fileId;
-
-    /** @var int */
     protected $vulnerabilityId;
 
     /** @var string */
@@ -31,22 +28,13 @@ class CreateJiraTicket extends Command
      * @param JiraIssue $jiraIssue
      */
     public function __construct(
-        int $fileId, int $vulnerabilityId, string $username, string $password, JiraIssue $jiraIssue
+        int $vulnerabilityId, string $username, string $password, JiraIssue $jiraIssue
     )
     {
-        $this->fileId          = $fileId;
         $this->vulnerabilityId = $vulnerabilityId;
         $this->username        = $username;
         $this->password        = $password;
         $this->jiraIssue       = $jiraIssue;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFileId(): int
-    {
-        return $this->fileId;
     }
 
     /**

@@ -4,31 +4,39 @@ namespace App\Handlers\Commands;
 
 use App\Commands\GetFolder as GetFolderCommand;
 use App\Entities\Folder;
+use App\Entities\Vulnerability;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\FolderNotFoundException;
 use App\Policies\ComponentPolicy;
 use App\Repositories\FolderRepository;
+use App\Repositories\VulnerabilityRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class GetFolder extends CommandHandler
 {
     /** @var FolderRepository */
     protected $folderRepository;
 
+    /** @var VulnerabilityRepository */
+    protected $vulnerabilityRepository;
+
     /**
      * GetFolder constructor.
      *
      * @param FolderRepository $folderRepository
+     * @param VulnerabilityRepository $vulnerabilityRepository
      */
-    public function __construct(FolderRepository $folderRepository)
+    public function __construct(FolderRepository $folderRepository, VulnerabilityRepository $vulnerabilityRepository)
     {
-        $this->folderRepository = $folderRepository;
+        $this->folderRepository        = $folderRepository;
+        $this->vulnerabilityRepository = $vulnerabilityRepository;
     }
 
     /**
      * Process the GetFolder command.
      *
      * @param GetFolderCommand $command
-     * @return Folder
+     * @return array
      * @throws ActionNotPermittedException
      * @throws FolderNotFoundException
      */
@@ -46,6 +54,16 @@ class GetFolder extends CommandHandler
             throw new ActionNotPermittedException("The requesting User is not permitted to view this folder.");
         }
 
-        return $folder;
+        $vulnerabilities = $this->vulnerabilityRepository->findByFolderQuery($command->getId());
+        if (!empty($vulnerabilities)) {
+            $vulnerabilities->getCollection()->transform(function ($result) {
+                return current($result);
+            });
+        }
+
+        return [
+            'folder'                => $folder,
+            Folder::VULNERABILITIES => $vulnerabilities,
+        ];
     }
 }

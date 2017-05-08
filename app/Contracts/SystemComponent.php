@@ -38,4 +38,27 @@ interface SystemComponent
      * @return SystemComponent|null
      */
     public function getParent();
+
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string;
+
+    /**
+     * Get the name used in routes related to this entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getRouteName(bool $plural = false): string;
+
+    /**
+     * Get the route parameter name used for passing the ID of a specific entity to a route
+     *
+     * @return string
+     */
+    public function getRouteParameterName(): string;
 }

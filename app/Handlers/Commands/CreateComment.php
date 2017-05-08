@@ -3,13 +3,12 @@
 namespace App\Handlers\Commands;
 
 use App\Commands\CreateComment as CreateCommentCommand;
-use App\Entities\File;
 use App\Entities\Comment;
+use App\Entities\User;
 use App\Entities\Vulnerability;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
-use App\Exceptions\FileNotFoundException;
 use App\Exceptions\VulnerabilityNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
 use App\Policies\ComponentPolicy;
@@ -68,19 +67,11 @@ class CreateComment extends CommandHandler
         $requestingUser = $this->authenticate();
 
         /** @var Comment $comment */
-        $fileId          = $command->getId();
-        $vulnerabilityId = $command->getVulnerabilityId();
+        $vulnerabilityId = $command->getId();
         $comment         = $command->getEntity();
         // Check that all the required fields were set on the command
-        if (!isset($fileId, $vulnerabilityId, $comment)) {
+        if (!isset($vulnerabilityId, $comment)) {
             throw new InvalidInputException("One or more required members are not set on the command");
-        }
-
-        /** @var File $file */
-        $file = $this->fileRepository->find($fileId);
-        // Make sure the File exists
-        if (empty($file)) {
-            throw new FileNotFoundException("A File with the given ID does not exist.");
         }
 
         /** @var Vulnerability $vulnerability */
@@ -91,7 +82,7 @@ class CreateComment extends CommandHandler
         }
 
         // Make sure the User has permission to create a Comment
-        if ($requestingUser->cannot(ComponentPolicy::ACTION_CREATE, $file)) {
+        if (empty($requestingUser) || !($requestingUser instanceof User)) {
             throw new ActionNotPermittedException(
                 "The requesting User does not have permission to create new Comments"
             );
@@ -99,7 +90,6 @@ class CreateComment extends CommandHandler
 
         // Set all the relate entities and the status
         $comment->setUser($requestingUser)
-            ->setFile($file)
             ->setVulnerability($vulnerability)
             ->setStatus(true);
 

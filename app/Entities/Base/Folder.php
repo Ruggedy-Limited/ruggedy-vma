@@ -2,13 +2,17 @@
 
 namespace App\Entities\Base;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * App\Entities\Base\Folder
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`folders`", indexes={@ORM\Index(name="folder_workspace_fk_idx", columns={"`workspace_id`"}), @ORM\Index(name="folder_user_fk_idx", columns={"`user_id`"})})
+ * @ORM\Table(name="`folders`", indexes={
+ *     @ORM\Index(name="folder_workspace_fk_idx", columns={"`workspace_id`"}),
+ *     @ORM\Index(name="folder_user_fk_idx", columns={"`user_id`"})
+ * })
  */
 class Folder extends AbstractEntity
 {
@@ -16,12 +20,12 @@ class Folder extends AbstractEntity
     const TABLE_NAME = 'folders';
 
     /** Column name constants */
-    const NAME         = 'name';
-    const DESCRIPTION  = 'description';
-    const WORKSPACE_ID = 'workspace_id';
-    const USER_ID      = 'user_id';
-    const WORKSPACE    = 'workspace';
-    const USER         = 'user';
+    const NAME                   = 'name';
+    const DESCRIPTION            = 'description';
+    const WORKSPACE_ID           = 'workspace_id';
+    const USER_ID                = 'user_id';
+    const WORKSPACE              = 'workspace';
+    const USER                   = 'user';
 
     /**
      * @ORM\Id
@@ -283,8 +287,19 @@ class Folder extends AbstractEntity
         return $this->user;
     }
 
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Folder' : 'Folders';
+    }
+
     public function __sleep()
     {
-        return array('id', 'name', 'description', 'workspace_id', 'user_id', 'created_at', 'updated_at');
+        return array('id', 'name', 'description', 'workspace_id', 'file_id', 'user_id', 'created_at', 'updated_at');
     }
 }

@@ -4,9 +4,11 @@ namespace App\Handlers\Commands;
 
 use App\Commands\DeleteComment as DeleteCommentCommand;
 use App\Entities\Comment;
+use App\Entities\User;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\CommentNotFoundException;
+use App\Policies\ComponentPolicy;
 use App\Repositories\CommentRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -60,7 +62,7 @@ class DeleteComment extends CommandHandler
         }
 
         // Check that the User has permission to delete the Comment
-        if ($requestingUser->getId() !== $comment->getUser()->getId()) {
+        if (!$requestingUser->isAdmin() && $requestingUser->getId() !== $comment->getUser()->getId()) {
             throw new ActionNotPermittedException("User does not have permission to delete this Comment");
         }
 

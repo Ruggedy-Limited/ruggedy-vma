@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Commands\ResetPassword;
+use App\Http\Controllers\AbstractController;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Support\Str;
 
-class ResetPasswordController extends Controller
+/**
+ * @Middleware("guest")
+ */
+class ResetPasswordController extends AbstractController
 {
     /*
     |--------------------------------------------------------------------------
@@ -28,12 +33,42 @@ class ResetPasswordController extends Controller
     protected $redirectTo = '/home';
 
     /**
-     * Create a new controller instance.
+     * Reset the given user's password.
      *
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
+     * @param  string  $password
      * @return void
      */
-    public function __construct()
+    protected function resetPassword($user, $password)
     {
-        $this->middleware('guest');
+        $command = new ResetPassword(
+            $user->setFromArray([
+                'password'       => bcrypt($password),
+                'remember_token' => Str::random(60),
+            ])
+        );
+
+        $result = $this->sendCommandToBusHelper($command);
+        $this->isCommandError($result);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return array
+     */
+    protected function getValidationRules(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return array
+     */
+    protected function getValidationMessages(): array
+    {
+        return [];
     }
 }

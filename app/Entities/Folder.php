@@ -14,9 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Folder extends Base\Folder implements SystemComponent
 {
+    /** Related Entity constants */
+    const VULNERABILITIES = 'vulnerabilities';
+
     /**
-     * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", cascade={"persist", "remove"},
+     * @ORM\ManyToMany(targetEntity="Vulnerability", inversedBy="folders", cascade={"persist"},
      *     fetch="EXTRA_LAZY")
      * @ORM\JoinTable(
      *     name="folders_vulnerabilities",
@@ -27,12 +29,21 @@ class Folder extends Base\Folder implements SystemComponent
     protected $vulnerabilities;
 
     /**
+     * Folder constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->vulnerabilities = new ArrayCollection();
+    }
+
+    /**
      * @inheritdoc
      * @return Base\Workspace
      */
     public function getParent()
     {
-        return $this->getWorkspace();
+        return $this->workspace;
     }
 
     /**

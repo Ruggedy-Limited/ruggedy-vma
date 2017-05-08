@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * App\Entities\Base\Asset
  *
  * @ORM\MappedSuperclass
- * @ORM\Table(name="`assets`", indexes={@ORM\Index(name="assets_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="assets_file_fk_idx", columns={"`file_id`"})})
+ * @ORM\Table(name="`assets`", indexes={@ORM\Index(name="assets_user_fk_idx", columns={"`user_id`"}), @ORM\Index(name="assets_file_fk", columns={"`file_id`"})})
  */
 class Asset extends AbstractEntity
 {
@@ -143,6 +143,7 @@ class Asset extends AbstractEntity
     /**
      * @ORM\ManyToOne(targetEntity="File", inversedBy="assets", cascade={"persist"})
      * @ORM\JoinColumn(name="`file_id`", referencedColumnName="`id`", nullable=false, onDelete="CASCADE")
+     * @var File
      */
     protected $file;
 
@@ -674,6 +675,17 @@ class Asset extends AbstractEntity
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Get the display name for the entity
+     *
+     * @param bool $plural
+     * @return string
+     */
+    public function getDisplayName(bool $plural = false): string
+    {
+        return $plural === false ? 'Asset' : 'Assets';
     }
 
     public function __sleep()

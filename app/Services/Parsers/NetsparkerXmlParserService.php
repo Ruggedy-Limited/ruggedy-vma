@@ -4,6 +4,7 @@ namespace App\Services\Parsers;
 
 use App\Entities\Asset;
 use App\Entities\Vulnerability;
+use App\Entities\VulnerabilityHttpData;
 use App\Entities\VulnerabilityReferenceCode;
 use App\Entities\Workspace;
 use App\Repositories\AssetRepository;
@@ -51,7 +52,7 @@ class NetsparkerXmlParserService extends AbstractXmlParserService
             ]),
             'vulnerability.url' => collect([
                 'setHttpUri' => collect([
-                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => Vulnerability::class,
+                    parent::MAP_ATTRIBUTE_ENTITY_CLASS => VulnerabilityHttpData::class,
                     parent::MAP_ATTRIBUTE_VALIDATION   => 'filled|url',
                 ]),
             ]),
@@ -109,15 +110,20 @@ class NetsparkerXmlParserService extends AbstractXmlParserService
                     Vulnerability::class,
                 ]),
             ]),
+            'url'   => collect([
+                'initialiseNewEntity' => collect([
+                    VulnerabilityHttpData::class,
+                ]),
+            ]),
             'rawrequest' => collect([
                 'captureCDataField' => collect([
-                    Vulnerability::class,
+                    VulnerabilityHttpData::class,
                     'setHttpRawRequest',
                 ]),
             ]),
             'rawresponse' => collect([
                 'captureCDataField' => collect([
-                    Vulnerability::class,
+                    VulnerabilityHttpData::class,
                     'setHttpRawResponse',
                 ]),
             ]),
@@ -136,12 +142,27 @@ class NetsparkerXmlParserService extends AbstractXmlParserService
                     Workspace::class
                 ]),
             ]),
+            'rawresponse'   => collect([
+                'persistPopulatedEntity' => collect([
+                    VulnerabilityHttpData::class,
+                    [
+                        VulnerabilityHttpData::HTTP_URI            => null,
+                        VulnerabilityHttpData::HTTP_METHOD         => null,
+                        VulnerabilityHttpData::HTTP_PORT           => null,
+                        VulnerabilityHttpData::HTTP_STATUS_CODE    => null,
+                        VulnerabilityHttpData::HTTP_TEST_PARAMETER => null,
+                        VulnerabilityHttpData::VULNERABILITY       => null,
+                    ],
+                    Vulnerability::class,
+                ]),
+            ]),
             'vulnerability' => collect([
                 'persistPopulatedEntity' => collect([
                     Vulnerability::class,
                     [
                         Vulnerability::ID_FROM_SCANNER => null,
                         Vulnerability::NAME            => null,
+                        Vulnerability::FILE            => null,
                     ],
                     Asset::class,
                 ]),

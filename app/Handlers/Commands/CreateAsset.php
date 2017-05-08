@@ -97,8 +97,6 @@ class CreateAsset extends CommandHandler
             return $asset;
         }
 
-
-
         // Set Asset name, as well as File and User relations
         $this->setAssetName($asset);
         $asset->setUser($file->getUser());

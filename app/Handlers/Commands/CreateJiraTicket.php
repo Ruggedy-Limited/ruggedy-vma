@@ -17,9 +17,6 @@ use Doctrine\ORM\EntityManager;
 
 class CreateJiraTicket extends CommandHandler
 {
-    /** @var FileRepository */
-    protected $fileRepository;
-
     /** @var VulnerabilityRepository */
     protected $vulnerabilityRepository;
 
@@ -32,17 +29,14 @@ class CreateJiraTicket extends CommandHandler
     /**
      * CreateJiraTicket constructor.
      *
-     * @param FileRepository $fileRepository
      * @param VulnerabilityRepository $vulnerabilityRepository
      * @param EntityManager $em
      * @param JiraService $service
      */
     public function __construct(
-        FileRepository $fileRepository, VulnerabilityRepository $vulnerabilityRepository,
-        EntityManager $em, JiraService $service
+        VulnerabilityRepository $vulnerabilityRepository, EntityManager $em, JiraService $service
     )
     {
-        $this->fileRepository          = $fileRepository;
         $this->vulnerabilityRepository = $vulnerabilityRepository;
         $this->service                 = $service;
         $this->em                      = $em;
@@ -61,7 +55,6 @@ class CreateJiraTicket extends CommandHandler
     public function handle(CreateJiraTicketCommand $command): JiraIssue
     {
         /** @var JiraIssue $jiraIssue */
-        $fileId          = $command->getFileId();
         $vulnerabilityId = $command->getVulnerabilityId();
         $username        = $command->getUsername();
         $password        = $command->getPassword();
@@ -69,7 +62,7 @@ class CreateJiraTicket extends CommandHandler
         $hostname        = $jiraIssue->getHost();
         $port            = $jiraIssue->getPort();
         // Check that we have everything we need to continue
-        if (!isset($fileId, $vulnerabilityId, $jiraIssue)) {
+        if (!isset($vulnerabilityId, $jiraIssue)) {
             throw new InvalidInputException("One or more required members are not set on the command");
         }
 
@@ -83,13 +76,6 @@ class CreateJiraTicket extends CommandHandler
             throw new InvalidInputException("A JIRA Project key is required to create a JIRA issue");
         }
 
-        // Make sure a File with the given ID exists
-        /** @var File $file */
-        $file = $this->fileRepository->find($fileId);
-        if (empty($file)) {
-            throw new FileNotFoundException("There is no existing file with the given ID");
-        }
-
         // Make sure a Vulnerability with the given ID exists
         /** @var Vulnerability $vulnerability */
         $vulnerability = $this->vulnerabilityRepository->find($vulnerabilityId);
@@ -98,8 +84,8 @@ class CreateJiraTicket extends CommandHandler
         }
 
         // Get the formatted issue summary and description
-        $summary     = $this->service->getIssueSummaryText($vulnerability, $file, $jiraIssue);
-        $description = $this->service->getIssueDescriptionText($vulnerability, $file, $jiraIssue);
+        $summary     = $this->service->getIssueSummaryText($vulnerability, $jiraIssue);
+        $description = $this->service->getIssueDescriptionText($vulnerability, $jiraIssue);
 
         // Calculate the number of retries on this request
         $retries = 0;
@@ -109,7 +95,7 @@ class CreateJiraTicket extends CommandHandler
 
         // Update the JirsIssue entity
         $jiraIssue
-            ->setFile($file)
+            ->setFile($vulnerability->getFile())
             ->setVulnerability($vulnerability)
             ->setSummary($summary)
             ->setDescription($description)

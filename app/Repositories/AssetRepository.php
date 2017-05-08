@@ -4,11 +4,15 @@ namespace App\Repositories;
 
 use App\Contracts\Searchable;
 use App\Entities\Asset;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Illuminate\Support\Collection;
+use LaravelDoctrine\ORM\Pagination\PaginatesFromRequest;
 
 class AssetRepository extends AbstractSearchableRepository implements Searchable
 {
+    use PaginatesFromRequest;
+
     /**
      * Attempt to find an existing Asset by the given criteria, but if not found create a new Asset populated with
      * the given $criteria array
@@ -127,12 +131,109 @@ class AssetRepository extends AbstractSearchableRepository implements Searchable
     }
 
     /**
+     * @param int $fileId
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function findByFileQuery(int $fileId = 0)
+    {
+        if (!isset($fileId)) {
+            $fileId = 0;
+        }
+
+        return $this->paginate(
+            $this->createQueryBuilder($this->getQueryBuilderAlias())
+                ->addSelect("SUM(v.severity) AS risk")
+                ->leftJoin('a.vulnerabilities', 'v')
+                ->addCriteria(
+                    Criteria::create()->where(
+                        Criteria::expr()->eq(Asset::FILE_ID, $fileId)
+                    )
+                )
+                ->groupBy('a.id')
+                ->orderBy('a.name', Criteria::ASC)
+                ->orderBy('risk', Criteria::DESC)
+                ->getQuery(),
+            $this->getPerPage(),
+            $this->getPageName(),
+            false
+        )->setPageName($this->getPageName());
+    }
+
+    /**
+     * Get all the sorted, paginated Assets related to a Vulnerability
+     *
+     * @param int $vulnerabilityId
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function findByVulnerabilityQuery(int $vulnerabilityId = 0)
+    {
+        if (!isset($vulnerabilityId)) {
+            $vulnerabilityId = 0;
+        }
+
+        return $this->paginate(
+            $this->createQueryBuilder($this->getQueryBuilderAlias())
+                 ->addSelect("SUM(v.severity) AS risk")
+                 ->leftJoin('a.vulnerabilities', 'v')
+                 ->leftJoin('a.vulnerabilities', 'v2')
+                 ->addCriteria(
+                     Criteria::create()->where(
+                         Criteria::expr()->eq('v2.id', $vulnerabilityId)
+                     )
+                 )
+                 ->groupBy('a.id')
+                 ->orderBy('a.name', Criteria::ASC)
+                 ->orderBy('risk', Criteria::DESC)
+                 ->getQuery(),
+            $this->getPerPage(),
+            $this->getPageName(),
+            false
+        )->setPageName($this->getPageName());
+    }
+
+    /**
      * @inheritdoc
      *
      * @return Collection
      */
-    protected function getSearchableFields(): Collection
+    public function getSearchableFields(): Collection
     {
         return collect([Asset::NAME, Asset::HOSTNAME, Asset::IP_ADDRESS_V4]);
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return string
+     */
+    protected function getQueryBuilderAlias(): string
+    {
+        return 'a';
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return string
+     */
+    protected function getPageName(): string
+    {
+        return 'assets_page';
+    }
+
+    protected function getPerPage(): int
+    {
+        return 9;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param QueryBuilder $queryBuilder
+     * @return QueryBuilder
+     */
+    protected function addOrdering(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        return $queryBuilder->orderBy('a.name', Criteria::ASC);
     }
 }
