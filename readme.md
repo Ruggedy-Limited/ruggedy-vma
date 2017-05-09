@@ -77,7 +77,10 @@ This still needs to be clearly defined, but the immediate plans are to make some
 
 ## Contributing
 
-Thank you for considering contributing to Ruggedy VMA! Feel free to submit a pull request against the master branch or send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io) if you want to discuss specific contributions.
+Thank you for considering contributing to Ruggedy VMA! Feel free to submit a pull request against the master branch, but if you do, all we ask is that you first check out a topic branch from master before making any commits, e.g.  
+`git checkout master && git checkout -b my-new-topic`
+
+Alternatively you can send an email to [hello@ruggedy.io](mailto:hello@ruggedy.io) if you want to discuss specific contributions.
 
 ## Security Vulnerabilities
 
