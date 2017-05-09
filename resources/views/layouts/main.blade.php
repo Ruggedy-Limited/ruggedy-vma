@@ -41,15 +41,17 @@
                     </a>
                 </li>
             @endcan
-            <li>
-                <a href="{{ route('settings.user.profile') }}">
-                    <div class="nav-btn">
-                        <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
-                        </h4>
-                        <p class="nav-btn-text">Profile</p>
-                    </div>
-                </a>
-            </li>
+            @if (empty(env('USES_GUEST_ACCOUNT', false)) || (!empty(Auth::user()) && Auth::user()->getName() !== 'Guest'))
+                <li>
+                    <a href="{{ route('settings.user.profile') }}">
+                        <div class="nav-btn">
+                            <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
+                            </h4>
+                            <p class="nav-btn-text">Profile</p>
+                        </div>
+                    </a>
+                </li>
+            @endif
             <li>
                 <!-- The logout requires a post request since Laravel 5.3:
                 Ref: https://laracasts.com/discuss/channels/laravel/laravel-53-logout-methodnotallowed -->
