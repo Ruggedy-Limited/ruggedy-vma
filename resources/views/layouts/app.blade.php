@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Ruggedy App') }}</title>
+    <title>{{ config('app.name', 'Ruggedy VMA') }}</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('/vendor/bootstrap/dist/css/bootstrap.css') }}">
