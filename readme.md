@@ -1,4 +1,4 @@
-<p align="center"><img src="http://www.ruggedy.io/img/logo_final_skyblue.png"></p>
+<p><img src="http://www.ruggedy.io/img/logo_final_skyblue.png"></p>
 
 ## About Ruggedy Limited
 
