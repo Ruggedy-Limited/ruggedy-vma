@@ -1,4 +1,6 @@
 {
+  "name": "ruggedy-vma",
+  "version": "0.1-beta.0",
   "private": true,
   "scripts": {
     "dev": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
