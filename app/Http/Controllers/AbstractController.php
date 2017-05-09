@@ -9,6 +9,7 @@ use App\Contracts\GivesUserFeedback;
 use App\Http\Responses\ErrorResponse;
 use App\Models\MessagingModel;
 use App\Services\JsonLogService;
+use Auth;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -231,6 +232,25 @@ abstract class AbstractController extends Controller implements GivesUserFeedbac
     protected function isValidMessageType(string $type): bool
     {
         return $this->getValidMessageTypes()->contains($type);
+    }
+
+    /**
+     * Check if the USES_GUEST_ACCOUNT flag is set in the env file and if the user is logged in as the guest user
+     *
+     * @return bool
+     */
+    protected function isGuestAccount(): bool
+    {
+        return !empty(env('USES_GUEST_ACCOUNT', false))
+            && (!empty(Auth::user()) && Auth::user()->getName() === 'Guest');
+    }
+
+    /**
+     * Show an info message explaining that the guest account cannot perform the requested action
+     */
+    protected function showGuestActionNotAllowed()
+    {
+        $this->flashMessenger->info("You have logged in using the guest account which cannot perform that action.");
     }
 
     /**
