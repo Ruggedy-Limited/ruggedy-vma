@@ -126,19 +126,15 @@ class JiraController extends AbstractController
     {
         return [
             'username.required'   => 'Your Jira username is required, but it does not seem like you entered it. '
-                .'Please try again.',
+                . 'Please try again.',
             'password.required'   => 'Your Jira password is required, but it does not seem like you entered it. '
                 . 'Please try again.',
             'project-id.required' => 'Your Jira Project ID is required, but it does not seem like you entered it. '
                 . 'Please try again.',
-            'host'                => [
-                'required' => 'Your Jira host URL is required, but it does not seem like you entered it.',
-                'url'      => 'The Jira hostname you entered does not seem to be a valid URL.',
-            ],
-            'port'                => [
-                'required' => 'Your Jira host port is required, but it does not seem like you entered it.',
-                'int'      => 'The Jira host port you entered does not seem to be a valid port number.',
-            ],
+            'host.required'       => 'Your Jira host URL is required, but it does not seem like you entered it.',
+            'host.url'            => 'The Jira hostname you entered does not seem to be a valid URL.',
+            'port.required'       => 'Your Jira host port is required, but it does not seem like you entered it.',
+            'port.int'            => 'The Jira host port you entered does not seem to be a valid port number.',
         ];
     }
 }

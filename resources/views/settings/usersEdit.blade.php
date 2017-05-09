@@ -44,6 +44,8 @@
                     {!! Form::checkbox('is_admin', true, $user->isAdmin()) !!}
                     {!! Form::label('is_admin', 'User is an Admin') !!}
                 </div>
+            @else
+                {!! Form::hidden('is_admin', $user->isAdmin()) !!}
             @endif
             <button class="primary-btn" type="submit">Save Changes</button>
             {!! Form::close() !!}
