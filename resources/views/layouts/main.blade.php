@@ -5,7 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_token" content="{{ csrf_token() }}">
-    <title>Ruggedy-App</title>
+    @include('partials.gtm-head')
+
+    <title>Ruggedy VMA</title>
+
     <link rel="stylesheet" href="{{ asset('/vendor/bootstrap/dist/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('/vendor/font-awesome/css/font-awesome.css') }}">
     <link rel="stylesheet" href="{{ asset("/css/animate.min.css") }}">
@@ -16,6 +19,7 @@
 </head>
 
 <body>
+@include('partials.gtm-body')
 <div id="wrapper">
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
@@ -41,15 +45,17 @@
                     </a>
                 </li>
             @endcan
-            <li>
-                <a href="{{ route('settings.user.profile') }}">
-                    <div class="nav-btn">
-                        <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
-                        </h4>
-                        <p class="nav-btn-text">Profile</p>
-                    </div>
-                </a>
-            </li>
+            @if (empty(env('USES_GUEST_ACCOUNT', false)) || (!empty(Auth::user()) && Auth::user()->getName() !== 'Guest'))
+                <li>
+                    <a href="{{ route('settings.user.profile') }}">
+                        <div class="nav-btn">
+                            <h4 class="nav-btn-header"><i class="fa fa-user fa-lg nav-indent" aria-hidden="true"></i>
+                            </h4>
+                            <p class="nav-btn-text">Profile</p>
+                        </div>
+                    </a>
+                </li>
+            @endif
             <li>
                 <!-- The logout requires a post request since Laravel 5.3:
                 Ref: https://laracasts.com/discuss/channels/laravel/laravel-53-logout-methodnotallowed -->
