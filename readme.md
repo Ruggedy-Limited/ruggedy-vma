@@ -2,7 +2,7 @@
 
 ## About Ruggedy Limited
 
-Ruggedy Limited is a New Zealand-based company founded by [Francois Marais](https://github.com//francois-ruggedy) and [Gareth Lawson](https://github.com/garethlawson). Our passion can be summed up as *"automation through technology that helps people in their day-today jobs and lives"*. Francois is an Information Security specialist and Gareth is a Software Developer. Each have more than 15 years of experience in their areas of expertise and have embarked on a journey to see how they can bring these two specialities together to create a "security as code" solution. You can read more on our website: [www.ruggedy.io](http://www.ruggedy.io).
+Ruggedy Limited is a New Zealand-based company founded by [Francois Marais](https://github.com//francois-ruggedy) and [Gareth Lawson](https://github.com/garethlawson). Our passion can be summed up as *"automation through technology that helps people in their day-to-day jobs and lives"*. Francois is an Information Security specialist and Gareth is a Software Developer. Each have more than 15 years of experience in their areas of expertise and have embarked on a journey to see how they can bring these two specialities together to create a "security as code" solution. You can read more on our website: [www.ruggedy.io](http://www.ruggedy.io).
 
 ## About Ruggedy VMA
 
