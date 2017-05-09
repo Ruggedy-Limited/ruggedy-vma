@@ -270,14 +270,12 @@ class SettingsController extends AbstractController
     {
         return [
             'name.required'    => 'A name for the User is required, but it does not seem like you entered one.',
-            'email'            => [
-                'required' => 'An email address is required for a User, but it does not seem like you entered one.',
-                'email'    => 'The email address you entered does not seem to be a valid. Please check and try again.',
-            ],
-            'password-confirm' => [
-                'required_with' => 'It does not seem like you confirmed your password. Please check and try again.',
-                'same'          => 'The passwords you entered do not match. Please try again.',
-            ],
+            'email.required' => 'An email address is required for a User, but it does not seem like you entered one.',
+            'email.email'    => 'The email address you entered does not seem to be a valid. '
+                .'Please check and try again.',
+            'password-confirm.required_with' => 'It does not seem like you confirmed your password. '
+                .'Please check and try again.',
+            'password-confirm.same'          => 'The passwords you entered do not match. Please try again.',
         ];
     }
 }
