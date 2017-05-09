@@ -80,6 +80,18 @@ Breadcrumbs::register('dynamic', function($breadcrumbs, $param1 = null) {
         App\Services\ComponentService::getOrderedComponentHierarchy($param1)
             ->each(function ($entity) use ($breadcrumbs) {
                  /** @var App\Entities\Base\AbstractEntity|App\Contracts\SystemComponent $entity */
+                 if ($entity instanceof App\Entities\WorkspaceApp && $entity->isRuggedyApp()) {
+                     /** @var App\Entities\File $file */
+                     $file = $entity->getFiles()->first();
+                     $breadcrumbs->push(
+                         'Ruggedy App: ' . $entity->getName(),
+                         route('ruggedy-app.view', [
+                             $file->getRouteParameterName() => $file->getId()
+                         ])
+                     );
+                     return;
+                 }
+
                  // Skip the file part of the Ruggedy App breadcrumbs
                  if ($entity instanceof App\Entities\File && $entity->getWorkspaceApp()->isRuggedyApp()) {
                      return;
