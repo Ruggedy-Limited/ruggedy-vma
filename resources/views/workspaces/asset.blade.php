@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <a href="{{ redirect()->back() }}">
+    <a href="{{ url()->previous() }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
