@@ -284,8 +284,8 @@ CREATE TABLE `files_software_information` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `file_software_information_idx` (`file_id`,`software_information_id`),
   KEY `files_software_information_si_fk` (`software_information_id`),
-  CONSTRAINT `files_software_information_file_fk` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `files_software_information_si_fk` FOREIGN KEY (`software_information_id`) REFERENCES `software_information` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `files_software_information_file_fk` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `files_software_information_si_fk` FOREIGN KEY (`software_information_id`) REFERENCES `software_information` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
