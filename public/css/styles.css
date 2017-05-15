@@ -1370,13 +1370,13 @@ Start: Tabs
 }
 
 .tabs [id^="tab"]:checked + label {
-    border: 3px solid #000066;
+    border: 3px solid #3a3f51;
     color: inherit;
 }
 
 .tabs [id^="tab"]:checked + label i, .tabs [id^="tab"]:checked + label small, .tabs [id^="tab"]:checked + label p  {
     border: 0;
-    color: #000066;
+    color: #3a3f51;
 }
 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
