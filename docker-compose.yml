@@ -1,0 +1,31 @@
+version: '2'
+services:
+  web:
+    restart: always
+    build: .
+    container_name: ruggedy-vma
+    ports:
+     - "80:80"
+     - "443:443"
+    depends_on:
+     - db
+    volumes_from:
+     - web-data
+  web-data:
+   build: .
+   entrypoint: /bin/true
+   volumes: ./:/usr/share/nginx/html/ruggedy-vma
+  db:
+    image: mysql:latest
+    environment:
+     - MYSQL_ROOT_PASSWORD=uh239r8hf
+     - MYSQL_DATABASE=ruggedy_go
+    ports:
+     - "3306:3306"
+    volumes_from:
+     - db-data
+  db-data:
+   image: mysql:latest
+   volumes:
+    - /var/lib/mysql
+   entrypoint: /bin/true
