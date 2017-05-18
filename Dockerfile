@@ -88,7 +88,6 @@ RUN curl -sS https://getcomposer.org/installer | php \
 WORKDIR /usr/share/nginx/html/
 RUN mkdir ruggedy-vma
 COPY docker-files/.env /usr/share/nginx/html/ruggedy-vma
-COPY composer.json /usr/share/nginx/html/ruggedy-vma
 
 WORKDIR /usr/share/nginx/html/ruggedy-vma
 
@@ -98,10 +97,6 @@ RUN npm install -g \
 COPY package.json /usr/share/nginx/html/ruggedy-vma
 RUN npm link gulp
 RUN ln -s /usr/bin/nodejs /usr/bin/node
-
-COPY bower.json /usr/share/nginx/html/ruggedy-vma
-COPY .bowerrc /usr/share/nginx/html/ruggedy-vma
-RUN bower install --allow-root
 
 WORKDIR /usr/share/nginx/html
 RUN chown -R www-data:www-data ./ruggedy-vma
