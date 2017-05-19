@@ -20,6 +20,8 @@ In the simplest terms, the application does the following:
 
 ## Requirements
 
+### Native
+
 This application has a few system requirements. All of these requirements are satisfied by the [Laravel Homestead virtual machine](https://laravel.com/docs/5.4/homestead), so it's highly recommended that you use Homestead if you are installing the application on your own machine.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
@@ -39,6 +41,13 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 For more information on how to setup and configure your web server environment you can read the [Laravel documentation](http://laravel.com/docs).
 
+### Docker
+
+We have added the ability to run the entire application in Docker. All that is required to be able to setup and run the app in Docker is:
+- A Linux compatible system or Mac OS X not more than a year old (Windows support coming soon)
+- Docker Engine version 1.13.0+ or Docker Machine 0.9.0+ (This has not been tested using Docker Machine and may not work as expected)
+- Docker Compose version 1.10.0+
+
 ## Setup and Installation
 
 ### Assumptions
@@ -46,6 +55,8 @@ For more information on how to setup and configure your web server environment y
 The following instructions assume that you have configured your web server environment with all the above requirements, that you understand how to setup a web server to run a PHP-based web application, and that you have access to a bash (or similar) shell to run the below commands.
 
 ### Instructions
+
+#### Native installation
 
 - Make sure your server environment meets all the requirments.
 - Clone this repository with Git to a location accessible to PHP and your web server (Apache, Nginx etc.): `git clone https://github.com/Ruggedy-Limited/ruggedy-vma.git`
@@ -64,12 +75,23 @@ Now run the following commands from your shell while in the directory where the 
 
 NOTE: *In the cron entry, make sure you replace **/path/to** with the path relevant to your server/environment*.
 
+#### Docker installation
 
-If all of the above commands succeed, then the application should be installed, working and accessible via the URL/hostname you configured on your web server (Apache/Nginx). A default admin user is installed with the following credentials:  
-Username: **admin@localhost**  
-Password: **password**
-
-It is highly recommended that you amend these details by logging in and making the relevant changes by clicking the "Profile" menu option on the main menu that can be accessed by clicking the hamburger menu icon at the top-left of the screen. 
+- Clone the git repository to a location that suits you, as long as the directory is included in Docker File Sharing: `git clone https://github.com/Ruggedy-Limited/ruggedy-vma.git`
+- Run the following command: `docker-files/build.sh`
+- The build process can take 30 - 60 minutes to complete, depending on the specs of the computer you're installing on and the speed of your internet connection.
+- If there are any errors that cause the build process to bomb out completely, you can try re-running the above command.
+- To stop all the containers running the app, but preserve them and their data: `docker-compose stop`
+- To start the containers again at a later time: `docker-compose start`
+- All the above commands should be run from the directory where the git repository was cloned.
+ 
+ #### Native and Docker
+ 
+ If all of the above commands succeed, then the application should be installed, working and accessible via the URL/hostname you configured on your web server (Apache/Nginx). A default admin user is installed with the following credentials:  
+ Username: **admin@localhost**  
+ Password: **password**
+ 
+ It is highly recommended that you amend these details by logging in and making the relevant changes by clicking the "Profile" menu option on the main menu that can be accessed by clicking the hamburger menu icon at the top-left of the screen.
 
 ## Development Roadmap
 
