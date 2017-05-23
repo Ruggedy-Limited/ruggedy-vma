@@ -253,7 +253,7 @@ Start: Navbar
     }
 
     .breadcrumb-nav {
-        padding: 10px;
+        padding: 15px;
     }
 }
 
@@ -885,7 +885,7 @@ Start: Cards
 
 .card.hovercard {
     position: relative;
-    padding-top: 0;
+    padding: 10px 15px 10px 15px;
     overflow: hidden;
     text-align: center;
     background-color: #ffffff;
@@ -1065,11 +1065,11 @@ a.remove-vulnerability {
 
 .remove-block {
     position: absolute;
-    top: 2px;
-    right: 2px;
+    top: -5px;
+    right: -10px;
     width: 30px;
     height: 30px;
-    background: #fff;
+    background: transparent;
     text-align: center;
     display: inline-block;
     z-index: 2;

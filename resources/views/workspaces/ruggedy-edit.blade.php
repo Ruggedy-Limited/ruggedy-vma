@@ -32,6 +32,14 @@
                 {!! Form::label('name', 'Vulnerability Name') !!}
                 {!! Form::text('name', $vulnerability->getName(), ['class' => 'black-form-control']) !!}
             </div>
+             <div class="form-group">
+                {!! Form::label('severity', 'Risk Score (severity)') !!}
+                {!! Form::select('severity', $severities, $vulnerability->getSeverity()) !!}
+            </div>
+            <div class="form-group">
+                {!! Form::label('cvss_score', 'CVSS Score') !!}
+                {!! Form::text('cvss_score', $vulnerability->getCvssScore(), ['class' => 'black-form-control']) !!}
+            </div>
             <div class="form-group">
                 {!! Form::label('description', 'Vulnerability Description') !!}
                 {!! Form::textarea('description', $vulnerability->getDescription(), ['class' => 'black-form-control', 'rows' => '3']) !!}
@@ -62,20 +70,7 @@
                     });
                 </script>
             </div>
-        </div>
-        <div class="col-md-1 col-sm-1 animated fadeIn"></div>
-        <div class="col-md-4 col-sm-4 animated fadeIn">
-            <br><br><br><br><br>
-            <div class="form-group">
-                {!! Form::label('severity', 'Risk Score (severity)') !!}
-                {!! Form::select('severity', $severities, $vulnerability->getSeverity()) !!}
-            </div>
-            <div class="form-group">
-                {!! Form::label('cvss_score', 'CVSS Score') !!}
-                {!! Form::text('cvss_score', $vulnerability->getCvssScore(), ['class' => 'black-form-control']) !!}
-            </div>
-            <div class="form-group row">
-                <div class="col-xs-12">
+            <div class="col-xs-12">
                 @include('partials.thumnail-edit', [
                     'thumbnail' => $vulnerability->getThumbnail1(),
                     'fieldName' => 'thumbnail_1',
@@ -96,15 +91,9 @@
                         'labelText' => 'Screenshot 3',
                     ])
                 </div>
-            </div>
-            @include('partials.related-assets')
-            <div class="form-group">
-                <button class="primary-btn" type="submit">Save Changes</button>
-            </div>
         </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-6 animated fadeInUp">
-
+        <div class="col-md-6 animated fadeIn">
+            @include('partials.related-assets')
         </div>
     </div>
     {{ csrf_field() }}

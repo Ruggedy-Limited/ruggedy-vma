@@ -2,7 +2,8 @@
     @if (!empty($isRuggedyApp))
         <div class="row">
             <div class="col-xs-12">
-                <div class="content-card">
+            <br>
+                <div class="m-l-8">
                     <p>No Assets here yet. When adding a Vulnerability, add Asset details for Assets to
                         be displayed here.</p>
                 </div>

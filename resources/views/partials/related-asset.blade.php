@@ -1,4 +1,4 @@
-<div class="col-md-6 asset" data-asset-id="{{ $asset->getId() }}">
+<div class="col-md-12 asset" data-asset-id="{{ $asset->getId() }}">
     <a href="#">
         <div class="list-content-card animated pulse-hover">
             <div class="remove-block">
