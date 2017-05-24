@@ -3,7 +3,8 @@
 @section ('breadcrumb')
 
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $folder)
-        <a href="{{ route('folder.delete', [$folder->getRouteParameterName() => $folder->getId()]) }}">
+        <a href="{{ route('folder.delete', [$folder->getRouteParameterName() => $folder->getId()]) }}"
+            class="delete-link">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>

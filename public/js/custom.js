@@ -388,3 +388,25 @@
         });
     });
 })(jQuery);
+
+// Prompt before deleting
+(function ($) {
+    $(document).ready(function () {
+        $('.delete-link').on('click', function (e) {
+            e.preventDefault();
+            var confirmUrl = $(this).prop('href');
+
+            swal({
+                title: "Are you sure?",
+                text: "This cannot be undone.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function () {
+                console.log(confirmUrl);
+                window.location.href = confirmUrl;
+            }).catch(swal.noop);
+        });
+    });
+})(jQuery);

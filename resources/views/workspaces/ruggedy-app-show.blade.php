@@ -1,7 +1,9 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-    <a href="{{ route('workspace.view', [$file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()]) }}">
+    <a href="{{ route('workspace.view', [
+        $file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId()
+    ]) }}">
         <button type="button" class="btn round-btn pull-right c-yellow">
             <i class="fa fa-times fa-lg" aria-hidden="true"></i>
         </button>
@@ -10,7 +12,7 @@
         <a href="{{ route('app.delete', [
             $file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId(),
             $file->getWorkspaceApp()->getWorkspace()->getRouteParameterName() => $file->getWorkspaceApp()->getWorkspace()->getId(),
-        ]) }}">
+        ]) }}" class="delete-link">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>
