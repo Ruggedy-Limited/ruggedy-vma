@@ -1,0 +1,3 @@
+* * * * * /usr/bin/php /usr/share/nginx/html/ruggedy-vma/artisan schedule:run >> /usr/share/nginx/html/ruggedy-vma/storage/logs/cron.log 2>&1
+
+

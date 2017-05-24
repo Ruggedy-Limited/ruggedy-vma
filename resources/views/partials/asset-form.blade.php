@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group">
                     {!! Form::label('asset-hostname', 'Hostname') !!}
-                    {!! Form::url('asset-hostname', null, ['class' => 'black-form-control']) !!}
+                    {!! Form::text('asset-hostname', null, ['class' => 'black-form-control']) !!}
                 </div>
                 <div class="form-group">
                     {!! Form::label('asset-mac_address', 'MAC Address') !!}

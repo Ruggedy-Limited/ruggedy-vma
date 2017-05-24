@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.gtm-head')
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Ruggedy App') }}</title>
+    <title>{{ config('app.name', 'Ruggedy VMA') }}</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('/vendor/bootstrap/dist/css/bootstrap.css') }}">
@@ -24,6 +25,7 @@
     </script>
 </head>
 <body>
+    @include('partials.gtm-body')
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top c-darkgrey">
             <div class="container">
@@ -62,6 +64,7 @@
 
         @yield('content')
     </div>
+    <div class="version-info">Version: 0.1.5-beta</div>
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>

@@ -160,7 +160,7 @@ class AssetController extends AbstractController
                 . "," . Asset::OS_VENDOR_UNKNOWN,
             'asset-ip_address_v4' => 'bail|nullable|ipv4',
             'asset-ip_address_v6' => 'bail|nullable|ipv6',
-            'asset-hostname'      => 'bail|nullable|url',
+            'asset-hostname'      => ['bail', 'nullable', 'regex:' . Asset::REGEX_HOSTNAME],
             'asset-mac_address'   => 'bail|nullable|regex:' . Asset::REGEX_MAC_ADDRESS,
             'asset-netbios'       => 'bail|nullable|regex:' . Asset::REGEX_NETBIOS_NAME,
         ];
@@ -180,7 +180,8 @@ class AssetController extends AbstractController
             'asset-vendor.in'          => 'The OS vendor you entered does not seem valid. Please try again.',
             'asset-ip_address_v4.ipv4' => 'The IP address v4 you entered does not seem valid. Please try again.',
             'asset-ip_address_v6.ipv6' => 'The IP address v6 you entered does not seem valid. Please try again..',
-            'asset-hostname.url'       => 'The hostname you entered does not seem to be a valid URL. Please try again.',
+            'asset-hostname.regex'     => 'The hostname you entered does not seem to be a valid hostname. '
+                .'Please try again.',
             'asset-mac_address.regex'  => 'The MAC address you entered does not seem valid. Please try again.',
             'asset-netbios.regex'      => 'The NETBIOS name you entered does not seem valid. Please try again.',
         ];
