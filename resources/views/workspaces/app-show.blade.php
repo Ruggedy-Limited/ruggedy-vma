@@ -12,12 +12,13 @@
     </a>
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $file)
         @if ($file->getWorkspaceApp()->isRuggedyApp())
-            <a href="{{ route('app.delete', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}">
+            <a href="{{ route('app.delete', [$file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()]) }}"
+               class="delete-link">
         @else
             <a href="{{ route('file.delete', [
                 $file->getRouteParameterName()                    => $file->getId(),
                 $file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()
-            ]) }}">
+            ]) }}" class="delete-link">
         @endif
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>

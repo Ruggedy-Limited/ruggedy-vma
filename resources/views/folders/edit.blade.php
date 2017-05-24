@@ -1,10 +1,11 @@
 @extends('layouts.main')
 
 @section ('breadcrumb')
-
-    <button type="button" class="btn round-btn pull-right c-yellow">
-        <i class="fa fa-times fa-lg" aria-hidden="true"></i>
-    </button>
+    <a href="{{ route('folder.view', [$folder->getRouteParameterName() => $folder->getId()]) }}">
+        <button type="button" class="btn round-btn pull-right c-yellow">
+            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+        </button>
+    </a>
     {!! Breadcrumbs::render('dynamic', $folder) !!}
 @endsection
 
