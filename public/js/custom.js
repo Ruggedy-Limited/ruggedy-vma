@@ -394,15 +394,18 @@
     $(document).ready(function () {
         $('.delete-link').on('click', function (e) {
             e.preventDefault();
-            var confirmUrl = $(this).prop('href');
+            var confirmUrl = $(this).prop('href'),
+                title      = $(this).data('confirm-title') || "Are you sure?",
+                text       = $(this).data('confirm-text') || "This cannot be undone.",
+                btnText    = $(this).data('confirm-btn-text') || "Yes, delete it!";
 
             swal({
-                title: "Are you sure?",
-                text: "This cannot be undone.",
+                title: title,
+                text: text,
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: btnText
             }).then(function () {
                 console.log(confirmUrl);
                 window.location.href = confirmUrl;
