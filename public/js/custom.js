@@ -393,12 +393,16 @@
 (function ($) {
     $(document).ready(function () {
         $('.delete-link').on('click', function (e) {
+            // Prevent the default action, otherwise the alert is shown, but the link triggered as per normal
             e.preventDefault();
-            var confirmUrl = $(this).prop('href'),
+
+            // Setup some customisable values with fallback defaults
+            var confirmUrl = $(this).prop('href') || '/',
                 title      = $(this).data('confirm-title') || "Are you sure?",
                 text       = $(this).data('confirm-text') || "This cannot be undone.",
                 btnText    = $(this).data('confirm-btn-text') || "Yes, delete it!";
 
+            // Trigger the sweet alert to confirm deletion
             swal({
                 title: title,
                 text: text,
@@ -407,9 +411,8 @@
                 confirmButtonColor: "#DD6B55",
                 confirmButtonText: btnText
             }).then(function () {
-                console.log(confirmUrl);
-                window.location.href = confirmUrl;
-            }).catch(swal.noop);
+                window.location.href = confirmUrl; // Go to the link URL if confirmation was received
+            }).catch(swal.noop); // Add a rejection handler to the promise
         });
     });
 })(jQuery);
