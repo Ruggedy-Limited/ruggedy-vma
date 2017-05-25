@@ -90,6 +90,7 @@
                         'fieldName' => 'thumbnail_3',
                         'labelText' => 'Screenshot 3',
                     ])
+                    <br>
                 </div>
         </div>
         <div class="col-md-6 animated fadeIn">

@@ -814,7 +814,7 @@ Start: Cards
     border-radius: 0;
     height: 100%;
     width: 100%;
-    padding: 7px 15px 2px 15px;
+    padding: 2px 15px 2px 15px;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
