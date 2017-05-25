@@ -17,7 +17,7 @@
     @if ($vulnerability->getFile()->getWorkspaceApp()->isRuggedyApp())
         <a href="{{ route('vulnerability.delete', [
             $vulnerability->getRouteParameterName() => $vulnerability->getId()
-        ]) }}">
+        ]) }}" class="delete-link">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>

@@ -12,7 +12,7 @@
         <a href="{{ route('app.delete', [
             'workspaceId'    => $workspaceApp->getWorkspace()->getId(),
             'workspaceAppId' => $workspaceApp->getId()
-        ]) }}">
+        ]) }}" class="delete-link">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>

@@ -7,7 +7,8 @@
         </button>
     </a>
     @can (App\Policies\ComponentPolicy::ACTION_EDIT, $workspace)
-        <a href="{{ route('workspace.delete', [$workspace->getRouteParameterName() => $workspace->getId()]) }}">
+        <a href="{{ route('workspace.delete', [$workspace->getRouteParameterName() => $workspace->getId()]) }}"
+           class="delete-link">
             <button type="button" class="btn round-btn pull-right c-red">
                 <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
             </button>
