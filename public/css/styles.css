@@ -1042,7 +1042,7 @@ a.remove-vulnerability {
 }
 
 .thumbnail-overlay {
-    position: absolute;;
+    position: absolute;
     width: 100%;
     height: 100%;
     background: #000;
@@ -1052,6 +1052,30 @@ a.remove-vulnerability {
     -o-transition:  200ms opacity ease-in;
     -webkit-transition: 200ms opacity ease-in;
     transition: 200ms opacity ease-in;
+}
+
+.file-card {
+    word-wrap: break-word;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 0;
+    height: 105px;
+    width: 100%;
+    padding: 15px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.file-card .img-float {
+    float: left;
+    display: inline-block;
+    width: 65px;
+    height: 75px;
+    background-color: transparent;
+    margin-right: 15px;
+    padding: 15px 15px;
 }
 
 .remove-poc:hover ~ .thumbnail-overlay {

@@ -71,8 +71,11 @@
                                     @foreach($files as $file)
                                         <div class="col-md-4 animated pulse-hover">
                                             <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
-                                                <div class="content-card">
-                                                    <h4 class="h-4-1">{{ $file->getName() }}</h4>
+                                                <div class="file-card">
+                                                    <div class="img-float">
+                                                    <i class="fa fa-file-text-o fa-3x" aria-hidden="true"></i>
+                                                    </div>
+						    <h4 class="h-4-1">{{ $file->getName() }}</h4>
                                                     <p>{{ $file->getDescription() }}</p>
                                                 </div>
                                             </a>
