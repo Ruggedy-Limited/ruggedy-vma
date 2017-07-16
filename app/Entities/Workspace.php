@@ -14,6 +14,10 @@ use Illuminate\Support\Collection;
  */
 class Workspace extends Base\Workspace implements SystemComponent
 {
+    const AUTO_SCAN_WORKSPACE_NAME        = 'Automatic Scans';
+    const AUTO_SCAN_WORKSPACE_DESCRIPTION = 'This Workspace is created automatically to contain scan results from '
+        . 'files that are picked up in the auto_scan directory and processed automagically.';
+
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="workspaces", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinColumn(name="`user_id`", referencedColumnName="`id`", nullable=false)
