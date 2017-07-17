@@ -64,7 +64,7 @@
 
         @yield('content')
     </div>
-    <div class="version-info">Version: 0.1.6-beta</div>
+    <div class="version-info">Version: 0.1.7-beta</div>
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>

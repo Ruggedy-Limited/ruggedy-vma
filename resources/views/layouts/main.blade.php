@@ -76,7 +76,7 @@
                     </form>
                 </li>
             </ul>
-            <div class="version-info">Version: 0.1.6-beta</div>
+            <div class="version-info">Version: 0.1.7-beta</div>
         </div>
         <div id="page-content-wrapper">
             <div class="c-darkgrey nav-sm-btn">
