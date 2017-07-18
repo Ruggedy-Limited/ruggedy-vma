@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Handlers\Commands;
+namespace App\Handlers\Commands\Assets;
 
-use App\Commands\GetAssetsMasterList as GetAssetsMasterListCommand;
+use App\Commands\Assets\GetAssetsMasterList as GetAssetsMasterListCommand;
 use App\Entities\Asset;
+use App\Handlers\Commands\CommandHandler;
 use App\Repositories\AssetRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Handlers\Commands;
+namespace App\Handlers\Commands\Assets;
 
-use App\Commands\EditAsset as EditAssetCommand;
+use App\Commands\Assets\EditAsset as EditAssetCommand;
 use App\Entities\Asset;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
 use App\Exceptions\InvalidInputException;
+use App\Handlers\Commands\CommandHandler;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 use Doctrine\ORM\EntityManager;

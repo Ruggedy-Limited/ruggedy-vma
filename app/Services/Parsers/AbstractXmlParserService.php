@@ -2,7 +2,7 @@
 
 namespace App\Services\Parsers;
 
-use App\Commands\CreateAsset;
+use App\Commands\Assets\CreateAsset;
 use App\Contracts\CustomLogging;
 use App\Contracts\GeneratesUniqueHash;
 use App\Contracts\HasIdColumn;

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Handlers\Commands;
+namespace App\Handlers\Commands\Assets;
 
-use App\Commands\GetAssetsInWorkspace as GetAssetsInWorkspaceCommand;
+use App\Commands\Assets\GetAssetsInWorkspace as GetAssetsInWorkspaceCommand;
 use App\Entities\Workspace;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\WorkspaceNotFoundException;
+use App\Handlers\Commands\CommandHandler;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 use App\Repositories\WorkspaceRepository;

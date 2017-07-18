@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Handlers\Commands;
+namespace App\Handlers\Commands\Assets;
 
-use App\Commands\GetAsset as GetAssetCommand;
+use App\Commands\Assets\GetAsset as GetAssetCommand;
 use App\Exceptions\ActionNotPermittedException;
 use App\Exceptions\AssetNotFoundException;
+use App\Handlers\Commands\CommandHandler;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 use App\Repositories\VulnerabilityRepository;
@@ -21,6 +22,7 @@ class GetAsset extends CommandHandler
      * GetAsset constructor.
      *
      * @param AssetRepository $assetRepository
+     * @param VulnerabilityRepository $vulnerabilityRepository
      */
     public function __construct(AssetRepository $assetRepository, VulnerabilityRepository $vulnerabilityRepository)
     {

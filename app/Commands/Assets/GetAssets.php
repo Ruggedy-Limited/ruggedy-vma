@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Commands;
+namespace App\Commands\Assets;
+
+use App\Commands\Command;
 
 class GetAssets extends Command
 {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Commands\CreateAsset;
-use App\Commands\DeleteAsset;
-use App\Commands\GetAsset;
+use App\Commands\Assets\CreateAsset;
+use App\Commands\Assets\DeleteAsset;
+use App\Commands\Assets\GetAsset;
 use App\Entities\Asset;
 use App\Http\Responses\AjaxResponse;
 use Illuminate\Validation\ValidationException;

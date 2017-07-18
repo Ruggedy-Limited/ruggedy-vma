@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Handlers\Commands;
+namespace App\Handlers\Commands\Assets;
 
-use App\Commands\GetAssets as GetAssetsCommand;
+use App\Commands\Assets\GetAssets as GetAssetsCommand;
 use App\Entities\Asset;
 use App\Exceptions\ActionNotPermittedException;
+use App\Handlers\Commands\CommandHandler;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 

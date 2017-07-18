@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Handlers\Commands;
+namespace App\Handlers\Commands\Assets;
 
-use App\Commands\CreateAsset as CreateAssetCommand;
+use App\Commands\Assets\CreateAsset as CreateAssetCommand;
 use App\Entities\Asset;
 use App\Entities\File;
 use App\Entities\Workspace;
@@ -12,6 +12,7 @@ use App\Exceptions\FileNotFoundException;
 use App\Exceptions\InvalidInputException;
 use App\Exceptions\UserNotFoundException;
 use App\Exceptions\WorkspaceNotFoundException;
+use App\Handlers\Commands\CommandHandler;
 use App\Policies\ComponentPolicy;
 use App\Repositories\AssetRepository;
 use App\Repositories\FileRepository;
