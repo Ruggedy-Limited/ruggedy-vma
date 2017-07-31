@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands\Parsers\Xml;
 
+use App\Commands\AutoScanForNewFiles;
 use App\Commands\ParseFile;
 use App\Contracts\CustomLogging;
 use App\Entities\File;
 use App\Repositories\FileRepository;
 use App\Services\JsonLogService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use League\Tactician\CommandBus;
 use Exception;
 use Monolog\Logger;
@@ -80,6 +82,11 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
 
         $this->filesystem->touch($this->getLockFilePath());
 
+        if (!empty(env('AUTO_SCAN_FOR_NEW_FILES'))) {
+            $this->info("Checking for new files to scan automatically.");
+            $this->autoScanForNewFiles();
+        }
+
         // Get unprocessed files grouped by workspace ID
         $filesByWorkspace = $this->repository->findUnprocessed();
         if ($filesByWorkspace->isEmpty()) {
@@ -113,6 +120,39 @@ class ParseUnprocessedXmlCommand extends Command implements CustomLogging
         });
 
         $this->filesystem->remove($this->getLockFilePath());
+    }
+
+    /**
+     * Send the auto scan for new files command and report on the results
+     */
+    protected function autoScanForNewFiles()
+    {
+        $command = new AutoScanForNewFiles(true);
+        try {
+            /** @var Collection $newFiles */
+            $newFiles = $this->bus->handle($command);
+        } catch (Exception $e) {
+            $this->logger->log(Logger::ERROR, "Error when looking for files to add and scan automatically", [
+                'exception' => $e->getMessage(),
+                'trace'     => $this->logger->getTraceAsArrayOfLines($e),
+            ]);
+
+            $this->warn("Error when looking for files to scan add and scan automatically: {$e->getMessage()}");
+            return;
+        }
+
+        if ($newFiles->isEmpty()) {
+            $this->info("No new files found to process automagically.");
+        }
+
+        $successCount = $newFiles->reduce(function ($successCount, $newFile) {
+            return $successCount + intval($newFile);
+        }, 0);
+
+        $failedCount = $newFiles->count() - $successCount;
+
+        $this->info("{$newFiles->count()} new files found. $successCount prepared successfully, $failedCount failed "
+            . "preparation.");
     }
 
     /**

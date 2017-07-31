@@ -20,6 +20,10 @@ class WorkspaceApp extends Base\WorkspaceApp implements SystemComponent
     const DEFAULT_NAME        = 'Unnamed';
     const DEFAULT_DESCRIPTION = 'No description given. Please add a relevant description.';
 
+    const AUTO_SCAN_WORKSPACE_APP_NAME        = 'Automatic Scans';
+    const AUTO_SCAN_WORKSPACE_APP_DESCRIPTION = 'This Workspace App is created automatically to contain scan results '
+    . 'from files that are picked up in the auto_scan directory and processed automagically.';
+
     /**
      * @ORM\OneToMany(targetEntity="File", mappedBy="workspaceApp", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="`id`", referencedColumnName="`workspace_apps_id`", nullable=false)

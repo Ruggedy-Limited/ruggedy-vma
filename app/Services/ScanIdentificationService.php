@@ -198,7 +198,7 @@ class ScanIdentificationService
      *
      * @return string
      */
-    protected function getScanFileStorageBasePath(): string
+    public function getScanFileStorageBasePath(): string
     {
         return storage_path('scans') . DIRECTORY_SEPARATOR;
     }
