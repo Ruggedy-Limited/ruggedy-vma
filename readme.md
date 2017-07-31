@@ -84,10 +84,11 @@ NOTE: *In the cron entry, make sure you replace **/path/to** with the path relev
 - To stop all the containers running the app, but preserve them and their data: `docker-compose stop`
 - To start the containers again at a later time: `docker-compose start`
 - All the above commands should be run from the directory where the git repository was cloned.
+- Please ensure that no native web server, MySQL server or any other process is binding to ports 80, 443 or 3306, or the Docker build will fail.
  
- #### Native and Docker
+ #### Native and Docker 
  
- If all of the above commands succeed, then the application should be installed, working and accessible via the URL/hostname you configured on your web server (Apache/Nginx). A default admin user is installed with the following credentials:  
+ If all of the above commands succeed, then the application should be installed, working and accessible via the URL/hostname you configured on your web server (Apache/Nginx), or if there are no configured local hostnames, just http://localhost/ or http://127.0.0.1/ should work too. A default admin user is installed with the following credentials:  
  Username: **admin@localhost**  
  Password: **password**
  
