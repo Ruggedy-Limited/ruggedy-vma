@@ -1063,7 +1063,7 @@ a.remove-vulnerability {
     height: auto;
 }
 
-.remove-block {
+.remove-block, .convenience-buttons {
     position: absolute;
     top: 2px;
     right: 2px;
@@ -1074,6 +1074,22 @@ a.remove-vulnerability {
     display: inline-block;
     z-index: 2;
     cursor: pointer;
+}
+
+.convenience-buttons {
+    top: 28px;
+    right: 22px;
+    width: auto;
+}
+
+@media screen and (max-width: 767px) {
+    .convenience-buttons {
+        top: 20px;
+    }
+}
+
+.convenience-buttons a {
+    display: inline-block;
 }
 
 .http-data a.collapsed .collapsed-state, .http-data a:not(.collapsed) .expanded-state {
