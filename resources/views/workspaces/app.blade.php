@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var App\Entities\File $file
+ */
+?>
 @extends('layouts.main')
 
 @section ('breadcrumb')
@@ -70,6 +75,23 @@
                                 <div class="row">
                                     @foreach($files as $file)
                                         <div class="col-md-4 animated pulse-hover">
+                                            <div class="convenience-buttons">
+                                                @can (App\Policies\ComponentPolicy::ACTION_EDIT, $file)
+                                                    <a href="{{ route('file.delete', [
+                                                            $file->getRouteParameterName()                    => $file->getId(),
+                                                            $file->getWorkspaceApp()->getRouteParameterName() => $file->getWorkspaceApp()->getId()
+                                                        ]) }}" class="delete-link">
+                                                        <button type="button" class="btn round-btn pull-right c-red">
+                                                            <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
+                                                        </button>
+                                                    </a>
+                                                    <a href="{{ route('file.edit', [$file->getRouteParameterName() => $file->getId()]) }}">
+                                                        <button type="button" class="btn round-btn pull-right c-purple">
+                                                            <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+                                                        </button>
+                                                    </a>
+                                                @endcan
+                                            </div>
                                             <a href="{{ route('file.view', ['fileId' => $file->getId()]) }}">
                                                 <div class="file-card">
                                                     <div class="img-float">
