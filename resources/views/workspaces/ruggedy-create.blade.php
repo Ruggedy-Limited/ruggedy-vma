@@ -28,6 +28,14 @@
                 {!! Form::text('name', null, ['class' => 'black-form-control']) !!}
             </div>
             <div class="form-group">
+                {!! Form::label('severity', 'Risk Score (severity)') !!}
+                {!! Form::select('severity', $severities) !!}
+            </div>
+            <div class="form-group">
+                {!! Form::label('cvss_score', 'CVSS Score') !!}
+                {!! Form::text('cvss_score', null, ['class' => 'black-form-control']) !!}
+            </div>
+            <div class="form-group">
                 {!! Form::label('description', 'Vulnerability Description') !!}
                 {!! Form::textarea('description', null, ['class' => 'black-form-control', 'rows' => '3']) !!}
                 <script>
@@ -57,19 +65,7 @@
                     });
                 </script>
             </div>
-        </div>
-        <div class="col-md-1 col-sm-1 animated fadeIn"></div>
-        <div class="col-md-4 col-sm-4 animated fadeIn">
-            <br><br><br><br><br>
-            <div class="form-group">
-                {!! Form::label('severity', 'Risk Score (severity)') !!}
-                {!! Form::select('severity', $severities) !!}
-            </div>
-            <div class="form-group">
-                {!! Form::label('cvss_score', 'CVSS Score') !!}
-                {!! Form::text('cvss_score', null, ['class' => 'black-form-control']) !!}
-            </div>
-            <div class="form-group">
+             <div class="form-group">
                 {!! Form::label('thumbnail_1', 'Screenshot 1', ['class' => '']) !!}
                 {!! Form::file('thumbnail_1') !!}
             </div>
@@ -81,11 +77,9 @@
                 {!! Form::label('thumbnail_3', 'Screenshot 3', ['class' => '']) !!}
                 {!! Form::file('thumbnail_3') !!}
             </div>
-            @include('partials.related-assets')
         </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-6 animated fadeInUp">
-
+        <div class="col-md-6 animated fadeIn">
+            @include('partials.related-assets')
         </div>
     </div>
     {{ csrf_field() }}

@@ -16,7 +16,8 @@
     @if (empty($apps) || $apps->isEmpty())
         <div class="row">
             <div class="col-xs-12">
-                <div class="content-card">
+            <br>
+                <div class="p-l-8">
                     No Apps in this Workspace yet.
                     <a href="{{ route('workspace.apps', [
                         $workspace->getRouteParameterName() => $workspace->getId()

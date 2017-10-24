@@ -8,7 +8,8 @@
     @elseif (!empty($isRuggedyApp))
         <div class="row">
             <div class="col-xs-12">
-                <div class="content-card">
+            <br>
+                <div class="m-l-8">
                     <p>No Vulnerabilities here yet. Add a Vulnerability by click the "Add Vulnerability"
                         button above, then enter the custom Vulnerability details.</p>
                 </div>

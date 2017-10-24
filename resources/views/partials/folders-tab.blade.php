@@ -16,7 +16,8 @@
     @if (empty($folders) || $folders->isEmpty())
         <div class="row">
             <div class="col-xs-12">
-                <div class="content-card">
+            <br>
+                <div class="p-l-8">
                     No Folders in this Workspace yet.
                     <a href="{{ route('folder.create', [
                         $workspace->getRouteParameterName() => $workspace->getId()

@@ -4,8 +4,8 @@
             @if ($user->isAdmin())
                 <span class="label label-success pull-right t-s-10">admin</span>
             @endif
-            <h4>{{ $user->getName() }}</h4>
-            <p>{{ $user->getEmail() }}</p>
+            <h4 class="h-4-1">{{ $user->getName() }}</h4>
+            <p class="t-1">{{ $user->getEmail() }}</p>
         </div>
     </a>
 </div>
