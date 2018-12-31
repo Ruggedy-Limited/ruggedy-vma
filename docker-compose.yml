@@ -19,7 +19,7 @@ services:
   volumes:
    - ./:/usr/share/nginx/html/ruggedy-vma
  db:
-  image: mysql:latest
+  image: mysql:5.7
   restart: always
   environment:
    - MYSQL_ROOT_PASSWORD=uh239r8hf
